@@ -5,48 +5,52 @@
     android:viewportWidth="96"
     android:viewportHeight="96">
 
-    <!-- Shield Background with Gradient -->
+    <!-- Rounded Squircle Dark Container -->
     <path
-        android:pathData="M48,6 C68,6 84,12 84,12 C84,54 58,84 48,90 C38,84 12,54 12,12 C12,12 28,6 48,6 Z">
+        android:pathData="M16,6 L80,6 C88.8,6 96,13.2 96,22 L96,80 C96,88.8 88.8,96 80,96 L16,96 C7.2,96 0,88.8 0,80 L0,22 C0,13.2 7.2,6 16,6 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:startX="12"
+                android:startX="0"
                 android:startY="6"
-                android:endX="84"
-                android:endY="90"
+                android:endX="96"
+                android:endY="96"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#4F46E5"/>
-                <item android:offset="0.5" android:color="#6366F1"/>
-                <item android:offset="1.0" android:color="#7C3AED"/>
+                <item android:offset="0.0" android:color="#1A1F2C"/>
+                <item android:offset="1.0" android:color="#0F121A"/>
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Inner Shield Accent Line -->
+    <!-- Squircle Subtle Border -->
     <path
-        android:pathData="M48,12 C64,12 77,17 77,17 C77,50 56,76 48,81 C40,76 19,50 19,17 C19,17 32,12 48,12 Z"
+        android:pathData="M16,6 L80,6 C88.8,6 96,13.2 96,22 L96,80 C96,88.8 88.8,96 80,96 L16,96 C7.2,96 0,88.8 0,80 L0,22 C0,13.2 7.2,6 16,6 Z"
         android:strokeWidth="1.5"
-        android:strokeColor="#40FFFFFF"
+        android:strokeColor="#33FFFFFF"
         android:fillColor="#00000000"/>
 
-    <!-- Stylized "B" for Blockfy / Focus Symbol -->
-    <!-- Vertical Spine -->
+    <!-- Bold White Letter "B" Body -->
     <path
-        android:pathData="M34,26 L46,26 C53,26 58,29 58,35 C58,39 55,42 51,43 C57,44 61,48 61,54 C61,61 55,65 47,65 L34,65 Z"
+        android:pathData="M24,20 L54,20 C65,20 72,26 72,36 C72,42.5 68,47.5 62,49.5 C70,51.5 75,57.5 75,68 C75,79 66,84 54,84 L24,84 Z"
         android:fillColor="#FFFFFF"/>
 
-    <!-- Top Cutout -->
+    <!-- Top Cutout Hole of B -->
     <path
-        android:pathData="M41,32 L46,32 C49,32 51,33.5 51,35.5 C51,37.5 49,39 46,39 L41,39 Z"
-        android:fillColor="#5448ED"/>
+        android:pathData="M38,31 L52,31 C56.5,31 60,33.5 60,37.5 C60,41.5 56.5,44 52,44 L38,44 Z"
+        android:fillColor="#151822"/>
 
-    <!-- Bottom Cutout -->
+    <!-- Bottom Cutout Hole of B -->
     <path
-        android:pathData="M41,47 L47,47 C50.5,47 53.5,49 53.5,52.5 C53.5,56 50.5,58 47,58 L41,58 Z"
-        android:fillColor="#6841E3"/>
+        android:pathData="M38,58 L53,58 C58,58 62,60.5 62,65 C62,69.5 58,72 53,72 L38,72 Z"
+        android:fillColor="#12151E"/>
 
-    <!-- Dynamic Focus Dot / Indicator -->
+    <!-- Diagonal Slash Bar (Block / Focus mark in Periwinkle/Indigo) -->
     <path
-        android:pathData="M70,32 A4,4 0 1,1 62,32 A4,4 0 1,1 70,32 Z"
-        android:fillColor="#38BDF8"/>
+        android:pathData="M20,30 L74,74 L68,81 L14,37 Z"
+        android:fillColor="#6E76F6"/>
+
+    <path
+        android:pathData="M20,30 L74,74 L68,81 L14,37 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#8B5CF6"
+        android:fillColor="#00000000"/>
 </vector>

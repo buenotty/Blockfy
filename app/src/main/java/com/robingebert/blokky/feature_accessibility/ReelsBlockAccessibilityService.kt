@@ -172,7 +172,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                     val currentUsed = if (currentUsage.date == getTodayDate()) currentUsage.instagramSeconds + 1L else 1L
                     if (currentUsed >= limitMinutes * 60L) {
                         serviceScope.launch(Dispatchers.Main) {
-                            showToast("Blockfy: Limite diário de $limitMinutes min de Reels atingido!")
+                            showToast(getString(R.string.toast_limit_reached, limitMinutes, "Reels"))
                             rootInActiveWindow?.let { exitInstagramReels(it) }
                         }
                         break
@@ -214,7 +214,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val limitSeconds = yt.dailyLimitMinutes * 60L
 
             if (todayUsedSeconds >= limitSeconds) {
-                showToast("Blockfy: Limite diário de ${yt.dailyLimitMinutes} min de Shorts atingido hoje!")
+                showToast(getString(R.string.toast_limit_reached, yt.dailyLimitMinutes, "Shorts"))
                 exitYouTubeShorts(root)
             } else {
                 startYouTubeTracking(yt.dailyLimitMinutes)
@@ -252,7 +252,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                     val currentUsed = if (currentUsage.date == getTodayDate()) currentUsage.youtubeSeconds + 1L else 1L
                     if (currentUsed >= limitMinutes * 60L) {
                         serviceScope.launch(Dispatchers.Main) {
-                            showToast("Blockfy: Limite diário de $limitMinutes min de Shorts atingido!")
+                            showToast(getString(R.string.toast_limit_reached, limitMinutes, "Shorts"))
                             rootInActiveWindow?.let { exitYouTubeShorts(it) }
                         }
                         break
@@ -283,8 +283,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
             if (shouldWarn) {
                 if (isInsta) lastWarnedInstaMinute = remainingMinutes else lastWarnedYtMinute = remainingMinutes
-                val minText = if (remainingMinutes == 1) "1 minuto restante" else "$remainingMinutes minutos restantes"
-                showToast("Blockfy: $minText de $featureName hoje!")
+                val minText = if (remainingMinutes == 1) {
+                    getString(R.string.toast_remaining_one_minute, featureName)
+                } else {
+                    getString(R.string.toast_remaining_minutes, remainingMinutes, featureName)
+                }
+                showToast(minText)
             }
         }
     }

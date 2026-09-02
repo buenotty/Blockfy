@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,8 +51,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,6 +68,8 @@ import com.robingebert.blokky.feature_preferences.ui.composables.AccessibilitySe
 import com.robingebert.blokky.feature_preferences.ui.composables.EditAppBottomSheet
 import com.robingebert.blokky.feature_preferences.ui.composables.InstagramColoredIcon
 import com.robingebert.blokky.feature_preferences.ui.composables.SwitchPreference
+import com.robingebert.blokky.ui.theme.BlockfyPrimary
+import com.robingebert.blokky.ui.theme.BlockfySecondary
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,22 +104,26 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     }
     //endregion
 
-    Column(modifier = Modifier.padding(10.dp)) {
+    Column(modifier = Modifier.padding(12.dp)) {
 
         AccessibilityServiceCard(isAccessibilityGranted)
         Spacer(modifier = Modifier.height(14.dp))
 
         Column(verticalArrangement = spacedBy(10.dp)) {
             val instaSummary = if (appSettings.instagram.dailyLimitMinutes > 0) {
-                "Limite: ${appSettings.instagram.dailyLimitMinutes} min/dia (usado: ${dailyUsage.instagramSeconds / 60}m)"
+                stringResource(
+                    R.string.daily_limit_format,
+                    appSettings.instagram.dailyLimitMinutes,
+                    dailyUsage.instagramSeconds / 60
+                )
             } else {
-                "Bloquear Instagram Reels"
+                stringResource(R.string.block_instagram_summary)
             }
 
             SwitchPreference(
                 value = appSettings.instagram.blocked,
                 enabled = isAccessibilityGranted,
-                title = "Instagram Reels",
+                title = stringResource(R.string.instagram_reels),
                 summary = instaSummary,
                 leadingIcon = {
                     InstagramColoredIcon()
@@ -128,7 +138,8 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Settings,
-                            contentDescription = "Configurações do Instagram",
+                            contentDescription = stringResource(R.string.instagram_reels),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -141,21 +152,25 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             }
 
             val ytSummary = if (appSettings.youtube.dailyLimitMinutes > 0) {
-                "Limite: ${appSettings.youtube.dailyLimitMinutes} min/dia (usado: ${dailyUsage.youtubeSeconds / 60}m)"
+                stringResource(
+                    R.string.daily_limit_format,
+                    appSettings.youtube.dailyLimitMinutes,
+                    dailyUsage.youtubeSeconds / 60
+                )
             } else {
-                "Bloquear YouTube Shorts"
+                stringResource(R.string.block_youtube_summary)
             }
 
             SwitchPreference(
                 value = appSettings.youtube.blocked,
                 enabled = isAccessibilityGranted,
-                title = "YouTube Shorts",
+                title = stringResource(R.string.youtube_shorts),
                 summary = ytSummary,
                 leadingIcon = {
                     Icon(
                         painterResource(R.drawable.ic_youtube),
                         null,
-                        tint = Color.Red
+                        tint = Color(0xFFFF0033)
                     )
                 },
                 settingsIcon = {
@@ -168,7 +183,8 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Settings,
-                            contentDescription = "Configurações do YouTube"
+                            contentDescription = stringResource(R.string.youtube_shorts),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -183,8 +199,8 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             SwitchPreference(
                 value = appSettings.tiktok.blocked,
                 enabled = isAccessibilityGranted,
-                title = "TikTok",
-                summary = "Bloquear TikTok (aplicativo inteiro)",
+                title = stringResource(R.string.tiktok_app),
+                summary = stringResource(R.string.block_tiktok_summary),
                 leadingIcon = {
                     Icon(
                         painterResource(R.drawable.ic_tiktok),
@@ -202,7 +218,8 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Settings,
-                            contentDescription = "Configurações do TikTok"
+                            contentDescription = stringResource(R.string.tiktok_app),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -214,13 +231,14 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Support Creator Card on Home Screen
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.65f)
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -228,31 +246,33 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     .clickable { showSupportDialog = true }
             ) {
                 Row(
-                    modifier = Modifier.padding(14.dp),
+                    modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Favorite,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
+                        tint = Color(0xFFF43F5E),
                         modifier = Modifier.size(28.dp)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Apoiar o Criador",
-                            style = MaterialTheme.typography.titleMedium
+                            text = stringResource(R.string.support_creator_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Gostou do Blockfy? Ajude a manter o projeto ativo via Pix.",
+                            text = stringResource(R.string.support_creator_subtitle),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Icon(
                         imageVector = Icons.Rounded.ChevronRight,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -295,13 +315,18 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val pixKey = "496f008e-c67d-4175-9fad-e6b3c9bbd248"
+    val toastMessage = stringResource(R.string.pix_copied_toast)
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(vertical = 12.dp)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -310,61 +335,69 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
                 Icon(
                     imageVector = Icons.Rounded.VolunteerActivism,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = BlockfyPrimary,
                     modifier = Modifier.size(44.dp)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Apoiar o Blockfy",
-                    style = MaterialTheme.typography.titleLarge
+                    text = stringResource(R.string.support_dialog_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "O Blockfy é 100% código aberto, gratuito e sem anúncios. Qualquer apoio via Pix ajuda a manter o app e o desenvolvimento de novas funções!",
+                    text = stringResource(R.string.support_dialog_desc),
                     style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Pix Key Display Box
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(14.dp)) {
                         Text(
-                            text = "Chave Pix Aleatória:",
+                            text = stringResource(R.string.pix_key_label),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            color = BlockfyPrimary,
+                            fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         SelectionContainer {
                             Text(
                                 text = pixKey,
                                 style = MaterialTheme.typography.bodySmall,
-                                fontFamily = FontFamily.Monospace
+                                fontFamily = FontFamily.Monospace,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 // Copy Pix Button
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BlockfyPrimary
+                    ),
                     onClick = {
                         clipboardManager.setText(AnnotatedString(pixKey))
-                        Toast.makeText(context, "Chave Pix copiada para a área de transferência!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
                     }
                 ) {
-                    Icon(Icons.Rounded.ContentCopy, contentDescription = null)
+                    Icon(Icons.Rounded.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Copiar Chave Pix")
+                    Text(stringResource(R.string.copy_pix_btn), fontWeight = FontWeight.SemiBold)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -373,20 +406,21 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     onClick = {
                         val intent = Intent(Intent.ACTION_VIEW, "https://github.com/buenotty/Blockfy".toUri())
                         context.startActivity(intent)
                     }
                 ) {
-                    Icon(Icons.Rounded.Star, contentDescription = null, tint = Color(0xFFFFB300))
+                    Icon(Icons.Rounded.Star, contentDescription = null, tint = Color(0xFFFFB300), modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Deixar uma Estrela no GitHub")
+                    Text(stringResource(R.string.star_github_btn), fontWeight = FontWeight.SemiBold)
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 TextButton(onClick = onDismiss) {
-                    Text("Fechar")
+                    Text(stringResource(R.string.btn_close))
                 }
             }
         }

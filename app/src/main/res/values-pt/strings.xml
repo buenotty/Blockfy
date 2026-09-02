@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">Blockfy</string>
+    <string name="app_tagline">Menos Reels. Mais Foco.</string>
+    <string name="title_about">Sobre</string>
+
+    <string name="accessibility_service_description">O Blockfy utiliza o Serviço de Acessibilidade exclusivamente para detectar e sair de vídeos curtos (Reels e Shorts).</string>
+    <string name="accessibility_service">Serviço de Acessibilidade</string>
+    <string name="accessibility_active">Ativado. Toque para ver configurações.</string>
+    <string name="accessibility_inactive">Não ativado. Toque aqui para ativar.</string>
+
+    <string name="accessibility_dialog_title">Como Ativar o Blockfy</string>
+    <string name="accessibility_dialog_desc">O Blockfy precisa do Serviço de Acessibilidade apenas para detectar a tela de Reels/Shorts e retornar ao feed principal. Não coletamos dados e o app funciona 100% offline.</string>
+
+    <string name="play_protect_title">1. Google Play Protect</string>
+    <string name="play_protect_desc">Se ao instalar o APK aparecer o alerta do Play Protect, toque em \"Mais detalhes\" e depois em \"Instalar assim mesmo\".</string>
+
+    <string name="samsung_title">2. Samsung, Motorola e Android 13+</string>
+    <string name="samsung_desc">Se a opção de acessibilidade estiver cinza com aviso de \"Configuração restrita\":\n\n1. Toque no botão \"1. Abrir Informações do App\" abaixo;\n2. Toque nos 3 pontinhos (⋮) no canto superior direito;\n3. Toque em \"Permitir configurações restritas\" e confirme seu PIN/digital;\n4. Depois volte e toque em \"2. Abrir Acessibilidade\" para ativar o Blockfy.</string>
+
+    <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
+    <string name="xiaomi_desc">• Em Informações do App, ative \"Início Automático\".\n• Ao ligar a Acessibilidade, aguarde os 10 segundos da tela de aviso da Xiaomi e confirme em OK.</string>
+
+    <string name="btn_open_app_info">1. Abrir Informações do App (3 pontinhos ⋮)</string>
+    <string name="btn_open_accessibility">2. Abrir Configurações de Acessibilidade</string>
+    <string name="btn_close">Fechar</string>
+
+    <string name="instagram_reels">Instagram Reels</string>
+    <string name="youtube_shorts">YouTube Shorts</string>
+    <string name="tiktok_app">TikTok</string>
+    <string name="block_tiktok_summary">Bloquear TikTok (aplicativo inteiro)</string>
+    <string name="block_instagram_summary">Bloquear Instagram Reels</string>
+    <string name="block_youtube_summary">Bloquear YouTube Shorts</string>
+
+    <string name="daily_limit_format">Limite: %1$d min/dia (usado: %2$d min)</string>
+
+    <string name="support_creator_title">Apoiar o Criador</string>
+    <string name="support_creator_subtitle">Gostou do Blockfy? Ajude a manter o projeto ativo via Pix.</string>
+    <string name="support_dialog_title">Apoiar o Blockfy</string>
+    <string name="support_dialog_desc">O Blockfy é 100% código aberto, gratuito e sem anúncios. Qualquer apoio via Pix ajuda a manter o app e o desenvolvimento de novas funções!</string>
+    <string name="pix_key_label">Chave Pix Aleatória:</string>
+    <string name="copy_pix_btn">Copiar Chave Pix</string>
+    <string name="pix_copied_toast">Chave Pix copiada para a área de transferência!</string>
+    <string name="star_github_btn">Deixar uma Estrela no GitHub</string>
+
+    <string name="version_label">Versão: %1$s</string>
+    <string name="check_updates_btn">Buscar Atualizações no GitHub</string>
+    <string name="report_bug_btn">Reportar Bug</string>
+    <string name="licenses_btn">Licenças</string>
+    <string name="source_code_btn">Código Fonte</string>
+    <string name="authorship_title">Autoria e Desenvolvimento</string>
+    <string name="fork_author_role">Autor do Fork &amp; Mantenedor do Blockfy</string>
+    <string name="original_author_role">Criador do Blokky original</string>
+
+    <string name="privacy_title">Privacidade e Segurança (100% Seguro)</string>
+    <string name="privacy_desc">• Verificado no VirusTotal: 0 detecções em mais de 70 antivírus (100% seguro e livre de ameaças).\n• Zero permissão de Internet: o aplicativo não tem acesso à rede, sendo tecnicamente impossível vazar qualquer dado seu.\n• O Serviço de Acessibilidade é utilizado estritamente para fechar vídeos curtos e retornar à tela inicial.</string>
+    <string name="share_app_title">Compartilhar Blockfy</string>
+
+    <string name="settings_dialog_title">Configurações: %1$s</string>
+    <string name="daily_limit_picker_title">Limite Diário de Uso</string>
+    <string name="daily_limit_picker_desc">Limite quanto tempo você pode assistir vídeos curtos por dia. Ao atingir o limite, eles são bloqueados até meia-noite.</string>
+    <string name="daily_limit_off">Desativado</string>
+    <string name="today_usage_label">Uso hoje: %1$d de %2$d min</string>
+    <string name="reset_usage_btn">Zerar Contador de Hoje</string>
+    <string name="schedule_title">Horários de Bloqueio</string>
+    <string name="start_time">Início</string>
+    <string name="end_time">Fim</string>
+    <string name="save_btn">Salvar</string>
+    <string name="cancel_btn">Cancelar</string>
+
+    <string name="toast_limit_reached">Blockfy: Limite diário de %1$d min de %2$s atingido!</string>
+    <string name="toast_remaining_minutes">Blockfy: %1$d minutos restantes de %2$s hoje!</string>
+    <string name="toast_remaining_one_minute">Blockfy: 1 minuto restante de %2$s hoje!</string>
+
+    <string name="disable_dialog_title">Tem certeza?</string>
+    <string name="disable_dialog_desc">Tem certeza de que deseja liberar o feed de vídeos curtos novamente?</string>
+    <string name="disable_dialog_cancel">Mudei de ideia</string>
+    <string name="disable_dialog_confirm">Quero desativar</string>
+</resources>

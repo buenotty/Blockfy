@@ -1,4 +1,78 @@
 <resources>
     <string name="app_name">Blockfy</string>
-    <string name="accessibility_service_description">Blockfy (Block For You) uses this permission to detect and navigate away from short videos</string>
+    <string name="app_tagline">Less Reels. More Focus.</string>
+    <string name="title_about">About</string>
+
+    <string name="accessibility_service_description">Blockfy uses Accessibility Service solely to detect and exit short-form video feeds (Reels &amp; Shorts).</string>
+    <string name="accessibility_service">Accessibility Service</string>
+    <string name="accessibility_active">Active. Tap to view settings.</string>
+    <string name="accessibility_inactive">Not granted. Tap here to enable.</string>
+
+    <string name="accessibility_dialog_title">How to Activate Blockfy</string>
+    <string name="accessibility_dialog_desc">Blockfy needs the Accessibility Service strictly to detect Reels/Shorts and bring you back to the home feed. No data is collected and the app operates 100% offline.</string>
+
+    <string name="play_protect_title">1. Google Play Protect</string>
+    <string name="play_protect_desc">If Google Play Protect warns you when installing the APK, tap \"More details\" and then \"Install anyway\".</string>
+
+    <string name="samsung_title">2. Samsung, Motorola &amp; Android 13+</string>
+    <string name="samsung_desc">If the accessibility switch is greyed out with a \"Restricted setting\" prompt:\n\n1. Tap the \"1. Open App Info\" button below;\n2. Tap the 3 dots (⋮) in the top-right corner;\n3. Select \"Allow restricted settings\" and confirm with your PIN/fingerprint;\n4. Return and tap \"2. Open Accessibility\" to turn on Blockfy.</string>
+
+    <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
+    <string name="xiaomi_desc">• In App Info, enable \"Autostart\".\n• When toggling Accessibility, wait for Xiaomi\'s 10-second security countdown and tap OK.</string>
+
+    <string name="btn_open_app_info">1. Open App Info (3 dots ⋮)</string>
+    <string name="btn_open_accessibility">2. Open Accessibility Settings</string>
+    <string name="btn_close">Close</string>
+
+    <string name="instagram_reels">Instagram Reels</string>
+    <string name="youtube_shorts">YouTube Shorts</string>
+    <string name="tiktok_app">TikTok</string>
+    <string name="block_tiktok_summary">Block TikTok (entire app)</string>
+    <string name="block_instagram_summary">Block Instagram Reels</string>
+    <string name="block_youtube_summary">Block YouTube Shorts</string>
+
+    <string name="daily_limit_format">Limit: %1$d min/day (used: %2$d min)</string>
+
+    <string name="support_creator_title">Support the Creator</string>
+    <string name="support_creator_subtitle">Enjoying Blockfy? Help keep the project active and free.</string>
+    <string name="support_dialog_title">Support Blockfy</string>
+    <string name="support_dialog_desc">Blockfy is 100% open-source, free, and ad-free. Any Pix or sponsorship contribution directly supports development and new features!</string>
+    <string name="pix_key_label">Random Pix Key:</string>
+    <string name="copy_pix_btn">Copy Pix Key</string>
+    <string name="pix_copied_toast">Pix key copied to clipboard!</string>
+    <string name="star_github_btn">Star on GitHub</string>
+
+    <string name="version_label">Version: %1$s</string>
+    <string name="check_updates_btn">Check for Updates on GitHub</string>
+    <string name="report_bug_btn">Report Bug</string>
+    <string name="licenses_btn">Licenses</string>
+    <string name="source_code_btn">Source Code</string>
+    <string name="authorship_title">Authorship &amp; Development</string>
+    <string name="fork_author_role">Fork Author &amp; Maintainer</string>
+    <string name="original_author_role">Original Blokky Creator</string>
+
+    <string name="privacy_title">Privacy &amp; Security (100% Safe)</string>
+    <string name="privacy_desc">• Verified on VirusTotal: 0 detections across 70+ antiviruses (100% clean and safe).\n• Zero Internet permission: mathematically impossible to leak any user data.\n• Accessibility Service is strictly used to exit short videos and return to feed.</string>
+    <string name="share_app_title">Share Blockfy</string>
+
+    <string name="settings_dialog_title">Settings: %1$s</string>
+    <string name="daily_limit_picker_title">Daily Screen Time Limit</string>
+    <string name="daily_limit_picker_desc">Limit your short video watch time per day. Once reached, they are locked until midnight.</string>
+    <string name="daily_limit_off">Disabled</string>
+    <string name="today_usage_label">Today\'s usage: %1$d of %2$d min</string>
+    <string name="reset_usage_btn">Reset Today\'s Counter</string>
+    <string name="schedule_title">Schedule Active Hours</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="save_btn">Save</string>
+    <string name="cancel_btn">Cancel</string>
+
+    <string name="toast_limit_reached">Blockfy: Daily limit of %1$d min of %2$s reached!</string>
+    <string name="toast_remaining_minutes">Blockfy: %1$d minutes remaining for %2$s today!</string>
+    <string name="toast_remaining_one_minute">Blockfy: 1 minute remaining for %2$s today!</string>
+
+    <string name="disable_dialog_title">Are you sure?</string>
+    <string name="disable_dialog_desc">Are you sure you want to allow yourself to doomscroll again?</string>
+    <string name="disable_dialog_cancel">Changed my mind</string>
+    <string name="disable_dialog_confirm">I want to disable</string>
 </resources>

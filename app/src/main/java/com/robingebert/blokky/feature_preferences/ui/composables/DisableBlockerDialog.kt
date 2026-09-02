@@ -3,6 +3,7 @@ package com.robingebert.blokky.feature_preferences.ui.composables
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,10 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.robingebert.blokky.R
+import com.robingebert.blokky.ui.theme.BlockfyError
+import com.robingebert.blokky.ui.theme.BlockfyPrimary
 
 @Composable
 fun DisableBlockerDialog(
@@ -26,48 +32,55 @@ fun DisableBlockerDialog(
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Are you sure?",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(8.dp))
                 Icon(
                     imageVector = Icons.Rounded.Warning,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(56.dp)
+                    tint = BlockfyError,
+                    modifier = Modifier.size(52.dp)
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(R.string.disable_dialog_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Are you sure you want / can allow yourself to doomscroll again?",
+                    text = stringResource(R.string.disable_dialog_desc),
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TextButton(onClick = onDismissRequest) {
-                        Text("Changed my mind")
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
                     TimedFilledButton(
-                        text = "I can handle it",
+                        text = stringResource(R.string.disable_dialog_confirm),
                         onClick = onConfirmation,
                         modifier = Modifier
+                            .fillMaxWidth()
                             .height(48.dp)
-                            .widthIn(min = 150.dp)
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(onClick = onDismissRequest) {
+                        Text(stringResource(R.string.disable_dialog_cancel))
+                    }
                 }
             }
         }
@@ -88,7 +101,7 @@ fun TimedFilledButton(
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (animationEnabled) 1.0f else 0f,
-        animationSpec = tween(durationMillis = 5000, easing = LinearEasing),
+        animationSpec = tween(durationMillis = 3500, easing = LinearEasing),
         finishedListener = {
             isClickEnabled = true
         }
@@ -101,9 +114,9 @@ fun TimedFilledButton(
             drawStopIndicator = {},
             modifier = Modifier
                 .matchParentSize()
-                .clip(RoundedCornerShape(24.dp)),
-            color = MaterialTheme.colorScheme.surfaceTint,
-            trackColor = MaterialTheme.colorScheme.surfaceTint.copy(alpha = 0.2f)
+                .clip(RoundedCornerShape(12.dp)),
+            color = BlockfyError.copy(alpha = 0.35f),
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
         )
         Button(
             onClick = {
@@ -112,15 +125,19 @@ fun TimedFilledButton(
                 }
             },
             modifier = Modifier.matchParentSize(),
+            shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor =  Color.Transparent
+                containerColor = if (isClickEnabled) BlockfyError else Color.Transparent,
+                contentColor = if (isClickEnabled) Color.White else MaterialTheme.colorScheme.onSurface
             ),
         ) {
-            Text(text)
+            Text(
+                text = if (!isClickEnabled) "$text (${((1.0f - animatedProgress) * 3.5).toInt() + 1}s)" else text,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
-
 
 @Preview
 @Composable

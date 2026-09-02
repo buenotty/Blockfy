@@ -3,6 +3,7 @@ package com.robingebert.blokky.feature_preferences.ui.composables
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,10 +20,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Accessibility
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Security
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,10 +47,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.robingebert.blokky.R
+import com.robingebert.blokky.ui.theme.BlockfyError
+import com.robingebert.blokky.ui.theme.BlockfyPrimary
+import com.robingebert.blokky.ui.theme.BlockfySuccess
 
 @Composable
 fun AccessibilityServiceCard(
@@ -65,12 +76,17 @@ fun AccessibilityServiceCard(
     Card(
         colors = CardDefaults.cardColors(
             containerColor = if (!isAccessibilityGranted) {
-                MaterialTheme.colorScheme.errorContainer
+                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
             } else {
-                Color(0x807DEF87)
+                MaterialTheme.colorScheme.surfaceVariant
             }
         ),
+        border = BorderStroke(
+            1.dp,
+            if (!isAccessibilityGranted) BlockfyError.copy(alpha = 0.5f) else BlockfySuccess.copy(alpha = 0.6f)
+        ),
         modifier = Modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .toggleable(
                 value = isAccessibilityGranted,
@@ -80,33 +96,42 @@ fun AccessibilityServiceCard(
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(
-            modifier = Modifier.padding(14.dp),
+            modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 modifier = Modifier.size(32.dp),
-                imageVector = Icons.Rounded.Accessibility,
-                contentDescription = null
+                imageVector = if (isAccessibilityGranted) Icons.Rounded.CheckCircle else Icons.Rounded.Accessibility,
+                contentDescription = null,
+                tint = if (isAccessibilityGranted) BlockfySuccess else BlockfyError
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(14.dp))
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Serviço de Acessibilidade",
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.accessibility_service),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = if (isAccessibilityGranted) {
-                        "Ativado. Toque para ver configurações."
+                        stringResource(R.string.accessibility_active)
                     } else {
-                        "Não ativado. Toque aqui para instruções e ativação."
+                        stringResource(R.string.accessibility_inactive)
                     },
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isAccessibilityGranted) BlockfySuccess else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Switch(
                 checked = isAccessibilityGranted,
-                onCheckedChange = { update(it) }
+                onCheckedChange = { update(it) },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = BlockfySuccess,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surface
+                )
             )
         }
     }
@@ -128,8 +153,12 @@ fun AccessibilityServiceDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            shape = RoundedCornerShape(20.dp)
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column(
                 modifier = Modifier
@@ -140,47 +169,54 @@ fun AccessibilityServiceDialog(
                     Icon(
                         imageVector = Icons.Rounded.Security,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        tint = BlockfyPrimary,
+                        modifier = Modifier.size(30.dp)
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Como Ativar o Blockfy",
-                        style = MaterialTheme.typography.titleLarge
+                        text = stringResource(R.string.accessibility_dialog_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "O Blockfy precisa do Serviço de Acessibilidade apenas para detectar a tela de Reels/Shorts e retornar ao feed. Não coletamos dados e o app é 100% offline.",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = stringResource(R.string.accessibility_dialog_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
 
                 // Card 1: Play Protect
                 OutlinedCard(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.outlinedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                Icons.Rounded.ShieldWarningOrSecurity(),
+                                Icons.Rounded.Shield,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = BlockfyPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "1. Google Play Protect",
-                                style = MaterialTheme.typography.titleSmall
+                                text = stringResource(R.string.play_protect_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Se ao instalar o APK aparecer o alerta do Play Protect, toque em \"Mais detalhes\" e depois em \"Instalar assim mesmo\".",
+                            text = stringResource(R.string.play_protect_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -189,32 +225,34 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Card 2: Restricted Settings (Samsung, Motorola, Pixel, Android 13+)
+                // Card 2: Samsung, Motorola and Android 13+ (Restricted Settings)
                 OutlinedCard(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.outlinedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    border = BorderStroke(1.dp, BlockfyPrimary.copy(alpha = 0.5f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 Icons.Rounded.Smartphone,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = BlockfyPrimary,
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "2. Samsung, Motorola e Android 13+",
-                                style = MaterialTheme.typography.titleSmall
+                                text = stringResource(R.string.samsung_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = BlockfyPrimary
                             )
                         }
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Se a opção de acessibilidade estiver cinza com aviso de \"Configuração restrita\":\n\n" +
-                                    "1. Toque no botão abaixo \"Abrir Informações do App\";\n" +
-                                    "2. Toque nos 3 pontinhos (⋮) no canto superior direito;\n" +
-                                    "3. Toque em \"Permitir configurações restritas\" e confirme seu PIN/digital;\n" +
-                                    "4. Depois volte e toque em \"Abrir Acessibilidade\" para ativar o Blockfy.",
+                            text = stringResource(R.string.samsung_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -223,12 +261,16 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Card 3: Xiaomi, HyperOS e MIUI
+                // Card 3: Xiaomi, HyperOS & MIUI
                 OutlinedCard(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.outlinedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(modifier = Modifier.padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 Icons.Rounded.Info,
@@ -238,14 +280,14 @@ fun AccessibilityServiceDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "3. Xiaomi / HyperOS / MIUI",
-                                style = MaterialTheme.typography.titleSmall
+                                text = stringResource(R.string.xiaomi_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "• Em Informações do App, ative \"Início Automático\".\n" +
-                                    "• Ao ligar a Acessibilidade, aguarde os 10 segundos da tela de aviso da Xiaomi e confirme em OK.",
+                            text = stringResource(R.string.xiaomi_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -254,10 +296,11 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Step 1 Button: App Info
+                // DIRECT SHORTCUT 1: Open App Info Screen
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, BlockfyPrimary),
                     onClick = {
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                             data = Uri.parse("package:${context.packageName}")
@@ -268,18 +311,26 @@ fun AccessibilityServiceDialog(
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
+                        tint = BlockfyPrimary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("1. Abrir Informações do App (3 pontinhos)")
+                    Text(
+                        text = stringResource(R.string.btn_open_app_info),
+                        color = BlockfyPrimary,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Step 2 Button: Accessibility Settings
+                // DIRECT SHORTCUT 2: Open Accessibility Settings
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BlockfyPrimary
+                    ),
                     onClick = {
                         context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                         onDismissRequest()
@@ -291,23 +342,24 @@ fun AccessibilityServiceDialog(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("2. Abrir Configurações de Acessibilidade")
+                    Text(
+                        text = stringResource(R.string.btn_open_accessibility),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 TextButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = onDismissRequest
                 ) {
-                    Text("Fechar")
+                    Text(stringResource(R.string.btn_close))
                 }
             }
         }
     }
 }
-
-private fun Icons.Rounded.ShieldWarningOrSecurity() = Icons.Rounded.Security
 
 @Preview
 @Composable

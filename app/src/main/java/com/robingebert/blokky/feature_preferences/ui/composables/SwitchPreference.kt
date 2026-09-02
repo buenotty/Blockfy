@@ -56,38 +56,56 @@ fun SwitchPreference(
     }
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8F)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant
         ),
         modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
+            .clip(RoundedCornerShape(16.dp))
             .toggleable(
                 value = value,
                 enabled = enabled,
                 role = Role.Switch,
                 onValueChange = { edit(it) }
             ),
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             leadingIcon()
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
-                Text(text = title, style = MaterialTheme.typography.titleMedium)
-                Text(text = summary, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = summary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Switch(
                 checked = value,
                 onCheckedChange = { edit(it) },
-                enabled = enabled
+                enabled = enabled,
+                colors = androidx.compose.material3.SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = com.robingebert.blokky.ui.theme.BlockfyPrimary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surface
+                )
             )
             Spacer(modifier = Modifier.width(10.dp))
-            VerticalDivider(modifier = Modifier.height(40.dp))
-            Spacer(modifier = Modifier.width(10.dp))
-            settingsIcon?.invoke(Modifier.size(30.dp))
+            VerticalDivider(modifier = Modifier.height(36.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            Spacer(modifier = Modifier.width(6.dp))
+            settingsIcon?.invoke(Modifier.size(28.dp))
         }
     }
 

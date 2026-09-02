@@ -114,7 +114,7 @@ fun AdvancedTimePickerDialog(
                     toggle()
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                        Text(androidx.compose.ui.res.stringResource(com.robingebert.blokky.R.string.cancel_btn))
                     }
                     TextButton(onClick = onConfirm) {
                         Text("OK")
