@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
+import com.robingebert.blokky.R
 import com.robingebert.blokky.datastore.AppSettings
 import com.robingebert.blokky.datastore.DailyUsage
 import com.robingebert.blokky.datastore.DataStoreManager

@@ -249,7 +249,7 @@ fun EditAppBottomSheet(
 
     if (showStartTimePicker) {
         TimePickerDialog(
-            startMinutes = blockedStart,
+            initialTime = blockedStart,
             onDismiss = { showStartTimePicker = false },
             onConfirm = {
                 blockedStart = it
@@ -260,7 +260,7 @@ fun EditAppBottomSheet(
 
     if (showEndTimePicker) {
         TimePickerDialog(
-            startMinutes = blockedEnd,
+            initialTime = blockedEnd,
             onDismiss = { showEndTimePicker = false },
             onConfirm = {
                 blockedEnd = it
