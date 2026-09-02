@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+import com.robingebert.blokky.datastore.DailyUsage
+
 class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewModel() {
     val appSettings: StateFlow<AppSettings> =
         dataStoreManager.appSettingsFlow
@@ -17,6 +19,14 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
                 scope = viewModelScope,
                 started = SharingStarted.Eagerly,
                 initialValue = AppSettings()
+            )
+
+    val dailyUsage: StateFlow<DailyUsage> =
+        dataStoreManager.dailyUsageFlow
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = DailyUsage()
             )
 
     fun updateInstagram(app: App) {
@@ -32,6 +42,12 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
     fun updateYoutube(app: App) {
         viewModelScope.launch {
             dataStoreManager.update(appSettings.value.copy(youtube = app))
+        }
+    }
+
+    fun resetDailyUsage(appName: String) {
+        viewModelScope.launch {
+            dataStoreManager.resetUsage(appName)
         }
     }
 }

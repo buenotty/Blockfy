@@ -173,7 +173,7 @@ fun AccessibilityServiceDialog(
                         ) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "Blokky uses Accessibility Services in order to detect your activity (whether you opened Reels / Shorts) and to bring you back to the feed tab. I do not store any information about you or your activity, nor does this app control any applications beside exiting Reels / Shorts for you.",
+                                text = "Blockfy uses Accessibility Services in order to detect your activity (whether you opened Reels / Shorts) and to bring you back to the feed tab. I do not store any personal information about you or your activity, nor does this app control any applications beside exiting Reels / Shorts for you.",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -216,7 +216,7 @@ fun AccessibilityServiceDialog(
                         ) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "After you opened accessibility settings, click on \"Blokky\" in the \"Downloaded Apps\" Section. Then click the slider to enable/disable the service.",
+                                text = "After you opened accessibility settings, click on \"Blockfy\" in the \"Downloaded Apps\" Section. Then click the slider to enable/disable the service.",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Spacer(modifier = Modifier.height(4.dp))

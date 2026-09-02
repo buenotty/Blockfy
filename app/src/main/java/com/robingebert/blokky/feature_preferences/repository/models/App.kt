@@ -9,5 +9,6 @@ data class App(
     val blockedStart: Int,
     val blockedEnd: Int,
     val blockedTimer: Int,
-    val features: List<Feature>
+    val features: List<Feature>,
+    val dailyLimitMinutes: Int = 0
 )

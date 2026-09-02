@@ -43,10 +43,10 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     val context = LocalContext.current
 
     val appSettings by overviewViewModel.appSettings.collectAsState()
+    val dailyUsage by overviewViewModel.dailyUsage.collectAsState()
 
     var selectedApp by remember { mutableStateOf(appSettings.instagram) }
     var showSettingsDialog by remember { mutableStateOf(false) }
-
 
     //region Accessibility Service
     var isAccessibilityGranted by remember { mutableStateOf(false) }
@@ -67,18 +67,23 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     }
     //endregion
 
-
     Column(modifier = Modifier.padding(8.dp)) {
 
         AccessibilityServiceCard(isAccessibilityGranted)
         Spacer(modifier = Modifier.height(12.dp))
 
         Column(verticalArrangement = spacedBy(8.dp)) {
+            val instaSummary = if (appSettings.instagram.dailyLimitMinutes > 0) {
+                "Limite: ${appSettings.instagram.dailyLimitMinutes} min/dia (usado: ${dailyUsage.instagramSeconds / 60}m)"
+            } else {
+                "Bloquear Instagram Reels"
+            }
+
             SwitchPreference(
                 value = appSettings.instagram.blocked,
                 enabled = isAccessibilityGranted,
                 title = "Instagram Reels",
-                summary = "Block Instagram Reels",
+                summary = instaSummary,
                 leadingIcon = {
                     InstagramColoredIcon()
                 },
@@ -92,10 +97,9 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Settings,
-                            contentDescription = "Settings for Instagram",
+                            contentDescription = "Configurações do Instagram",
                         )
                     }
-
                 },
             ) {
                 overviewViewModel.updateInstagram(
@@ -104,11 +108,18 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     )
                 )
             }
+
+            val ytSummary = if (appSettings.youtube.dailyLimitMinutes > 0) {
+                "Limite: ${appSettings.youtube.dailyLimitMinutes} min/dia (usado: ${dailyUsage.youtubeSeconds / 60}m)"
+            } else {
+                "Bloquear YouTube Shorts"
+            }
+
             SwitchPreference(
                 value = appSettings.youtube.blocked,
                 enabled = isAccessibilityGranted,
                 title = "YouTube Shorts",
-                summary = "Block YouTube Shorts",
+                summary = ytSummary,
                 leadingIcon = {
                     Icon(
                         painterResource(R.drawable.ic_youtube),
@@ -124,7 +135,10 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                             showSettingsDialog = true
                         }
                     ) {
-                        Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings for YouTube")
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = "Configurações do YouTube"
+                        )
                     }
                 }
             ) {
@@ -134,11 +148,12 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     )
                 )
             }
+
             SwitchPreference(
                 value = appSettings.tiktok.blocked,
                 enabled = isAccessibilityGranted,
                 title = "TikTok",
-                summary = "Block TikTok (whole app)",
+                summary = "Bloquear TikTok (aplicativo inteiro)",
                 leadingIcon = {
                     Icon(
                         painterResource(R.drawable.ic_tiktok),
@@ -154,10 +169,13 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                             showSettingsDialog = true
                         }
                     ) {
-                        Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings for TikTok")
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = "Configurações do TikTok"
+                        )
                     }
                 }
-            ){
+            ) {
                 overviewViewModel.updateTikTok(
                     appSettings.tiktok.copy(
                         blocked = it
@@ -168,9 +186,18 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     }
 
     if (showSettingsDialog) {
+        val todayUsed = when (selectedApp.name) {
+            appSettings.instagram.name -> dailyUsage.instagramSeconds
+            appSettings.youtube.name -> dailyUsage.youtubeSeconds
+            appSettings.tiktok.name -> dailyUsage.tiktokSeconds
+            else -> 0L
+        }
+
         EditAppBottomSheet(
             onDismiss = { showSettingsDialog = false },
             app = selectedApp,
+            todayUsedSeconds = todayUsed,
+            onResetUsage = { overviewViewModel.resetDailyUsage(selectedApp.name) },
             onSave = {
                 when (it.name) {
                     appSettings.instagram.name -> overviewViewModel.updateInstagram(it)
@@ -178,18 +205,21 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     appSettings.tiktok.name -> overviewViewModel.updateTikTok(it)
                 }
                 showSettingsDialog = false
-                // Handle confirm action
             }
         )
     }
 }
 
-
 fun Context.isAccessibilityGranted(): Boolean {
     val am = this.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
     val runningServices =
         am.getEnabledAccessibilityServiceList(AccessibilityEvent.TYPE_VIEW_CLICKED)
-    return runningServices.any { it.id == "com.robingebert.blokky/.feature_accessibility.ReelsBlockAccessibilityService" }
+    return runningServices.any { service ->
+        service.id.contains("ReelsBlockAccessibilityService") &&
+        (service.id.startsWith("${packageName}/") ||
+         service.id.startsWith("com.robingebert.blokky/") ||
+         service.id.startsWith("com.buenotty.blockfy/"))
+    }
 }
 
 @Preview

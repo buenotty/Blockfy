@@ -12,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.robingebert.blokky"
+        applicationId = "com.buenotty.blockfy"
         minSdk = 28
         targetSdk = 35
         versionCode = 6

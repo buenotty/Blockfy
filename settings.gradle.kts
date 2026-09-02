@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Blokky"
+rootProject.name = "Blockfy"
 include(":app")
  

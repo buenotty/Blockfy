@@ -90,7 +90,8 @@ fun AboutScreen() {
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
-                    Text(text = "Blokky", style = MaterialTheme.typography.titleMedium)
+                    Text(text = "Blockfy", style = MaterialTheme.typography.titleMedium)
+                    Text(text = "Block For You", style = MaterialTheme.typography.labelMedium)
                     Text(
                         text = "Version: " + getVersionName(context),
                         style = MaterialTheme.typography.bodyMedium
@@ -121,12 +122,9 @@ fun AboutScreen() {
                 icon = Icons.Rounded.BugReport,
                 title = "Report Bug"
             ) {
-                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    Intent.setData = "mailto:".toUri()
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf("blokky@robingebert.com"))
-                    putExtra(Intent.EXTRA_SUBJECT, "Blokky Bug Report")
-                }
-                context.startActivity(intent)
+                val browserIntent =
+                    Intent(Intent.ACTION_VIEW, "https://github.com/buenotty/Blokky/issues".toUri())
+                context.startActivity(browserIntent)
             }
 
             HeroCard(
@@ -137,19 +135,11 @@ fun AboutScreen() {
             }
 
             HeroCard(
-                icon = Icons.Rounded.Web,
-                title = "Website"
-            ) {
-                val browserIntent =
-                    Intent(Intent.ACTION_VIEW, "https://blokky.robingebert.com".toUri())
-                context.startActivity(browserIntent)
-            }
-            HeroCard(
                 icon = Icons.Rounded.SettingsEthernet,
                 title = "Code"
             ) {
                 val browserIntent =
-                    Intent(Intent.ACTION_VIEW, "https://github.com/ronjar/blokky".toUri())
+                    Intent(Intent.ACTION_VIEW, "https://github.com/buenotty/Blokky".toUri())
                 context.startActivity(browserIntent)
             }
         }
@@ -160,7 +150,7 @@ fun AboutScreen() {
             )
         ) {
             Text(
-                text = "This app was developed by me, Robin 😊.\nI have ADHD myself and I wanted to create an app that helps me stay focused (actually a friend asked me whether this is possible and as a good ADHD person, i was up for the challenge). \nI hope you enjoy it and have a productive time! 😉",
+                text = "Blockfy (Block For You) ajuda você a manter o foco bloqueando vídeos curtos como Instagram Reels e YouTube Shorts, com suporte a limites diários de tempo e agendamento.\n\nFork desenvolvido e mantido por buenotty, baseado no projeto original de Robin Gebert.",
                 modifier = Modifier.padding(12.dp)
             )
         }

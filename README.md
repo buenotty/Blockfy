@@ -1,19 +1,20 @@
-# Blokky - stop doomscrolling
+# Blockfy (Block For You) - Stop Doomscrolling
 
-Do you often catch yourself looking at Reels / Shorts way to long?
-This is why I created Blokky. Blokky uses the Accessibility Service to block access to Reels / Shorts for you.
+Blockfy uses the Android Accessibility Service to help you stop doomscrolling on short-form video platforms like **Instagram Reels** and **YouTube Shorts**.
 
-Easyly downloaded and activated in just a minute, it can save you hours every day.
+> Fork maintained and enhanced by [buenotty](https://github.com/buenotty/Blokky), based on the original project by Robin Gebert.
 
-## Installation
-Install Blokky from the [PlayStore](https://play.google.com/store/apps/details?id=com.robingebert.blokky) or from the [Releases](https://github.com/Ronjar/Blokky/releases) here on GitHub.
+### Features
+- **Instagram Reels Blocker**: Fast detection and redirection to Feed, fixing the reload loop bug.
+- **YouTube Shorts Blocker**: Instant redirect to home feed.
+- **Daily Usage Limits**: Set maximum daily usage (e.g. 15 minutes of Reels/Shorts per day) before blocking kicks in.
+- **Schedule Time Intervals**: Choose specific hours of the day to block or allow reels.
+- **100% Offline & Private**: No internet permission required. Your data never leaves your device.
 
-#### Why do you need Accessibility Service, that's a pretty dangerous permission?
-Well thank you for asking this well phrased question. In order to detect if you've been a bad boy:girl and clicked on the Reels / Shorts tab although you promised youself to really work today and to navigate you friendly but firmly back to your feed tab.
-
-#### I can't activate Accessibility Service in settings?
-Some Vendors like Xiaomi restrict permissions based on installation source. Use this ADB command or ask your tech savy nerd friend to do it for you:
-```Bash
-$ adb shell settings put secure enabled_accessibility_services com.robingebert.blokky/.feature_accessibility.ReelsBlockAccessibilityService
+## Enabling Accessibility Service via ADB (if blocked by vendor)
+Some vendors (like Xiaomi / MIUI) restrict permissions based on installation source. Run this ADB command:
+```bash
+adb shell settings put secure enabled_accessibility_services com.buenotty.blockfy/com.robingebert.blokky.feature_accessibility.ReelsBlockAccessibilityService
 ```
+
 
