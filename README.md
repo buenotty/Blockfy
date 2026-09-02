@@ -2,7 +2,7 @@
 
 Blockfy uses the Android Accessibility Service to help you stop doomscrolling on short-form video platforms like **Instagram Reels** and **YouTube Shorts**.
 
-> Fork maintained and enhanced by [buenotty](https://github.com/buenotty/Blokky), based on the original project by Robin Gebert.
+> Fork maintained and enhanced by [buenotty](https://github.com/buenotty/Blockfy), based on the original project by Robin Gebert.
 
 ### Features
 - **Instagram Reels Blocker**: Fast detection and redirection to Feed, fixing the reload loop bug.

@@ -5,7 +5,9 @@ import com.robingebert.blokky.datastore.AppSettings
 import com.robingebert.blokky.datastore.DataStoreManager
 import com.robingebert.blokky.feature_preferences.repository.models.App
 import com.robingebert.blokky.feature_preferences.repository.models.Feature
+import com.robingebert.blokky.worker.FeatureToggleWorker
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class SettingsRepository(
     private val dataStore: DataStoreManager,
@@ -19,16 +21,13 @@ class SettingsRepository(
         appName: String,
         update: (old: App) -> App
     ) {
-        // 1. aktuellen Settings-Snapshot holen
         val current = dataStore.appSettingsFlow.first()
-        // 2. gezielt die richtige App kopieren und modifizieren
-        val modified = when(appName) {
+        val modified = when (appName) {
             "Instagram" -> current.copy(instagram = update(current.instagram))
             "YouTube"   -> current.copy(youtube   = update(current.youtube))
             "TikTok"    -> current.copy(tiktok    = update(current.tiktok))
             else        -> current
         }
-        // 3. speichern
         dataStore.update(modified)
     }
 
@@ -37,25 +36,22 @@ class SettingsRepository(
         featureName: String,
         update: (old: Feature) -> Feature
     ) {
-        // 1. aktuellen Settings-Snapshot holen
         val current = dataStore.appSettingsFlow.first()
-        // 2. Liste der Features der entsprechenden App anpassen
-        val newApps = when(appName) {
+        val newApps = when (appName) {
             "Instagram" -> {
-                val updatedFeatures = current.instagram.features.map {
-                    if (it.name == featureName) update(it) else it
+                val updatedFeatures = current.instagram.features.map { feature ->
+                    if (feature.name == featureName) update(feature) else feature
                 }
                 current.copy(instagram = current.instagram.copy(features = updatedFeatures))
             }
             "YouTube" -> {
-                val updatedFeatures = current.youtube.features.map {
-                    if (it.name == featureName) update(it) else it
+                val updatedFeatures = current.youtube.features.map { feature ->
+                    if (feature.name == featureName) update(feature) else feature
                 }
                 current.copy(youtube = current.youtube.copy(features = updatedFeatures))
             }
             else -> current
         }
-        // 3. speichern
         dataStore.update(newApps)
     }
 

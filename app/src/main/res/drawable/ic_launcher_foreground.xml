@@ -4,27 +4,55 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+
+    <group
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:translateX="18"
+        android:translateY="18">
+
+        <!-- Shield with Gradient -->
+        <path
+            android:pathData="M48,6 C68,6 84,12 84,12 C84,54 58,84 48,90 C38,84 12,54 12,12 C12,12 28,6 48,6 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="12"
+                    android:startY="6"
+                    android:endX="84"
+                    android:endY="90"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#4F46E5"/>
+                    <item android:offset="0.5" android:color="#6366F1"/>
+                    <item android:offset="1.0" android:color="#7C3AED"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Inner Line -->
+        <path
+            android:pathData="M48,12 C64,12 77,17 77,17 C77,50 56,76 48,81 C40,76 19,50 19,17 C19,17 32,12 48,12 Z"
+            android:strokeWidth="1.5"
+            android:strokeColor="#40FFFFFF"
+            android:fillColor="#00000000"/>
+
+        <!-- B Symbol -->
+        <path
+            android:pathData="M34,26 L46,26 C53,26 58,29 58,35 C58,39 55,42 51,43 C57,44 61,48 61,54 C61,61 55,65 47,65 L34,65 Z"
+            android:fillColor="#FFFFFF"/>
+
+        <!-- Top Cutout -->
+        <path
+            android:pathData="M41,32 L46,32 C49,32 51,33.5 51,35.5 C51,37.5 49,39 46,39 L41,39 Z"
+            android:fillColor="#5448ED"/>
+
+        <!-- Bottom Cutout -->
+        <path
+            android:pathData="M41,47 L47,47 C50.5,47 53.5,49 53.5,52.5 C53.5,56 50.5,58 47,58 L41,58 Z"
+            android:fillColor="#6841E3"/>
+
+        <!-- Cyan Accent Indicator -->
+        <path
+            android:pathData="M70,32 A4,4 0 1,1 62,32 A4,4 0 1,1 70,32 Z"
+            android:fillColor="#38BDF8"/>
+    </group>
 </vector>

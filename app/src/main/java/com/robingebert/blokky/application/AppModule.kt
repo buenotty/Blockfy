@@ -6,6 +6,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.androidx.workmanager.dsl.workerOf
+import com.robingebert.blokky.worker.FeatureToggleWorker
 
 object AppModule {
     fun modules() = commonModule+ workerModule + viewModelModule

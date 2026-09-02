@@ -38,6 +38,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var ytTrackingJob: Job? = null
 
     private var lastToastTime = 0L
+    private var lastWarnedInstaMinute = -1
+    private var lastWarnedYtMinute = -1
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -174,6 +176,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                             rootInActiveWindow?.let { exitInstagramReels(it) }
                         }
                         break
+                    } else {
+                        checkAndNotifyRemainingTime("Reels", currentUsed, limitMinutes, isInsta = true)
                     }
                 } else {
                     break
@@ -252,10 +256,35 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                             rootInActiveWindow?.let { exitYouTubeShorts(it) }
                         }
                         break
+                    } else {
+                        checkAndNotifyRemainingTime("Shorts", currentUsed, limitMinutes, isInsta = false)
                     }
                 } else {
                     break
                 }
+            }
+        }
+    }
+
+    private fun checkAndNotifyRemainingTime(featureName: String, usedSeconds: Long, limitMinutes: Int, isInsta: Boolean) {
+        val totalSeconds = limitMinutes * 60L
+        val remainingSeconds = totalSeconds - usedSeconds
+        if (remainingSeconds <= 0L) return
+
+        val remainingMinutes = ((remainingSeconds + 59L) / 60L).toInt()
+        val lastWarned = if (isInsta) lastWarnedInstaMinute else lastWarnedYtMinute
+
+        if (remainingMinutes != lastWarned) {
+            val shouldWarn = when {
+                remainingMinutes <= 5 -> true
+                remainingMinutes % 5 == 0 -> true
+                else -> false
+            }
+
+            if (shouldWarn) {
+                if (isInsta) lastWarnedInstaMinute = remainingMinutes else lastWarnedYtMinute = remainingMinutes
+                val minText = if (remainingMinutes == 1) "1 minuto restante" else "$remainingMinutes minutos restantes"
+                showToast("Blockfy: $minText de $featureName hoje!")
             }
         }
     }

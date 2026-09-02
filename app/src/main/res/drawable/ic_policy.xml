@@ -1,13 +1,52 @@
-<vector
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:name="vector"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- Shield Background with Gradient -->
     <path
-        android:name="path"
-        android:pathData="M 12 1 L 3 5 L 3 11 C 3 16.55 6.84 21.74 12 23 C 17.16 21.74 21 16.55 21 11 L 21 5 L 12 1 Z M 19 11 C 19 12.85 18.49 14.65 17.62 16.21 L 16.17 14.76 C 17.46 12.82 17.24 10.18 15.53 8.47 C 13.58 6.52 10.41 6.52 8.46 8.47 C 6.51 10.42 6.51 13.59 8.46 15.54 C 10.17 17.25 12.81 17.46 14.75 16.18 L 16.47 17.9 C 15.28 19.32 13.74 20.41 12 20.94 C 7.98 19.69 5 15.52 5 11 L 5 6.3 L 12 3.19 L 19 6.3 L 19 11 Z M 12 15 C 10.34 15 9 13.66 9 12 C 9 10.34 10.34 9 12 9 C 13.66 9 15 10.34 15 12 C 15 13.66 13.66 15 12 15 Z"
-        android:fillColor="#912431"
-        android:strokeWidth="1"/>
+        android:pathData="M48,6 C68,6 84,12 84,12 C84,54 58,84 48,90 C38,84 12,54 12,12 C12,12 28,6 48,6 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="12"
+                android:startY="6"
+                android:endX="84"
+                android:endY="90"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#4F46E5"/>
+                <item android:offset="0.5" android:color="#6366F1"/>
+                <item android:offset="1.0" android:color="#7C3AED"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner Shield Accent Line -->
+    <path
+        android:pathData="M48,12 C64,12 77,17 77,17 C77,50 56,76 48,81 C40,76 19,50 19,17 C19,17 32,12 48,12 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#40FFFFFF"
+        android:fillColor="#00000000"/>
+
+    <!-- Stylized "B" for Blockfy / Focus Symbol -->
+    <!-- Vertical Spine -->
+    <path
+        android:pathData="M34,26 L46,26 C53,26 58,29 58,35 C58,39 55,42 51,43 C57,44 61,48 61,54 C61,61 55,65 47,65 L34,65 Z"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Top Cutout -->
+    <path
+        android:pathData="M41,32 L46,32 C49,32 51,33.5 51,35.5 C51,37.5 49,39 46,39 L41,39 Z"
+        android:fillColor="#5448ED"/>
+
+    <!-- Bottom Cutout -->
+    <path
+        android:pathData="M41,47 L47,47 C50.5,47 53.5,49 53.5,52.5 C53.5,56 50.5,58 47,58 L41,58 Z"
+        android:fillColor="#6841E3"/>
+
+    <!-- Dynamic Focus Dot / Indicator -->
+    <path
+        android:pathData="M70,32 A4,4 0 1,1 62,32 A4,4 0 1,1 70,32 Z"
+        android:fillColor="#38BDF8"/>
 </vector>
