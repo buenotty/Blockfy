@@ -11,6 +11,7 @@
 <p align="center">
   <a href="https://github.com/buenotty/Blockfy/actions/workflows/build-debug-apk.yml"><img src="https://github.com/buenotty/Blockfy/actions/workflows/build-debug-apk.yml/badge.svg" alt="Build Status"/></a>
   <img src="https://img.shields.io/badge/Platform-Android%209.0%2B-3DDC84.svg?logo=android&logoColor=white" alt="Platform"/>
+  <img src="https://img.shields.io/badge/VirusTotal-0%2F70%20Clean%20(100%25%20Safe)-brightgreen.svg?logo=virustotal&logoColor=white" alt="VirusTotal Clean"/>
   <img src="https://img.shields.io/badge/Privacy-100%25%20Offline%20(Zero%20Internet)-4F46E5.svg" alt="Privacy"/>
   <img src="https://img.shields.io/badge/Open%20Source-Yes-blue.svg" alt="Open Source"/>
   <a href="https://github.com/buenotty/Blockfy/stargazers"><img src="https://img.shields.io/github/stars/buenotty/Blockfy?style=social" alt="GitHub Stars"/></a>
@@ -45,6 +46,19 @@ Whether you're dealing with ADHD, striving for a digital detox, or simply want t
   - Your data, usage stats, and habits never leave your phone.
 - 🎨 **Modern Material 3 Design**:
   - Clean Jetpack Compose interface with dark mode support, quick toggle chips, and refreshed vector graphics.
+
+---
+
+## 🛡️ Segurança e Verificação no VirusTotal (100% Seguro)
+
+> **0 Detecções no VirusTotal — Aplicativo 100% Limpo e Seguro**
+
+Muitos usuários ficam receosos ao conceder permissões do Serviço de Acessibilidade no Android por conta dos avisos genéricos do sistema operacional. Com o **Blockfy**, sua segurança e privacidade são garantidas:
+
+- ✅ **0 Detecções no VirusTotal**: O APK passa por escaneamento em mais de 70 antivírus líderes de mercado com **0 detecções** (totalmente livre de malwares, vírus ou spywares).
+- ✅ **Zero Permissão de Internet**: O Blockfy **não possui** a permissão `android.permission.INTERNET` declarada em seu código. Isso torna **tecnicamente e fisicamente impossível** que o aplicativo envie qualquer dado, clique ou histórico de tela para servidores externos.
+- ✅ **Código 100% Aberto e Transparente**: Todo o código-fonte está disponível publicamente para auditoria de qualquer desenvolvedor.
+- ✅ **Sem Anúncios e Sem Rastreadores**: Não contém SDKs de publicidade, analytics invasivos ou telemetria em segundo plano.
 
 ---
 

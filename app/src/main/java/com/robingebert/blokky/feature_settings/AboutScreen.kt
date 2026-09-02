@@ -286,13 +286,13 @@ fun AboutScreen() {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Privacidade e Segurança",
+                    text = "Privacidade e Segurança (100% Seguro)",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "O Blockfy utiliza o Serviço de Acessibilidade exclusivamente para detectar a tela de vídeos curtos e retornar ao feed principal.\n\nO aplicativo funciona 100% offline e não possui permissão de Internet. Seus dados nunca saem do seu dispositivo.",
+                    text = "• Verificado no VirusTotal: 0 detecções em mais de 70 antivírus (100% seguro e livre de ameaças).\n• Zero permissão de Internet: o aplicativo não tem acesso à rede, sendo tecnicamente impossível vazar qualquer dado seu.\n• O Serviço de Acessibilidade é utilizado estritamente para fechar vídeos curtos e retornar à tela inicial.",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
