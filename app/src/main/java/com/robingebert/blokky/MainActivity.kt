@@ -78,15 +78,24 @@ class MainActivity : ComponentActivity() {
                                             painter = painterResource(R.drawable.ic_blockfy_logo),
                                             contentDescription = "Blockfy Logo",
                                             modifier = Modifier
-                                                .size(32.dp)
+                                                .size(34.dp)
                                                 .clip(RoundedCornerShape(8.dp))
                                         )
                                         Spacer(modifier = Modifier.width(10.dp))
-                                        Text(
-                                            text = stringResource(R.string.app_name),
-                                            style = MaterialTheme.typography.titleLarge,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                                        Row {
+                                            Text(
+                                                text = "Block",
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = androidx.compose.ui.graphics.Color.White
+                                            )
+                                            Text(
+                                                text = "fy",
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = androidx.compose.ui.graphics.Color(0xFF7C83FD)
+                                            )
+                                        }
                                     }
                                 }
                             },
