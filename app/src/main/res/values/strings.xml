@@ -69,7 +69,7 @@
 
     <string name="toast_limit_reached">Blockfy: Daily limit of %1$d min of %2$s reached!</string>
     <string name="toast_remaining_minutes">Blockfy: %1$d minutes remaining for %2$s today!</string>
-    <string name="toast_remaining_one_minute">Blockfy: 1 minute remaining for %2$s today!</string>
+    <string name="toast_remaining_one_minute">Blockfy: 1 minute remaining for %1$s today!</string>
 
     <string name="disable_dialog_title">Are you sure?</string>
     <string name="disable_dialog_desc">Are you sure you want to allow yourself to doomscroll again?</string>

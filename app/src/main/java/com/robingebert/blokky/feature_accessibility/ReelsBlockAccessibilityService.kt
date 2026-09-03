@@ -1,6 +1,7 @@
 package com.robingebert.blokky.feature_accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
@@ -45,29 +46,41 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     override fun onServiceConnected() {
         super.onServiceConnected()
         serviceScope.launch {
-            dataStore.appSettingsFlow.collect { latest ->
-                settings = latest
+            try {
+                dataStore.appSettingsFlow.collect { latest ->
+                    settings = latest
+                }
+            } catch (e: Exception) {
+                Log.e("BlockfyService", "Error collecting app settings", e)
             }
         }
         serviceScope.launch {
-            dataStore.dailyUsageFlow.collect { latest ->
-                currentUsage = latest
+            try {
+                dataStore.dailyUsageFlow.collect { latest ->
+                    currentUsage = latest
+                }
+            } catch (e: Exception) {
+                Log.e("BlockfyService", "Error collecting daily usage", e)
             }
         }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        val pkg = event?.packageName?.toString() ?: return
-        val root = rootInActiveWindow ?: return
+        try {
+            val pkg = event?.packageName?.toString() ?: return
+            val root = rootInActiveWindow ?: return
 
-        when (pkg) {
-            "com.instagram.android" -> handleInstagram(root)
-            "com.google.android.youtube" -> handleYouTube(root)
-            "com.zhiliaoapp.musically" -> handleTikTok()
-            else -> {
-                // If user switched to another app, stop active video tracking
-                stopTracking()
+            when (pkg) {
+                "com.instagram.android" -> handleInstagram(root)
+                "com.google.android.youtube" -> handleYouTube(root)
+                "com.zhiliaoapp.musically" -> handleTikTok()
+                else -> {
+                    // If user switched to another app, stop active video tracking
+                    stopTracking()
+                }
             }
+        } catch (t: Throwable) {
+            Log.e("BlockfyService", "Unhandled error in onAccessibilityEvent", t)
         }
     }
 
@@ -98,11 +111,15 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private fun isNodeVisible(root: AccessibilityNodeInfo, viewId: String): Boolean {
-        val nodes = root.findAccessibilityNodeInfosByViewId(viewId)
-        if (nodes.isNullOrEmpty()) return false
-        val visible = nodes.any { it.isVisibleToUser }
-        nodes.forEach { it.recycle() }
-        return visible
+        return try {
+            val nodes = root.findAccessibilityNodeInfosByViewId(viewId)
+            if (nodes.isNullOrEmpty()) return false
+            val visible = nodes.any { it.isVisibleToUser }
+            nodes.forEach { it.recycle() }
+            visible
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun handleInstagram(root: AccessibilityNodeInfo) {
@@ -131,7 +148,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val limitSeconds = insta.dailyLimitMinutes * 60L
 
             if (todayUsedSeconds >= limitSeconds) {
-                showToast("Blockfy: Limite diário de ${insta.dailyLimitMinutes} min de Reels atingido hoje!")
+                showToast(getString(R.string.toast_limit_reached, insta.dailyLimitMinutes, "Reels"))
                 exitInstagramReels(root)
             } else {
                 // Within daily limit: allow viewing and track usage
@@ -143,45 +160,62 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun exitInstagramReels(root: AccessibilityNodeInfo) {
+    private fun exitInstagramReels(root: AccessibilityNodeInfo?) {
         stopInstagramTracking()
 
-        val feedTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/feed_tab")
-        val feedTab = feedTabs?.firstOrNull()
+        if (root == null) {
+            exitTheDoom(null)
+            return
+        }
 
-        // Only click feedTab if it exists AND is NOT already selected.
-        // If feedTab is already selected, clicking it reloads and scrolls to top in Instagram!
-        if (feedTab != null && !feedTab.isSelected) {
-            exitTheDoom(feedTab)
-        } else {
-            // Modal reel or already on feed tab -> use BACK action to exit overlay safely
+        try {
+            val feedTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/feed_tab")
+            val feedTab = feedTabs?.firstOrNull()
+
+            // Only click feedTab if it exists AND is NOT already selected.
+            // If feedTab is already selected, clicking it reloads and scrolls to top in Instagram!
+            if (feedTab != null && !feedTab.isSelected) {
+                exitTheDoom(feedTab)
+            } else {
+                // Modal reel or already on feed tab -> use BACK action to exit overlay safely
+                exitTheDoom(null)
+            }
+            feedTabs?.forEach { it.recycle() }
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error in exitInstagramReels", e)
             exitTheDoom(null)
         }
-        feedTabs?.forEach { it.recycle() }
     }
 
     private fun startInstagramTracking(limitMinutes: Int) {
         if (instaTrackingJob?.isActive == true) return
 
         instaTrackingJob = serviceScope.launch {
+            var localUsedSeconds = if (currentUsage.date == getTodayDate()) currentUsage.instagramSeconds else 0L
+
             while (isActive) {
                 delay(1000L)
-                val root = rootInActiveWindow
-                val stillVisible = root != null && isNodeVisible(root, "com.instagram.android:id/clips_swipe_refresh_container")
-                if (stillVisible && root != null) {
-                    dataStore.addUsage("Instagram", 1L)
-                    val currentUsed = if (currentUsage.date == getTodayDate()) currentUsage.instagramSeconds + 1L else 1L
-                    if (currentUsed >= limitMinutes * 60L) {
-                        serviceScope.launch(Dispatchers.Main) {
-                            showToast(getString(R.string.toast_limit_reached, limitMinutes, "Reels"))
-                            rootInActiveWindow?.let { exitInstagramReels(it) }
+                try {
+                    val root = rootInActiveWindow
+                    val stillVisible = root != null && isNodeVisible(root, "com.instagram.android:id/clips_swipe_refresh_container")
+                    if (stillVisible) {
+                        localUsedSeconds++
+                        dataStore.addUsage("Instagram", 1L)
+
+                        if (localUsedSeconds >= limitMinutes * 60L) {
+                            serviceScope.launch(Dispatchers.Main) {
+                                showToast(getString(R.string.toast_limit_reached, limitMinutes, "Reels"))
+                                exitInstagramReels(rootInActiveWindow)
+                            }
+                            break
+                        } else {
+                            checkAndNotifyRemainingTime("Reels", localUsedSeconds, limitMinutes, isInsta = true)
                         }
-                        break
                     } else {
-                        checkAndNotifyRemainingTime("Reels", currentUsed, limitMinutes, isInsta = true)
+                        break
                     }
-                } else {
-                    break
+                } catch (e: Exception) {
+                    Log.e("BlockfyService", "Error in instaTrackingJob", e)
                 }
             }
         }
@@ -225,72 +259,93 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun exitYouTubeShorts(root: AccessibilityNodeInfo) {
+    private fun exitYouTubeShorts(root: AccessibilityNodeInfo?) {
         stopYouTubeTracking()
 
-        val pivotBar = root.findAccessibilityNodeInfosByViewId(
-            "com.google.android.youtube:id/pivot_bar"
-        ).firstOrNull()
-        val homeTab = pivotBar?.getChild(0)?.getChild(0)
-
-        exitTheDoom(homeTab) {
-            homeTab?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        if (root == null) {
+            exitTheDoom(null)
+            return
         }
-        homeTab?.recycle()
-        pivotBar?.recycle()
+
+        try {
+            val pivotBar = root.findAccessibilityNodeInfosByViewId(
+                "com.google.android.youtube:id/pivot_bar"
+            ).firstOrNull()
+            val homeTab = pivotBar?.getChild(0)?.getChild(0)
+
+            exitTheDoom(homeTab) {
+                homeTab?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            }
+            homeTab?.recycle()
+            pivotBar?.recycle()
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error in exitYouTubeShorts", e)
+            exitTheDoom(null)
+        }
     }
 
     private fun startYouTubeTracking(limitMinutes: Int) {
         if (ytTrackingJob?.isActive == true) return
 
         ytTrackingJob = serviceScope.launch {
+            var localUsedSeconds = if (currentUsage.date == getTodayDate()) currentUsage.youtubeSeconds else 0L
+
             while (isActive) {
                 delay(1000L)
-                val root = rootInActiveWindow
-                val stillVisible = root != null && isNodeVisible(root, "com.google.android.youtube:id/reel_watch_fragment_root")
-                if (stillVisible && root != null) {
-                    dataStore.addUsage("YouTube", 1L)
-                    val currentUsed = if (currentUsage.date == getTodayDate()) currentUsage.youtubeSeconds + 1L else 1L
-                    if (currentUsed >= limitMinutes * 60L) {
-                        serviceScope.launch(Dispatchers.Main) {
-                            showToast(getString(R.string.toast_limit_reached, limitMinutes, "Shorts"))
-                            rootInActiveWindow?.let { exitYouTubeShorts(it) }
+                try {
+                    val root = rootInActiveWindow
+                    val stillVisible = root != null && isNodeVisible(root, "com.google.android.youtube:id/reel_watch_fragment_root")
+                    if (stillVisible) {
+                        localUsedSeconds++
+                        dataStore.addUsage("YouTube", 1L)
+
+                        if (localUsedSeconds >= limitMinutes * 60L) {
+                            serviceScope.launch(Dispatchers.Main) {
+                                showToast(getString(R.string.toast_limit_reached, limitMinutes, "Shorts"))
+                                exitYouTubeShorts(rootInActiveWindow)
+                            }
+                            break
+                        } else {
+                            checkAndNotifyRemainingTime("Shorts", localUsedSeconds, limitMinutes, isInsta = false)
                         }
-                        break
                     } else {
-                        checkAndNotifyRemainingTime("Shorts", currentUsed, limitMinutes, isInsta = false)
+                        break
                     }
-                } else {
-                    break
+                } catch (e: Exception) {
+                    Log.e("BlockfyService", "Error in ytTrackingJob", e)
                 }
             }
         }
     }
 
     private fun checkAndNotifyRemainingTime(featureName: String, usedSeconds: Long, limitMinutes: Int, isInsta: Boolean) {
-        val totalSeconds = limitMinutes * 60L
-        val remainingSeconds = totalSeconds - usedSeconds
-        if (remainingSeconds <= 0L) return
+        try {
+            val totalSeconds = limitMinutes * 60L
+            val remainingSeconds = totalSeconds - usedSeconds
+            if (remainingSeconds <= 0L) return
 
-        val remainingMinutes = ((remainingSeconds + 59L) / 60L).toInt()
-        val lastWarned = if (isInsta) lastWarnedInstaMinute else lastWarnedYtMinute
+            val remainingMinutes = ((remainingSeconds + 59L) / 60L).toInt()
+            val lastWarned = if (isInsta) lastWarnedInstaMinute else lastWarnedYtMinute
 
-        if (remainingMinutes != lastWarned) {
-            val shouldWarn = when {
-                remainingMinutes <= 5 -> true
-                remainingMinutes % 5 == 0 -> true
-                else -> false
-            }
-
-            if (shouldWarn) {
-                if (isInsta) lastWarnedInstaMinute = remainingMinutes else lastWarnedYtMinute = remainingMinutes
-                val minText = if (remainingMinutes == 1) {
-                    getString(R.string.toast_remaining_one_minute, featureName)
-                } else {
-                    getString(R.string.toast_remaining_minutes, remainingMinutes, featureName)
+            if (remainingMinutes != lastWarned) {
+                val shouldWarn = when {
+                    remainingMinutes <= 5 -> true
+                    remainingMinutes % 5 == 0 -> true
+                    else -> false
                 }
-                showToast(minText)
+
+                if (shouldWarn) {
+                    if (isInsta) lastWarnedInstaMinute = remainingMinutes else lastWarnedYtMinute = remainingMinutes
+                    val minText = if (remainingMinutes == 1) {
+                        getString(R.string.toast_remaining_one_minute, featureName)
+                    } else {
+                        getString(R.string.toast_remaining_minutes, remainingMinutes, featureName)
+                    }
+                    showToast(minText)
+                }
             }
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error in checkAndNotifyRemainingTime", e)
         }
     }
 
@@ -322,20 +377,36 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         if (now - lastActionTime < debounceMillis) return
         lastActionTime = now
 
-        if (node != null) {
-            node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-        } else {
+        try {
+            if (node != null) {
+                val clicked = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                if (!clicked) {
+                    performGlobalAction(GLOBAL_ACTION_BACK)
+                }
+            } else {
+                performGlobalAction(GLOBAL_ACTION_BACK)
+            }
+            extra?.invoke()
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error in exitTheDoom", e)
             performGlobalAction(GLOBAL_ACTION_BACK)
         }
-        extra?.invoke()
     }
 
     private fun showToast(message: String) {
-        val now = System.currentTimeMillis()
-        if (now - lastToastTime < 3000L) return
-        lastToastTime = now
-        serviceScope.launch(Dispatchers.Main) {
-            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+        try {
+            val now = System.currentTimeMillis()
+            if (now - lastToastTime < 3000L) return
+            lastToastTime = now
+            serviceScope.launch(Dispatchers.Main) {
+                try {
+                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("BlockfyService", "Error displaying toast", e)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error in showToast", e)
         }
     }
 }

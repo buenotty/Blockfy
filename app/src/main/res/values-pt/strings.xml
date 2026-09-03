@@ -69,7 +69,7 @@
 
     <string name="toast_limit_reached">Blockfy: Limite diário de %1$d min de %2$s atingido!</string>
     <string name="toast_remaining_minutes">Blockfy: %1$d minutos restantes de %2$s hoje!</string>
-    <string name="toast_remaining_one_minute">Blockfy: 1 minuto restante de %2$s hoje!</string>
+    <string name="toast_remaining_one_minute">Blockfy: 1 minuto restante de %1$s hoje!</string>
 
     <string name="disable_dialog_title">Tem certeza?</string>
     <string name="disable_dialog_desc">Tem certeza de que deseja liberar o feed de vídeos curtos novamente?</string>
