@@ -7,50 +7,37 @@
 
     <!-- Rounded Squircle Dark Container -->
     <path
-        android:pathData="M16,6 L80,6 C88.8,6 96,13.2 96,22 L96,80 C96,88.8 88.8,96 80,96 L16,96 C7.2,96 0,88.8 0,80 L0,22 C0,13.2 7.2,6 16,6 Z">
+        android:pathData="M16,4 L80,4 C88.8,4 96,11.2 96,20 L96,76 C96,84.8 88.8,92 80,92 L16,92 C7.2,92 0,84.8 0,76 L0,20 C0,11.2 7.2,4 16,4 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:startX="0"
-                android:startY="6"
-                android:endX="96"
-                android:endY="96"
+                android:startX="48"
+                android:startY="4"
+                android:endX="48"
+                android:endY="92"
                 android:type="linear">
                 <item android:offset="0.0" android:color="#1A1F2C"/>
-                <item android:offset="1.0" android:color="#0F121A"/>
+                <item android:offset="1.0" android:color="#0D1017"/>
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Squircle Subtle Border -->
-    <path
-        android:pathData="M16,6 L80,6 C88.8,6 96,13.2 96,22 L96,80 C96,88.8 88.8,96 80,96 L16,96 C7.2,96 0,88.8 0,80 L0,22 C0,13.2 7.2,6 16,6 Z"
-        android:strokeWidth="1.5"
-        android:strokeColor="#33FFFFFF"
-        android:fillColor="#00000000"/>
-
     <!-- Bold White Letter "B" Body -->
     <path
-        android:pathData="M24,20 L54,20 C65,20 72,26 72,36 C72,42.5 68,47.5 62,49.5 C70,51.5 75,57.5 75,68 C75,79 66,84 54,84 L24,84 Z"
+        android:pathData="M30,24 L52,24 C59,24 65,28 65,34.5 C65,38.5 62.5,41.5 58.5,43.5 C63.5,45.5 66.5,49.5 66.5,56.5 C66.5,63.5 61,68 52,68 L30,68 Z"
         android:fillColor="#FFFFFF"/>
 
     <!-- Top Cutout Hole of B -->
     <path
-        android:pathData="M38,31 L52,31 C56.5,31 60,33.5 60,37.5 C60,41.5 56.5,44 52,44 L38,44 Z"
-        android:fillColor="#151822"/>
+        android:pathData="M39,31 L50,31 C53.5,31 56,33 56,35.5 C56,38 53.5,40 50,40 L39,40 Z"
+        android:fillColor="#171B26"/>
 
     <!-- Bottom Cutout Hole of B -->
     <path
-        android:pathData="M38,58 L53,58 C58,58 62,60.5 62,65 C62,69.5 58,72 53,72 L38,72 Z"
-        android:fillColor="#12151E"/>
+        android:pathData="M39,50 L51,50 C55,50 57.5,52 57.5,55.5 C57.5,59 55,61 51,61 L39,61 Z"
+        android:fillColor="#10131B"/>
 
-    <!-- Diagonal Slash Bar (Block / Focus mark in Periwinkle/Indigo) -->
+    <!-- Diagonal Slash Bar (Blockfy Focus Slash in Periwinkle / Violet) -->
     <path
-        android:pathData="M20,30 L74,74 L68,81 L14,37 Z"
-        android:fillColor="#6E76F6"/>
-
-    <path
-        android:pathData="M20,30 L74,74 L68,81 L14,37 Z"
-        android:strokeWidth="0.8"
-        android:strokeColor="#8B5CF6"
-        android:fillColor="#00000000"/>
+        android:pathData="M22,31 L72,64 L68,70 L18,37 Z"
+        android:fillColor="#6875F5"/>
 </vector>
