@@ -65,8 +65,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.robingebert.blokky.R
 import com.robingebert.blokky.feature_preferences.OverviewViewModel
 import com.robingebert.blokky.feature_preferences.ui.composables.AccessibilityServiceCard
+import com.robingebert.blokky.feature_preferences.ui.composables.BlockfyThemedAppIcon
 import com.robingebert.blokky.feature_preferences.ui.composables.EditAppBottomSheet
-import com.robingebert.blokky.feature_preferences.ui.composables.InstagramColoredIcon
 import com.robingebert.blokky.feature_preferences.ui.composables.SwitchPreference
 import com.robingebert.blokky.ui.theme.BlockfyPrimary
 import com.robingebert.blokky.ui.theme.BlockfySecondary
@@ -86,7 +86,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showSupportDialog by remember { mutableStateOf(false) }
 
     //region Accessibility Service
-    var isAccessibilityGranted by remember { mutableStateOf(false) }
+    var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -126,7 +126,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 title = stringResource(R.string.instagram_reels),
                 summary = instaSummary,
                 leadingIcon = {
-                    InstagramColoredIcon()
+                    BlockfyThemedAppIcon("Instagram")
                 },
                 settingsIcon = {
                     IconButton(
@@ -167,11 +167,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 title = stringResource(R.string.youtube_shorts),
                 summary = ytSummary,
                 leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.ic_youtube),
-                        null,
-                        tint = Color(0xFFFF0033)
-                    )
+                    BlockfyThemedAppIcon("YouTube")
                 },
                 settingsIcon = {
                     IconButton(
@@ -202,11 +198,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 title = stringResource(R.string.tiktok_app),
                 summary = stringResource(R.string.block_tiktok_summary),
                 leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.ic_tiktok),
-                        null,
-                        tint = Color.Unspecified
-                    )
+                    BlockfyThemedAppIcon("TikTok")
                 },
                 settingsIcon = {
                     IconButton(

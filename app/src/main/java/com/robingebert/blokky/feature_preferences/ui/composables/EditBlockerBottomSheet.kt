@@ -89,11 +89,18 @@ fun EditAppBottomSheet(
                     .padding(vertical = 8.dp, horizontal = 20.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                Text(
-                    text = stringResource(R.string.settings_dialog_title, app.name),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    BlockfyThemedAppIcon(app.name)
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = stringResource(R.string.settings_dialog_title, app.name),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
 
