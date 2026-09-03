@@ -41,11 +41,12 @@ Whether you're dealing with ADHD, striving for a digital detox, or simply want t
   - Once reached, short videos are locked until midnight.
 - ⏰ **Custom Scheduled Focus Windows**:
   - Choose specific time intervals during the day (e.g. 09:00 to 18:00) to enforce blocking.
-- 🔒 **100% Private & Completely Offline**:
-  - **Zero Internet Permission (`android.permission.INTERNET` is not even requested)**.
-  - Your data, usage stats, and habits never leave your phone.
-- 🎨 **Modern Material 3 Design**:
-  - Clean Jetpack Compose interface with dark mode support, quick toggle chips, and refreshed vector graphics.
+- 🔄 **In-App Self Updater (Atualizador Automático OTA)**:
+  - O Blockfy verifica novas versões diretamente na API do GitHub, exibe as notas da atualização, baixa o APK com barra de progresso em tempo real e inicia a instalação nativa do Android com um toque, sem precisar abrir o navegador ou baixar manualmente!
+- 🔒 **100% Private & Open Source**:
+  - A permissão de Internet é utilizada exclusivamente pelo atualizador para consultar o GitHub e baixar a nova versão. O serviço de acessibilidade e o controle de tempo são 100% locais no dispositivo, sem rastreamento nem telemetria.
+- 🎨 **Modern Cyber Focus Theme**:
+  - Interface Jetpack Compose Material 3 escura de alto contraste, adaptada às cores da nova logo oficial.
 
 ---
 
@@ -56,7 +57,7 @@ Whether you're dealing with ADHD, striving for a digital detox, or simply want t
 Muitos usuários ficam receosos ao conceder permissões do Serviço de Acessibilidade no Android por conta dos avisos genéricos do sistema operacional. Com o **Blockfy**, sua segurança e privacidade são garantidas:
 
 - ✅ **0 Detecções no VirusTotal**: O APK passa por escaneamento em mais de 70 antivírus líderes de mercado com **0 detecções** (totalmente livre de malwares, vírus ou spywares).
-- ✅ **Zero Permissão de Internet**: O Blockfy **não possui** a permissão `android.permission.INTERNET` declarada em seu código. Isso torna **tecnicamente e fisicamente impossível** que o aplicativo envie qualquer dado, clique ou histórico de tela para servidores externos.
+- ✅ **Privacidade Total**: A conexão com a internet é restrita estritamente às requisições do atualizador integrado para consultar novos lançamentos no GitHub. Seus hábitos, cliques, dados de tela e tempos de uso nunca saem do seu aparelho.
 - ✅ **Código 100% Aberto e Transparente**: Todo o código-fonte está disponível publicamente para auditoria de qualquer desenvolvedor.
 - ✅ **Sem Anúncios e Sem Rastreadores**: Não contém SDKs de publicidade, analytics invasivos ou telemetria em segundo plano.
 

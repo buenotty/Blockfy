@@ -60,6 +60,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.robingebert.blokky.R
 import com.robingebert.blokky.ui.theme.BlockfyPrimary
 import com.robingebert.blokky.ui.theme.BlockfySecondary
+import com.robingebert.blokky.updater.UpdateDialog
 import qrcode.QRCode
 
 @Composable
@@ -67,6 +68,7 @@ fun AboutScreen() {
 
     val context = LocalContext.current
     var showQrCodeDialog by remember { mutableStateOf(false) }
+    var showUpdateDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -136,11 +138,7 @@ fun AboutScreen() {
                 containerColor = BlockfyPrimary
             ),
             onClick = {
-                val releasesIntent = Intent(
-                    Intent.ACTION_VIEW,
-                    "https://github.com/buenotty/Blockfy/releases".toUri()
-                )
-                context.startActivity(releasesIntent)
+                showUpdateDialog = true
             }
         ) {
             Icon(Icons.Rounded.SystemUpdate, contentDescription = null, modifier = Modifier.size(20.dp))
@@ -317,6 +315,13 @@ fun AboutScreen() {
         QrCodeDialog {
             showQrCodeDialog = false
         }
+    }
+
+    if (showUpdateDialog) {
+        UpdateDialog(
+            currentVersion = getVersionName(context),
+            onDismissRequest = { showUpdateDialog = false }
+        )
     }
 }
 

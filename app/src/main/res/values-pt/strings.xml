@@ -75,4 +75,20 @@
     <string name="disable_dialog_desc">Tem certeza de que deseja liberar o feed de vídeos curtos novamente?</string>
     <string name="disable_dialog_cancel">Mudei de ideia</string>
     <string name="disable_dialog_confirm">Quero desativar</string>
+
+    <string name="update_checking">Verificando atualizações…</string>
+    <string name="update_latest_title">Você já está atualizado!</string>
+    <string name="update_latest_desc">O Blockfy %s é a versão mais recente disponível.</string>
+    <string name="update_available_title">Nova versão disponível!</string>
+    <string name="update_version_tag">Versão %s</string>
+    <string name="update_size_label">Tamanho: ~%s MB</string>
+    <string name="update_btn_download_install">Baixar e Instalar</string>
+    <string name="update_downloading">Baixando atualização…</string>
+    <string name="update_download_complete">Download concluído!</string>
+    <string name="update_btn_install">Instalar Agora</string>
+    <string name="update_permission_required">Permissão necessária para instalar atualizações deste app.</string>
+    <string name="update_btn_grant_permission">Permitir instalação de apps</string>
+    <string name="update_error_title">Falha ao verificar</string>
+    <string name="update_error_desc">Não foi possível conectar ao GitHub. Verifique sua conexão com a internet.</string>
+    <string name="btn_retry">Tentar novamente</string>
 </resources>
