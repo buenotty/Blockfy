@@ -1,10 +1,28 @@
 package com.robingebert.blokky.feature_accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.graphics.Color
+import android.graphics.PixelFormat
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import com.robingebert.blokky.R
 import com.robingebert.blokky.datastore.AppSettings
 import com.robingebert.blokky.datastore.DailyUsage
@@ -39,9 +57,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var instaTrackingJob: Job? = null
     private var ytTrackingJob: Job? = null
 
-    private var lastToastTime = 0L
+    private var lastAlertTime = 0L
     private var lastWarnedInstaMinute = -1
     private var lastWarnedYtMinute = -1
+
+    private var currentOverlayView: View? = null
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -92,6 +112,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         super.onDestroy()
         stopTracking()
         serviceScope.cancel()
+        removeOverlayView()
     }
 
     private fun getTodayDate(): String = LocalDate.now().toString()
@@ -148,7 +169,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val limitSeconds = insta.dailyLimitMinutes * 60L
 
             if (todayUsedSeconds >= limitSeconds) {
-                showToast(getString(R.string.toast_limit_reached, insta.dailyLimitMinutes, "Reels"))
+                val title = getString(R.string.alert_limit_title)
+                val msg = getString(R.string.toast_limit_reached, insta.dailyLimitMinutes, "Reels")
+                notifyAlert(title, msg, isFinal = true)
                 exitInstagramReels(root)
             } else {
                 // Within daily limit: allow viewing and track usage
@@ -156,6 +179,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             }
         } else {
             // No daily limit: block immediately
+            val title = getString(R.string.alert_limit_title)
+            val msg = getString(R.string.toast_limit_reached, insta.dailyLimitMinutes, "Reels")
+            notifyAlert(title, msg, isFinal = true)
             exitInstagramReels(root)
         }
     }
@@ -172,12 +198,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val feedTabs = root.findAccessibilityNodeInfosByViewId("com.instagram.android:id/feed_tab")
             val feedTab = feedTabs?.firstOrNull()
 
-            // Only click feedTab if it exists AND is NOT already selected.
-            // If feedTab is already selected, clicking it reloads and scrolls to top in Instagram!
             if (feedTab != null && !feedTab.isSelected) {
                 exitTheDoom(feedTab)
             } else {
-                // Modal reel or already on feed tab -> use BACK action to exit overlay safely
                 exitTheDoom(null)
             }
             feedTabs?.forEach { it.recycle() }
@@ -204,7 +227,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
                         if (localUsedSeconds >= limitMinutes * 60L) {
                             serviceScope.launch(Dispatchers.Main) {
-                                showToast(getString(R.string.toast_limit_reached, limitMinutes, "Reels"))
+                                val title = getString(R.string.alert_limit_title)
+                                val msg = getString(R.string.toast_limit_reached, limitMinutes, "Reels")
+                                notifyAlert(title, msg, isFinal = true)
                                 exitInstagramReels(rootInActiveWindow)
                             }
                             break
@@ -249,12 +274,17 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val limitSeconds = yt.dailyLimitMinutes * 60L
 
             if (todayUsedSeconds >= limitSeconds) {
-                showToast(getString(R.string.toast_limit_reached, yt.dailyLimitMinutes, "Shorts"))
+                val title = getString(R.string.alert_limit_title)
+                val msg = getString(R.string.toast_limit_reached, yt.dailyLimitMinutes, "Shorts")
+                notifyAlert(title, msg, isFinal = true)
                 exitYouTubeShorts(root)
             } else {
                 startYouTubeTracking(yt.dailyLimitMinutes)
             }
         } else {
+            val title = getString(R.string.alert_limit_title)
+            val msg = getString(R.string.toast_limit_reached, yt.dailyLimitMinutes, "Shorts")
+            notifyAlert(title, msg, isFinal = true)
             exitYouTubeShorts(root)
         }
     }
@@ -301,7 +331,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
                         if (localUsedSeconds >= limitMinutes * 60L) {
                             serviceScope.launch(Dispatchers.Main) {
-                                showToast(getString(R.string.toast_limit_reached, limitMinutes, "Shorts"))
+                                val title = getString(R.string.alert_limit_title)
+                                val msg = getString(R.string.toast_limit_reached, limitMinutes, "Shorts")
+                                notifyAlert(title, msg, isFinal = true)
                                 exitYouTubeShorts(rootInActiveWindow)
                             }
                             break
@@ -336,12 +368,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
                 if (shouldWarn) {
                     if (isInsta) lastWarnedInstaMinute = remainingMinutes else lastWarnedYtMinute = remainingMinutes
+                    val title = getString(R.string.alert_warning_title)
                     val minText = if (remainingMinutes == 1) {
                         getString(R.string.toast_remaining_one_minute, featureName)
                     } else {
                         getString(R.string.toast_remaining_minutes, remainingMinutes, featureName)
                     }
-                    showToast(minText)
+                    notifyAlert(title, minText, isFinal = false)
                 }
             }
         } catch (e: Exception) {
@@ -393,14 +426,195 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    /**
+     * Centralized alert system:
+     * 1. Haptic feedback (Vibration)
+     * 2. Visual floating pill banner directly on screen (TYPE_ACCESSIBILITY_OVERLAY)
+     * 3. System Heads-Up Notification
+     * 4. Android Toast
+     */
+    private fun notifyAlert(title: String, message: String, isFinal: Boolean = false) {
+        val now = System.currentTimeMillis()
+        if (!isFinal && now - lastAlertTime < 4000L) return
+        lastAlertTime = now
+
+        triggerVibration(isFinal)
+        showOverlayBanner(title, message, isFinal)
+        showNotification(title, message, isFinal)
+        showToast(message)
+    }
+
+    private fun triggerVibration(isFinal: Boolean) {
+        try {
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                vibratorManager?.defaultVibrator
+            } else {
+                @Suppress("DEPRECATION")
+                getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+            }
+
+            vibrator?.let { v ->
+                if (v.hasVibrator()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val timings = if (isFinal) longArrayOf(0, 180, 100, 220) else longArrayOf(0, 100)
+                        val amplitudes = if (isFinal) intArrayOf(0, 255, 0, 255) else intArrayOf(0, 180)
+                        v.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        v.vibrate(if (isFinal) 350L else 120L)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error vibrating", e)
+        }
+    }
+
+    private fun showOverlayBanner(title: String, message: String, isFinal: Boolean) {
+        serviceScope.launch(Dispatchers.Main) {
+            try {
+                val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                removeOverlayView()
+
+                val density = resources.displayMetrics.density
+                fun dp(dp: Int) = (dp * density).toInt()
+
+                val container = LinearLayout(this@ReelsBlockAccessibilityService).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_VERTICAL
+                    val padH = dp(16)
+                    val padV = dp(12)
+                    setPadding(padH, padV, padH, padV)
+                    elevation = dp(12).toFloat()
+
+                    val shape = GradientDrawable().apply {
+                        this.shape = GradientDrawable.RECTANGLE
+                        cornerRadius = dp(20).toFloat()
+                        setColor(if (isFinal) Color.parseColor("#1C132A") else Color.parseColor("#101528"))
+                        setStroke(dp(2), if (isFinal) Color.parseColor("#FF5252") else Color.parseColor("#7C83FD"))
+                    }
+                    background = shape
+                }
+
+                val iconView = TextView(this@ReelsBlockAccessibilityService).apply {
+                    text = if (isFinal) "🛑" else "⏳"
+                    textSize = 22f
+                    val marginEnd = dp(12)
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(0, 0, marginEnd, 0)
+                    }
+                }
+                container.addView(iconView)
+
+                val textColumn = LinearLayout(this@ReelsBlockAccessibilityService).apply {
+                    orientation = LinearLayout.VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                }
+
+                val titleView = TextView(this@ReelsBlockAccessibilityService).apply {
+                    text = title
+                    textSize = 14f
+                    setTypeface(typeface, Typeface.BOLD)
+                    setTextColor(if (isFinal) Color.parseColor("#FF8A80") else Color.parseColor("#B4B9FE"))
+                }
+                textColumn.addView(titleView)
+
+                val msgView = TextView(this@ReelsBlockAccessibilityService).apply {
+                    text = message
+                    textSize = 12f
+                    setTextColor(Color.WHITE)
+                }
+                textColumn.addView(msgView)
+
+                container.addView(textColumn)
+
+                val wrapper = FrameLayout(this@ReelsBlockAccessibilityService).apply {
+                    val marginH = dp(16)
+                    setPadding(marginH, 0, marginH, 0)
+                    addView(container)
+                }
+
+                val params = WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                    PixelFormat.TRANSLUCENT
+                ).apply {
+                    gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                    y = dp(52)
+                }
+
+                wm.addView(wrapper, params)
+                currentOverlayView = wrapper
+
+                // Auto dismiss after 4.5 seconds
+                serviceScope.launch(Dispatchers.Main) {
+                    delay(4500L)
+                    if (currentOverlayView == wrapper) {
+                        removeOverlayView()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("BlockfyService", "Error showing overlay banner", e)
+            }
+        }
+    }
+
+    private fun removeOverlayView() {
+        try {
+            currentOverlayView?.let {
+                val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                wm.removeView(it)
+                currentOverlayView = null
+            }
+        } catch (e: Exception) {
+            currentOverlayView = null
+        }
+    }
+
+    private fun showNotification(title: String, message: String, isFinal: Boolean) {
+        try {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val channelId = "blockfy_alerts_channel"
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    channelId,
+                    "Alertas do Blockfy",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Alertas de limite de tempo e avisos do Blockfy"
+                    enableVibration(true)
+                }
+                notificationManager.createNotificationChannel(channel)
+            }
+
+            val builder = NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.ic_blockfy_logo)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setAutoCancel(true)
+
+            notificationManager.notify(if (isFinal) 1001 else 1002, builder.build())
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error showing notification", e)
+        }
+    }
+
     private fun showToast(message: String) {
         try {
-            val now = System.currentTimeMillis()
-            if (now - lastToastTime < 3000L) return
-            lastToastTime = now
             serviceScope.launch(Dispatchers.Main) {
                 try {
-                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
                 } catch (e: Exception) {
                     Log.e("BlockfyService", "Error displaying toast", e)
                 }
