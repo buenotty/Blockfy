@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Event
+import androidx.compose.material.icons.rounded.HourglassBottom
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Timer
@@ -55,6 +57,7 @@ import com.robingebert.blokky.ui.theme.BlockfyPrimary
 fun EditAppBottomSheet(
     app: App,
     todayUsedSeconds: Long = 0L,
+    isStrictLocked: Boolean = false,
     onDismiss: () -> Unit,
     onSave: (App) -> Unit,
     onResetUsage: (() -> Unit)? = null,
@@ -65,16 +68,22 @@ fun EditAppBottomSheet(
     var blockedStart by remember { mutableIntStateOf(app.blockedStart) }
     var blockedEnd by remember { mutableIntStateOf(app.blockedEnd) }
     var dailyLimitMinutes by remember { mutableIntStateOf(app.dailyLimitMinutes) }
+    var appTotalDailyLimitMinutes by remember { mutableIntStateOf(app.appTotalDailyLimitMinutes) }
 
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
 
     fun save() {
+        if (isStrictLocked) {
+            onDismiss()
+            return
+        }
         onSave(
             app.copy(
                 blockedStart = blockedStart,
                 blockedEnd = blockedEnd,
-                dailyLimitMinutes = dailyLimitMinutes
+                dailyLimitMinutes = dailyLimitMinutes,
+                appTotalDailyLimitMinutes = appTotalDailyLimitMinutes
             )
         )
         onDismiss()
@@ -231,6 +240,87 @@ fun EditAppBottomSheet(
                     }
                 }
 
+                Spacer(Modifier.height(20.dp))
+
+                // App Total Daily Limit Section
+                Text(
+                    text = stringResource(R.string.app_total_limit_label),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color(0xFF60A5FA),
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(8.dp))
+
+                IconRow(icon = Icons.Rounded.HourglassBottom) {
+                    Column {
+                        Text(
+                            text = if (appTotalDailyLimitMinutes == 0) {
+                                "Sem limite geral (apenas vídeos curtos)"
+                            } else {
+                                "${appTotalDailyLimitMinutes} min no total do app"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(8.dp))
+
+                        val totalOptions = listOf(0, 15, 30, 45, 60, 90, 120)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            totalOptions.take(4).forEach { min ->
+                                FilterChip(
+                                    selected = appTotalDailyLimitMinutes == min,
+                                    onClick = { if (!isStrictLocked) appTotalDailyLimitMinutes = min },
+                                    enabled = !isStrictLocked,
+                                    label = { Text(if (min == 0) stringResource(R.string.daily_limit_off) else "${min}m") },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = Color(0xFF3B82F6),
+                                        selectedLabelColor = Color.White
+                                    )
+                                )
+                            }
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            totalOptions.drop(4).forEach { min ->
+                                FilterChip(
+                                    selected = appTotalDailyLimitMinutes == min,
+                                    onClick = { if (!isStrictLocked) appTotalDailyLimitMinutes = min },
+                                    enabled = !isStrictLocked,
+                                    label = { Text("${min}m") },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = Color(0xFF3B82F6),
+                                        selectedLabelColor = Color.White
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (isStrictLocked) {
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFEF4444).copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                            .padding(12.dp)
+                    ) {
+                        Icon(Icons.Rounded.Lock, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = "Modo Inviolável Ativo: limites travados até a meia-noite.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFFCA5A5)
+                        )
+                    }
+                }
+
                 Spacer(Modifier.height(24.dp))
 
                 // Save button
@@ -238,8 +328,9 @@ fun EditAppBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = BlockfyPrimary
+                        containerColor = if (isStrictLocked) Color.Gray else BlockfyPrimary
                     ),
+                    enabled = !isStrictLocked,
                     onClick = { save() }
                 ) {
                     Icon(Icons.Rounded.Save, contentDescription = null, modifier = Modifier.size(18.dp))

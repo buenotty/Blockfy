@@ -10,5 +10,6 @@ data class App(
     val blockedEnd: Int,
     val blockedTimer: Int,
     val features: List<Feature>,
-    val dailyLimitMinutes: Int = 0
+    val dailyLimitMinutes: Int = 0,
+    val appTotalDailyLimitMinutes: Int = 0
 )

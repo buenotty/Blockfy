@@ -68,6 +68,12 @@ import com.robingebert.blokky.feature_preferences.ui.composables.AccessibilitySe
 import com.robingebert.blokky.feature_preferences.ui.composables.BlockfyThemedAppIcon
 import com.robingebert.blokky.feature_preferences.ui.composables.EditAppBottomSheet
 import com.robingebert.blokky.feature_preferences.ui.composables.SwitchPreference
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Psychology
+import com.robingebert.blokky.feature_preferences.ui.composables.SavedTimeDashboardCard
+import com.robingebert.blokky.feature_preferences.ui.composables.StrictModeDialog
 import com.robingebert.blokky.ui.theme.BlockfyPrimary
 import com.robingebert.blokky.ui.theme.BlockfySecondary
 import org.koin.androidx.compose.koinViewModel
@@ -84,6 +90,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var selectedApp by remember { mutableStateOf(appSettings.instagram) }
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showSupportDialog by remember { mutableStateOf(false) }
+    var showStrictModeDialog by remember { mutableStateOf(false) }
 
     //region Accessibility Service
     var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
@@ -104,12 +111,123 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     }
     //endregion
 
-    Column(modifier = Modifier.padding(12.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(12.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
 
+        // 1. Dashboard de Tempo Salvo e Economia de Vida
+        SavedTimeDashboardCard(dailyUsage = dailyUsage)
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 2. Card de Serviço de Acessibilidade
         AccessibilityServiceCard(isAccessibilityGranted)
         Spacer(modifier = Modifier.height(14.dp))
 
+        // 3. Toggles de Mentalidade e Modo Inviolável
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        ) {
+            Column(modifier = Modifier.padding(14.dp), verticalArrangement = spacedBy(10.dp)) {
+                // Modo Choque de Consciência
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                        Icon(
+                            Icons.Rounded.Psychology,
+                            contentDescription = null,
+                            tint = Color(0xFFC084FC),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                stringResource(R.string.provocation_mode_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                stringResource(R.string.provocation_mode_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    androidx.compose.material3.Switch(
+                        checked = appSettings.provocationModeEnabled,
+                        onCheckedChange = { overviewViewModel.setProvocationMode(it) },
+                        colors = androidx.compose.material3.SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = BlockfyPrimary
+                        )
+                    )
+                }
+
+                androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                // Modo Inviolável (Hardcore)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                        Icon(
+                            Icons.Rounded.Lock,
+                            contentDescription = null,
+                            tint = Color(0xFFF59E0B),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                stringResource(R.string.strict_mode_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                stringResource(R.string.strict_mode_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    androidx.compose.material3.Switch(
+                        checked = appSettings.strictModeEnabled,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                overviewViewModel.setStrictMode(true, "MIDNIGHT")
+                            } else {
+                                if (overviewViewModel.isStrictLocked()) {
+                                    showStrictModeDialog = true
+                                } else {
+                                    overviewViewModel.setStrictMode(false)
+                                }
+                            }
+                        },
+                        colors = androidx.compose.material3.SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = Color(0xFFF59E0B)
+                        )
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 4. Lista de Aplicativos Rastreados
         Column(verticalArrangement = spacedBy(10.dp)) {
+            // Instagram
             val instaSummary = if (appSettings.instagram.dailyLimitMinutes > 0) {
                 stringResource(
                     R.string.daily_limit_format,
@@ -151,6 +269,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 )
             }
 
+            // YouTube
             val ytSummary = if (appSettings.youtube.dailyLimitMinutes > 0) {
                 stringResource(
                     R.string.daily_limit_format,
@@ -192,6 +311,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 )
             }
 
+            // TikTok
             SwitchPreference(
                 value = appSettings.tiktok.blocked,
                 enabled = isAccessibilityGranted,
@@ -218,6 +338,86 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             ) {
                 overviewViewModel.updateTikTok(
                     appSettings.tiktok.copy(
+                        blocked = it
+                    )
+                )
+            }
+
+            // Facebook
+            val fbSummary = if (appSettings.facebook.dailyLimitMinutes > 0) {
+                stringResource(
+                    R.string.daily_limit_format,
+                    appSettings.facebook.dailyLimitMinutes,
+                    dailyUsage.facebookSeconds / 60
+                )
+            } else {
+                stringResource(R.string.block_facebook_summary)
+            }
+
+            SwitchPreference(
+                value = appSettings.facebook.blocked,
+                enabled = isAccessibilityGranted,
+                title = stringResource(R.string.facebook_reels),
+                summary = fbSummary,
+                leadingIcon = {
+                    BlockfyThemedAppIcon("Facebook")
+                },
+                settingsIcon = {
+                    IconButton(
+                        modifier = it,
+                        onClick = {
+                            selectedApp = appSettings.facebook
+                            showSettingsDialog = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = stringResource(R.string.facebook_reels),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            ) {
+                overviewViewModel.updateFacebook(
+                    appSettings.facebook.copy(
+                        blocked = it
+                    )
+                )
+            }
+
+            // X (Twitter)
+            val xSummary = if (appSettings.x.appTotalDailyLimitMinutes > 0) {
+                "${dailyUsage.xTotalSeconds / 60}m / ${appSettings.x.appTotalDailyLimitMinutes}m diários"
+            } else {
+                stringResource(R.string.block_x_summary)
+            }
+
+            SwitchPreference(
+                value = appSettings.x.blocked,
+                enabled = isAccessibilityGranted,
+                title = stringResource(R.string.x_app),
+                summary = xSummary,
+                leadingIcon = {
+                    BlockfyThemedAppIcon("X")
+                },
+                settingsIcon = {
+                    IconButton(
+                        modifier = it,
+                        onClick = {
+                            selectedApp = appSettings.x
+                            showSettingsDialog = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = stringResource(R.string.x_app),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            ) {
+                overviewViewModel.updateX(
+                    appSettings.x.copy(
                         blocked = it
                     )
                 )
@@ -276,6 +476,8 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             appSettings.instagram.name -> dailyUsage.instagramSeconds
             appSettings.youtube.name -> dailyUsage.youtubeSeconds
             appSettings.tiktok.name -> dailyUsage.tiktokSeconds
+            appSettings.facebook.name -> dailyUsage.facebookSeconds
+            appSettings.x.name -> dailyUsage.xTotalSeconds
             else -> 0L
         }
 
@@ -283,14 +485,28 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             onDismiss = { showSettingsDialog = false },
             app = selectedApp,
             todayUsedSeconds = todayUsed,
+            isStrictLocked = overviewViewModel.isStrictLocked(),
             onResetUsage = { overviewViewModel.resetDailyUsage(selectedApp.name) },
             onSave = {
                 when (it.name) {
                     appSettings.instagram.name -> overviewViewModel.updateInstagram(it)
                     appSettings.youtube.name -> overviewViewModel.updateYoutube(it)
                     appSettings.tiktok.name -> overviewViewModel.updateTikTok(it)
+                    appSettings.facebook.name -> overviewViewModel.updateFacebook(it)
+                    appSettings.x.name -> overviewViewModel.updateX(it)
                 }
                 showSettingsDialog = false
+            }
+        )
+    }
+
+    if (showStrictModeDialog) {
+        StrictModeDialog(
+            isMidnightLock = appSettings.strictModeType == "MIDNIGHT",
+            onDismiss = { showStrictModeDialog = false },
+            onUnlockSuccess = {
+                overviewViewModel.setStrictMode(false)
+                showStrictModeDialog = false
             }
         )
     }

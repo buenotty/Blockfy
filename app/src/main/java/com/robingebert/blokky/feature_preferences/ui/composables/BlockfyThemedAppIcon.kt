@@ -23,6 +23,8 @@ fun BlockfyThemedAppIcon(appName: String, modifier: Modifier = Modifier) {
         "Instagram" -> Pair(R.drawable.ic_instagram_themed, Color(0xFFC084FC)) // Electric Violet
         "YouTube" -> Pair(R.drawable.ic_youtube_themed, Color(0xFF818CF8)) // Periwinkle Indigo
         "TikTok" -> Pair(R.drawable.ic_tiktok_themed, Color(0xFF67E8F9)) // Cyber Cyan
+        "Facebook" -> Pair(R.drawable.ic_facebook_themed, Color(0xFF60A5FA)) // Frost Blue
+        "X" -> Pair(R.drawable.ic_x_themed, Color(0xFFF1F5F9)) // Ice White
         else -> Pair(R.drawable.ic_blockfy_logo, Color.White)
     }
 

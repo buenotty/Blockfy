@@ -93,4 +93,26 @@
     <string name="update_error_title">Falha ao verificar</string>
     <string name="update_error_desc">Não foi possível conectar ao GitHub. Verifique sua conexão com a internet.</string>
     <string name="btn_retry">Tentar novamente</string>
+
+    <string name="app_total_limit_label">Limite Diário do App Completo</string>
+    <string name="short_video_limit_label">Limite Diário de Reels / Shorts</string>
+    <string name="facebook_app">Facebook</string>
+    <string name="facebook_reels">Facebook Reels</string>
+    <string name="block_facebook_summary">Bloquear vídeos curtos do Reels no Facebook</string>
+    <string name="x_app">X (Twitter)</string>
+    <string name="block_x_summary">Controlar rolagem infinita e limite de tempo no X</string>
+    <string name="dashboard_saved_time_title">Economia de Vida &amp; Foco</string>
+    <string name="dashboard_saved_time_desc">Hoje você evitou %s de rolagem inútil</string>
+    <string name="dashboard_videos_avoided">~%d vídeos a menos poluindo sua mente</string>
+    <string name="dashboard_impulses_blocked">%d impulsos de dopamina bloqueados hoje</string>
+    <string name="provocation_mode_title">Modo Choque de Consciência</string>
+    <string name="provocation_mode_desc">Avisos reflexivos na abertura de apps para quebrar o transe da dopamina</string>
+    <string name="strict_mode_title">Modo Inviolável (Hardcore)</string>
+    <string name="strict_mode_desc">Trava limites até a meia-noite ou exige desafio complexo contra recaídas</string>
+    <string name="strict_mode_midnight_locked_msg">🔒 Modo Inviolável Ativo: Configurações travadas até a meia-noite para proteger seu foco!</string>
+    <string name="strict_challenge_title">Desafio de Fricção de Foco</string>
+    <string name="strict_challenge_instruction">Para desbloquear, digite esta sequência de 30 caracteres sem colar:</string>
+    <string name="strict_challenge_confirm">Desbloquear Configurações</string>
+    <string name="alert_app_total_limit_title">Blockfy • Limite Geral Atingido!</string>
+    <string name="toast_app_total_limit_reached">Limite diário de %1$d min do %2$s como um todo atingido!</string>
 </resources>

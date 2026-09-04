@@ -61,5 +61,32 @@ data class AppSettings(
         blockedEnd = 1439,
         blockedTimer = 0,
         features = emptyList()
-    )
+    ),
+    val facebook: App = App(
+        name = "Facebook",
+        blocked = false,
+        blockedStart = 0,
+        blockedEnd = 1439,
+        blockedTimer = 0,
+        features = listOf(
+            Feature(
+                name = "Reels",
+                enabled = true,
+                startTime = 0,
+                endTime = 1439,
+            )
+        )
+    ),
+    val x: App = App(
+        name = "X",
+        blocked = false,
+        blockedStart = 0,
+        blockedEnd = 1439,
+        blockedTimer = 0,
+        features = emptyList()
+    ),
+    val provocationModeEnabled: Boolean = true,
+    val strictModeEnabled: Boolean = false,
+    val strictModeType: String = "MIDNIGHT",
+    val strictModeLockedUntilEpoch: Long = 0L
 )
