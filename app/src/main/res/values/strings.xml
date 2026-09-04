@@ -67,7 +67,7 @@
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
 
-    <string name="alert_limit_title">Blockfy • Limit Reached!</string>
+    <string name="alert_limit_title">Blockfy • Limit Reached</string>
     <string name="alert_warning_title">Blockfy • Time Alert</string>
     <string name="toast_limit_reached">Daily limit of %1$d min of %2$s reached today!</string>
     <string name="toast_remaining_minutes">%1$d minutes remaining for %2$s today!</string>
@@ -103,16 +103,16 @@
     <string name="block_x_summary">Control doomscrolling and daily limits on X</string>
     <string name="dashboard_saved_time_title">Life Economy &amp; Focus</string>
     <string name="dashboard_saved_time_desc">Today you avoided %s of useless scrolling</string>
-    <string name="dashboard_videos_avoided">~%d fewer videos polluting your mind</string>
-    <string name="dashboard_impulses_blocked">%d dopamine impulses blocked today</string>
-    <string name="provocation_mode_title">Mindfulness Shock Mode</string>
+    <string name="dashboard_videos_avoided">~%d fewer videos on your mind</string>
+    <string name="dashboard_impulses_blocked">%d impulses blocked today</string>
+    <string name="provocation_mode_title">Mindfulness Messages</string>
     <string name="provocation_mode_desc">Show reality-check quotes upon opening to snap out of the dopamine trance</string>
     <string name="strict_mode_title">Hardcore Strict Mode</string>
     <string name="strict_mode_desc">Lock settings until midnight or require complex challenge to prevent relapse</string>
-    <string name="strict_mode_midnight_locked_msg">🔒 Strict Mode Active: Settings are locked until midnight to protect your focus!</string>
+    <string name="strict_mode_midnight_locked_msg">Strict Mode Active: Settings are locked until midnight to protect your focus.</string>
     <string name="strict_challenge_title">Focus Friction Challenge</string>
     <string name="strict_challenge_instruction">To unlock, type this 30-character sequence manually without copying:</string>
     <string name="strict_challenge_confirm">Unlock Settings</string>
-    <string name="alert_app_total_limit_title">Blockfy • App Limit Reached!</string>
+    <string name="alert_app_total_limit_title">Blockfy • App Limit Reached</string>
     <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached!</string>
 </resources>

@@ -174,14 +174,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private fun handleTrackedApp(pkg: String, appName: String, appConfig: App, root: AccessibilityNodeInfo) {
         val now = System.currentTimeMillis()
 
-        // 1. Provocation on App Entry (Mindfulness shock to snap out of trance)
+        // 1. Provocation on App Entry (Mindfulness to snap out of automatic loop)
         if (settings.provocationModeEnabled) {
             val lastEntryTime = lastAppEntryProvocation[appName] ?: 0L
             if (now - lastEntryTime > 210_000L) { // At most once every 3.5 min
                 lastAppEntryProvocation[appName] = now
                 val quote = MindfulnessProvocationEngine.getRandomAppEntryQuote()
-                showOverlayBanner("Blockfy • Choque de Realidade", quote, isFinal = false, customIcon = "🧠", customBorderColor = Color.parseColor("#7C83FD"))
-                triggerVibration(isFinal = false)
+                showOverlayBanner("Blockfy", quote, isFinal = false, customBorderColor = Color.parseColor("#7C83FD"))
             }
         }
 
@@ -232,14 +231,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             return
         }
 
-        // 4. Provocation on Short Videos Entry (Deep Reflection Shock)
+        // 4. Provocation on Short Videos Entry (Deep Reflection)
         if (settings.provocationModeEnabled) {
             val lastReelsTime = lastReelsProvocation[appName] ?: 0L
             if (now - lastReelsTime > 180_000L) { // At most once every 3 min
                 lastReelsProvocation[appName] = now
                 val reflectionQuote = MindfulnessProvocationEngine.getRandomReelsQuote()
-                showOverlayBanner("Blockfy • Pare e Reflita", reflectionQuote, isFinal = false, customIcon = "⚡", customBorderColor = Color.parseColor("#F59E0B"))
-                triggerVibration(isFinal = false)
+                showOverlayBanner("Blockfy", reflectionQuote, isFinal = false, customBorderColor = Color.parseColor("#7C83FD"))
             }
         }
 
@@ -497,72 +495,63 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         title: String,
         message: String,
         isFinal: Boolean,
-        customIcon: String? = null,
         customBorderColor: Int? = null
     ) {
         serviceScope.launch(Dispatchers.Main) {
             try {
                 val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                removeOverlayView()
+                dismissCurrentOverlayImmediate()
 
                 val density = resources.displayMetrics.density
                 fun dp(dp: Int) = (dp * density).toInt()
 
                 val container = LinearLayout(this@ReelsBlockAccessibilityService).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    gravity = Gravity.CENTER_VERTICAL
-                    val padH = dp(16)
-                    val padV = dp(12)
+                    orientation = LinearLayout.VERTICAL
+                    val padH = dp(18)
+                    val padV = dp(14)
                     setPadding(padH, padV, padH, padV)
-                    elevation = dp(14).toFloat()
+                    elevation = dp(16).toFloat()
 
                     val strokeColor = customBorderColor ?: if (isFinal) Color.parseColor("#FF5252") else Color.parseColor("#7C83FD")
-                    val bgColor = if (isFinal) Color.parseColor("#1C132A") else Color.parseColor("#101528")
+                    val bgColor = if (isFinal) Color.parseColor("#1B1226") else Color.parseColor("#101426")
 
                     val shape = GradientDrawable().apply {
                         this.shape = GradientDrawable.RECTANGLE
-                        cornerRadius = dp(20).toFloat()
+                        cornerRadius = dp(18).toFloat()
                         setColor(bgColor)
-                        setStroke(dp(2), strokeColor)
+                        setStroke(dp(1).coerceAtLeast(1), strokeColor)
                     }
                     background = shape
-                }
 
-                val iconView = TextView(this@ReelsBlockAccessibilityService).apply {
-                    text = customIcon ?: if (isFinal) "🛑" else "⏳"
-                    textSize = 22f
-                    val marginEnd = dp(12)
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, marginEnd, 0)
-                    }
-                }
-                container.addView(iconView)
-
-                val textColumn = LinearLayout(this@ReelsBlockAccessibilityService).apply {
-                    orientation = LinearLayout.VERTICAL
-                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    // Start invisible and slightly above for smooth slide-in
+                    alpha = 0f
+                    translationY = -dp(24).toFloat()
                 }
 
                 val titleView = TextView(this@ReelsBlockAccessibilityService).apply {
-                    text = title
-                    textSize = 13f
+                    text = title.uppercase()
+                    textSize = 11f
+                    letterSpacing = 0.08f
                     setTypeface(typeface, Typeface.BOLD)
-                    setTextColor(if (isFinal) Color.parseColor("#FF8A80") else Color.parseColor("#B4B9FE"))
+                    setTextColor(if (isFinal) Color.parseColor("#FF6E6E") else Color.parseColor("#9EA6FF"))
                 }
-                textColumn.addView(titleView)
+                container.addView(titleView)
 
                 val msgView = TextView(this@ReelsBlockAccessibilityService).apply {
                     text = message
-                    textSize = 12f
-                    setTextColor(Color.WHITE)
-                    setLineSpacing(dp(2).toFloat(), 1f)
+                    textSize = 13f
+                    setTypeface(typeface, Typeface.NORMAL)
+                    setTextColor(Color.parseColor("#F8FAFC"))
+                    setLineSpacing(dp(3).toFloat(), 1f)
+                    val marginTop = dp(4)
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(0, marginTop, 0, 0)
+                    }
                 }
-                textColumn.addView(msgView)
-
-                container.addView(textColumn)
+                container.addView(msgView)
 
                 val wrapper = FrameLayout(this@ReelsBlockAccessibilityService).apply {
                     val marginH = dp(16)
@@ -586,11 +575,27 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 wm.addView(wrapper, params)
                 currentOverlayView = wrapper
 
-                // Auto dismiss after 4.5 seconds
+                // Smooth Entrance Animation (fade in & slide down)
+                container.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(350L)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
+                    .start()
+
+                // Auto dismiss with Smooth Exit Animation after 4.5 seconds
                 serviceScope.launch(Dispatchers.Main) {
                     delay(4500L)
                     if (currentOverlayView == wrapper) {
-                        removeOverlayView()
+                        container.animate()
+                            .alpha(0f)
+                            .translationY(-dp(24).toFloat())
+                            .setDuration(300L)
+                            .setInterpolator(android.view.animation.AccelerateInterpolator())
+                            .withEndAction {
+                                removeOverlayView(wrapper)
+                            }
+                            .start()
                     }
                 }
             } catch (e: Exception) {
@@ -599,12 +604,27 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun removeOverlayView() {
+    private fun dismissCurrentOverlayImmediate() {
         try {
-            currentOverlayView?.let {
+            currentOverlayView?.let { view ->
                 val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                wm.removeView(it)
+                wm.removeView(view)
                 currentOverlayView = null
+            }
+        } catch (e: Exception) {
+            currentOverlayView = null
+        }
+    }
+
+    private fun removeOverlayView(specificView: View? = null) {
+        try {
+            val target = specificView ?: currentOverlayView
+            if (target != null) {
+                if (currentOverlayView == target) {
+                    currentOverlayView = null
+                }
+                val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                wm.removeView(target)
             }
         } catch (e: Exception) {
             currentOverlayView = null
