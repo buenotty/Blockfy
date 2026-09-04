@@ -1,6 +1,7 @@
 package com.robingebert.blokky.feature_accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -71,6 +72,22 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+
+        try {
+            val info = serviceInfo ?: AccessibilityServiceInfo()
+            info.packageNames = arrayOf(
+                "com.instagram.android",
+                "com.google.android.youtube",
+                "com.zhiliaoapp.musically",
+                "com.facebook.katana",
+                "com.twitter.android"
+            )
+            info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+            serviceInfo = info
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error setting packageNames on AccessibilityServiceInfo", e)
+        }
+
         serviceScope.launch {
             try {
                 dataStore.appSettingsFlow.collect { latest ->
