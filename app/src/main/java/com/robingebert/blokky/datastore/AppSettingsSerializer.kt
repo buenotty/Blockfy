@@ -9,16 +9,22 @@ import java.io.OutputStream
 @Suppress("BlockingMethodInNonBlockingContext")
 object AppSettingsSerializer : Serializer<AppSettings> {
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        encodeDefaults = true
+    }
+
     override val defaultValue: AppSettings
         get() = AppSettings()
 
     override suspend fun readFrom(input: InputStream): AppSettings {
         return try {
-            Json.decodeFromString(
+            json.decodeFromString(
                 deserializer = AppSettings.serializer(),
                 string = input.readBytes().decodeToString()
             )
-        } catch (e: SerializationException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             defaultValue
         }

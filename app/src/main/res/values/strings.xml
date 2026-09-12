@@ -115,4 +115,17 @@
     <string name="strict_challenge_confirm">Unlock Settings</string>
     <string name="alert_app_total_limit_title">Blockfy • App Limit Reached</string>
     <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached!</string>
+
+    <string name="bank_protection_title">Anti-Bank Conflict Protection</string>
+    <string name="bank_protection_desc">Auto-pauses Blockfy when banking apps open to prevent security alerts</string>
+    <string name="bank_usage_access_needed">Usage Access permission required to detect banking apps</string>
+    <string name="btn_allow_usage_access">Grant Permission</string>
+    <string name="bank_adb_active_badge">Instant Mode: 100% automated via ADB</string>
+    <string name="bank_standard_active_badge">Active: Auto-pauses on bank open, alerts to reactivate on exit</string>
+    <string name="bank_dialog_title">Banking Protection Guide</string>
+    <string name="bank_dialog_explanation">Digital banks (Nubank, Itaú, Bradesco, Santander, etc.) detect active accessibility services and block user access for security reasons. Blockfy solves this automatically.</string>
+    <string name="bank_dialog_how_it_works_title">1. How Blockfy Protects You</string>
+    <string name="bank_dialog_how_it_works_desc">The moment you open any banking app, Blockfy immediately disables its Accessibility Service in real-time. The bank opens cleanly with zero security warnings.</string>
+    <string name="bank_dialog_adb_title">2. 100% Invisible Auto-Reactivation (via ADB)</string>
+    <string name="bank_dialog_adb_desc">To let Blockfy automatically turn back on when you close the bank without touching notifications, grant the secure settings permission once via USB/ADB:</string>
 </resources>

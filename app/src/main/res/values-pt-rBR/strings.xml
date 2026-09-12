@@ -115,4 +115,17 @@
     <string name="strict_challenge_confirm">Desbloquear Configurações</string>
     <string name="alert_app_total_limit_title">Blockfy • Limite Geral Atingido</string>
     <string name="toast_app_total_limit_reached">Limite diário de %1$d min do %2$s como um todo atingido!</string>
+
+    <string name="bank_protection_title">Proteção contra Conflito com Bancos</string>
+    <string name="bank_protection_desc">Pausa o Blockfy automaticamente ao abrir bancos para evitar bloqueios de segurança</string>
+    <string name="bank_usage_access_needed">Requer permissão de Acesso de Uso para detectar bancos</string>
+    <string name="btn_allow_usage_access">Conceder Acesso</string>
+    <string name="bank_adb_active_badge">Modo Invisível: 100% automatizado via ADB</string>
+    <string name="bank_standard_active_badge">Ativo: Pausa ao entrar no banco e avisa ao sair</string>
+    <string name="bank_dialog_title">Como Funciona a Proteção Bancária</string>
+    <string name="bank_dialog_explanation">Bancos digitais (Nubank, Itaú, Bradesco, Santander, Inter, etc.) detectam serviços de acessibilidade e bloqueiam o acesso por segurança contra vírus. O Blockfy resolve isso de forma inteligente.</string>
+    <string name="bank_dialog_how_it_works_title">1. Como o Blockfy te protege</string>
+    <string name="bank_dialog_how_it_works_desc">No instante em que você abre um app de banco, o Blockfy desativa seu próprio serviço de acessibilidade em milissegundos. O banco abre limpo, sem avisos de perigo.</string>
+    <string name="bank_dialog_adb_title">2. Reativação 100% Invisível (via ADB)</string>
+    <string name="bank_dialog_adb_desc">Para o Blockfy religar sozinho assim que você fechar o banco (sem você precisar tocar em nada), execute este comando uma única vez via ADB:</string>
 </resources>

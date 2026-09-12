@@ -41,6 +41,8 @@ Whether you're dealing with ADHD, striving for a digital detox, or simply want t
   - Once reached, short videos are locked until midnight.
 - ⏰ **Custom Scheduled Focus Windows**:
   - Choose specific time intervals during the day (e.g. 09:00 to 18:00) to enforce blocking.
+- 🛡️ **Proteção Bancária Automática (Zero Conflitos com Nubank, Itaú, etc)**:
+  - Detecta quando qualquer app financeiro é aberto e desativa o serviço de acessibilidade em tempo real para que os bancos não detectem nem bloqueiem seu acesso. Ao fechar o banco, o Blockfy reativa automaticamente (Modo Invisível via ADB) ou via notificação de 1 toque!
 - 🔄 **In-App Self Updater (Atualizador Automático OTA)**:
   - O Blockfy verifica novas versões diretamente na API do GitHub, exibe as notas da atualização, baixa o APK com barra de progresso em tempo real e inicia a instalação nativa do Android com um toque, sem precisar abrir o navegador ou baixar manualmente!
 - 🔒 **100% Private & Open Source**:

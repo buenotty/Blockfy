@@ -88,5 +88,6 @@ data class AppSettings(
     val provocationModeEnabled: Boolean = true,
     val strictModeEnabled: Boolean = false,
     val strictModeType: String = "MIDNIGHT",
-    val strictModeLockedUntilEpoch: Long = 0L
+    val strictModeLockedUntilEpoch: Long = 0L,
+    val bankProtectionEnabled: Boolean = true
 )
