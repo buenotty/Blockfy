@@ -9,7 +9,7 @@
     <string name="accessibility_inactive">Not granted. Tap here to enable.</string>
 
     <string name="accessibility_dialog_title">How to Activate Blockfy</string>
-    <string name="accessibility_dialog_desc">Blockfy needs the Accessibility Service strictly to detect Reels/Shorts and bring you back to the home feed. No data is collected and the app operates 100% offline.</string>
+    <string name="accessibility_dialog_desc" formatted="false">Blockfy needs the Accessibility Service strictly to detect Reels/Shorts and bring you back to the home feed. No data is collected and the app operates 100% offline.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">If Google Play Protect warns you when installing the APK, tap \"More details\" and then \"Install anyway\".</string>
@@ -36,7 +36,7 @@
     <string name="support_creator_title">Support the Creator</string>
     <string name="support_creator_subtitle">Enjoying Blockfy? Help keep the project active and free.</string>
     <string name="support_dialog_title">Support Blockfy</string>
-    <string name="support_dialog_desc">Blockfy is 100% open-source, free, and ad-free. Any Pix or sponsorship contribution directly supports development and new features!</string>
+    <string name="support_dialog_desc" formatted="false">Blockfy is 100% open-source, free, and ad-free. Any Pix or sponsorship contribution directly supports development and new features!</string>
     <string name="pix_key_label">Random Pix Key:</string>
     <string name="copy_pix_btn">Copy Pix Key</string>
     <string name="pix_copied_toast">Pix key copied to clipboard!</string>
@@ -51,8 +51,8 @@
     <string name="fork_author_role">Fork Author &amp; Maintainer</string>
     <string name="original_author_role">Original Blokky Creator</string>
 
-    <string name="privacy_title">Privacy &amp; Security (100% Safe)</string>
-    <string name="privacy_desc">• Verified on VirusTotal: 0 detections across 70+ antiviruses (100% clean and safe).\n• Zero Internet permission: mathematically impossible to leak any user data.\n• Accessibility Service is strictly used to exit short videos and return to feed.</string>
+    <string name="privacy_title" formatted="false">Privacy &amp; Security (100% Safe)</string>
+    <string name="privacy_desc" formatted="false">• Verified on VirusTotal: 0 detections across 70+ antiviruses (100% clean and safe).\n• Zero Internet permission: mathematically impossible to leak any user data.\n• Accessibility Service is strictly used to exit short videos and return to feed.</string>
     <string name="share_app_title">Share Blockfy</string>
 
     <string name="settings_dialog_title">Settings: %1$s</string>

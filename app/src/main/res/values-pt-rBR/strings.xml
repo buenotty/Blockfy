@@ -9,7 +9,7 @@
     <string name="accessibility_inactive">Não ativado. Toque aqui para ativar.</string>
 
     <string name="accessibility_dialog_title">Como Ativar o Blockfy</string>
-    <string name="accessibility_dialog_desc">O Blockfy precisa do Serviço de Acessibilidade apenas para detectar a tela de Reels/Shorts e retornar ao feed principal. Não coletamos dados e o app funciona 100% offline.</string>
+    <string name="accessibility_dialog_desc" formatted="false">O Blockfy precisa do Serviço de Acessibilidade apenas para detectar a tela de Reels/Shorts e retornar ao feed principal. Não coletamos dados e o app funciona 100% offline.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">Se ao instalar o APK aparecer o alerta do Play Protect, toque em \"Mais detalhes\" e depois em \"Instalar assim mesmo\".</string>
@@ -36,7 +36,7 @@
     <string name="support_creator_title">Apoiar o Criador</string>
     <string name="support_creator_subtitle">Gostou do Blockfy? Ajude a manter o projeto ativo via Pix.</string>
     <string name="support_dialog_title">Apoiar o Blockfy</string>
-    <string name="support_dialog_desc">O Blockfy é 100% código aberto, gratuito e sem anúncios. Qualquer apoio via Pix ajuda a manter o app e o desenvolvimento de novas funções!</string>
+    <string name="support_dialog_desc" formatted="false">O Blockfy é 100% código aberto, gratuito e sem anúncios. Qualquer apoio via Pix ajuda a manter o app e o desenvolvimento de novas funções!</string>
     <string name="pix_key_label">Chave Pix Aleatória:</string>
     <string name="copy_pix_btn">Copiar Chave Pix</string>
     <string name="pix_copied_toast">Chave Pix copiada para a área de transferência!</string>
@@ -51,8 +51,8 @@
     <string name="fork_author_role">Autor do Fork &amp; Mantenedor do Blockfy</string>
     <string name="original_author_role">Criador do Blokky original</string>
 
-    <string name="privacy_title">Privacidade e Segurança (100% Seguro)</string>
-    <string name="privacy_desc">• Verificado no VirusTotal: 0 detecções em mais de 70 antivírus (100% seguro e livre de ameaças).\n• Zero permissão de Internet: o aplicativo não tem acesso à rede, sendo tecnicamente impossível vazar qualquer dado seu.\n• O Serviço de Acessibilidade é utilizado estritamente para fechar vídeos curtos e retornar à tela inicial.</string>
+    <string name="privacy_title" formatted="false">Privacidade e Segurança (100% Seguro)</string>
+    <string name="privacy_desc" formatted="false">• Verificado no VirusTotal: 0 detecções em mais de 70 antivírus (100% seguro e livre de ameaças).\n• Zero permissão de Internet: o aplicativo não tem acesso à rede, sendo tecnicamente impossível vazar qualquer dado seu.\n• O Serviço de Acessibilidade é utilizado estritamente para fechar vídeos curtos e retornar à tela inicial.</string>
     <string name="share_app_title">Compartilhar Blockfy</string>
 
     <string name="settings_dialog_title">Configurações: %1$s</string>
