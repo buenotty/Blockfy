@@ -1,7 +1,9 @@
 package com.robingebert.blokky.updater
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -135,7 +137,7 @@ object UpdateManager {
             }
 
             val totalBytes = connection.contentLengthLong
-            val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
+            val downloadDir = context.cacheDir
             val destFile = File(downloadDir, fileName)
 
             if (destFile.exists()) {
@@ -160,6 +162,11 @@ object UpdateManager {
                         }
                     }
                     output.flush()
+
+                    if (totalBytes > 0L && totalRead < totalBytes) {
+                        destFile.delete()
+                        throw java.io.IOException("Incomplete APK download ($totalRead of $totalBytes bytes)")
+                    }
                 }
             }
 
@@ -195,7 +202,25 @@ object UpdateManager {
             setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            clipData = ClipData.newRawUri("Blockfy Update", uri)
         }
+
+        val resInfoList = context.packageManager.queryIntentActivities(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        for (resolveInfo in resInfoList) {
+            try {
+                context.grantUriPermission(
+                    resolveInfo.activityInfo.packageName,
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                // Ignore per-package permission grant errors
+            }
+        }
+
         context.startActivity(intent)
     }
 }
