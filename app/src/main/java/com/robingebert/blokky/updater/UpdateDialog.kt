@@ -40,11 +40,21 @@ sealed interface UpdateState {
 @Composable
 fun UpdateDialog(
     currentVersion: String,
+    initialInfo: AppUpdateInfo? = null,
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var state by remember { mutableStateOf<UpdateState>(UpdateState.Checking) }
+    var state by remember {
+        mutableStateOf<UpdateState>(
+            if (initialInfo != null) {
+                if (initialInfo.isUpdateAvailable) UpdateState.Available(initialInfo)
+                else UpdateState.UpToDate(currentVersion)
+            } else {
+                UpdateState.Checking
+            }
+        )
+    }
 
     fun checkUpdates() {
         state = UpdateState.Checking
@@ -63,7 +73,9 @@ fun UpdateDialog(
     }
 
     LaunchedEffect(Unit) {
-        checkUpdates()
+        if (initialInfo == null) {
+            checkUpdates()
+        }
     }
 
     Dialog(onDismissRequest = {

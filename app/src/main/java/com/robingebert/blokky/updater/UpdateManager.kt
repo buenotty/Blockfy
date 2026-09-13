@@ -32,6 +32,15 @@ object UpdateManager {
 
     private const val GITHUB_API_URL = "https://api.github.com/repos/buenotty/Blockfy/releases/latest"
 
+    fun getCurrentVersion(context: Context): String {
+        return try {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            pInfo?.versionName ?: "1.0.0"
+        } catch (e: Exception) {
+            "1.0.0"
+        }
+    }
+
     suspend fun checkForUpdates(currentVersion: String): Result<AppUpdateInfo> = withContext(Dispatchers.IO) {
         runCatching {
             val url = URL(GITHUB_API_URL)

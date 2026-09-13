@@ -26,10 +26,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +46,11 @@ import androidx.navigation.compose.rememberNavController
 import com.robingebert.blokky.ui.theme.BlokkyTheme
 import com.robingebert.blokky.navigation.AppNavigation
 import com.robingebert.blokky.navigation.Screen
+import com.robingebert.blokky.updater.AppUpdateInfo
+import com.robingebert.blokky.updater.UpdateDialog
+import com.robingebert.blokky.updater.UpdateManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -49,6 +60,24 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BlokkyTheme {
+                val context = LocalContext.current
+                val currentVersion = remember(context) { UpdateManager.getCurrentVersion(context) }
+                var availableUpdateInfo by remember { mutableStateOf<AppUpdateInfo?>(null) }
+                var showAutoUpdateDialog by remember { mutableStateOf(false) }
+
+                LaunchedEffect(Unit) {
+                    withContext(Dispatchers.IO) {
+                        UpdateManager.checkForUpdates(currentVersion).onSuccess { info ->
+                            if (info.isUpdateAvailable) {
+                                withContext(Dispatchers.Main) {
+                                    availableUpdateInfo = info
+                                    showAutoUpdateDialog = true
+                                }
+                            }
+                        }
+                    }
+                }
+
                 val navController = rememberNavController()
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                 val isAboutScreen = currentRoute == Screen.About.route
@@ -135,6 +164,14 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 )
+
+                if (showAutoUpdateDialog && availableUpdateInfo != null) {
+                    UpdateDialog(
+                        currentVersion = currentVersion,
+                        initialInfo = availableUpdateInfo,
+                        onDismissRequest = { showAutoUpdateDialog = false }
+                    )
+                }
             }
         }
     }
