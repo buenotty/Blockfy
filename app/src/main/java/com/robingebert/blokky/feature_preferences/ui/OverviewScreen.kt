@@ -1,7 +1,10 @@
 package com.robingebert.blokky.feature_preferences.ui
 
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
+import android.provider.Settings
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
@@ -636,15 +639,47 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
 }
 
 fun Context.isAccessibilityGranted(): Boolean {
-    val am = this.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-    val runningServices =
-        am.getEnabledAccessibilityServiceList(AccessibilityEvent.TYPE_VIEW_CLICKED)
-    return runningServices.any { service ->
-        service.id.contains("ReelsBlockAccessibilityService") &&
-        (service.id.startsWith("${packageName}/") ||
-         service.id.startsWith("com.robingebert.blokky/") ||
-         service.id.startsWith("com.buenotty.blockfy/"))
+    // 1. Primary check via Settings.Secure (most reliable across all Android versions)
+    try {
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        if (!enabledServices.isNullOrBlank()) {
+            val colonSplitter = TextUtils.SimpleStringSplitter(':')
+            colonSplitter.setString(enabledServices)
+            while (colonSplitter.hasNext()) {
+                val componentName = colonSplitter.next()
+                if (componentName.contains("ReelsBlockAccessibilityService", ignoreCase = true) &&
+                    (componentName.contains(packageName, ignoreCase = true) ||
+                     componentName.contains("blokky", ignoreCase = true) ||
+                     componentName.contains("blockfy", ignoreCase = true))
+                ) {
+                    return true
+                }
+            }
+        }
+    } catch (e: Exception) {
+        // Fallback to AccessibilityManager below
     }
+
+    // 2. Secondary check via AccessibilityManager with FEEDBACK_ALL_MASK
+    try {
+        val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+        val runningServices = am?.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+        if (!runningServices.isNullOrEmpty()) {
+            return runningServices.any { service ->
+                service.id.contains("ReelsBlockAccessibilityService") &&
+                (service.id.contains(packageName) ||
+                 service.id.contains("blokky") ||
+                 service.id.contains("blockfy"))
+            }
+        }
+    } catch (e: Exception) {
+        // Ignored
+    }
+
+    return false
 }
 
 @Preview

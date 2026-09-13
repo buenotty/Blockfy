@@ -82,7 +82,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 "com.facebook.katana",
                 "com.twitter.android"
             )
-            info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or AccessibilityEvent.TYPE_VIEW_CLICKED
+            info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+                AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
+                AccessibilityEvent.TYPE_VIEW_CLICKED
             info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
             info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
             info.notificationTimeout = 100L
