@@ -269,40 +269,21 @@ fun UpdateDialog(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        if (!UpdateManager.canInstallPackages(context)) {
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = stringResource(R.string.update_permission_required),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onErrorContainer
-                                    )
+                        Button(
+                            onClick = {
+                                try {
+                                    UpdateManager.installApk(context, s.apkFile)
+                                } catch (e: Exception) {
+                                    // Fallback to open in browser
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/buenotty/Blockfy/releases/latest"))
+                                    context.startActivity(intent)
                                 }
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Button(
-                                onClick = { UpdateManager.openInstallPermissionSettings(context) },
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = BlockfyPrimary)
-                            ) {
-                                Text(stringResource(R.string.update_btn_grant_permission))
-                            }
-                        } else {
-                            Button(
-                                onClick = { UpdateManager.installApk(context, s.apkFile) },
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = BlockfyPrimary)
-                            ) {
-                                Text(stringResource(R.string.update_btn_install), fontWeight = FontWeight.Bold)
-                            }
+                            },
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = BlockfyPrimary)
+                        ) {
+                            Text(stringResource(R.string.update_btn_install), fontWeight = FontWeight.Bold)
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))

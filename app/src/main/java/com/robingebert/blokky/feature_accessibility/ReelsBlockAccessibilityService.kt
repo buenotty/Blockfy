@@ -70,30 +70,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private var currentOverlayView: View? = null
 
-    private val bankReceiver = object : android.content.BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == BankProtectionManager.ACTION_BANK_DETECTED) {
-                Log.i("BlockfyService", "ACTION_BANK_DETECTED received! Disabling accessibility service immediately.")
-                stopAllTracking()
-                removeOverlayView()
-                disableSelf()
-            }
-        }
-    }
-
     override fun onServiceConnected() {
         super.onServiceConnected()
-
-        try {
-            val filter = android.content.IntentFilter(BankProtectionManager.ACTION_BANK_DETECTED)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                registerReceiver(bankReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-            } else {
-                registerReceiver(bankReceiver, filter)
-            }
-        } catch (e: Exception) {
-            Log.e("BlockfyService", "Error registering bankReceiver", e)
-        }
 
         try {
             val info = serviceInfo ?: AccessibilityServiceInfo()
@@ -104,19 +82,19 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 "com.facebook.katana",
                 "com.twitter.android"
             )
+            info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or AccessibilityEvent.TYPE_VIEW_CLICKED
             info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+            info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
+            info.notificationTimeout = 100L
             serviceInfo = info
         } catch (e: Exception) {
-            Log.e("BlockfyService", "Error setting packageNames on AccessibilityServiceInfo", e)
+            Log.e("BlockfyService", "Error setting AccessibilityServiceInfo", e)
         }
 
         serviceScope.launch {
             try {
                 dataStore.appSettingsFlow.collect { latest ->
                     settings = latest
-                    if (settings.bankProtectionEnabled && BankProtectionManager.hasUsageStatsPermission(this@ReelsBlockAccessibilityService)) {
-                        BankProtectionMonitorService.start(this@ReelsBlockAccessibilityService)
-                    }
                 }
             } catch (e: Exception) {
                 Log.e("BlockfyService", "Error collecting app settings", e)
@@ -136,15 +114,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
             val pkg = event?.packageName?.toString() ?: return
-
-            if (settings.bankProtectionEnabled && BankAppDetector.isBankApp(pkg)) {
-                Log.w("BlockfyService", "Bank app event detected ($pkg). Disabling accessibility service immediately!")
-                stopAllTracking()
-                removeOverlayView()
-                disableSelf()
-                return
-            }
-
             val root = rootInActiveWindow ?: return
 
             when (pkg) {
@@ -171,11 +140,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            unregisterReceiver(bankReceiver)
-        } catch (e: Exception) {
-            // Ignored if not registered
-        }
         stopAllTracking()
         serviceScope.cancel()
         removeOverlayView()

@@ -67,12 +67,6 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         }
     }
 
-    fun setBankProtection(enabled: Boolean) {
-        viewModelScope.launch {
-            dataStoreManager.update(appSettings.value.copy(bankProtectionEnabled = enabled))
-        }
-    }
-
     fun setStrictMode(enabled: Boolean, type: String = "MIDNIGHT") {
         viewModelScope.launch {
             val lockedUntil = if (enabled && type == "MIDNIGHT") {

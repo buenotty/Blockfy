@@ -125,13 +125,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         AccessibilityServiceCard(isAccessibilityGranted)
         Spacer(modifier = Modifier.height(14.dp))
 
-        // 2.1 Card de Proteção contra Bloqueio em Bancos
-        com.robingebert.blokky.feature_preferences.ui.composables.BankProtectionCard(
-            enabled = appSettings.bankProtectionEnabled,
-            onCheckedChange = { overviewViewModel.setBankProtection(it) }
-        )
-        Spacer(modifier = Modifier.height(14.dp))
-
         // 3. Toggles de Mentalidade e Modo Inviolável
         Card(
             modifier = Modifier.fillMaxWidth(),
