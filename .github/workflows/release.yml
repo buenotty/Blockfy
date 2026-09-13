@@ -2,39 +2,45 @@ name: Build and Release Signed APK
 
 permissions:
   contents: write
+
 on:
   push:
     tags: 
       - 'v*.*.*'
   workflow_dispatch:
+
 jobs:
-  build:
-    name: Build Signed APK
+  build-and-release:
+    name: Build Signed APK and Publish Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: echo $GITHUB_REF
-      - uses: victorbnl/build-signed-apk@main
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          keystore_b64: ${{ secrets.KEYSTORE }}
-          keystore_password: ${{ secrets.KEYSTORE_PASSWORD }}
-          key_alias: ${{ secrets.KEY_ALIAS }}
-          key_password: ${{ secrets.KEY_PASSWORD }}
-          java_version: '17'
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Signed APK with Gradle
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: build-output
-          path: app/build/outputs/apk/release/app-release.apk
-  deploy:
-    name: Deploy APK
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-      - uses: softprops/action-gh-release@v1
-        with:
-          files: app-release.apk
+          files: app/build/outputs/apk/release/app-release.apk
+          name: Blockfy ${{ github.ref_name }} — Zero Conflito com Bancos
+          body: |
+            ## 🛡️ Blockfy ${{ github.ref_name }}
+            
+            ### ✨ O que há de novo:
+            - **Zero Conflito com Bancos Digitais (Nubank, Itaú, etc)**: Arquitetura limpa inspirada no StayFree.
+            - **Isolamento Estrito**: Removida a flag invasiva `flagRetrieveInteractiveWindows` e removida a permissão `REQUEST_INSTALL_PACKAGES`.
+            - **100% Automático e Sem Desgaste**: O serviço opera continuamente em segundo plano sem exigir comandos ADB nem reativações manuais.
+          draft: false
+          prerelease: false
