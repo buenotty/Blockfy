@@ -296,6 +296,27 @@ object AdultContentDetector {
         "Sua versão do futuro está se envergonhando dessa escolha. Levante a cabeça."
     )
 
+    fun isBlockedHost(host: String?): Boolean {
+        if (host.isNullOrBlank()) return false
+        val hostname = normalize(host).trim().trim('.')
+        if (hostname.isEmpty()) return false
+
+        for (domain in ADULT_DOMAINS) {
+            val needle = normalize(domain).trim('.')
+            if (needle.isEmpty()) continue
+            if (hostname == needle || hostname.endsWith(".$needle")) {
+                return true
+            }
+            if (!needle.contains('.')) {
+                val labels = hostname.split('.')
+                if (labels.any { it == needle }) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun isAdultContent(rawText: String?): Boolean {
         if (rawText.isNullOrBlank()) return false
 

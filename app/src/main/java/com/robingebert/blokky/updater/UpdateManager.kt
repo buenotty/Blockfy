@@ -1,19 +1,9 @@
 package com.robingebert.blokky.updater
 
-import android.content.ClipData
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.Settings
-import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -83,8 +73,6 @@ object UpdateManager {
                 throw Exception("No APK found in the latest release")
             }
 
-            val isNewer = isNewerVersion(remoteVersion, currentVersion)
-
             AppUpdateInfo(
                 tagName = tagName,
                 versionName = remoteVersion,
@@ -93,7 +81,7 @@ object UpdateManager {
                 downloadUrl = downloadUrl,
                 fileName = fileName,
                 apkSize = size,
-                isUpdateAvailable = isNewer
+                isUpdateAvailable = isNewerVersion(remoteVersion, currentVersion)
             )
         }
     }
@@ -110,126 +98,5 @@ object UpdateManager {
             if (r < l) return false
         }
         return false
-    }
-
-    suspend fun downloadApk(
-        context: Context,
-        downloadUrl: String,
-        fileName: String,
-        onProgress: (progress: Float, downloadedBytes: Long, totalBytes: Long) -> Unit
-    ): Result<File> = withContext(Dispatchers.IO) {
-        runCatching {
-            var currentUrl = downloadUrl
-            var connection: HttpURLConnection
-            var redirects = 0
-
-            // Handle HTTP 301, 302, 307 redirects commonly used by GitHub Releases -> Amazon S3
-            while (true) {
-                val url = URL(currentUrl)
-                connection = (url.openConnection() as HttpURLConnection).apply {
-                    connectTimeout = 15000
-                    readTimeout = 30000
-                    instanceFollowRedirects = false
-                    setRequestProperty("User-Agent", "Blockfy-App")
-                }
-
-                val status = connection.responseCode
-                if (status in 300..399) {
-                    val newUrl = connection.getHeaderField("Location")
-                    if (newUrl != null && redirects < 5) {
-                        currentUrl = newUrl
-                        redirects++
-                        continue
-                    }
-                }
-                break
-            }
-
-            val totalBytes = connection.contentLengthLong
-            val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
-            val destFile = File(downloadDir, fileName)
-
-            if (destFile.exists()) {
-                destFile.delete()
-            }
-
-            connection.inputStream.use { input ->
-                FileOutputStream(destFile).use { output ->
-                    val buffer = ByteArray(8 * 1024)
-                    var bytesRead: Int
-                    var totalRead = 0L
-
-                    while (input.read(buffer).also { bytesRead = it } != -1) {
-                        output.write(buffer, 0, bytesRead)
-                        totalRead += bytesRead
-
-                        if (totalBytes > 0) {
-                            val progress = totalRead.toFloat() / totalBytes.toFloat()
-                            withContext(Dispatchers.Main) {
-                                onProgress(progress, totalRead, totalBytes)
-                            }
-                        }
-                    }
-                    output.flush()
-
-                    if (totalBytes > 0L && totalRead < totalBytes) {
-                        destFile.delete()
-                        throw java.io.IOException("Incomplete APK download ($totalRead of $totalBytes bytes)")
-                    }
-                }
-            }
-
-            destFile
-        }
-    }
-
-    fun canInstallPackages(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.packageManager.canRequestPackageInstalls()
-        } else {
-            true
-        }
-    }
-
-    fun openInstallPermissionSettings(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                data = Uri.parse("package:${context.packageName}")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            context.startActivity(intent)
-        }
-    }
-
-    fun installApk(context: Context, apkFile: File) {
-        val uri = FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            apkFile
-        )
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/vnd.android.package-archive")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            clipData = ClipData.newRawUri("Blockfy Update", uri)
-        }
-
-        val resInfoList = context.packageManager.queryIntentActivities(
-            intent,
-            PackageManager.MATCH_DEFAULT_ONLY
-        )
-        for (resolveInfo in resInfoList) {
-            try {
-                context.grantUriPermission(
-                    resolveInfo.activityInfo.packageName,
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-            } catch (e: Exception) {
-                // Ignore per-package permission grant errors
-            }
-        }
-
-        context.startActivity(intent)
     }
 }
