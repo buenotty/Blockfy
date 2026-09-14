@@ -45,7 +45,6 @@ object BlockPolicy {
             ?: return BlockVerdict(BlockReason.NONE, "", packageName)
 
         val appConfig = appConfig(settings, appName)
-        val usedFeatureSeconds = featureSeconds(usage, appName)
         val usedTotalSeconds = totalSeconds(usage, appName)
 
         if (appConfig.appTotalDailyLimitMinutes > 0 &&
@@ -54,15 +53,26 @@ object BlockPolicy {
             return BlockVerdict(BlockReason.TOTAL_LIMIT, appName, packageName)
         }
 
-        if (appConfig.blocked && isWithinInterval(appConfig.blockedStart, appConfig.blockedEnd, minuteOfDay)) {
-            if (appConfig.dailyLimitMinutes <= 0) {
-                return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
-            }
-            if (usedFeatureSeconds >= appConfig.dailyLimitMinutes * 60L) {
-                return BlockVerdict(BlockReason.DAILY_LIMIT, appName, packageName)
-            }
-        }
+        return BlockVerdict(BlockReason.NONE, appName, packageName)
+    }
 
+    fun evaluateShorts(
+        appName: String,
+        settings: AppSettings,
+        usage: DailyUsage,
+        minuteOfDay: Int
+    ): BlockVerdict {
+        val packageName = TrackedPackages.ALL.entries.firstOrNull { it.value == appName }?.key ?: return BlockVerdict(BlockReason.NONE, appName, "")
+        val appConfig = appConfig(settings, appName)
+        if (!appConfig.blocked || !isWithinInterval(appConfig.blockedStart, appConfig.blockedEnd, minuteOfDay)) {
+            return BlockVerdict(BlockReason.NONE, appName, packageName)
+        }
+        if (appConfig.dailyLimitMinutes <= 0) {
+            return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
+        }
+        if (featureSeconds(usage, appName) >= appConfig.dailyLimitMinutes * 60L) {
+            return BlockVerdict(BlockReason.DAILY_LIMIT, appName, packageName)
+        }
         return BlockVerdict(BlockReason.NONE, appName, packageName)
     }
 

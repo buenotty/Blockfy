@@ -1,8 +1,13 @@
 package com.robingebert.blokky.feature_preferences.ui
 
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.VpnService
+import android.provider.Settings
+import android.text.TextUtils
+import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -70,6 +75,7 @@ import com.robingebert.blokky.R
 import com.robingebert.blokky.feature_preferences.OverviewViewModel
 import com.robingebert.blokky.feature_monitor.AppMonitorService
 import com.robingebert.blokky.feature_monitor.UsageAccess
+import com.robingebert.blokky.feature_preferences.ui.composables.AccessibilityServiceCard
 import com.robingebert.blokky.feature_preferences.ui.composables.UsageAccessCard
 import com.robingebert.blokky.feature_vpn.AdultBlockVpnService
 import com.robingebert.blokky.feature_preferences.ui.composables.BlockfyThemedAppIcon
@@ -103,6 +109,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
 
     var isUsageAccessGranted by remember { mutableStateOf(UsageAccess.isGranted(context)) }
+    var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -119,6 +126,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     LaunchedEffect(lifecycleState) {
         if (lifecycleState == Lifecycle.State.RESUMED) {
             isUsageAccessGranted = UsageAccess.isGranted(context)
+            isAccessibilityGranted = context.isAccessibilityGranted()
             if (isUsageAccessGranted) {
                 AppMonitorService.start(context)
             }
@@ -137,6 +145,8 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
         // 2. Card de Serviço de Acessibilidade
         UsageAccessCard(isUsageAccessGranted)
+        Spacer(modifier = Modifier.height(14.dp))
+        AccessibilityServiceCard(isAccessibilityGranted)
         Spacer(modifier = Modifier.height(14.dp))
 
         // 3. Toggles de Mentalidade e Modo Inviolável
@@ -306,7 +316,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.instagram.blocked,
-                enabled = isUsageAccessGranted,
+                enabled = isAccessibilityGranted,
                 title = stringResource(R.string.instagram_reels),
                 summary = instaSummary,
                 leadingIcon = {
@@ -348,7 +358,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.youtube.blocked,
-                enabled = isUsageAccessGranted,
+                enabled = isAccessibilityGranted,
                 title = stringResource(R.string.youtube_shorts),
                 summary = ytSummary,
                 leadingIcon = {
@@ -380,7 +390,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             // TikTok
             SwitchPreference(
                 value = appSettings.tiktok.blocked,
-                enabled = isUsageAccessGranted,
+                enabled = isAccessibilityGranted,
                 title = stringResource(R.string.tiktok_app),
                 summary = stringResource(R.string.block_tiktok_summary),
                 leadingIcon = {
@@ -422,7 +432,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.facebook.blocked,
-                enabled = isUsageAccessGranted,
+                enabled = isAccessibilityGranted,
                 title = stringResource(R.string.facebook_reels),
                 summary = fbSummary,
                 leadingIcon = {
@@ -460,7 +470,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.x.blocked,
-                enabled = isUsageAccessGranted,
+                enabled = isAccessibilityGranted,
                 title = stringResource(R.string.x_app),
                 summary = xSummary,
                 leadingIcon = {
@@ -710,6 +720,46 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
             }
         }
     }
+}
+
+fun Context.isAccessibilityGranted(): Boolean {
+    try {
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        if (!enabledServices.isNullOrBlank()) {
+            val colonSplitter = TextUtils.SimpleStringSplitter(':')
+            colonSplitter.setString(enabledServices)
+            while (colonSplitter.hasNext()) {
+                val componentName = colonSplitter.next()
+                if (componentName.contains("ReelsBlockAccessibilityService", ignoreCase = true) &&
+                    (componentName.contains(packageName, ignoreCase = true) ||
+                        componentName.contains("blokky", ignoreCase = true) ||
+                        componentName.contains("blockfy", ignoreCase = true))
+                ) {
+                    return true
+                }
+            }
+        }
+    } catch (_: Exception) {
+    }
+
+    try {
+        val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
+        val runningServices = am?.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+        if (!runningServices.isNullOrEmpty()) {
+            return runningServices.any { service ->
+                service.id.contains("ReelsBlockAccessibilityService") &&
+                    (service.id.contains(packageName) ||
+                        service.id.contains("blokky") ||
+                        service.id.contains("blockfy"))
+            }
+        }
+    } catch (_: Exception) {
+    }
+
+    return false
 }
 
 @Preview

@@ -28,7 +28,7 @@ O **Blockfy** foi criado com um princípio inegociável: **ferramentas essenciai
 - 💎 **100% Gratuito Para Sempre**: Nada de teste de 7 dias, nada de versão "premium".
 - 🚫 **Zero Anúncios**: Sem banners, sem pop-ups, sem propagandas em vídeo.
 - 🔒 **Privacidade Real**: O serviço de bloqueio funciona **100% offline no seu dispositivo**. Seus dados, histórico e hábitos nunca saem do seu celular.
-- 🛡️ **Zero Conflito com Bancos Digitais**: Sem serviço de acessibilidade e sem permissão de instalar APKs — a combinação que Nubank, Itaú, Inter e Bradesco tratam como malware. O Blockfy usa Acesso ao uso (a mesma API do StayFree) e nunca observa apps de banco.
+- 🛡️ **Zero Conflito com Bancos Digitais**: Acessibilidade isolada em Instagram/YouTube/TikTok/Facebook/X — sem overlay e sem permissão de instalar APKs. Nubank e outros bancos ficam fora da lista e nunca são lidos.
 
 ---
 
@@ -53,8 +53,12 @@ Para desativar o Escudo Anti-Pornô dentro do app, não basta clicar em um botã
 - **Copiar e colar é estritamente desabilitado**: o menu de colar do Android é bloqueado e qualquer colagem via atalho ou teclado é rejeitada na hora.
 - Só é liberado após digitar 100% dos caracteres, forçando seu córtex pré-frontal a retomar a consciência.
 
-### 🚫 4. Anti-Doomscrolling (apps inteiros, como o StayFree)
-- **Instagram, YouTube, TikTok, Facebook e X**: quando o bloqueio ou o limite diário está ativo, o app é interrompido na hora — sem raspar a interface e sem serviço de acessibilidade.
+### 🚫 4. Anti-Doomscrolling (Vídeos Curtos)
+- **Instagram Reels**: detecta a tela de Reels e devolve para o feed de amigos.
+- **YouTube Shorts**: detecta Shorts e volta para a aba inicial.
+- **TikTok**: fecha o app quando o limite diário é atingido.
+- **Facebook Reels**: bloqueia a reprodução de vídeos curtos.
+- **X (Twitter)**: controla a rolagem infinita.
 
 ### ⏳ 5. Limites Diários com Reset Automático à Meia-Noite
 - Defina uma cota diária de uso para cada app (ex.: 15 minutos por dia).
@@ -76,7 +80,7 @@ Para desativar o Escudo Anti-Pornô dentro do app, não basta clicar em um botã
 > **0 Detecções no VirusTotal — Aplicativo 100% Seguro e Auditado**
 
 - ✅ **0/70 no VirusTotal**: Totalmente livre de qualquer malware, adware ou spyware.
-- ✅ **Sem permissões perigosas**: Não declara Serviço de Acessibilidade, não pede para instalar outros APKs e não desenha overlay sobre outros apps.
+- ✅ **Sem permissões perigosas**: Sem overlay sobre outros apps e sem permissão de instalar APKs. A acessibilidade não observa bancos.
 - ✅ **Código Aberto no GitHub**: Qualquer pessoa pode auditar o código-fonte linha por linha.
 
 ---
@@ -95,10 +99,9 @@ Como o APK é distribuído de forma independente fora da Play Store:
 
 ## ⚙️ Como Ativar no seu Celular
 
-1. Abra o Blockfy e toque no card **Acesso ao uso**.
-2. Encontre o Blockfy na lista e ative o acesso.
-3. Volte ao app — o monitoramento no estilo StayFree começa sozinho.
-4. (Opcional) Ative o Escudo Anti-Pornô. O Android pede uma vez para criar a VPN de DNS; apps de banco ficam de fora.
+1. Abra o Blockfy e ative **Acesso ao uso** (limites de tempo do app).
+2. Ative a **Acessibilidade** (necessária para sair de Reels/Shorts e manter o feed).
+3. (Opcional) Ative o Escudo Anti-Pornô. O Android pede uma vez a VPN de DNS; apps de banco ficam de fora.
 
 ### 📱 Samsung (One UI), Motorola e Android 13+
 Se a opção de acesso ao uso não aparecer: Informações do app → 3 pontinhos → **Permitir configurações restritas**, depois volte e ative o Acesso ao uso.

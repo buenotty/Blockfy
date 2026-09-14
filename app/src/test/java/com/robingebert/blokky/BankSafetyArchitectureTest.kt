@@ -27,18 +27,25 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
-    fun scheduleBlocksInstagramInsideWindowWithoutReadingScreen() {
+    fun scheduleBlocksInstagramReelsNotTheWholeApp() {
         val settings = AppSettings(
             instagram = AppSettings().instagram.copy(blocked = true, blockedStart = 0, blockedEnd = 1439, dailyLimitMinutes = 0)
         )
-        val verdict = BlockPolicy.evaluate(
+        val wholeApp = BlockPolicy.evaluate(
             packageName = TrackedPackages.INSTAGRAM,
             settings = settings,
             usage = DailyUsage(),
             minuteOfDay = 12 * 60
         )
-        assertTrue(verdict.shouldBlock)
-        assertEquals(BlockReason.SCHEDULE, verdict.reason)
+        val shorts = BlockPolicy.evaluateShorts(
+            appName = "Instagram",
+            settings = settings,
+            usage = DailyUsage(),
+            minuteOfDay = 12 * 60
+        )
+        assertFalse(wholeApp.shouldBlock)
+        assertTrue(shorts.shouldBlock)
+        assertEquals(BlockReason.SCHEDULE, shorts.reason)
     }
 
     @Test
@@ -61,14 +68,14 @@ class BankSafetyArchitectureTest {
         val settings = AppSettings(
             youtube = AppSettings().youtube.copy(blocked = true, dailyLimitMinutes = 10)
         )
-        val underLimit = BlockPolicy.evaluate(
-            TrackedPackages.YOUTUBE,
+        val underLimit = BlockPolicy.evaluateShorts(
+            "YouTube",
             settings,
             DailyUsage(youtubeSeconds = 9 * 60),
             minuteOfDay = 60
         )
-        val overLimit = BlockPolicy.evaluate(
-            TrackedPackages.YOUTUBE,
+        val overLimit = BlockPolicy.evaluateShorts(
+            "YouTube",
             settings,
             DailyUsage(youtubeSeconds = 10 * 60),
             minuteOfDay = 60
@@ -119,24 +126,35 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
-    fun sourceManifestHasNoBankTriggerPermissions() {
+    fun sourceManifestKeepsBankSafeAccessibilityWithoutDropperPermissions() {
         val manifest = readAppFile("src/main/AndroidManifest.xml").readText()
-        assertFalse(manifest.contains("BIND_ACCESSIBILITY_SERVICE"))
+        val config = readAppFile("src/main/res/xml/accessibility_service_config.xml").readText()
+        assertTrue(manifest.contains("BIND_ACCESSIBILITY_SERVICE"))
+        assertTrue(manifest.contains("ReelsBlockAccessibilityService"))
         assertFalse(manifest.contains("REQUEST_INSTALL_PACKAGES"))
         assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
         assertFalse(manifest.contains("QUERY_ALL_PACKAGES"))
-        assertFalse(manifest.contains("AccessibilityService"))
         assertTrue(manifest.contains("PACKAGE_USAGE_STATS"))
-        assertTrue(manifest.contains("AppMonitorService"))
-        assertTrue(manifest.contains("AdultBlockVpnService"))
+        assertTrue(config.contains("com.instagram.android"))
+        assertTrue(config.contains("flagReportViewIds"))
+        assertFalse(config.contains("flagRetrieveInteractiveWindows"))
+        assertTrue(config.contains("canPerformGestures=\"false\""))
+        BankPackages.ALL.forEach { bank ->
+            assertFalse("a11y config must not include $bank", config.contains(bank))
+        }
     }
 
     @Test
-    fun accessibilityServiceFilesWereRemoved() {
-        assertFalse(readAppFile("src/main/res/xml/accessibility_service_config.xml").exists())
-        assertFalse(
+    fun accessibilityServiceStaysSandboxedToSocialPackages() {
+        assertTrue(readAppFile("src/main/res/xml/accessibility_service_config.xml").exists())
+        assertTrue(
             readAppFile("src/main/java/com/robingebert/blokky/feature_accessibility/ReelsBlockAccessibilityService.kt").exists()
         )
+        val service = readAppFile("src/main/java/com/robingebert/blokky/feature_accessibility/ReelsBlockAccessibilityService.kt").readText()
+        assertFalse(service.contains("TYPE_ACCESSIBILITY_OVERLAY"))
+        assertFalse(service.contains("REQUEST_INSTALL_PACKAGES"))
+        assertTrue(service.contains("rootForPackage"))
+        assertTrue(service.contains("SOCIAL_PACKAGES"))
     }
 
     private fun readAppFile(relativeFromApp: String): File {

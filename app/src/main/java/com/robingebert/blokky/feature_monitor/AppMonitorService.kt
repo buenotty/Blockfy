@@ -111,10 +111,6 @@ class AppMonitorService : Service(), KoinComponent {
         if (elapsedSeconds > 0L && elapsedSeconds < 10L) {
             scope.launch {
                 dataStore.addTotalAppUsage(appName, elapsedSeconds)
-                val config = BlockPolicy.appConfig(settings, appName)
-                if (config.blocked) {
-                    dataStore.addUsage(appName, elapsedSeconds)
-                }
             }
         }
 

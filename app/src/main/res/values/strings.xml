@@ -8,7 +8,14 @@
     <string name="usage_access_inactive">Not granted. Tap here to enable.</string>
 
     <string name="usage_access_dialog_title">How to Activate Blockfy</string>
-    <string name="usage_access_dialog_desc" formatted="false">Blockfy uses Usage Access — the same API as StayFree — to know which social app is in the foreground. It does not use Accessibility, does not read your screen, and never watches banking apps.</string>
+    <string name="usage_access_dialog_desc" formatted="false">Usage Access counts time in social apps, the same API StayFree uses. It never observes Nubank or other banks.</string>
+
+    <string name="accessibility_service_description">Blockfy uses Accessibility only to detect Reels and Shorts inside Instagram, YouTube, TikTok, Facebook and X. Banking apps are outside this list and are never read.</string>
+    <string name="accessibility_service">Accessibility (Reels / Shorts)</string>
+    <string name="accessibility_active">Active. Sandboxed to social apps — banks are never observed.</string>
+    <string name="accessibility_inactive">Not granted. Required to leave Reels and keep the feed.</string>
+    <string name="accessibility_dialog_title">How to Activate Reels Blocking</string>
+    <string name="accessibility_dialog_desc" formatted="false">Accessibility is locked to Instagram, YouTube, TikTok, Facebook and X. It cannot receive events from Nubank or other banks, does not draw overlays, and does not install APKs.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">If Google Play Protect warns you when installing the APK, tap \"More details\" and then \"Install anyway\".</string>
@@ -21,14 +28,15 @@
 
     <string name="btn_open_app_info">1. Open App Info (3 dots ⋮)</string>
     <string name="btn_open_usage_access">2. Open Usage Access</string>
+    <string name="btn_open_accessibility">3. Open Accessibility Settings</string>
     <string name="btn_close">Close</string>
 
     <string name="instagram_reels">Instagram Reels</string>
     <string name="youtube_shorts">YouTube Shorts</string>
     <string name="tiktok_app">TikTok</string>
     <string name="block_tiktok_summary">Block TikTok (entire app)</string>
-    <string name="block_instagram_summary">Block Instagram during the selected hours</string>
-    <string name="block_youtube_summary">Block YouTube during the selected hours</string>
+    <string name="block_instagram_summary">Block Instagram Reels (feed stays available)</string>
+    <string name="block_youtube_summary">Block YouTube Shorts (home stays available)</string>
 
     <string name="daily_limit_format">Limit: %1$d min/day (used: %2$d min)</string>
 
@@ -51,7 +59,7 @@
     <string name="original_author_role">Original Blokky Creator</string>
 
     <string name="privacy_title" formatted="false">Privacy &amp; Security (100% Safe)</string>
-    <string name="privacy_desc" formatted="false">• No Accessibility Service and no install-unknown-apps permission — the combination banks flag as malware.\n• Usage Access only sees which social app is open, never Nubank or other banks.\n• Adult shield is a DNS filter that excludes banking apps from the VPN path.</string>
+    <string name="privacy_desc" formatted="false">• Accessibility is sandboxed to five social apps and never watches banks.\n• No overlay windows and no permission to install APKs — the combination banks flag as malware.\n• Usage Access only counts time in those social apps. Adult shield DNS excludes banking packages.</string>
     <string name="share_app_title">Share Blockfy</string>
 
     <string name="settings_dialog_title">Settings: %1$s</string>
