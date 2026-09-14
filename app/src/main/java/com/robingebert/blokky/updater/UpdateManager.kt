@@ -146,7 +146,7 @@ object UpdateManager {
             }
 
             val totalBytes = connection.contentLengthLong
-            val downloadDir = context.cacheDir
+            val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
             val destFile = File(downloadDir, fileName)
 
             if (destFile.exists()) {
