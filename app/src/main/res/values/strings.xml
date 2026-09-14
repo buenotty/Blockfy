@@ -112,6 +112,7 @@
     <string name="strict_mode_midnight_locked_msg">Strict Mode Active: Settings are locked until midnight to protect your focus.</string>
     <string name="strict_challenge_title">Focus Friction Challenge</string>
     <string name="strict_challenge_instruction">To unlock, type this 30-character sequence manually without copying:</string>
+    <string name="strict_challenge_confirm">Unlock Settings</string>
     <string name="alert_app_total_limit_title">Blockfy • App Limit Reached</string>
     <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached!</string>
 
