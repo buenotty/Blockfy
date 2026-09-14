@@ -166,6 +166,19 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
+    fun adultBlockAlertSurvivesBackgroundActivityStartRestrictions() {
+        val manifest = readAppFile("src/main/AndroidManifest.xml").readText()
+        val vpn = readAppFile("src/main/java/com/robingebert/blokky/feature_vpn/AdultBlockVpnService.kt").readText()
+        assertTrue(
+            "a background service cannot start InterruptActivity on Android 10+ without a full-screen intent",
+            vpn.contains("setFullScreenIntent")
+        )
+        assertTrue(manifest.contains("USE_FULL_SCREEN_INTENT"))
+        assertTrue(manifest.contains("android:showWhenLocked=\"true\""))
+        assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
+    }
+
+    @Test
     fun usageAccessIsNotPartOfTheProductSurface() {
         val overview = readAppFile("src/main/java/com/robingebert/blokky/feature_preferences/ui/OverviewScreen.kt").readText()
         assertFalse(overview.contains("UsageAccessCard"))

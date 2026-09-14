@@ -39,8 +39,8 @@ jobs:
             ## 🛡️ Blockfy ${{ github.ref_name }}
             
             ### ✨ O que há de novo:
+            - **Escudo Anti-Pornô voltou a avisar**: o alerta em tela cheia usa full-screen intent. Sem isso o Android 10+ descartava a tela em silêncio.
             - **Acessibilidade só para Reels/Shorts**: isolada em Instagram, YouTube, TikTok, Facebook e X. Sem overlay, sem Acesso ao uso e sem `REQUEST_INSTALL_PACKAGES`.
-            - **Nunca lê a janela ativa**: o serviço só caminha o `event.source` do app social. Trocar para o Nubank não é observado.
-            - **Limites de tempo** são contados pelos eventos de acessibilidade nesses cinco apps.
+            - **Nunca lê a janela ativa**: o serviço só caminha o `event.source` do app social.
           draft: false
           prerelease: false
