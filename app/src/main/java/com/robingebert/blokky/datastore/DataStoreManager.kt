@@ -3,6 +3,7 @@ package com.robingebert.blokky.datastore
 import android.content.Context
 import androidx.datastore.dataStore
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 val Context.appSettingsStore by dataStore("app_settings.json", AppSettingsSerializer)
 val Context.featureEnabledStore by dataStore("feature_enabled.json", FeatureEnabledSerializer)
@@ -12,7 +13,10 @@ class DataStoreManager(private val context: Context) {
 
     val appSettingsFlow = context.appSettingsStore.data
     val featureEnabledFlow = context.featureEnabledStore.data
-    val dailyUsageFlow = context.dailyUsageStore.data
+    val dailyUsageFlow = context.dailyUsageStore.data.map { current ->
+        val today = getTodayDateString()
+        if (current.date == today) current else DailyUsage(date = today)
+    }
 
     suspend fun updateAppSettings(settings: AppSettings) {
         context.appSettingsStore.updateData { settings }
@@ -26,16 +30,15 @@ class DataStoreManager(private val context: Context) {
         return java.time.LocalDate.now().toString()
     }
 
-    suspend fun getTodayUsage(): DailyUsage {
+    suspend fun ensureTodayUsage(): DailyUsage {
         val today = getTodayDateString()
-        val current = dailyUsageFlow.first()
-        return if (current.date == today) {
-            current
-        } else {
-            val resetUsage = DailyUsage(date = today)
-            context.dailyUsageStore.updateData { resetUsage }
-            resetUsage
+        return context.dailyUsageStore.updateData { current ->
+            if (current.date == today) current else DailyUsage(date = today)
         }
+    }
+
+    suspend fun getTodayUsage(): DailyUsage {
+        return ensureTodayUsage()
     }
 
     suspend fun addUsage(appName: String, seconds: Long) {

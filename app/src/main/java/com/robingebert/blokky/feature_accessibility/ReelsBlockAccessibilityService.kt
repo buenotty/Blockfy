@@ -70,18 +70,23 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private var currentOverlayView: View? = null
 
+    private var lastAdultBlockTime = 0L
+
     override fun onServiceConnected() {
         super.onServiceConnected()
 
         try {
             val info = serviceInfo ?: AccessibilityServiceInfo()
-            info.packageNames = arrayOf(
+            val allPackages = mutableListOf(
                 "com.instagram.android",
                 "com.google.android.youtube",
                 "com.zhiliaoapp.musically",
                 "com.facebook.katana",
                 "com.twitter.android"
             )
+            allPackages.addAll(AdultContentDetector.BROWSER_PACKAGES)
+            allPackages.addAll(AdultContentDetector.SOCIAL_PACKAGES)
+            info.packageNames = allPackages.distinct().toTypedArray()
             info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
                 AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
                 AccessibilityEvent.TYPE_VIEW_CLICKED
@@ -115,8 +120,36 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
+            val today = getTodayDate()
+            if (currentUsage.date != today) {
+                currentUsage = DailyUsage(date = today)
+                serviceScope.launch {
+                    dataStore.ensureTodayUsage()
+                }
+            }
+
             val pkg = event?.packageName?.toString() ?: return
             val root = rootInActiveWindow ?: return
+
+            if (AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
+                if (currentActivePackage != null) {
+                    stopAllTracking()
+                }
+                if (settings.adultContentBlockerEnabled) {
+                    handleBrowserApp(pkg, root)
+                }
+                return
+            }
+
+            if (settings.adultContentBlockerEnabled && AdultContentDetector.SOCIAL_PACKAGES.contains(pkg)) {
+                handleSocialContent(pkg, root)
+                if (pkg != "com.twitter.android") {
+                    if (currentActivePackage != null) {
+                        stopAllTracking()
+                    }
+                    return
+                }
+            }
 
             when (pkg) {
                 "com.instagram.android" -> handleTrackedApp(pkg, "Instagram", settings.instagram, root)
@@ -304,6 +337,118 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             }
             exitShorts(appName, root)
         }
+    }
+
+    private fun handleBrowserApp(pkg: String, root: AccessibilityNodeInfo) {
+        val detectedText = extractBrowserUrlOrContent(root)
+        if (AdultContentDetector.isAdultContent(detectedText)) {
+            blockAdultContent(detectedText)
+        }
+    }
+
+    private fun handleSocialContent(pkg: String, root: AccessibilityNodeInfo) {
+        val detectedText = extractSocialAppVisibleText(root)
+        if (AdultContentDetector.isAdultContent(detectedText)) {
+            blockAdultContent(detectedText)
+        }
+    }
+
+    private fun extractSocialAppVisibleText(root: AccessibilityNodeInfo): String? {
+        val sb = StringBuilder()
+        collectTextFromNodes(root, sb, depth = 0, maxDepth = 4, maxChars = 600)
+        return if (sb.isNotEmpty()) sb.toString() else null
+    }
+
+    private fun collectTextFromNodes(node: AccessibilityNodeInfo?, sb: StringBuilder, depth: Int, maxDepth: Int, maxChars: Int) {
+        if (node == null || depth > maxDepth || sb.length >= maxChars) return
+        try {
+            val text = node.text?.toString()
+            if (!text.isNullOrBlank() && text.length > 2) {
+                sb.append(text).append(" ")
+            }
+            val desc = node.contentDescription?.toString()
+            if (!desc.isNullOrBlank() && desc.length > 2) {
+                sb.append(desc).append(" ")
+            }
+            for (i in 0 until node.childCount) {
+                if (sb.length >= maxChars) break
+                val child = node.getChild(i) ?: continue
+                collectTextFromNodes(child, sb, depth + 1, maxDepth, maxChars)
+                child.recycle()
+            }
+        } catch (e: Exception) {
+            // Ignore
+        }
+    }
+
+    private fun extractBrowserUrlOrContent(root: AccessibilityNodeInfo): String? {
+        for (viewId in AdultContentDetector.URL_VIEW_IDS) {
+            try {
+                val nodes = root.findAccessibilityNodeInfosByViewId(viewId)
+                if (!nodes.isNullOrEmpty()) {
+                    for (node in nodes) {
+                        val text = node.text?.toString()
+                        val desc = node.contentDescription?.toString()
+                        node.recycle()
+                        if (!text.isNullOrBlank()) return text
+                        if (!desc.isNullOrBlank()) return desc
+                    }
+                }
+            } catch (e: Exception) {
+                // Ignore viewId lookup errors
+            }
+        }
+
+        try {
+            val text = findTextInEditableNodes(root, depth = 0, maxDepth = 4)
+            if (!text.isNullOrBlank()) return text
+        } catch (e: Exception) {
+            // Ignore
+        }
+
+        return null
+    }
+
+    private fun findTextInEditableNodes(node: AccessibilityNodeInfo?, depth: Int, maxDepth: Int): String? {
+        if (node == null || depth > maxDepth) return null
+        try {
+            if (node.isEditable || node.className?.contains("EditText", ignoreCase = true) == true) {
+                val t = node.text?.toString()
+                if (!t.isNullOrBlank()) return t
+            }
+            for (i in 0 until node.childCount) {
+                val child = node.getChild(i) ?: continue
+                val result = findTextInEditableNodes(child, depth + 1, maxDepth)
+                child.recycle()
+                if (!result.isNullOrBlank()) return result
+            }
+        } catch (e: Exception) {
+            // Ignore
+        }
+        return null
+    }
+
+    private fun blockAdultContent(detectedUrl: String?) {
+        val now = System.currentTimeMillis()
+        if (now - lastAdultBlockTime < 1500L) return
+        lastAdultBlockTime = now
+
+        serviceScope.launch {
+            dataStore.recordBlockedDistraction(300L)
+        }
+
+        performGlobalAction(GLOBAL_ACTION_HOME)
+
+        val warningQuote = AdultContentDetector.getRandomWarning()
+        triggerVibration(isFinal = true)
+        showOverlayBanner(
+            title = "CONTEÚDO ADULTO BLOQUEADO",
+            message = warningQuote,
+            isFinal = true,
+            customBorderColor = Color.parseColor("#FF1744")
+        )
+        showNotification("CONTEÚDO ADULTO BLOQUEADO", warningQuote, isFinal = true)
+        showToast(warningQuote)
     }
 
     private fun startAppTotalTracking(appName: String, limitMinutes: Int) {
@@ -535,13 +680,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                     elevation = dp(16).toFloat()
 
                     val strokeColor = customBorderColor ?: if (isFinal) Color.parseColor("#FF5252") else Color.parseColor("#7C83FD")
-                    val bgColor = if (isFinal) Color.parseColor("#1B1226") else Color.parseColor("#101426")
+                    val bgColor = if (customBorderColor != null) Color.parseColor("#220A0E") else if (isFinal) Color.parseColor("#1B1226") else Color.parseColor("#101426")
 
                     val shape = GradientDrawable().apply {
                         this.shape = GradientDrawable.RECTANGLE
                         cornerRadius = dp(18).toFloat()
                         setColor(bgColor)
-                        setStroke(dp(1).coerceAtLeast(1), strokeColor)
+                        setStroke(if (customBorderColor != null) dp(2).coerceAtLeast(1) else dp(1).coerceAtLeast(1), strokeColor)
                     }
                     background = shape
 
@@ -555,7 +700,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                     textSize = 11f
                     letterSpacing = 0.08f
                     setTypeface(typeface, Typeface.BOLD)
-                    setTextColor(if (isFinal) Color.parseColor("#FF6E6E") else Color.parseColor("#9EA6FF"))
+                    setTextColor(if (customBorderColor != null) Color.parseColor("#FF3B56") else if (isFinal) Color.parseColor("#FF6E6E") else Color.parseColor("#9EA6FF"))
                 }
                 container.addView(titleView)
 

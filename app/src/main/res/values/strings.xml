@@ -112,7 +112,16 @@
     <string name="strict_mode_midnight_locked_msg">Strict Mode Active: Settings are locked until midnight to protect your focus.</string>
     <string name="strict_challenge_title">Focus Friction Challenge</string>
     <string name="strict_challenge_instruction">To unlock, type this 30-character sequence manually without copying:</string>
-    <string name="strict_challenge_confirm">Unlock Settings</string>
     <string name="alert_app_total_limit_title">Blockfy • App Limit Reached</string>
     <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached!</string>
+
+    <string name="adult_blocker_title">Anti-Porn &amp; Adult Shield</string>
+    <string name="adult_blocker_desc">Blocks adult websites, OnlyFans, Fatal Model, az nude, and others across all browsers with immediate exit</string>
+    <string name="adult_blocker_dialog_title">Anti-Relapse Barrier</string>
+    <string name="adult_blocker_dialog_desc">To disable this shield, you must manually type the reflection paragraph below. Copy and paste is strictly disabled.</string>
+    <string name="adult_blocker_reflection_text">Eu reconheço conscientemente que a pornografia destrói minha dopamina, rouba meu tempo vital, sabota minha mente e enfraquece minha determinação. Desativar este bloqueio é uma escolha deliberada de ceder a um impulso prejudicial que atrasa meus objetivos de vida. Prometo assumir total responsabilidade por minhas escolhas.</string>
+    <string name="adult_blocker_type_placeholder">Type the exact text above...</string>
+    <string name="adult_blocker_paste_blocked_warning">Pasting is disabled. Type character by character.</string>
+    <string name="adult_blocker_confirm_disable">Disable Shield</string>
+    <string name="adult_blocker_keep_active">Keep Active (Recommended)</string>
 </resources>

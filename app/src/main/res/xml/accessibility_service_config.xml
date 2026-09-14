@@ -2,7 +2,7 @@
 <accessibility-service
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_service_description"
-    android:packageNames="com.instagram.android,com.google.android.youtube,com.zhiliaoapp.musically,com.facebook.katana,com.twitter.android"
+    android:packageNames="com.instagram.android,com.google.android.youtube,com.zhiliaoapp.musically,com.facebook.katana,com.twitter.android,com.android.chrome,com.sec.android.app.sbrowser,org.mozilla.firefox,com.brave.browser,com.microsoft.emmx,com.opera.browser,com.opera.mini.native,com.opera.gx,com.duckduckgo.mobile.android,com.vivaldi.browser,com.mi.globalbrowser,com.android.browser,org.telegram.messenger,org.thunderdog.challegram,org.telegram.plus,com.reddit.frontpage"
     android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewClicked"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"

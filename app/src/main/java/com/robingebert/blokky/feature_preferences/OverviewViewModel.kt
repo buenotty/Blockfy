@@ -31,6 +31,18 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
                 initialValue = DailyUsage()
             )
 
+    init {
+        viewModelScope.launch {
+            dataStoreManager.ensureTodayUsage()
+        }
+    }
+
+    fun setAdultContentBlocker(enabled: Boolean) {
+        viewModelScope.launch {
+            dataStoreManager.update(appSettings.value.copy(adultContentBlockerEnabled = enabled))
+        }
+    }
+
     fun updateInstagram(app: App) {
         viewModelScope.launch {
             dataStoreManager.update(appSettings.value.copy(instagram = app))

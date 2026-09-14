@@ -75,6 +75,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Psychology
+import androidx.compose.material.icons.rounded.Shield
+import com.robingebert.blokky.feature_preferences.ui.composables.DisableAdultContentDialog
 import com.robingebert.blokky.feature_preferences.ui.composables.SavedTimeDashboardCard
 import com.robingebert.blokky.feature_preferences.ui.composables.StrictModeDialog
 import com.robingebert.blokky.ui.theme.BlockfyPrimary
@@ -94,6 +96,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showSupportDialog by remember { mutableStateOf(false) }
     var showStrictModeDialog by remember { mutableStateOf(false) }
+    var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
 
     //region Accessibility Service
     var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
@@ -220,6 +223,52 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                         colors = androidx.compose.material3.SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             checkedTrackColor = Color(0xFFF59E0B)
+                        )
+                    )
+                }
+
+                androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                // Escudo Anti-Pornô & Conteúdo Adulto
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                        Icon(
+                            Icons.Rounded.Shield,
+                            contentDescription = null,
+                            tint = Color(0xFFEF4444),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                stringResource(R.string.adult_blocker_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                stringResource(R.string.adult_blocker_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    androidx.compose.material3.Switch(
+                        checked = appSettings.adultContentBlockerEnabled,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                overviewViewModel.setAdultContentBlocker(true)
+                            } else {
+                                showDisableAdultBlockerDialog = true
+                            }
+                        },
+                        colors = androidx.compose.material3.SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = Color(0xFFEF4444)
                         )
                     )
                 }
@@ -517,6 +566,16 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     if (showSupportDialog) {
         SupportCreatorDialog(
             onDismiss = { showSupportDialog = false }
+        )
+    }
+
+    if (showDisableAdultBlockerDialog) {
+        DisableAdultContentDialog(
+            onDismissRequest = { showDisableAdultBlockerDialog = false },
+            onConfirmDisable = {
+                overviewViewModel.setAdultContentBlocker(false)
+                showDisableAdultBlockerDialog = false
+            }
         )
     }
 }

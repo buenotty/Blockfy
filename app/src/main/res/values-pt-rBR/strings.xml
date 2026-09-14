@@ -112,7 +112,16 @@
     <string name="strict_mode_midnight_locked_msg">Modo Inviolável Ativo: Configurações travadas até a meia-noite para proteger seu foco.</string>
     <string name="strict_challenge_title">Desafio de Fricção de Foco</string>
     <string name="strict_challenge_instruction">Para desbloquear, digite esta sequência de 30 caracteres sem colar:</string>
-    <string name="strict_challenge_confirm">Desbloquear Configurações</string>
     <string name="alert_app_total_limit_title">Blockfy • Limite Geral Atingido</string>
     <string name="toast_app_total_limit_reached">Limite diário de %1$d min do %2$s como um todo atingido!</string>
+
+    <string name="adult_blocker_title">Escudo Anti-Pornô &amp; Adulto</string>
+    <string name="adult_blocker_desc">Bloqueia navegação em sites adultos, OnlyFans, Fatal Model, az nude e outros em todos os navegadores com expulsão imediata</string>
+    <string name="adult_blocker_dialog_title">Barreira Anti-Recaída</string>
+    <string name="adult_blocker_dialog_desc">Para desativar o escudo, você precisa digitar manualmente o parágrafo de reflexão abaixo. Não é permitido copiar e colar.</string>
+    <string name="adult_blocker_reflection_text">Eu reconheço conscientemente que a pornografia destrói minha dopamina, rouba meu tempo vital, sabota minha mente e enfraquece minha determinação. Desativar este bloqueio é uma escolha deliberada de ceder a um impulso prejudicial que atrasa meus objetivos de vida. Prometo assumir total responsabilidade por minhas escolhas.</string>
+    <string name="adult_blocker_type_placeholder">Digite exatamente o texto acima...</string>
+    <string name="adult_blocker_paste_blocked_warning">Colar é bloqueado. Digite caractere por caractere.</string>
+    <string name="adult_blocker_confirm_disable">Desativar Escudo</string>
+    <string name="adult_blocker_keep_active">Manter Ativado (Recomendado)</string>
 </resources>

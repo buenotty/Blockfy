@@ -9,16 +9,22 @@ import java.io.OutputStream
 @Suppress("BlockingMethodInNonBlockingContext")
 object DailyUsageSerializer : Serializer<DailyUsage> {
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        encodeDefaults = true
+    }
+
     override val defaultValue: DailyUsage
         get() = DailyUsage()
 
     override suspend fun readFrom(input: InputStream): DailyUsage {
         return try {
-            Json.decodeFromString(
+            json.decodeFromString(
                 deserializer = DailyUsage.serializer(),
                 string = input.readBytes().decodeToString()
             )
-        } catch (e: SerializationException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             defaultValue
         }
@@ -26,7 +32,7 @@ object DailyUsageSerializer : Serializer<DailyUsage> {
 
     override suspend fun writeTo(t: DailyUsage, output: OutputStream) {
         output.write(
-            Json.encodeToString(
+            json.encodeToString(
                 serializer = DailyUsage.serializer(),
                 value = t
             ).encodeToByteArray()

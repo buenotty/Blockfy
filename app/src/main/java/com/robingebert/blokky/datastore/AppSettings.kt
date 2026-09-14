@@ -89,5 +89,6 @@ data class AppSettings(
     val strictModeEnabled: Boolean = false,
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
-    val bankProtectionEnabled: Boolean = true
+    val bankProtectionEnabled: Boolean = true,
+    val adultContentBlockerEnabled: Boolean = false
 )
