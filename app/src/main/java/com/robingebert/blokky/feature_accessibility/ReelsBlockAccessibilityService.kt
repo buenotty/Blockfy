@@ -72,10 +72,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private var lastAdultBlockTime = 0L
 
-    private fun isPixPauseActive(): Boolean {
-        return System.currentTimeMillis() < settings.pixPauseUntilEpoch
-    }
-
     private fun updateServicePackageNames() {
         try {
             val info = serviceInfo ?: AccessibilityServiceInfo()
@@ -87,15 +83,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 "com.twitter.android"
             )
 
-            if (!settings.adultContentBlockerEnabled || isPixPauseActive()) {
-                // Modo Área Pix ou Bloqueador Adulto desligado:
-                // Monitora estritamente os 5 apps sociais, garantindo 100% de compatibilidade com Nubank e bancos
-                info.packageNames = cleanSocialPackages
-            } else {
+            if (settings.adultContentBlockerEnabled) {
                 val allPackages = mutableListOf(*cleanSocialPackages)
                 allPackages.addAll(AdultContentDetector.BROWSER_PACKAGES)
-                allPackages.addAll(AdultContentDetector.SOCIAL_PACKAGES)
                 info.packageNames = allPackages.distinct().toTypedArray()
+            } else {
+                info.packageNames = cleanSocialPackages
             }
 
             info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
@@ -119,9 +112,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             try {
                 dataStore.appSettingsFlow.collect { latest ->
                     val oldAdult = settings.adultContentBlockerEnabled
-                    val oldPix = settings.pixPauseUntilEpoch
                     settings = latest
-                    if (oldAdult != latest.adultContentBlockerEnabled || oldPix != latest.pixPauseUntilEpoch) {
+                    if (oldAdult != latest.adultContentBlockerEnabled) {
                         updateServicePackageNames()
                     }
                 }
@@ -153,33 +145,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val pkg = event?.packageName?.toString() ?: return
             val root = rootInActiveWindow ?: return
 
-            // Modo Área Pix ou Bloqueador Adulto:
-            // Se a pausa para Pix estiver ativa ou o bloqueador estiver desligado, não inspeciona navegadores
-            if (settings.adultContentBlockerEnabled && !isPixPauseActive()) {
-                if (AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
-                    if (currentActivePackage != null) {
-                        stopAllTracking()
-                    }
-                    handleBrowserApp(pkg, root)
-                    return
+            if (settings.adultContentBlockerEnabled && AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
+                if (currentActivePackage != null) {
+                    stopAllTracking()
                 }
-
-                if (AdultContentDetector.SOCIAL_PACKAGES.contains(pkg)) {
-                    handleSocialContent(pkg, root)
-                    if (pkg != "com.twitter.android") {
-                        if (currentActivePackage != null) {
-                            stopAllTracking()
-                        }
-                        return
-                    }
-                }
-            } else {
-                if (AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
-                    if (currentActivePackage != null) {
-                        stopAllTracking()
-                    }
-                    return
-                }
+                handleBrowserApp(pkg, root)
+                return
             }
 
             when (pkg) {
@@ -374,41 +345,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val detectedText = extractBrowserUrlOrContent(root)
         if (AdultContentDetector.isAdultContent(detectedText)) {
             blockAdultContent(detectedText)
-        }
-    }
-
-    private fun handleSocialContent(pkg: String, root: AccessibilityNodeInfo) {
-        val detectedText = extractSocialAppVisibleText(root)
-        if (AdultContentDetector.isAdultContent(detectedText)) {
-            blockAdultContent(detectedText)
-        }
-    }
-
-    private fun extractSocialAppVisibleText(root: AccessibilityNodeInfo): String? {
-        val sb = StringBuilder()
-        collectTextFromNodes(root, sb, depth = 0, maxDepth = 4, maxChars = 600)
-        return if (sb.isNotEmpty()) sb.toString() else null
-    }
-
-    private fun collectTextFromNodes(node: AccessibilityNodeInfo?, sb: StringBuilder, depth: Int, maxDepth: Int, maxChars: Int) {
-        if (node == null || depth > maxDepth || sb.length >= maxChars) return
-        try {
-            val text = node.text?.toString()
-            if (!text.isNullOrBlank() && text.length > 2) {
-                sb.append(text).append(" ")
-            }
-            val desc = node.contentDescription?.toString()
-            if (!desc.isNullOrBlank() && desc.length > 2) {
-                sb.append(desc).append(" ")
-            }
-            for (i in 0 until node.childCount) {
-                if (sb.length >= maxChars) break
-                val child = node.getChild(i) ?: continue
-                collectTextFromNodes(child, sb, depth + 1, maxDepth, maxChars)
-                child.recycle()
-            }
-        } catch (e: Exception) {
-            // Ignore
         }
     }
 

@@ -43,19 +43,6 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         }
     }
 
-    fun pauseForPix(durationMinutes: Int = 10) {
-        viewModelScope.launch {
-            val pauseUntil = System.currentTimeMillis() + (durationMinutes * 60 * 1000L)
-            dataStoreManager.update(appSettings.value.copy(pixPauseUntilEpoch = pauseUntil))
-        }
-    }
-
-    fun resumeFromPixPause() {
-        viewModelScope.launch {
-            dataStoreManager.update(appSettings.value.copy(pixPauseUntilEpoch = 0L))
-        }
-    }
-
     fun updateInstagram(app: App) {
         viewModelScope.launch {
             dataStoreManager.update(appSettings.value.copy(instagram = app))

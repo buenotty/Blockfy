@@ -24,11 +24,6 @@ object AdultContentDetector {
         "com.vivo.browser"
     )
 
-    val SOCIAL_PACKAGES = setOf(
-        "com.reddit.frontpage",
-        "com.twitter.android"
-    )
-
     val URL_VIEW_IDS = listOf(
         "com.android.chrome:id/url_bar",
         "com.sec.android.app.sbrowser:id/location_bar_edit_text",

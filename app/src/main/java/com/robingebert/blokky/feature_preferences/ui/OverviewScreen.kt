@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,13 +25,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -277,81 +274,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                             checkedTrackColor = Color(0xFFEF4444)
                         )
                     )
-                }
-
-                if (appSettings.adultContentBlockerEnabled) {
-                    Spacer(Modifier.height(8.dp))
-                    val isPixPaused = appSettings.pixPauseUntilEpoch > System.currentTimeMillis()
-                    val remainingMinutes = if (isPixPaused) {
-                        ((appSettings.pixPauseUntilEpoch - System.currentTimeMillis()) / 60000L + 1).coerceAtLeast(1L)
-                    } else 0L
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                if (isPixPaused) Color(0xFF1E293B) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                            )
-                            .padding(12.dp)
-                    ) {
-                        Column {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                    Icon(
-                                        imageVector = if (isPixPaused) Icons.Rounded.Timer else Icons.Rounded.AccountBalance,
-                                        contentDescription = null,
-                                        tint = if (isPixPaused) Color(0xFF38BDF8) else MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Column {
-                                        Text(
-                                            text = if (isPixPaused) "Modo Seguro Pix Ativo (${remainingMinutes}m)" else "Compatibilidade com Área Pix (Nubank)",
-                                            style = MaterialTheme.typography.labelLarge,
-                                            fontWeight = FontWeight.Bold,
-                                            color = if (isPixPaused) Color(0xFF38BDF8) else MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Text(
-                                            text = if (isPixPaused)
-                                                "Navegadores pausados para você realizar transferências no Nubank/bancos."
-                                            else
-                                                "Pausa a leitura de navegadores por 10 min para liberar a Área Pix do Nubank sem desativar o app.",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-                            }
-                            Spacer(Modifier.height(8.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                if (isPixPaused) {
-                                    OutlinedButton(
-                                        onClick = { overviewViewModel.resumeFromPixPause() },
-                                        shape = RoundedCornerShape(8.dp),
-                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-                                    ) {
-                                        Text("Reativar Proteção Agora", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                                    }
-                                } else {
-                                    Button(
-                                        onClick = { overviewViewModel.pauseForPix(10) },
-                                        shape = RoundedCornerShape(8.dp),
-                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-                                    ) {
-                                        Text("Pausa Rápida Pix (10 min)", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
