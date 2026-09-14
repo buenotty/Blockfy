@@ -134,7 +134,11 @@ class BankSafetyArchitectureTest {
         assertFalse(manifest.contains("REQUEST_INSTALL_PACKAGES"))
         assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
         assertFalse(manifest.contains("QUERY_ALL_PACKAGES"))
-        assertTrue(manifest.contains("PACKAGE_USAGE_STATS"))
+        assertFalse(
+            "Usage Access is not required for Reels and lets banking SDKs see every foreground app",
+            manifest.contains("PACKAGE_USAGE_STATS")
+        )
+        assertFalse(manifest.contains("AppMonitorService"))
         assertTrue(config.contains("com.instagram.android"))
         assertTrue(config.contains("flagReportViewIds"))
         assertFalse(config.contains("flagRetrieveInteractiveWindows"))
@@ -153,8 +157,35 @@ class BankSafetyArchitectureTest {
         val service = readAppFile("src/main/java/com/robingebert/blokky/feature_accessibility/ReelsBlockAccessibilityService.kt").readText()
         assertFalse(service.contains("TYPE_ACCESSIBILITY_OVERLAY"))
         assertFalse(service.contains("REQUEST_INSTALL_PACKAGES"))
-        assertTrue(service.contains("rootForPackage"))
+        assertFalse(
+            "reading the active window scrapes whichever app is open, including Nubank",
+            service.contains("rootInActiveWindow")
+        )
+        assertTrue(service.contains("event.source"))
         assertTrue(service.contains("SOCIAL_PACKAGES"))
+    }
+
+    @Test
+    fun adultBlockAlertSurvivesBackgroundActivityStartRestrictions() {
+        val manifest = readAppFile("src/main/AndroidManifest.xml").readText()
+        val vpn = readAppFile("src/main/java/com/robingebert/blokky/feature_vpn/AdultBlockVpnService.kt").readText()
+        assertTrue(
+            "a background service cannot start InterruptActivity on Android 10+ without a full-screen intent",
+            vpn.contains("setFullScreenIntent")
+        )
+        assertTrue(manifest.contains("USE_FULL_SCREEN_INTENT"))
+        assertTrue(manifest.contains("android:showWhenLocked=\"true\""))
+        assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
+    }
+
+    @Test
+    fun usageAccessIsNotPartOfTheProductSurface() {
+        val overview = readAppFile("src/main/java/com/robingebert/blokky/feature_preferences/ui/OverviewScreen.kt").readText()
+        assertFalse(overview.contains("UsageAccessCard"))
+        assertFalse(File("app/src/main/java/com/robingebert/blokky/feature_monitor/ForegroundAppTracker.kt").exists())
+        assertFalse(File("src/main/java/com/robingebert/blokky/feature_monitor/ForegroundAppTracker.kt").exists())
+        assertFalse(File("app/src/main/java/com/robingebert/blokky/feature_monitor/UsageAccess.kt").exists())
+        assertFalse(File("src/main/java/com/robingebert/blokky/feature_monitor/UsageAccess.kt").exists())
     }
 
     private fun readAppFile(relativeFromApp: String): File {

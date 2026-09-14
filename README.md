@@ -28,7 +28,7 @@ O **Blockfy** foi criado com um princípio inegociável: **ferramentas essenciai
 - 💎 **100% Gratuito Para Sempre**: Nada de teste de 7 dias, nada de versão "premium".
 - 🚫 **Zero Anúncios**: Sem banners, sem pop-ups, sem propagandas em vídeo.
 - 🔒 **Privacidade Real**: O serviço de bloqueio funciona **100% offline no seu dispositivo**. Seus dados, histórico e hábitos nunca saem do seu celular.
-- 🛡️ **Zero Conflito com Bancos Digitais**: Acessibilidade isolada em Instagram/YouTube/TikTok/Facebook/X — sem overlay e sem permissão de instalar APKs. Nubank e outros bancos ficam fora da lista e nunca são lidos.
+- 🛡️ **Zero Conflito com Bancos Digitais**: Acessibilidade isolada em Instagram/YouTube/TikTok/Facebook/X. Sem overlay, sem Acesso ao uso e sem permissão de instalar APKs. O serviço nunca lê a janela ativa do Nubank.
 
 ---
 
@@ -37,7 +37,7 @@ O **Blockfy** foi criado com um princípio inegociável: **ferramentas essenciai
 ### 🔞 1. Escudo Anti-Pornô & Conteúdo Adulto (navegadores)
 Bloqueia sites adultos com um filtro DNS local. O tráfego dos bancos **não passa** por esse filtro:
 - **Todos os navegadores da Web**: Chrome, Samsung Internet, Firefox, Brave, Opera, Edge, DuckDuckGo e outros.
-- **Sem leitura de tela**: o Blockfy não usa Acessibilidade e não enxerga o que está aberto no Nubank, WhatsApp ou qualquer outro app.
+- **Sem leitura da janela ativa**: o Blockfy não chama `getRootInActiveWindow`. Só caminha a árvore do evento do Instagram/YouTube/etc. Trocar para o Nubank não é observado.
 - **Mapeamento de domínios**: OnlyFans, Fatal Model, Privacy, XVideos, Pornhub, XNXX e dezenas de outros.
 
 ### ⚡ 2. Dissuasão Psicológica Agressiva
@@ -80,7 +80,7 @@ Para desativar o Escudo Anti-Pornô dentro do app, não basta clicar em um botã
 > **0 Detecções no VirusTotal — Aplicativo 100% Seguro e Auditado**
 
 - ✅ **0/70 no VirusTotal**: Totalmente livre de qualquer malware, adware ou spyware.
-- ✅ **Sem permissões perigosas**: Sem overlay sobre outros apps e sem permissão de instalar APKs. A acessibilidade não observa bancos.
+- ✅ **Sem permissões perigosas**: Sem overlay, sem Acesso ao uso e sem permissão de instalar APKs. A acessibilidade não observa bancos.
 - ✅ **Código Aberto no GitHub**: Qualquer pessoa pode auditar o código-fonte linha por linha.
 
 ---
@@ -99,16 +99,15 @@ Como o APK é distribuído de forma independente fora da Play Store:
 
 ## ⚙️ Como Ativar no seu Celular
 
-1. Abra o Blockfy e ative **Acesso ao uso** (limites de tempo do app).
-2. Ative a **Acessibilidade** (necessária para sair de Reels/Shorts e manter o feed).
-3. (Opcional) Ative o Escudo Anti-Pornô. O Android pede uma vez a VPN de DNS; apps de banco ficam de fora.
+1. Abra o Blockfy e ative a **Acessibilidade** (necessária para sair de Reels/Shorts e manter o feed).
+2. (Opcional) Ative o Escudo Anti-Pornô. O Android pede uma vez a VPN de DNS; se o Nubank reclamar da VPN, desligue só esse escudo — a Acessibilidade pode continuar ligada.
 
 ### 📱 Samsung (One UI), Motorola e Android 13+
-Se a opção de acesso ao uso não aparecer: Informações do app → 3 pontinhos → **Permitir configurações restritas**, depois volte e ative o Acesso ao uso.
+Se a opção de Acessibilidade não aparecer: Informações do app → 3 pontinhos → **Permitir configurações restritas**, depois volte e ative a Acessibilidade.
 
 ### 📱 Xiaomi, HyperOS e MIUI
 1. Em Informações do App Blockfy, marque **"Início Automático"**;
-2. Ative o **Acesso ao uso** na lista de permissões especiais.
+2. Ative a **Acessibilidade** na lista de permissões especiais.
 
 ---
 

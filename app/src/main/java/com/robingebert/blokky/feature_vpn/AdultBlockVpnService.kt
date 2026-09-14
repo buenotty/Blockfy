@@ -2,6 +2,7 @@ package com.robingebert.blokky.feature_vpn
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -185,6 +186,38 @@ class AdultBlockVpnService : VpnService() {
         } catch (e: Exception) {
             Log.w(TAG, "Unable to show adult block screen for $host", e)
         }
+        showAlertNotification(intent, quote)
+    }
+
+    /**
+     * Android 10+ blocks background activity starts, so the startActivity above
+     * is silently dropped while the browser is in front. The full-screen intent
+     * is what actually brings the warning up.
+     */
+    private fun showAlertNotification(intent: Intent, message: String) {
+        val pending = PendingIntent.getActivity(
+            this,
+            43,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(this, CHANNEL_ALERT_ID)
+            .setSmallIcon(R.drawable.ic_policy)
+            .setContentTitle(getString(R.string.adult_block_alert_title))
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setContentIntent(pending)
+            .setFullScreenIntent(pending, true)
+            .setAutoCancel(true)
+            .build()
+        try {
+            val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            nm.notify(ALERT_NOTIF_ID, notification)
+        } catch (e: Exception) {
+            Log.w(TAG, "Unable to post adult block alert", e)
+        }
     }
 
     private fun createChannel() {
@@ -192,13 +225,18 @@ class AdultBlockVpnService : VpnService() {
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL_ID, "Blockfy Shield", NotificationManager.IMPORTANCE_LOW)
         )
+        nm.createNotificationChannel(
+            NotificationChannel(CHANNEL_ALERT_ID, "Blockfy Alerts", NotificationManager.IMPORTANCE_HIGH)
+        )
     }
 
     companion object {
         private const val TAG = "BlockfyVpn"
         private const val ACTION_STOP = "com.robingebert.blokky.STOP_ADULT_VPN"
         private const val CHANNEL_ID = "blockfy_vpn"
+        private const val CHANNEL_ALERT_ID = "blockfy_alerts"
         private const val NOTIF_ID = 1003
+        private const val ALERT_NOTIF_ID = 1004
         private const val VPN_ADDRESS = "10.7.0.2"
         private const val VPN_DNS = "10.7.0.1"
         private const val UPSTREAM_DNS = "1.1.1.1"
