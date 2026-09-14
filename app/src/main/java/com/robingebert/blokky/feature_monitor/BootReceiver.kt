@@ -20,7 +20,6 @@ class BootReceiver : BroadcastReceiver() {
             return
         }
 
-        AppMonitorService.start(context)
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {

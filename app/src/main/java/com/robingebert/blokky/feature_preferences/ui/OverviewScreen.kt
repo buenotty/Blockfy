@@ -73,10 +73,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.robingebert.blokky.R
 import com.robingebert.blokky.feature_preferences.OverviewViewModel
-import com.robingebert.blokky.feature_monitor.AppMonitorService
-import com.robingebert.blokky.feature_monitor.UsageAccess
 import com.robingebert.blokky.feature_preferences.ui.composables.AccessibilityServiceCard
-import com.robingebert.blokky.feature_preferences.ui.composables.UsageAccessCard
 import com.robingebert.blokky.feature_vpn.AdultBlockVpnService
 import com.robingebert.blokky.feature_preferences.ui.composables.BlockfyThemedAppIcon
 import com.robingebert.blokky.feature_preferences.ui.composables.EditAppBottomSheet
@@ -108,7 +105,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showStrictModeDialog by remember { mutableStateOf(false) }
     var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
 
-    var isUsageAccessGranted by remember { mutableStateOf(UsageAccess.isGranted(context)) }
     var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -125,11 +121,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
     LaunchedEffect(lifecycleState) {
         if (lifecycleState == Lifecycle.State.RESUMED) {
-            isUsageAccessGranted = UsageAccess.isGranted(context)
             isAccessibilityGranted = context.isAccessibilityGranted()
-            if (isUsageAccessGranted) {
-                AppMonitorService.start(context)
-            }
         }
     }
 
@@ -143,9 +135,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         SavedTimeDashboardCard(dailyUsage = dailyUsage)
         Spacer(modifier = Modifier.height(14.dp))
 
-        // 2. Card de Serviço de Acessibilidade
-        UsageAccessCard(isUsageAccessGranted)
-        Spacer(modifier = Modifier.height(14.dp))
         AccessibilityServiceCard(isAccessibilityGranted)
         Spacer(modifier = Modifier.height(14.dp))
 

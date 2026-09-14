@@ -39,8 +39,8 @@ jobs:
             ## 🛡️ Blockfy ${{ github.ref_name }}
             
             ### ✨ O que há de novo:
-            - **Acessibilidade só para Reels/Shorts**: isolada em Instagram, YouTube, TikTok, Facebook e X. Sem overlay e sem `REQUEST_INSTALL_PACKAGES`.
-            - **Bancos fora da lista**: o serviço recusa ler qualquer janela que não seja o app social do evento.
-            - **Limite do app inteiro** continua via Usage Access, como o StayFree.
+            - **Acessibilidade só para Reels/Shorts**: isolada em Instagram, YouTube, TikTok, Facebook e X. Sem overlay, sem Acesso ao uso e sem `REQUEST_INSTALL_PACKAGES`.
+            - **Nunca lê a janela ativa**: o serviço só caminha o `event.source` do app social. Trocar para o Nubank não é observado.
+            - **Limites de tempo** são contados pelos eventos de acessibilidade nesses cinco apps.
           draft: false
           prerelease: false

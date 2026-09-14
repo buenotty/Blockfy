@@ -1,12 +1,8 @@
 package com.robingebert.blokky.application
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.net.VpnService
 import com.robingebert.blokky.datastore.DataStoreManager
-import com.robingebert.blokky.feature_monitor.AppMonitorService
-import com.robingebert.blokky.feature_monitor.UsageAccess
 import com.robingebert.blokky.feature_vpn.AdultBlockVpnService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,18 +24,6 @@ class MainApplication: Application() {
             androidContext(this@MainApplication)
             androidLogger()
             modules(AppModule.modules())
-        }
-
-        val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        nm.createNotificationChannel(
-            NotificationChannel(AppMonitorService.CHANNEL_MONITOR, "Blockfy Focus", NotificationManager.IMPORTANCE_LOW)
-        )
-        nm.createNotificationChannel(
-            NotificationChannel(AppMonitorService.CHANNEL_ALERT, "Blockfy Alerts", NotificationManager.IMPORTANCE_HIGH)
-        )
-
-        if (UsageAccess.isGranted(this)) {
-            AppMonitorService.start(this)
         }
 
         appScope.launch {

@@ -3,32 +3,24 @@
     <string name="app_tagline">Menos Reels. Mais Foco.</string>
     <string name="title_about">Sobre</string>
 
-    <string name="usage_access_title">Acesso ao uso</string>
-    <string name="usage_access_active">Ativo. Monitoramento no estilo StayFree — bancos nunca são observados.</string>
-    <string name="usage_access_inactive">Não ativado. Toque aqui para ativar.</string>
-
-    <string name="usage_access_dialog_title">Como ativar o Blockfy</string>
-    <string name="usage_access_dialog_desc" formatted="false">O Acesso ao uso conta o tempo nos apps sociais, a mesma API do StayFree. Nunca observa o Nubank nem outros bancos.</string>
-
     <string name="accessibility_service_description">O Blockfy usa Acessibilidade só para detectar Reels e Shorts no Instagram, YouTube, TikTok, Facebook e X. Apps de banco ficam fora dessa lista e nunca são lidos.</string>
     <string name="accessibility_service">Acessibilidade (Reels / Shorts)</string>
     <string name="accessibility_active">Ativa. Isolada nos apps sociais — bancos nunca são observados.</string>
     <string name="accessibility_inactive">Não ativada. Necessária para sair do Reels e manter o feed.</string>
     <string name="accessibility_dialog_title">Como ativar o bloqueio de Reels</string>
-    <string name="accessibility_dialog_desc" formatted="false">A acessibilidade está travada em Instagram, YouTube, TikTok, Facebook e X. Ela não recebe eventos do Nubank, não desenha overlay e não instala APKs.</string>
+    <string name="accessibility_dialog_desc" formatted="false">A acessibilidade está travada em Instagram, YouTube, TikTok, Facebook e X. Ela nunca lê a janela ativa de outro app (incluindo o Nubank), não desenha overlay e não instala APKs.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">Se ao instalar o APK aparecer o alerta do Play Protect, toque em \"Mais detalhes\" e depois em \"Instalar assim mesmo\".</string>
 
     <string name="samsung_title">2. Samsung, Motorola e Android 13+</string>
-    <string name="samsung_desc">Se o Acesso ao uso não aparecer ou estiver cinza:\n\n1. Toque em \"1. Abrir Informações do App\";\n2. Toque nos 3 pontinhos (⋮);\n3. Se aparecer, toque em \"Permitir configurações restritas\";\n4. Volte e toque em \"2. Abrir Acesso ao uso\" para ativar o Blockfy.</string>
+    <string name="samsung_desc">Se a Acessibilidade não aparecer ou estiver cinza:\n\n1. Toque em \"1. Abrir Informações do App\";\n2. Toque nos 3 pontinhos (⋮);\n3. Se aparecer, toque em \"Permitir configurações restritas\";\n4. Volte e toque em \"2. Abrir Configurações de Acessibilidade\" para ativar o Blockfy.</string>
 
     <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
-    <string name="xiaomi_desc">• Em Informações do App, ative \"Início Automático\".\n• Em Outras permissões, libere o acesso ao uso e pop-ups em segundo plano se pedir.</string>
+    <string name="xiaomi_desc">• Em Informações do App, ative \"Início Automático\".\n• Em Outras permissões, libere a Acessibilidade se pedir.</string>
 
     <string name="btn_open_app_info">1. Abrir Informações do App (3 pontinhos ⋮)</string>
-    <string name="btn_open_usage_access">2. Abrir Acesso ao uso</string>
-    <string name="btn_open_accessibility">3. Abrir Configurações de Acessibilidade</string>
+    <string name="btn_open_accessibility">2. Abrir Configurações de Acessibilidade</string>
     <string name="btn_close">Fechar</string>
 
     <string name="instagram_reels">Instagram Reels</string>
@@ -59,7 +51,7 @@
     <string name="original_author_role">Criador do Blokky original</string>
 
     <string name="privacy_title" formatted="false">Privacidade e Segurança (100% Seguro)</string>
-    <string name="privacy_desc" formatted="false">• A acessibilidade está isolada em cinco apps sociais e nunca observa bancos.\n• Sem overlay e sem permissão de instalar APKs — a combinação que os bancos marcam como malware.\n• O Acesso ao uso só conta tempo nesses apps. O escudo adulto por DNS exclui pacotes bancários.</string>
+    <string name="privacy_desc" formatted="false">• A acessibilidade está isolada em cinco apps sociais e nunca observa bancos.\n• Ela nunca lê a janela ativa de outro app, então trocar para o Nubank não é observado.\n• Sem overlay, sem Acesso ao uso e sem permissão de instalar APKs.</string>
     <string name="share_app_title">Compartilhar Blockfy</string>
 
     <string name="settings_dialog_title">Configurações: %1$s</string>

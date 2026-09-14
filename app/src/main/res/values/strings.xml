@@ -3,32 +3,24 @@
     <string name="app_tagline">Less Reels. More Focus.</string>
     <string name="title_about">About</string>
 
-    <string name="usage_access_title">Usage Access</string>
-    <string name="usage_access_active">Active. StayFree-style monitoring — banks are never observed.</string>
-    <string name="usage_access_inactive">Not granted. Tap here to enable.</string>
-
-    <string name="usage_access_dialog_title">How to Activate Blockfy</string>
-    <string name="usage_access_dialog_desc" formatted="false">Usage Access counts time in social apps, the same API StayFree uses. It never observes Nubank or other banks.</string>
-
     <string name="accessibility_service_description">Blockfy uses Accessibility only to detect Reels and Shorts inside Instagram, YouTube, TikTok, Facebook and X. Banking apps are outside this list and are never read.</string>
     <string name="accessibility_service">Accessibility (Reels / Shorts)</string>
     <string name="accessibility_active">Active. Sandboxed to social apps — banks are never observed.</string>
     <string name="accessibility_inactive">Not granted. Required to leave Reels and keep the feed.</string>
     <string name="accessibility_dialog_title">How to Activate Reels Blocking</string>
-    <string name="accessibility_dialog_desc" formatted="false">Accessibility is locked to Instagram, YouTube, TikTok, Facebook and X. It cannot receive events from Nubank or other banks, does not draw overlays, and does not install APKs.</string>
+    <string name="accessibility_dialog_desc" formatted="false">Accessibility is locked to Instagram, YouTube, TikTok, Facebook and X. It never reads the active window of another app (including Nubank), does not draw overlays, and does not install APKs.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">If Google Play Protect warns you when installing the APK, tap \"More details\" and then \"Install anyway\".</string>
 
     <string name="samsung_title">2. Samsung, Motorola &amp; Android 13+</string>
-    <string name="samsung_desc">If Usage Access is missing or greyed out:\n\n1. Tap \"1. Open App Info\" below;\n2. Tap the 3 dots (⋮) in the top-right corner;\n3. Select \"Allow restricted settings\" if shown;\n4. Return and tap \"2. Open Usage Access\" to enable Blockfy.</string>
+    <string name="samsung_desc">If Accessibility is missing or greyed out:\n\n1. Tap \"1. Open App Info\" below;\n2. Tap the 3 dots (⋮) in the top-right corner;\n3. Select \"Allow restricted settings\" if shown;\n4. Return and tap \"2. Open Accessibility Settings\" to enable Blockfy.</string>
 
     <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
-    <string name="xiaomi_desc">• In App Info, enable \"Autostart\".\n• In Other permissions, allow usage access and background pop-ups if asked.</string>
+    <string name="xiaomi_desc">• In App Info, enable \"Autostart\".\n• Under Other permissions, allow Accessibility if asked.</string>
 
     <string name="btn_open_app_info">1. Open App Info (3 dots ⋮)</string>
-    <string name="btn_open_usage_access">2. Open Usage Access</string>
-    <string name="btn_open_accessibility">3. Open Accessibility Settings</string>
+    <string name="btn_open_accessibility">2. Open Accessibility Settings</string>
     <string name="btn_close">Close</string>
 
     <string name="instagram_reels">Instagram Reels</string>
@@ -59,7 +51,7 @@
     <string name="original_author_role">Original Blokky Creator</string>
 
     <string name="privacy_title" formatted="false">Privacy &amp; Security (100% Safe)</string>
-    <string name="privacy_desc" formatted="false">• Accessibility is sandboxed to five social apps and never watches banks.\n• No overlay windows and no permission to install APKs — the combination banks flag as malware.\n• Usage Access only counts time in those social apps. Adult shield DNS excludes banking packages.</string>
+    <string name="privacy_desc" formatted="false">• Accessibility is sandboxed to five social apps and never watches banks.\n• It never calls getRootInActiveWindow, so switching to Nubank cannot be scraped.\n• No overlay windows, no Usage Access, and no permission to install APKs.</string>
     <string name="share_app_title">Share Blockfy</string>
 
     <string name="settings_dialog_title">Settings: %1$s</string>

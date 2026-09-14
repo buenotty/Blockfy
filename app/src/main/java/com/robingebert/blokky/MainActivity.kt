@@ -82,8 +82,6 @@ class MainActivity : ComponentActivity() {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
             }
         }
-        com.robingebert.blokky.feature_monitor.AppMonitorService.start(this)
-
         adultBlockWarning = intent.getStringExtra(EXTRA_ADULT_BLOCK_WARNING)
 
         setContent {

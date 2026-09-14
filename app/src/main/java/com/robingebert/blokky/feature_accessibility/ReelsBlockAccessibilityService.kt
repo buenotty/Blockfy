@@ -1,11 +1,11 @@
 package com.robingebert.blokky.feature_accessibility
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -23,11 +23,8 @@ import com.robingebert.blokky.feature_monitor.TrackedPackages
 import com.robingebert.blokky.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -47,10 +44,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private val debounceMillis = 700L
 
     private val lastReelsProvocation = mutableMapOf<String, Long>()
-
-    private var activeShortsTrackingJob: Job? = null
     private var lastAlertTime = 0L
     private val lastWarnedMinutes = mutableMapOf<String, Int>()
+
+    private var lastCreditPkg: String? = null
+    private var lastCreditElapsed = 0L
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -65,18 +63,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     /**
      * Banks query enabled services and treat a null packageNames filter as
-     * "this service can watch us". Keep the sandbox applied for the whole
-     * lifetime of the service — never assign null.
+     * "this service can watch us". Only mutate the filter on the live info —
+     * never replace it with a blank AccessibilityServiceInfo().
      */
     private fun lockToSocialPackages() {
         try {
-            val info = serviceInfo ?: AccessibilityServiceInfo()
+            val info = serviceInfo ?: return
             info.packageNames = SOCIAL_PACKAGES
-            info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
-                AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
-            info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
-            info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
-            info.notificationTimeout = 100L
             serviceInfo = info
         } catch (e: Exception) {
             Log.e(TAG, "Error locking AccessibilityServiceInfo", e)
@@ -85,9 +78,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
-            val pkg = event?.packageName?.toString() ?: return
+            if (event == null) return
+            val pkg = event.packageName?.toString() ?: return
             if (!TrackedPackages.isTracked(pkg)) {
-                stopShortsTracking()
+                lastCreditPkg = null
+                lastCreditElapsed = 0L
                 return
             }
 
@@ -97,11 +92,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 serviceScope.launch { dataStore.ensureTodayUsage() }
             }
 
-            val root = rootForPackage(pkg) ?: return
+            val appName = TrackedPackages.displayName(pkg) ?: return
+            val root = rootFromEvent(event, pkg) ?: return
             try {
-                val appName = TrackedPackages.displayName(pkg) ?: return
-                val appConfig = BlockPolicy.appConfig(settings, appName)
-                handleTrackedApp(appName, appConfig, root)
+                handleTrackedApp(pkg, appName, root)
             } finally {
                 root.recycle()
             }
@@ -110,17 +104,15 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    override fun onInterrupt() {
-        stopShortsTracking()
-    }
+    override fun onInterrupt() = Unit
 
     override fun onDestroy() {
         super.onDestroy()
-        stopShortsTracking()
         serviceScope.cancel()
     }
 
-    private fun handleTrackedApp(appName: String, appConfig: App, root: AccessibilityNodeInfo) {
+    private fun handleTrackedApp(pkg: String, appName: String, root: AccessibilityNodeInfo) {
+        val appConfig = BlockPolicy.appConfig(settings, appName)
         val isShortsVisible = when (appName) {
             "Instagram" -> isNodeVisible(root, "com.instagram.android:id/clips_swipe_refresh_container")
             "YouTube" -> isNodeVisible(root, "com.google.android.youtube:id/reel_watch_fragment_root")
@@ -132,10 +124,23 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             else -> false
         }
 
-        if (!isShortsVisible) {
-            stopShortsTracking()
+        creditUsage(pkg, appName, isShortsVisible)
+
+        val minute = BlockPolicy.currentMinuteOfDay()
+        val totalVerdict = BlockPolicy.evaluate(pkg, settings, currentUsage, minute)
+        if (totalVerdict.shouldBlock) {
+            val limit = appConfig.appTotalDailyLimitMinutes
+            notifyAlert(
+                getString(R.string.alert_app_total_limit_title),
+                getString(R.string.toast_app_total_limit_reached, limit, appName),
+                isFinal = true
+            )
+            serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
+            exitTheDoom(null) { performGlobalAction(GLOBAL_ACTION_HOME) }
             return
         }
+
+        if (!isShortsVisible) return
 
         if (settings.provocationModeEnabled) {
             val now = System.currentTimeMillis()
@@ -150,10 +155,14 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             }
         }
 
-        val shortsVerdict = BlockPolicy.evaluateShorts(appName, settings, currentUsage, BlockPolicy.currentMinuteOfDay())
+        val shortsVerdict = BlockPolicy.evaluateShorts(appName, settings, currentUsage, minute)
         if (!shortsVerdict.shouldBlock) {
             if (appConfig.blocked && appConfig.dailyLimitMinutes > 0) {
-                startShortsTracking(appName, appConfig.dailyLimitMinutes)
+                checkAndNotifyRemainingTime(
+                    appName,
+                    BlockPolicy.featureSeconds(currentUsage, appName),
+                    appConfig.dailyLimitMinutes
+                )
             }
             return
         }
@@ -165,46 +174,23 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         exitShorts(appName, root)
     }
 
-    private fun startShortsTracking(appName: String, limitMinutes: Int) {
-        if (activeShortsTrackingJob?.isActive == true) return
-
-        activeShortsTrackingJob = serviceScope.launch {
-            var localSeconds = BlockPolicy.featureSeconds(currentUsage, appName)
-            while (isActive) {
-                delay(1000L)
-                localSeconds++
-                dataStore.addUsage(appName, 1L)
-                if (localSeconds >= limitMinutes * 60L) {
-                    serviceScope.launch(Dispatchers.Main) {
-                        notifyAlert(
-                            getString(R.string.alert_limit_title),
-                            getString(R.string.toast_limit_reached, limitMinutes, "Vídeos Curtos"),
-                            isFinal = true
-                        )
-                        dataStore.recordBlockedDistraction(300L)
-                        val pkg = TrackedPackages.ALL.entries.firstOrNull { it.value == appName }?.key
-                        val root = pkg?.let { rootForPackage(it) }
-                        try {
-                            exitShorts(appName, root)
-                        } finally {
-                            root?.recycle()
-                        }
-                    }
-                    break
-                } else {
-                    checkAndNotifyRemainingTime(appName, localSeconds, limitMinutes)
-                }
-            }
+    private fun creditUsage(pkg: String, appName: String, shortsVisible: Boolean) {
+        val now = SystemClock.elapsedRealtime()
+        if (lastCreditPkg != pkg || lastCreditElapsed == 0L) {
+            lastCreditPkg = pkg
+            lastCreditElapsed = now
+            return
+        }
+        val delta = ((now - lastCreditElapsed) / 1000L).coerceAtMost(3L)
+        if (delta <= 0L) return
+        lastCreditElapsed = now
+        serviceScope.launch {
+            dataStore.addTotalAppUsage(appName, delta)
+            if (shortsVisible) dataStore.addUsage(appName, delta)
         }
     }
 
-    private fun stopShortsTracking() {
-        activeShortsTrackingJob?.cancel()
-        activeShortsTrackingJob = null
-    }
-
     private fun exitShorts(appName: String, root: AccessibilityNodeInfo?) {
-        stopShortsTracking()
         when (appName) {
             "Instagram" -> {
                 if (root != null) {
@@ -365,18 +351,28 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     /**
-     * Never inspect a window unless it still belongs to the social app that
-     * generated the event. Calling getRootInActiveWindow() after the user
-     * switched to Nubank is what banking SDKs detect as screen scraping.
+     * Walk up from the event source. Never inspect whichever window is in
+     * front — that would include Nubank after the user switches apps.
      */
-    private fun rootForPackage(expectedPkg: String): AccessibilityNodeInfo? {
-        val root = rootInActiveWindow ?: return null
-        val actual = root.packageName?.toString()
-        if (actual != expectedPkg) {
-            root.recycle()
+    private fun rootFromEvent(event: AccessibilityEvent, expectedPkg: String): AccessibilityNodeInfo? {
+        var node = event.source ?: return null
+        if (node.packageName?.toString() != expectedPkg) {
+            node.recycle()
             return null
         }
-        return root
+        while (true) {
+            val parent = try {
+                node.parent
+            } catch (_: Exception) {
+                null
+            } ?: return node
+            if (parent.packageName?.toString() != expectedPkg) {
+                parent.recycle()
+                return node
+            }
+            node.recycle()
+            node = parent
+        }
     }
 
     companion object {
