@@ -25,9 +25,6 @@ object AdultContentDetector {
     )
 
     val SOCIAL_PACKAGES = setOf(
-        "org.telegram.messenger",
-        "org.thunderdog.challegram",
-        "org.telegram.plus",
         "com.reddit.frontpage",
         "com.twitter.android"
     )

@@ -72,21 +72,32 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private var lastAdultBlockTime = 0L
 
-    override fun onServiceConnected() {
-        super.onServiceConnected()
+    private fun isPixPauseActive(): Boolean {
+        return System.currentTimeMillis() < settings.pixPauseUntilEpoch
+    }
 
+    private fun updateServicePackageNames() {
         try {
             val info = serviceInfo ?: AccessibilityServiceInfo()
-            val allPackages = mutableListOf(
+            val cleanSocialPackages = arrayOf(
                 "com.instagram.android",
                 "com.google.android.youtube",
                 "com.zhiliaoapp.musically",
                 "com.facebook.katana",
                 "com.twitter.android"
             )
-            allPackages.addAll(AdultContentDetector.BROWSER_PACKAGES)
-            allPackages.addAll(AdultContentDetector.SOCIAL_PACKAGES)
-            info.packageNames = allPackages.distinct().toTypedArray()
+
+            if (!settings.adultContentBlockerEnabled || isPixPauseActive()) {
+                // Modo Área Pix ou Bloqueador Adulto desligado:
+                // Monitora estritamente os 5 apps sociais, garantindo 100% de compatibilidade com Nubank e bancos
+                info.packageNames = cleanSocialPackages
+            } else {
+                val allPackages = mutableListOf(*cleanSocialPackages)
+                allPackages.addAll(AdultContentDetector.BROWSER_PACKAGES)
+                allPackages.addAll(AdultContentDetector.SOCIAL_PACKAGES)
+                info.packageNames = allPackages.distinct().toTypedArray()
+            }
+
             info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
                 AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
                 AccessibilityEvent.TYPE_VIEW_CLICKED
@@ -97,11 +108,22 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         } catch (e: Exception) {
             Log.e("BlockfyService", "Error setting AccessibilityServiceInfo", e)
         }
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+
+        updateServicePackageNames()
 
         serviceScope.launch {
             try {
                 dataStore.appSettingsFlow.collect { latest ->
+                    val oldAdult = settings.adultContentBlockerEnabled
+                    val oldPix = settings.pixPauseUntilEpoch
                     settings = latest
+                    if (oldAdult != latest.adultContentBlockerEnabled || oldPix != latest.pixPauseUntilEpoch) {
+                        updateServicePackageNames()
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("BlockfyService", "Error collecting app settings", e)
@@ -131,19 +153,28 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val pkg = event?.packageName?.toString() ?: return
             val root = rootInActiveWindow ?: return
 
-            if (AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
-                if (currentActivePackage != null) {
-                    stopAllTracking()
-                }
-                if (settings.adultContentBlockerEnabled) {
+            // Modo Área Pix ou Bloqueador Adulto:
+            // Se a pausa para Pix estiver ativa ou o bloqueador estiver desligado, não inspeciona navegadores
+            if (settings.adultContentBlockerEnabled && !isPixPauseActive()) {
+                if (AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
+                    if (currentActivePackage != null) {
+                        stopAllTracking()
+                    }
                     handleBrowserApp(pkg, root)
+                    return
                 }
-                return
-            }
 
-            if (settings.adultContentBlockerEnabled && AdultContentDetector.SOCIAL_PACKAGES.contains(pkg)) {
-                handleSocialContent(pkg, root)
-                if (pkg != "com.twitter.android") {
+                if (AdultContentDetector.SOCIAL_PACKAGES.contains(pkg)) {
+                    handleSocialContent(pkg, root)
+                    if (pkg != "com.twitter.android") {
+                        if (currentActivePackage != null) {
+                            stopAllTracking()
+                        }
+                        return
+                    }
+                }
+            } else {
+                if (AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
                     if (currentActivePackage != null) {
                         stopAllTracking()
                     }
@@ -437,16 +468,17 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             dataStore.recordBlockedDistraction(300L)
         }
 
-        performGlobalAction(GLOBAL_ACTION_HOME)
-
         val warningQuote = AdultContentDetector.getRandomWarning()
         triggerVibration(isFinal = true)
-        showOverlayBanner(
-            title = "CONTEÚDO ADULTO BLOQUEADO",
-            message = warningQuote,
-            isFinal = true,
-            customBorderColor = Color.parseColor("#FF1744")
-        )
+
+        try {
+            val intent = AdultBlockAlertActivity.createIntent(this, warningQuote)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e("BlockfyService", "Error launching AdultBlockAlertActivity", e)
+            performGlobalAction(GLOBAL_ACTION_HOME)
+        }
+
         showNotification("CONTEÚDO ADULTO BLOQUEADO", warningQuote, isFinal = true)
         showToast(warningQuote)
     }
@@ -731,12 +763,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                     PixelFormat.TRANSLUCENT
                 ).apply {
                     gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                    y = dp(52)
+                    y = dp(80)
                 }
 
                 wm.addView(wrapper, params)

@@ -90,5 +90,6 @@ data class AppSettings(
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
     val bankProtectionEnabled: Boolean = true,
-    val adultContentBlockerEnabled: Boolean = false
+    val adultContentBlockerEnabled: Boolean = false,
+    val pixPauseUntilEpoch: Long = 0L
 )
