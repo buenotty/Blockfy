@@ -1,13 +1,11 @@
 package com.robingebert.blokky.feature_preferences.ui
 
-import android.accessibilityservice.AccessibilityServiceInfo
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.provider.Settings
-import android.text.TextUtils
-import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityManager
+import android.net.VpnService
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,7 +68,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.robingebert.blokky.R
 import com.robingebert.blokky.feature_preferences.OverviewViewModel
-import com.robingebert.blokky.feature_preferences.ui.composables.AccessibilityServiceCard
+import com.robingebert.blokky.feature_monitor.AppMonitorService
+import com.robingebert.blokky.feature_monitor.UsageAccess
+import com.robingebert.blokky.feature_preferences.ui.composables.UsageAccessCard
+import com.robingebert.blokky.feature_vpn.AdultBlockVpnService
 import com.robingebert.blokky.feature_preferences.ui.composables.BlockfyThemedAppIcon
 import com.robingebert.blokky.feature_preferences.ui.composables.EditAppBottomSheet
 import com.robingebert.blokky.feature_preferences.ui.composables.SwitchPreference
@@ -101,24 +102,28 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showStrictModeDialog by remember { mutableStateOf(false) }
     var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
 
-    //region Accessibility Service
-    var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
+    var isUsageAccessGranted by remember { mutableStateOf(UsageAccess.isGranted(context)) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
 
+    val vpnPrepareLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            overviewViewModel.setAdultContentBlocker(true)
+            AdultBlockVpnService.start(context)
+        }
+    }
+
     LaunchedEffect(lifecycleState) {
-        when (lifecycleState) {
-            Lifecycle.State.DESTROYED -> {}
-            Lifecycle.State.INITIALIZED -> {}
-            Lifecycle.State.CREATED -> {}
-            Lifecycle.State.STARTED -> {}
-            Lifecycle.State.RESUMED -> {
-                isAccessibilityGranted = context.isAccessibilityGranted()
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            isUsageAccessGranted = UsageAccess.isGranted(context)
+            if (isUsageAccessGranted) {
+                AppMonitorService.start(context)
             }
         }
     }
-    //endregion
 
     Column(
         modifier = Modifier
@@ -131,7 +136,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         Spacer(modifier = Modifier.height(14.dp))
 
         // 2. Card de Serviço de Acessibilidade
-        AccessibilityServiceCard(isAccessibilityGranted)
+        UsageAccessCard(isUsageAccessGranted)
         Spacer(modifier = Modifier.height(14.dp))
 
         // 3. Toggles de Mentalidade e Modo Inviolável
@@ -264,7 +269,13 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                         checked = appSettings.adultContentBlockerEnabled,
                         onCheckedChange = { enabled ->
                             if (enabled) {
-                                overviewViewModel.setAdultContentBlocker(true)
+                                val prepareIntent = VpnService.prepare(context)
+                                if (prepareIntent != null) {
+                                    vpnPrepareLauncher.launch(prepareIntent)
+                                } else {
+                                    overviewViewModel.setAdultContentBlocker(true)
+                                    AdultBlockVpnService.start(context)
+                                }
                             } else {
                                 showDisableAdultBlockerDialog = true
                             }
@@ -295,7 +306,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.instagram.blocked,
-                enabled = isAccessibilityGranted,
+                enabled = isUsageAccessGranted,
                 title = stringResource(R.string.instagram_reels),
                 summary = instaSummary,
                 leadingIcon = {
@@ -337,7 +348,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.youtube.blocked,
-                enabled = isAccessibilityGranted,
+                enabled = isUsageAccessGranted,
                 title = stringResource(R.string.youtube_shorts),
                 summary = ytSummary,
                 leadingIcon = {
@@ -369,7 +380,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             // TikTok
             SwitchPreference(
                 value = appSettings.tiktok.blocked,
-                enabled = isAccessibilityGranted,
+                enabled = isUsageAccessGranted,
                 title = stringResource(R.string.tiktok_app),
                 summary = stringResource(R.string.block_tiktok_summary),
                 leadingIcon = {
@@ -411,7 +422,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.facebook.blocked,
-                enabled = isAccessibilityGranted,
+                enabled = isUsageAccessGranted,
                 title = stringResource(R.string.facebook_reels),
                 summary = fbSummary,
                 leadingIcon = {
@@ -449,7 +460,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
             SwitchPreference(
                 value = appSettings.x.blocked,
-                enabled = isAccessibilityGranted,
+                enabled = isUsageAccessGranted,
                 title = stringResource(R.string.x_app),
                 summary = xSummary,
                 leadingIcon = {
@@ -577,6 +588,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             onDismissRequest = { showDisableAdultBlockerDialog = false },
             onConfirmDisable = {
                 overviewViewModel.setAdultContentBlocker(false)
+                AdultBlockVpnService.stop(context)
                 showDisableAdultBlockerDialog = false
             }
         )
@@ -698,50 +710,6 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
             }
         }
     }
-}
-
-fun Context.isAccessibilityGranted(): Boolean {
-    // 1. Primary check via Settings.Secure (most reliable across all Android versions)
-    try {
-        val enabledServices = Settings.Secure.getString(
-            contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        )
-        if (!enabledServices.isNullOrBlank()) {
-            val colonSplitter = TextUtils.SimpleStringSplitter(':')
-            colonSplitter.setString(enabledServices)
-            while (colonSplitter.hasNext()) {
-                val componentName = colonSplitter.next()
-                if (componentName.contains("ReelsBlockAccessibilityService", ignoreCase = true) &&
-                    (componentName.contains(packageName, ignoreCase = true) ||
-                     componentName.contains("blokky", ignoreCase = true) ||
-                     componentName.contains("blockfy", ignoreCase = true))
-                ) {
-                    return true
-                }
-            }
-        }
-    } catch (e: Exception) {
-        // Fallback to AccessibilityManager below
-    }
-
-    // 2. Secondary check via AccessibilityManager with FEEDBACK_ALL_MASK
-    try {
-        val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
-        val runningServices = am?.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-        if (!runningServices.isNullOrEmpty()) {
-            return runningServices.any { service ->
-                service.id.contains("ReelsBlockAccessibilityService") &&
-                (service.id.contains(packageName) ||
-                 service.id.contains("blokky") ||
-                 service.id.contains("blockfy"))
-            }
-        }
-    } catch (e: Exception) {
-        // Ignored
-    }
-
-    return false
 }
 
 @Preview

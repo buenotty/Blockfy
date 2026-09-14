@@ -28,23 +28,17 @@ O **Blockfy** foi criado com um princípio inegociável: **ferramentas essenciai
 - 💎 **100% Gratuito Para Sempre**: Nada de teste de 7 dias, nada de versão "premium".
 - 🚫 **Zero Anúncios**: Sem banners, sem pop-ups, sem propagandas em vídeo.
 - 🔒 **Privacidade Real**: O serviço de bloqueio funciona **100% offline no seu dispositivo**. Seus dados, histórico e hábitos nunca saem do seu celular.
-- 🛡️ **Zero Conflito com Bancos Digitais**: Nubank, Itaú, Inter, Bradesco e outros bancos funcionam livremente sem nenhum falso alarme de segurança.
+- 🛡️ **Zero Conflito com Bancos Digitais**: Sem serviço de acessibilidade e sem permissão de instalar APKs — a combinação que Nubank, Itaú, Inter e Bradesco tratam como malware. O Blockfy usa Acesso ao uso (a mesma API do StayFree) e nunca observa apps de banco.
 
 ---
 
 ## ✨ Funcionalidades Principais
 
-### 🔞 1. Escudo Anti-Pornô & Conteúdo Adulto (Navegadores & Redes Sociais)
-Bloqueia o acesso a pornografia e plataformas adultas com expulsão instantânea para a tela de início do celular (`HOME`), vibração de alerta e avisos agressivos de choque de consciência:
-- **Todos os Navegadores da Web**: Chrome, Samsung Internet, Firefox, Brave, Opera, Edge, DuckDuckGo, Kiwi, Xiaomi Browser, etc.
-- **Telegram (`org.telegram.messenger`)**: Intercepta canais, grupos, bots e pesquisas de vazados, OnlyFans, Fatal Model ou com o emoji `🔞` *(suas conversas normais com amigos e família continuam funcionando 100%)*.
-- **Reddit (`com.reddit.frontpage`)**: Bloqueia subreddits NSFW e buscas adultas na plataforma.
-- **X / Twitter (`com.twitter.android`)**: Intercepta buscas por criadores adultos, hashtags impróprias e perfis de conteúdo +18.
-- **Mapeamento Exaustivo**:
-  - *Solicitados:* Fatal Model, Fatal Fans, OnlyFans, AZ Nude.
-  - *Brasil:* Privacy, PhotoAcompanhantes, CameraPrivé, SambaPorno, Brasileirinhas, UModel, Caiu na Net, VazaNudes, Tufos, Bella da Semana, SexyClube, Garota com Local, Guia de GPs, Sexlog, SexPrivé.
-  - *Mundiais:* XVideos, Pornhub, XNXX, xHamster, RedTube, YouPorn, SpankBang, Brazzers, Naughty America, Erome, Coomer, Kemono, SimpCity, Chaturbate, Stripchat, Rule34, NHentai, etc.
-  - *Motor Heurístico:* Mais de 100 palavras-chave e termos em português analisados em tempo real (ex.: *caiu na net, novinha, casal amador, sexo amador, flagra íntimo, suruba, travesti, acompanhante, privacy vazado, etc.*).
+### 🔞 1. Escudo Anti-Pornô & Conteúdo Adulto (navegadores)
+Bloqueia sites adultos com um filtro DNS local. O tráfego dos bancos **não passa** por esse filtro:
+- **Todos os navegadores da Web**: Chrome, Samsung Internet, Firefox, Brave, Opera, Edge, DuckDuckGo e outros.
+- **Sem leitura de tela**: o Blockfy não usa Acessibilidade e não enxerga o que está aberto no Nubank, WhatsApp ou qualquer outro app.
+- **Mapeamento de domínios**: OnlyFans, Fatal Model, Privacy, XVideos, Pornhub, XNXX e dezenas de outros.
 
 ### ⚡ 2. Dissuasão Psicológica Agressiva
 Tentou abrir pornografia? O Blockfy não apenas fecha a página, ele te arremessa para a Home e solta um aviso direto no topo:
@@ -59,12 +53,8 @@ Para desativar o Escudo Anti-Pornô dentro do app, não basta clicar em um botã
 - **Copiar e colar é estritamente desabilitado**: o menu de colar do Android é bloqueado e qualquer colagem via atalho ou teclado é rejeitada na hora.
 - Só é liberado após digitar 100% dos caracteres, forçando seu córtex pré-frontal a retomar a consciência.
 
-### 🚫 4. Anti-Doomscrolling (Vídeos Curtos)
-- **Instagram Reels**: Intercepta o Reels e te devolve para o feed de amigos sem o loop infinito de recarregamento.
-- **YouTube Shorts**: Redireciona de volta para a aba inicial/inscrições.
-- **TikTok**: Fecha o app quando o limite diário for atingido.
-- **Facebook Reels**: Bloqueia a reprodução de vídeos curtos.
-- **X (Twitter)**: Controla a rolagem infinita.
+### 🚫 4. Anti-Doomscrolling (apps inteiros, como o StayFree)
+- **Instagram, YouTube, TikTok, Facebook e X**: quando o bloqueio ou o limite diário está ativo, o app é interrompido na hora — sem raspar a interface e sem serviço de acessibilidade.
 
 ### ⏳ 5. Limites Diários com Reset Automático à Meia-Noite
 - Defina uma cota diária de uso para cada app (ex.: 15 minutos por dia).
@@ -86,7 +76,7 @@ Para desativar o Escudo Anti-Pornô dentro do app, não basta clicar em um botã
 > **0 Detecções no VirusTotal — Aplicativo 100% Seguro e Auditado**
 
 - ✅ **0/70 no VirusTotal**: Totalmente livre de qualquer malware, adware ou spyware.
-- ✅ **Sem permissões perigosas**: Não utiliza permissões invasivas de gravação de tela nem de sobreposição abusiva.
+- ✅ **Sem permissões perigosas**: Não declara Serviço de Acessibilidade, não pede para instalar outros APKs e não desenha overlay sobre outros apps.
 - ✅ **Código Aberto no GitHub**: Qualquer pessoa pode auditar o código-fonte linha por linha.
 
 ---
@@ -105,16 +95,17 @@ Como o APK é distribuído de forma independente fora da Play Store:
 
 ## ⚙️ Como Ativar no seu Celular
 
-### 📱 Samsung (One UI), Motorola e Android 13+ ("Configuração Restrita")
-1. Abra as **Configurações** → **Aplicativos** → encontre o **Blockfy**;
-2. No canto superior direito, toque nos **3 pontinhos (⋮)**;
-3. Selecione **"Permitir configurações restritas"** e confirme com sua digital ou senha;
-4. Abra o Blockfy, toque no card de Acessibilidade e ative o serviço!
+1. Abra o Blockfy e toque no card **Acesso ao uso**.
+2. Encontre o Blockfy na lista e ative o acesso.
+3. Volte ao app — o monitoramento no estilo StayFree começa sozinho.
+4. (Opcional) Ative o Escudo Anti-Pornô. O Android pede uma vez para criar a VPN de DNS; apps de banco ficam de fora.
+
+### 📱 Samsung (One UI), Motorola e Android 13+
+Se a opção de acesso ao uso não aparecer: Informações do app → 3 pontinhos → **Permitir configurações restritas**, depois volte e ative o Acesso ao uso.
 
 ### 📱 Xiaomi, HyperOS e MIUI
 1. Em Informações do App Blockfy, marque **"Início Automático"**;
-2. Em **"Outras permissões"**, marque "Exibir pop-ups enquanto estiver em segundo plano";
-3. Em **Acessibilidade** → Aplicativos baixados → Blockfy, aguarde os 10 segundos e confirme.
+2. Ative o **Acesso ao uso** na lista de permissões especiais.
 
 ---
 

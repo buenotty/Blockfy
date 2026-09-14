@@ -3,17 +3,43 @@ package com.robingebert.blokky.updater
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.SystemUpdate
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,15 +51,12 @@ import com.robingebert.blokky.ui.theme.BlockfyError
 import com.robingebert.blokky.ui.theme.BlockfyPrimary
 import com.robingebert.blokky.ui.theme.BlockfySuccess
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.Locale
 
 sealed interface UpdateState {
     data object Checking : UpdateState
     data class UpToDate(val version: String) : UpdateState
     data class Available(val info: AppUpdateInfo) : UpdateState
-    data class Downloading(val progress: Float, val downloadedBytes: Long, val totalBytes: Long) : UpdateState
-    data class ReadyToInstall(val apkFile: File) : UpdateState
     data class Error(val message: String) : UpdateState
 }
 
@@ -61,10 +84,10 @@ fun UpdateDialog(
         scope.launch {
             val result = UpdateManager.checkForUpdates(currentVersion)
             result.onSuccess { info ->
-                if (info.isUpdateAvailable) {
-                    state = UpdateState.Available(info)
+                state = if (info.isUpdateAvailable) {
+                    UpdateState.Available(info)
                 } else {
-                    state = UpdateState.UpToDate(currentVersion)
+                    UpdateState.UpToDate(currentVersion)
                 }
             }.onFailure { err ->
                 state = UpdateState.Error(err.localizedMessage ?: "Connection error")
@@ -78,11 +101,7 @@ fun UpdateDialog(
         }
     }
 
-    Dialog(onDismissRequest = {
-        if (state !is UpdateState.Downloading) {
-            onDismissRequest()
-        }
-    }) {
+    Dialog(onDismissRequest = onDismissRequest) {
         Card(
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
@@ -199,140 +218,25 @@ fun UpdateDialog(
 
                         Button(
                             onClick = {
-                                state = UpdateState.Downloading(0f, 0L, s.info.apkSize)
-                                scope.launch {
-                                    val dlResult = UpdateManager.downloadApk(
-                                        context = context,
-                                        downloadUrl = s.info.downloadUrl,
-                                        fileName = s.info.fileName
-                                    ) { progress, downloaded, total ->
-                                        state = UpdateState.Downloading(progress, downloaded, total)
-                                    }
-
-                                    dlResult.onSuccess { apkFile ->
-                                        state = UpdateState.ReadyToInstall(apkFile)
-                                        if (UpdateManager.canInstallPackages(context)) {
-                                            try {
-                                                UpdateManager.installApk(context, apkFile)
-                                            } catch (e: Exception) {
-                                                // If auto-launch fails, user can tap install button
-                                            }
-                                        }
-                                    }.onFailure { err ->
-                                        state = UpdateState.Error(err.localizedMessage ?: "Download failed")
-                                    }
-                                }
+                                val page = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://github.com/buenotty/Blockfy/releases/latest")
+                                )
+                                context.startActivity(page)
+                                onDismissRequest()
                             },
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = BlockfyPrimary)
                         ) {
-                            Icon(Icons.Rounded.CloudDownload, contentDescription = null)
+                            Icon(Icons.Rounded.OpenInNew, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.update_btn_download_install), fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.update_btn_open_github), fontWeight = FontWeight.Bold)
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
                         TextButton(onClick = onDismissRequest) {
                             Text(stringResource(R.string.cancel_btn))
-                        }
-                    }
-
-                    is UpdateState.Downloading -> {
-                        Icon(
-                            imageVector = Icons.Rounded.CloudDownload,
-                            contentDescription = null,
-                            tint = BlockfyPrimary,
-                            modifier = Modifier.size(52.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(R.string.update_downloading),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        LinearProgressIndicator(
-                            progress = { s.progress },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(10.dp)
-                                .clip(RoundedCornerShape(5.dp)),
-                            color = BlockfyPrimary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        val percent = (s.progress * 100).toInt().coerceIn(0, 100)
-                        val dlMb = String.format(Locale.US, "%.1f", s.downloadedBytes / (1024.0 * 1024.0))
-                        val totMb = String.format(Locale.US, "%.1f", s.totalBytes / (1024.0 * 1024.0))
-                        Text(
-                            text = "$percent% • $dlMb MB / $totMb MB",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    is UpdateState.ReadyToInstall -> {
-                        Icon(
-                            imageVector = Icons.Rounded.TaskAlt,
-                            contentDescription = null,
-                            tint = BlockfySuccess,
-                            modifier = Modifier.size(56.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(R.string.update_download_complete),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        if (!UpdateManager.canInstallPackages(context)) {
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = stringResource(R.string.update_permission_required),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onErrorContainer
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Button(
-                                onClick = { UpdateManager.openInstallPermissionSettings(context) },
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = BlockfyPrimary)
-                            ) {
-                                Text(stringResource(R.string.update_btn_grant_permission))
-                            }
-                        } else {
-                            Button(
-                                onClick = {
-                                    try {
-                                        UpdateManager.installApk(context, s.apkFile)
-                                    } catch (e: Exception) {
-                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/buenotty/Blockfy/releases/latest"))
-                                        context.startActivity(intent)
-                                    }
-                                },
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(containerColor = BlockfyPrimary)
-                            ) {
-                                Text(stringResource(R.string.update_btn_install), fontWeight = FontWeight.Bold)
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-                        TextButton(onClick = onDismissRequest) {
-                            Text(stringResource(R.string.btn_close))
                         }
                     }
 

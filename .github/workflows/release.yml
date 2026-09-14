@@ -39,8 +39,8 @@ jobs:
             ## 🛡️ Blockfy ${{ github.ref_name }}
             
             ### ✨ O que há de novo:
-            - **Zero Conflito com Bancos Digitais (Nubank, Itaú, etc)**: Arquitetura limpa inspirada no StayFree.
-            - **Isolamento Estrito**: Removida a flag invasiva `flagRetrieveInteractiveWindows` e removida a permissão `REQUEST_INSTALL_PACKAGES`.
-            - **100% Automático e Sem Desgaste**: O serviço opera continuamente em segundo plano sem exigir comandos ADB nem reativações manuais.
+            - **Zero Conflito com Bancos Digitais (Nubank, Itaú, etc)**: Sem acessibilidade e sem permissão de instalar APKs. Monitoramento via Usage Access, como o StayFree.
+            - **Escudo adulto por DNS**: filtro local que exclui apps bancários do túnel.
+            - **Atualização pelo GitHub**: o navegador instala o APK, o Blockfy não pede `REQUEST_INSTALL_PACKAGES`.
           draft: false
           prerelease: false

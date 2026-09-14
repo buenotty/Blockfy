@@ -3,33 +3,32 @@
     <string name="app_tagline">Menos Reels. Mais Foco.</string>
     <string name="title_about">Sobre</string>
 
-    <string name="accessibility_service_description">O Blockfy utiliza o Serviço de Acessibilidade exclusivamente para detectar e sair de vídeos curtos (Reels e Shorts).</string>
-    <string name="accessibility_service">Serviço de Acessibilidade</string>
-    <string name="accessibility_active">Ativado. Toque para ver configurações.</string>
-    <string name="accessibility_inactive">Não ativado. Toque aqui para ativar.</string>
+    <string name="usage_access_title">Acesso ao uso</string>
+    <string name="usage_access_active">Ativo. Monitoramento no estilo StayFree — bancos nunca são observados.</string>
+    <string name="usage_access_inactive">Não ativado. Toque aqui para ativar.</string>
 
-    <string name="accessibility_dialog_title">Como Ativar o Blockfy</string>
-    <string name="accessibility_dialog_desc" formatted="false">O Blockfy precisa do Serviço de Acessibilidade apenas para detectar a tela de Reels/Shorts e retornar ao feed principal. Não coletamos dados e o app funciona 100% offline.</string>
+    <string name="usage_access_dialog_title">Como ativar o Blockfy</string>
+    <string name="usage_access_dialog_desc" formatted="false">O Blockfy usa Acesso ao uso — a mesma API do StayFree — para saber qual app social está aberto. Não usa Acessibilidade, não lê a tela e nunca observa apps de banco.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">Se ao instalar o APK aparecer o alerta do Play Protect, toque em \"Mais detalhes\" e depois em \"Instalar assim mesmo\".</string>
 
     <string name="samsung_title">2. Samsung, Motorola e Android 13+</string>
-    <string name="samsung_desc">Se a opção de acessibilidade estiver cinza com aviso de \"Configuração restrita\":\n\n1. Toque no botão \"1. Abrir Informações do App\" abaixo;\n2. Toque nos 3 pontinhos (⋮) no canto superior direito;\n3. Toque em \"Permitir configurações restritas\" e confirme seu PIN/digital;\n4. Depois volte e toque em \"2. Abrir Acessibilidade\" para ativar o Blockfy.</string>
+    <string name="samsung_desc">Se o Acesso ao uso não aparecer ou estiver cinza:\n\n1. Toque em \"1. Abrir Informações do App\";\n2. Toque nos 3 pontinhos (⋮);\n3. Se aparecer, toque em \"Permitir configurações restritas\";\n4. Volte e toque em \"2. Abrir Acesso ao uso\" para ativar o Blockfy.</string>
 
     <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
-    <string name="xiaomi_desc">• Em Informações do App, ative \"Início Automático\".\n• Ao ligar a Acessibilidade, aguarde os 10 segundos da tela de aviso da Xiaomi e confirme em OK.</string>
+    <string name="xiaomi_desc">• Em Informações do App, ative \"Início Automático\".\n• Em Outras permissões, libere o acesso ao uso e pop-ups em segundo plano se pedir.</string>
 
     <string name="btn_open_app_info">1. Abrir Informações do App (3 pontinhos ⋮)</string>
-    <string name="btn_open_accessibility">2. Abrir Configurações de Acessibilidade</string>
+    <string name="btn_open_usage_access">2. Abrir Acesso ao uso</string>
     <string name="btn_close">Fechar</string>
 
     <string name="instagram_reels">Instagram Reels</string>
     <string name="youtube_shorts">YouTube Shorts</string>
     <string name="tiktok_app">TikTok</string>
     <string name="block_tiktok_summary">Bloquear TikTok (aplicativo inteiro)</string>
-    <string name="block_instagram_summary">Bloquear Instagram Reels</string>
-    <string name="block_youtube_summary">Bloquear YouTube Shorts</string>
+    <string name="block_instagram_summary">Bloquear o Instagram nos horários escolhidos</string>
+    <string name="block_youtube_summary">Bloquear o YouTube nos horários escolhidos</string>
 
     <string name="daily_limit_format">Limite: %1$d min/dia (usado: %2$d min)</string>
 
@@ -52,12 +51,12 @@
     <string name="original_author_role">Criador do Blokky original</string>
 
     <string name="privacy_title" formatted="false">Privacidade e Segurança (100% Seguro)</string>
-    <string name="privacy_desc" formatted="false">• Verificado no VirusTotal: 0 detecções em mais de 70 antivírus (100% seguro e livre de ameaças).\n• Zero permissão de Internet: o aplicativo não tem acesso à rede, sendo tecnicamente impossível vazar qualquer dado seu.\n• O Serviço de Acessibilidade é utilizado estritamente para fechar vídeos curtos e retornar à tela inicial.</string>
+    <string name="privacy_desc" formatted="false">• Sem Serviço de Acessibilidade e sem permissão de instalar apps — a combinação que os bancos marcam como malware.\n• O Acesso ao uso só vê qual app social está aberto, nunca o Nubank ou outros bancos.\n• O escudo adulto é um filtro DNS que exclui os apps bancários do caminho da VPN.</string>
     <string name="share_app_title">Compartilhar Blockfy</string>
 
     <string name="settings_dialog_title">Configurações: %1$s</string>
     <string name="daily_limit_picker_title">Limite Diário de Uso</string>
-    <string name="daily_limit_picker_desc">Limite quanto tempo você pode assistir vídeos curtos por dia. Ao atingir o limite, eles são bloqueados até meia-noite.</string>
+    <string name="daily_limit_picker_desc">Limite quanto tempo você pode ficar neste aplicativo por dia. Ao atingir o limite, ele fica bloqueado até meia-noite.</string>
     <string name="daily_limit_off">Desativado</string>
     <string name="today_usage_label">Uso hoje: %1$d de %2$d min</string>
     <string name="reset_usage_btn">Zerar Contador de Hoje</string>
@@ -84,7 +83,7 @@
     <string name="update_available_title">Nova versão disponível!</string>
     <string name="update_version_tag">Versão %s</string>
     <string name="update_size_label">Tamanho: ~%s MB</string>
-    <string name="update_btn_download_install">Baixar e Instalar</string>
+    <string name="update_btn_open_github">Baixar no GitHub</string>
     <string name="update_downloading">Baixando atualização…</string>
     <string name="update_download_complete">Download concluído!</string>
     <string name="update_btn_install">Instalar Agora</string>
@@ -98,7 +97,7 @@
     <string name="short_video_limit_label">Limite Diário de Reels / Shorts</string>
     <string name="facebook_app">Facebook</string>
     <string name="facebook_reels">Facebook Reels</string>
-    <string name="block_facebook_summary">Bloquear vídeos curtos do Reels no Facebook</string>
+    <string name="block_facebook_summary">Bloquear o Facebook nos horários escolhidos</string>
     <string name="x_app">X (Twitter)</string>
     <string name="block_x_summary">Controlar rolagem infinita e limite de tempo no X</string>
     <string name="dashboard_saved_time_title">Economia de Vida &amp; Foco</string>
@@ -117,7 +116,7 @@
     <string name="toast_app_total_limit_reached">Limite diário de %1$d min do %2$s como um todo atingido!</string>
 
     <string name="adult_blocker_title">Escudo Anti-Pornô &amp; Adulto</string>
-    <string name="adult_blocker_desc">Bloqueia navegação em sites adultos, OnlyFans, Fatal Model, az nude e outros em todos os navegadores com expulsão imediata</string>
+    <string name="adult_blocker_desc">Bloqueia sites adultos em todos os navegadores via DNS, sem ler a tela. Apps de banco ficam fora do filtro.</string>
     <string name="adult_blocker_dialog_title">Barreira Anti-Recaída</string>
     <string name="adult_blocker_dialog_desc">Para desativar o escudo, você precisa digitar manualmente o parágrafo de reflexão abaixo. Não é permitido copiar e colar.</string>
     <string name="adult_blocker_reflection_text">Eu reconheço conscientemente que a pornografia destrói minha dopamina, rouba meu tempo vital, sabota minha mente e enfraquece minha determinação. Desativar este bloqueio é uma escolha deliberada de ceder a um impulso prejudicial que atrasa meus objetivos de vida. Prometo assumir total responsabilidade por minhas escolhas.</string>
@@ -125,4 +124,10 @@
     <string name="adult_blocker_paste_blocked_warning">Colar é bloqueado. Digite caractere por caractere.</string>
     <string name="adult_blocker_confirm_disable">Desativar Escudo</string>
     <string name="adult_blocker_keep_active">Manter Ativado (Recomendado)</string>
+    <string name="monitor_notification_title">O Blockfy está protegendo seu foco</string>
+    <string name="monitor_notification_text">Os limites continuam ativos sem ler a tela e sem observar bancos.</string>
+    <string name="vpn_notification_title">Escudo adulto ligado</string>
+    <string name="vpn_notification_text">Filtro DNS ativo. Bancos usam sua conexão normal.</string>
+    <string name="interrupt_go_home">Ir para a tela inicial</string>
+    <string name="adult_block_alert_title">CONTEÚDO ADULTO BLOQUEADO</string>
 </resources>

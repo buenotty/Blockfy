@@ -3,33 +3,32 @@
     <string name="app_tagline">Less Reels. More Focus.</string>
     <string name="title_about">About</string>
 
-    <string name="accessibility_service_description">Blockfy uses Accessibility Service solely to detect and exit short-form video feeds (Reels &amp; Shorts).</string>
-    <string name="accessibility_service">Accessibility Service</string>
-    <string name="accessibility_active">Active. Tap to view settings.</string>
-    <string name="accessibility_inactive">Not granted. Tap here to enable.</string>
+    <string name="usage_access_title">Usage Access</string>
+    <string name="usage_access_active">Active. StayFree-style monitoring — banks are never observed.</string>
+    <string name="usage_access_inactive">Not granted. Tap here to enable.</string>
 
-    <string name="accessibility_dialog_title">How to Activate Blockfy</string>
-    <string name="accessibility_dialog_desc" formatted="false">Blockfy needs the Accessibility Service strictly to detect Reels/Shorts and bring you back to the home feed. No data is collected and the app operates 100% offline.</string>
+    <string name="usage_access_dialog_title">How to Activate Blockfy</string>
+    <string name="usage_access_dialog_desc" formatted="false">Blockfy uses Usage Access — the same API as StayFree — to know which social app is in the foreground. It does not use Accessibility, does not read your screen, and never watches banking apps.</string>
 
     <string name="play_protect_title">1. Google Play Protect</string>
     <string name="play_protect_desc">If Google Play Protect warns you when installing the APK, tap \"More details\" and then \"Install anyway\".</string>
 
     <string name="samsung_title">2. Samsung, Motorola &amp; Android 13+</string>
-    <string name="samsung_desc">If the accessibility switch is greyed out with a \"Restricted setting\" prompt:\n\n1. Tap the \"1. Open App Info\" button below;\n2. Tap the 3 dots (⋮) in the top-right corner;\n3. Select \"Allow restricted settings\" and confirm with your PIN/fingerprint;\n4. Return and tap \"2. Open Accessibility\" to turn on Blockfy.</string>
+    <string name="samsung_desc">If Usage Access is missing or greyed out:\n\n1. Tap \"1. Open App Info\" below;\n2. Tap the 3 dots (⋮) in the top-right corner;\n3. Select \"Allow restricted settings\" if shown;\n4. Return and tap \"2. Open Usage Access\" to enable Blockfy.</string>
 
     <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
-    <string name="xiaomi_desc">• In App Info, enable \"Autostart\".\n• When toggling Accessibility, wait for Xiaomi\'s 10-second security countdown and tap OK.</string>
+    <string name="xiaomi_desc">• In App Info, enable \"Autostart\".\n• In Other permissions, allow usage access and background pop-ups if asked.</string>
 
     <string name="btn_open_app_info">1. Open App Info (3 dots ⋮)</string>
-    <string name="btn_open_accessibility">2. Open Accessibility Settings</string>
+    <string name="btn_open_usage_access">2. Open Usage Access</string>
     <string name="btn_close">Close</string>
 
     <string name="instagram_reels">Instagram Reels</string>
     <string name="youtube_shorts">YouTube Shorts</string>
     <string name="tiktok_app">TikTok</string>
     <string name="block_tiktok_summary">Block TikTok (entire app)</string>
-    <string name="block_instagram_summary">Block Instagram Reels</string>
-    <string name="block_youtube_summary">Block YouTube Shorts</string>
+    <string name="block_instagram_summary">Block Instagram during the selected hours</string>
+    <string name="block_youtube_summary">Block YouTube during the selected hours</string>
 
     <string name="daily_limit_format">Limit: %1$d min/day (used: %2$d min)</string>
 
@@ -52,12 +51,12 @@
     <string name="original_author_role">Original Blokky Creator</string>
 
     <string name="privacy_title" formatted="false">Privacy &amp; Security (100% Safe)</string>
-    <string name="privacy_desc" formatted="false">• Verified on VirusTotal: 0 detections across 70+ antiviruses (100% clean and safe).\n• Zero Internet permission: mathematically impossible to leak any user data.\n• Accessibility Service is strictly used to exit short videos and return to feed.</string>
+    <string name="privacy_desc" formatted="false">• No Accessibility Service and no install-unknown-apps permission — the combination banks flag as malware.\n• Usage Access only sees which social app is open, never Nubank or other banks.\n• Adult shield is a DNS filter that excludes banking apps from the VPN path.</string>
     <string name="share_app_title">Share Blockfy</string>
 
     <string name="settings_dialog_title">Settings: %1$s</string>
     <string name="daily_limit_picker_title">Daily Screen Time Limit</string>
-    <string name="daily_limit_picker_desc">Limit your short video watch time per day. Once reached, they are locked until midnight.</string>
+    <string name="daily_limit_picker_desc">Limit how long you can stay in this app per day. Once reached, it stays locked until midnight.</string>
     <string name="daily_limit_off">Disabled</string>
     <string name="today_usage_label">Today\'s usage: %1$d of %2$d min</string>
     <string name="reset_usage_btn">Reset Today\'s Counter</string>
@@ -84,7 +83,7 @@
     <string name="update_available_title">New version available!</string>
     <string name="update_version_tag">Version %s</string>
     <string name="update_size_label">Size: ~%s MB</string>
-    <string name="update_btn_download_install">Download &amp; Install</string>
+    <string name="update_btn_open_github">Download on GitHub</string>
     <string name="update_downloading">Downloading update…</string>
     <string name="update_download_complete">Download completed!</string>
     <string name="update_btn_install">Install Now</string>
@@ -98,7 +97,7 @@
     <string name="short_video_limit_label">Reels / Shorts Daily Limit</string>
     <string name="facebook_app">Facebook</string>
     <string name="facebook_reels">Facebook Reels</string>
-    <string name="block_facebook_summary">Block short video Reels on Facebook</string>
+    <string name="block_facebook_summary">Block Facebook during the selected hours</string>
     <string name="x_app">X (Twitter)</string>
     <string name="block_x_summary">Control doomscrolling and daily limits on X</string>
     <string name="dashboard_saved_time_title">Life Economy &amp; Focus</string>
@@ -117,7 +116,7 @@
     <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached!</string>
 
     <string name="adult_blocker_title">Anti-Porn &amp; Adult Shield</string>
-    <string name="adult_blocker_desc">Blocks adult websites, OnlyFans, Fatal Model, az nude, and others across all browsers with immediate exit</string>
+    <string name="adult_blocker_desc">Blocks adult websites in every browser via DNS, without reading the screen. Banking apps are excluded from the filter.</string>
     <string name="adult_blocker_dialog_title">Anti-Relapse Barrier</string>
     <string name="adult_blocker_dialog_desc">To disable this shield, you must manually type the reflection paragraph below. Copy and paste is strictly disabled.</string>
     <string name="adult_blocker_reflection_text">Eu reconheço conscientemente que a pornografia destrói minha dopamina, rouba meu tempo vital, sabota minha mente e enfraquece minha determinação. Desativar este bloqueio é uma escolha deliberada de ceder a um impulso prejudicial que atrasa meus objetivos de vida. Prometo assumir total responsabilidade por minhas escolhas.</string>
@@ -125,4 +124,10 @@
     <string name="adult_blocker_paste_blocked_warning">Pasting is disabled. Type character by character.</string>
     <string name="adult_blocker_confirm_disable">Disable Shield</string>
     <string name="adult_blocker_keep_active">Keep Active (Recommended)</string>
+    <string name="monitor_notification_title">Blockfy is protecting your focus</string>
+    <string name="monitor_notification_text">Usage limits stay on without reading your screen or banking apps.</string>
+    <string name="vpn_notification_title">Adult shield is on</string>
+    <string name="vpn_notification_text">DNS filter active. Banks use your normal connection.</string>
+    <string name="interrupt_go_home">Go to Home</string>
+    <string name="adult_block_alert_title">ADULT CONTENT BLOCKED</string>
 </resources>

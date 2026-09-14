@@ -19,9 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
-import androidx.compose.material.icons.rounded.Accessibility
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.QueryStats
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Smartphone
@@ -54,28 +54,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.robingebert.blokky.R
+import com.robingebert.blokky.feature_monitor.AppMonitorService
+import com.robingebert.blokky.feature_monitor.UsageAccess
 import com.robingebert.blokky.ui.theme.BlockfyError
 import com.robingebert.blokky.ui.theme.BlockfyPrimary
 import com.robingebert.blokky.ui.theme.BlockfySuccess
 
 @Composable
-fun AccessibilityServiceCard(
-    isAccessibilityGranted: Boolean
+fun UsageAccessCard(
+    isUsageAccessGranted: Boolean
 ) {
-    var showAccessibilityServiceDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     val update: (Boolean) -> Unit = {
-        if (isAccessibilityGranted) {
-            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        if (isUsageAccessGranted) {
+            UsageAccess.openSettings(context)
         } else {
-            showAccessibilityServiceDialog = true
+            showDialog = true
         }
     }
 
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = if (!isAccessibilityGranted) {
+            containerColor = if (!isUsageAccessGranted) {
                 MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
@@ -83,13 +85,13 @@ fun AccessibilityServiceCard(
         ),
         border = BorderStroke(
             1.dp,
-            if (!isAccessibilityGranted) BlockfyError.copy(alpha = 0.5f) else BlockfySuccess.copy(alpha = 0.6f)
+            if (!isUsageAccessGranted) BlockfyError.copy(alpha = 0.5f) else BlockfySuccess.copy(alpha = 0.6f)
         ),
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .toggleable(
-                value = isAccessibilityGranted,
+                value = isUsageAccessGranted,
                 role = Role.Switch,
                 onValueChange = update
             ),
@@ -102,30 +104,30 @@ fun AccessibilityServiceCard(
         ) {
             Icon(
                 modifier = Modifier.size(32.dp),
-                imageVector = if (isAccessibilityGranted) Icons.Rounded.CheckCircle else Icons.Rounded.Accessibility,
+                imageVector = if (isUsageAccessGranted) Icons.Rounded.CheckCircle else Icons.Rounded.QueryStats,
                 contentDescription = null,
-                tint = if (isAccessibilityGranted) BlockfySuccess else BlockfyError
+                tint = if (isUsageAccessGranted) BlockfySuccess else BlockfyError
             )
             Spacer(modifier = Modifier.width(14.dp))
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(R.string.accessibility_service),
+                    text = stringResource(R.string.usage_access_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = if (isAccessibilityGranted) {
-                        stringResource(R.string.accessibility_active)
+                    text = if (isUsageAccessGranted) {
+                        stringResource(R.string.usage_access_active)
                     } else {
-                        stringResource(R.string.accessibility_inactive)
+                        stringResource(R.string.usage_access_inactive)
                     },
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (isAccessibilityGranted) BlockfySuccess else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (isUsageAccessGranted) BlockfySuccess else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Switch(
-                checked = isAccessibilityGranted,
+                checked = isUsageAccessGranted,
                 onCheckedChange = { update(it) },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
@@ -136,15 +138,15 @@ fun AccessibilityServiceCard(
         }
     }
 
-    if (showAccessibilityServiceDialog) {
-        AccessibilityServiceDialog {
-            showAccessibilityServiceDialog = false
+    if (showDialog) {
+        UsageAccessDialog {
+            showDialog = false
         }
     }
 }
 
 @Composable
-fun AccessibilityServiceDialog(
+fun UsageAccessDialog(
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -174,7 +176,7 @@ fun AccessibilityServiceDialog(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = stringResource(R.string.accessibility_dialog_title),
+                        text = stringResource(R.string.usage_access_dialog_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -183,14 +185,13 @@ fun AccessibilityServiceDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = stringResource(R.string.accessibility_dialog_desc),
+                    text = stringResource(R.string.usage_access_dialog_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // Card 1: Play Protect
                 OutlinedCard(
                     shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.outlinedCardColors(
@@ -225,7 +226,6 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Card 2: Samsung, Motorola and Android 13+ (Restricted Settings)
                 OutlinedCard(
                     shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.outlinedCardColors(
@@ -261,7 +261,6 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Card 3: Xiaomi, HyperOS & MIUI
                 OutlinedCard(
                     shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.outlinedCardColors(
@@ -296,7 +295,6 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // DIRECT SHORTCUT 1: Open App Info Screen
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -324,7 +322,6 @@ fun AccessibilityServiceDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // DIRECT SHORTCUT 2: Open Accessibility Settings
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -332,18 +329,19 @@ fun AccessibilityServiceDialog(
                         containerColor = BlockfyPrimary
                     ),
                     onClick = {
-                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                        UsageAccess.openSettings(context)
+                        AppMonitorService.start(context)
                         onDismissRequest()
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Accessibility,
+                        imageVector = Icons.Rounded.QueryStats,
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.btn_open_accessibility),
+                        text = stringResource(R.string.btn_open_usage_access),
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -363,6 +361,6 @@ fun AccessibilityServiceDialog(
 
 @Preview
 @Composable
-fun AccessibilityServiceCardPreview() {
-    AccessibilityServiceCard(isAccessibilityGranted = false)
+fun UsageAccessCardPreview() {
+    UsageAccessCard(isUsageAccessGranted = false)
 }

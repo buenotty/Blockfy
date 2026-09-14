@@ -285,7 +285,7 @@ fun AboutScreen() {
             }
         }
 
-        // Privacy & Accessibility Information
+        // Privacy information
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
