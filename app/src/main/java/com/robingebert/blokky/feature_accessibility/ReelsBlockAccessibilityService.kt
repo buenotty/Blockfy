@@ -85,17 +85,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 "com.twitter.android"
             )
 
-            if (settings.adultContentBlockerEnabled) {
-                val allPackages = mutableListOf(*cleanSocialPackages)
-                allPackages.addAll(AdultContentDetector.BROWSER_PACKAGES)
-                info.packageNames = allPackages.distinct().toTypedArray()
-            } else {
-                info.packageNames = cleanSocialPackages
-            }
+            info.packageNames = cleanSocialPackages
 
             info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
-                AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
-                AccessibilityEvent.TYPE_VIEW_CLICKED
+                AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
             info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
             info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
             info.notificationTimeout = 100L
@@ -146,14 +139,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
             val pkg = event?.packageName?.toString() ?: return
             val root = rootInActiveWindow ?: return
-
-            if (settings.adultContentBlockerEnabled && AdultContentDetector.BROWSER_PACKAGES.contains(pkg)) {
-                if (currentActivePackage != null) {
-                    stopAllTracking()
-                }
-                handleBrowserApp(pkg, root)
-                return
-            }
 
             when (pkg) {
                 "com.instagram.android" -> handleTrackedApp(pkg, "Instagram", settings.instagram, root)
