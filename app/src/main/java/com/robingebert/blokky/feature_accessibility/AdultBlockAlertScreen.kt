@@ -1,14 +1,5 @@
 package com.robingebert.blokky.feature_accessibility
 
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -48,76 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.robingebert.blokky.ui.theme.BlokkyTheme
 import kotlinx.coroutines.delay
-
-class AdultBlockAlertActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val quote = intent.getStringExtra(EXTRA_QUOTE) ?: AdultContentDetector.getRandomWarning()
-        triggerVibration()
-
-        setContent {
-            BlokkyTheme {
-                AdultBlockAlertScreen(
-                    quote = quote,
-                    onDismiss = {
-                        goToHome()
-                    }
-                )
-            }
-        }
-    }
-
-    private fun goToHome() {
-        val homeIntent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_HOME)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        startActivity(homeIntent)
-        finishAffinity()
-    }
-
-    private fun triggerVibration() {
-        try {
-            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val vm = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
-                vm?.defaultVibrator
-            } else {
-                @Suppress("DEPRECATION")
-                getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-            }
-
-            vibrator?.let { v ->
-                if (v.hasVibrator()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val timings = longArrayOf(0, 180, 100, 250, 100, 300)
-                        val amplitudes = intArrayOf(0, 255, 0, 255, 0, 255)
-                        v.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
-                    } else {
-                        @Suppress("DEPRECATION")
-                        v.vibrate(450L)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            // Ignore
-        }
-    }
-
-    companion object {
-        const val EXTRA_QUOTE = "extra_quote"
-
-        fun createIntent(context: Context, quote: String): Intent {
-            return Intent(context, AdultBlockAlertActivity::class.java).apply {
-                putExtra(EXTRA_QUOTE, quote)
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            }
-        }
-    }
-}
 
 @Composable
 fun AdultBlockAlertScreen(

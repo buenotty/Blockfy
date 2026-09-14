@@ -5,6 +5,7 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Typeface
@@ -24,6 +25,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.robingebert.blokky.MainActivity
 import com.robingebert.blokky.R
 import com.robingebert.blokky.datastore.AppSettings
 import com.robingebert.blokky.datastore.DailyUsage
@@ -408,10 +410,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         triggerVibration(isFinal = true)
 
         try {
-            val intent = AdultBlockAlertActivity.createIntent(this, warningQuote)
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra(MainActivity.EXTRA_ADULT_BLOCK_WARNING, warningQuote)
+            }
             startActivity(intent)
         } catch (e: Exception) {
-            Log.e("BlockfyService", "Error launching AdultBlockAlertActivity", e)
+            Log.e("BlockfyService", "Error launching adult block warning", e)
             performGlobalAction(GLOBAL_ACTION_HOME)
         }
 
