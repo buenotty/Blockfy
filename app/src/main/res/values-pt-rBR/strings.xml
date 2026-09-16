@@ -35,17 +35,25 @@
     <string name="short_videos_label">vídeos curtos</string>
 
     <string name="language_title">Idioma</string>
-    <string name="language_desc">Escolha o idioma do Blockfy. O padrão é inglês.</string>
+    <string name="language_desc">No Brasil o app usa português. Nos outros países, inglês — até você alterar aqui.</string>
+    <string name="language_automatic">Automático</string>
     <string name="language_english">English</string>
     <string name="language_portuguese">Português</string>
 
+    <string name="section_apps">Vídeos curtos</string>
+    <string name="section_focus">Foco</string>
+
     <string name="support_creator_title">Apoiar o projeto</string>
-    <string name="support_creator_subtitle">O Blockfy continua gratuito. Um Pix ajuda a manter o app.</string>
+    <string name="support_creator_subtitle">Pix ou PayPal mantêm o Blockfy gratuito.</string>
     <string name="support_dialog_title">Apoiar o Blockfy</string>
-    <string name="support_dialog_desc">O Blockfy é gratuito e de código aberto. Se ele te ajuda a sair dos vídeos curtos, você pode apoiar o desenvolvimento via Pix.</string>
+    <string name="support_dialog_desc">O Blockfy é gratuito e de código aberto. Se ele te ajuda a sair dos vídeos curtos, você pode apoiar o desenvolvimento via Pix ou PayPal.</string>
     <string name="pix_key_label">Chave Pix</string>
     <string name="copy_pix_btn">Copiar chave Pix</string>
     <string name="pix_copied_toast">Chave Pix copiada</string>
+    <string name="paypal_label">PayPal</string>
+    <string name="copy_paypal_btn">Copiar e-mail do PayPal</string>
+    <string name="open_paypal_btn">Abrir PayPal</string>
+    <string name="paypal_copied_toast">E-mail do PayPal copiado</string>
     <string name="star_github_btn">Estrela no GitHub</string>
 
     <string name="version_label">Versão: %1$s</string>

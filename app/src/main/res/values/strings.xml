@@ -35,17 +35,25 @@
     <string name="short_videos_label">short videos</string>
 
     <string name="language_title">Language</string>
-    <string name="language_desc">Choose the language used in Blockfy. The default is English.</string>
+    <string name="language_desc">Brazil uses Portuguese. Everywhere else uses English, until you change it here.</string>
+    <string name="language_automatic">Automatic</string>
     <string name="language_english">English</string>
     <string name="language_portuguese">Português</string>
 
+    <string name="section_apps">Short videos</string>
+    <string name="section_focus">Focus</string>
+
     <string name="support_creator_title">Support the project</string>
-    <string name="support_creator_subtitle">Blockfy stays free. A Pix contribution helps keep it that way.</string>
+    <string name="support_creator_subtitle">Pix or PayPal keep Blockfy free.</string>
     <string name="support_dialog_title">Support Blockfy</string>
-    <string name="support_dialog_desc">Blockfy is free and open source. If it helps you stay off short videos, you can support development with Pix.</string>
+    <string name="support_dialog_desc">Blockfy is free and open source. If it helps you stay off short videos, you can support development with Pix or PayPal.</string>
     <string name="pix_key_label">Pix key</string>
     <string name="copy_pix_btn">Copy Pix key</string>
     <string name="pix_copied_toast">Pix key copied</string>
+    <string name="paypal_label">PayPal</string>
+    <string name="copy_paypal_btn">Copy PayPal email</string>
+    <string name="open_paypal_btn">Open PayPal</string>
+    <string name="paypal_copied_toast">PayPal email copied</string>
     <string name="star_github_btn">Star on GitHub</string>
 
     <string name="version_label">Version: %1$s</string>

@@ -204,6 +204,41 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
+    fun languageFollowsBrazilDetectionAndLivesOffTheHomeScreen() {
+        val overview = readAppFile("src/main/java/com/buenotty/blockfy/feature_preferences/ui/OverviewScreen.kt").readText()
+        val about = readAppFile("src/main/java/com/buenotty/blockfy/feature_settings/AboutScreen.kt").readText()
+        val activity = readAppFile("src/main/java/com/buenotty/blockfy/MainActivity.kt").readText()
+        val locales = readAppFile("src/main/res/xml/locales_config.xml").readText()
+        assertFalse(
+            "language chips on home made English look selected while system Portuguese was shown",
+            overview.contains("language_title")
+        )
+        assertTrue(about.contains("language_title"))
+        assertTrue(about.contains("AppLocale.AUTO"))
+        assertTrue(activity.contains("Icons.Rounded.Settings"))
+        assertFalse(activity.contains("Icons.Rounded.Info"))
+        assertTrue(locales.contains("pt-BR"))
+    }
+
+    @Test
+    fun supportTheProjectIncludesPaypalEmail() {
+        val overview = readAppFile("src/main/java/com/buenotty/blockfy/feature_preferences/ui/OverviewScreen.kt").readText()
+        val links = readAppFile("src/main/java/com/buenotty/blockfy/SupportLinks.kt").readText()
+        assertTrue(links.contains("samuellbuenno@gmail.com"))
+        assertTrue(overview.contains("SupportLinks.PAYPAL_EMAIL") || overview.contains("samuellbuenno@gmail.com"))
+    }
+
+    @Test
+    fun dailyLimitChipsDoNotForceWhiteLabelOnPrimary() {
+        val sheet = readAppFile("src/main/java/com/buenotty/blockfy/feature_preferences/ui/composables/EditBlockerBottomSheet.kt").readText()
+        assertFalse(
+            "selected FilterChips used Color.White on a light primary, so the chosen time was unreadable",
+            sheet.contains("selectedLabelColor = Color.White")
+        )
+        assertFalse(sheet.contains("selectedContainerColor = MaterialTheme.colorScheme.primary"))
+    }
+
+    @Test
     fun playStoreIdentityMatchesAndKeepsSigningSecretsOutOfSource() {
         val gradle = readAppFile("build.gradle.kts").readText()
         assertTrue(gradle.contains("namespace = \"com.buenotty.blockfy\""))

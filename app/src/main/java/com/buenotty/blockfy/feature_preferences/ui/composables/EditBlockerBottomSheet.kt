@@ -5,6 +5,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +27,6 @@ import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -34,7 +34,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,16 +43,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditAppBottomSheet(
     app: App,
@@ -99,24 +96,8 @@ fun EditAppBottomSheet(
                     .padding(vertical = 8.dp, horizontal = 20.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Icon(
-                        painter = painterResource(
-                            when (app.name) {
-                                "YouTube" -> R.drawable.ic_youtube
-                                "TikTok" -> R.drawable.ic_tiktok
-                                "Facebook" -> R.drawable.ic_facebook_themed
-                                "X" -> R.drawable.ic_x_themed
-                                else -> R.drawable.ic_instagram
-                            }
-                        ),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(28.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AppBrandIcon(trackedAppIcon(app.name))
                     Spacer(Modifier.width(12.dp))
                     Text(
                         text = stringResource(R.string.settings_dialog_title, app.name),
@@ -125,9 +106,8 @@ fun EditAppBottomSheet(
                     )
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(20.dp))
 
-                // Schedule Section
                 Text(
                     text = stringResource(R.string.schedule_title),
                     style = MaterialTheme.typography.titleSmall,
@@ -170,7 +150,6 @@ fun EditAppBottomSheet(
 
                 Spacer(Modifier.height(20.dp))
 
-                // Daily Limit Section
                 Text(
                     text = stringResource(R.string.daily_limit_picker_title),
                     style = MaterialTheme.typography.titleSmall,
@@ -192,42 +171,26 @@ fun EditAppBottomSheet(
                         )
                         Spacer(Modifier.height(8.dp))
 
-                        // Quick selection chips
                         val options = listOf(0, 5, 10, 15, 30, 45, 60)
-                        Row(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            options.take(4).forEach { min ->
-                                FilterChip(
+                            options.forEach { min ->
+                                SelectableFilterChip(
                                     selected = dailyLimitMinutes == min,
                                     onClick = { dailyLimitMinutes = min },
-                                    label = { Text(if (min == 0) stringResource(R.string.daily_limit_off) else "${min}m") },
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                        selectedLabelColor = Color.White
-                                    )
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            options.drop(4).forEach { min ->
-                                FilterChip(
-                                    selected = dailyLimitMinutes == min,
-                                    onClick = { dailyLimitMinutes = min },
-                                    label = { Text("${min}m") },
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                        selectedLabelColor = Color.White
-                                    )
+                                    label = if (min == 0) {
+                                        stringResource(R.string.daily_limit_off)
+                                    } else {
+                                        "${min}m"
+                                    },
+                                    enabled = !isStrictLocked
                                 )
                             }
                         }
 
-                        // Usage info & reset button
                         if (dailyLimitMinutes > 0) {
                             Spacer(Modifier.height(10.dp))
                             val usedMin = todayUsedSeconds / 60
@@ -256,11 +219,10 @@ fun EditAppBottomSheet(
 
                 Spacer(Modifier.height(20.dp))
 
-                // App Total Daily Limit Section
                 Text(
                     text = stringResource(R.string.app_total_limit_label),
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFF60A5FA),
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(Modifier.height(8.dp))
@@ -279,37 +241,21 @@ fun EditAppBottomSheet(
                         Spacer(Modifier.height(8.dp))
 
                         val totalOptions = listOf(0, 15, 30, 45, 60, 90, 120)
-                        Row(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            totalOptions.take(4).forEach { min ->
-                                FilterChip(
+                            totalOptions.forEach { min ->
+                                SelectableFilterChip(
                                     selected = appTotalDailyLimitMinutes == min,
                                     onClick = { if (!isStrictLocked) appTotalDailyLimitMinutes = min },
                                     enabled = !isStrictLocked,
-                                    label = { Text(if (min == 0) stringResource(R.string.daily_limit_off) else "${min}m") },
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = Color(0xFF3B82F6),
-                                        selectedLabelColor = Color.White
-                                    )
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            totalOptions.drop(4).forEach { min ->
-                                FilterChip(
-                                    selected = appTotalDailyLimitMinutes == min,
-                                    onClick = { if (!isStrictLocked) appTotalDailyLimitMinutes = min },
-                                    enabled = !isStrictLocked,
-                                    label = { Text("${min}m") },
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = Color(0xFF3B82F6),
-                                        selectedLabelColor = Color.White
-                                    )
+                                    label = if (min == 0) {
+                                        stringResource(R.string.daily_limit_off)
+                                    } else {
+                                        "${min}m"
+                                    }
                                 )
                             }
                         }
@@ -322,27 +268,37 @@ fun EditAppBottomSheet(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFFEF4444).copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                            .background(
+                                MaterialTheme.colorScheme.errorContainer,
+                                RoundedCornerShape(12.dp)
+                            )
                             .padding(12.dp)
                     ) {
-                        Icon(Icons.Rounded.Lock, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(20.dp))
+                        Icon(
+                            Icons.Rounded.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.size(20.dp)
+                        )
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = stringResource(R.string.strict_locked_banner),
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFFCA5A5)
+                            color = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
                 }
 
                 Spacer(Modifier.height(24.dp))
 
-                // Save button
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isStrictLocked) Color.Gray else MaterialTheme.colorScheme.primary
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     ),
                     enabled = !isStrictLocked,
                     onClick = { save() }

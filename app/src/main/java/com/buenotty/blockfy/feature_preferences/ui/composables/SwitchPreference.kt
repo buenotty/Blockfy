@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +38,8 @@ fun SwitchPreference(
     title: String,
     summary: String,
     enabled: Boolean = true,
+    grouped: Boolean = false,
+    showDivider: Boolean = false,
     leadingIcon: @Composable (() -> Unit),
     settingsIcon: @Composable ((Modifier) -> Unit)? = null,
     confirmDisable: Boolean = true,
@@ -52,30 +54,48 @@ fun SwitchPreference(
         }
         onValueChange(newValue)
     }
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8F)
-        ),
-        modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
-            .toggleable(
-                value = value,
-                enabled = enabled,
-                role = Role.Switch,
-                onValueChange = { edit(it) }
-            ),
-        shape = RoundedCornerShape(15.dp)
-    ) {
+
+    val row = @Composable {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(
+                    if (grouped) {
+                        Modifier.toggleable(
+                            value = value,
+                            enabled = enabled,
+                            role = Role.Switch,
+                            onValueChange = { edit(it) }
+                        )
+                    } else {
+                        Modifier
+                    }
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             leadingIcon()
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
-                Text(text = title, style = MaterialTheme.typography.titleMedium)
-                Text(text = summary, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (enabled) {
+                        MaterialTheme.colorScheme.onSurface
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    }
+                )
+                Text(
+                    text = summary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (enabled) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                    }
+                )
             }
             Switch(
                 checked = value,
@@ -83,11 +103,35 @@ fun SwitchPreference(
                 enabled = enabled
             )
             if (settingsIcon != null) {
-                Spacer(modifier = Modifier.width(10.dp))
-                VerticalDivider(modifier = Modifier.height(40.dp))
-                Spacer(modifier = Modifier.width(10.dp))
-                settingsIcon(Modifier.size(30.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                VerticalDivider(modifier = Modifier.height(28.dp))
+                settingsIcon(Modifier)
             }
+        }
+    }
+
+    if (grouped) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            row()
+            if (showDivider) PreferenceDivider()
+        }
+    } else {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .toggleable(
+                    value = value,
+                    enabled = enabled,
+                    role = Role.Switch,
+                    onValueChange = { edit(it) }
+                ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            row()
         }
     }
 

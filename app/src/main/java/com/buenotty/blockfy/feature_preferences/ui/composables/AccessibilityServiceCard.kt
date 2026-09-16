@@ -10,7 +10,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -69,38 +70,54 @@ fun AccessibilityServiceCard(
         }
     }
 
+    val containerColor = if (!isAccessibilityGranted) {
+        MaterialTheme.colorScheme.errorContainer
+    } else {
+        MaterialTheme.colorScheme.primaryContainer
+    }
+    val onContainer = if (!isAccessibilityGranted) {
+        MaterialTheme.colorScheme.onErrorContainer
+    } else {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    }
+
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (!isAccessibilityGranted) {
-                MaterialTheme.colorScheme.errorContainer
-            } else {
-                Color(0x807DEF87)
-            }
-        ),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
         modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .toggleable(
                 value = isAccessibilityGranted,
                 role = Role.Switch,
                 onValueChange = update
             ),
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                imageVector = Icons.Rounded.Accessibility,
-                contentDescription = null
-            )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(onContainer.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(22.dp),
+                    imageVector = Icons.Rounded.Accessibility,
+                    contentDescription = null,
+                    tint = onContainer
+                )
+            }
             Spacer(modifier = Modifier.width(12.dp))
             Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(R.string.accessibility_service),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = onContainer
                 )
                 Text(
                     text = if (isAccessibilityGranted) {
@@ -108,7 +125,8 @@ fun AccessibilityServiceCard(
                     } else {
                         stringResource(R.string.accessibility_inactive)
                     },
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodySmall,
+                    color = onContainer.copy(alpha = 0.8f)
                 )
             }
             Switch(
@@ -190,7 +208,7 @@ fun AccessibilityServiceDialog(
                                         context.startActivity(intent)
                                     }
                                 ) {
-                                    Text(stringResource(R.string.btn_open_app_info), color = Color.Gray)
+                                    Text(stringResource(R.string.btn_open_app_info))
                                 }
                                 Spacer(modifier = Modifier.weight(1f))
                                 TextButton(onClick = onDismissRequest) {

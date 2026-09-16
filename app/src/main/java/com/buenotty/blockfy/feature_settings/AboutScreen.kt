@@ -5,26 +5,25 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Balance
 import androidx.compose.material.icons.rounded.BugReport
+import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.QrCode2
-import androidx.compose.material.icons.rounded.SettingsEthernet
 import androidx.compose.material.icons.rounded.Shop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,8 +39,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -54,7 +55,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
+import com.buenotty.blockfy.AppLocale
 import com.buenotty.blockfy.R
+import com.buenotty.blockfy.SupportLinks
+import com.buenotty.blockfy.feature_preferences.ui.composables.PreferenceGroup
+import com.buenotty.blockfy.feature_preferences.ui.composables.SelectableFilterChip
+import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
 import com.buenotty.blockfy.updater.UpdateManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import qrcode.QRCode
@@ -68,93 +74,108 @@ fun AboutScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = spacedBy(20.dp)
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
+            shape = RoundedCornerShape(16.dp)
         ) {
             Row(
-                modifier = Modifier.padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painterResource(R.drawable.ic_policy),
                     contentDescription = stringResource(R.string.app_name),
-                    modifier = Modifier.size(32.dp)
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(36.dp)
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
-                    Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.size(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                     Text(
                         text = stringResource(R.string.app_tagline),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                     )
                     Text(
                         text = stringResource(R.string.version_label, getVersionName(context)),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                     )
                 }
                 IconButton(onClick = { showQrCodeDialog = true }) {
                     Icon(
                         Icons.Rounded.QrCode2,
                         contentDescription = stringResource(R.string.share_app_title),
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(RoundedCornerShape(15.dp)),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        LanguageSettingsCard()
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = spacedBy(12.dp)
         ) {
-            HeroCard(icon = Icons.Rounded.Shop, title = stringResource(R.string.check_updates_btn)) {
+            HeroCard(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Rounded.Shop,
+                title = stringResource(R.string.check_updates_btn)
+            ) {
                 UpdateManager.openPlayStoreOrSource(context)
             }
-            HeroCard(icon = Icons.Rounded.BugReport, title = stringResource(R.string.report_bug_btn)) {
+            HeroCard(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Rounded.BugReport,
+                title = stringResource(R.string.report_bug_btn)
+            ) {
                 context.startActivity(
-                    Intent(Intent.ACTION_VIEW, "https://github.com/buenotty/Blockfy/issues".toUri())
+                    Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB_ISSUES.toUri())
                 )
             }
-            HeroCard(icon = Icons.Rounded.Balance, title = stringResource(R.string.licenses_btn)) {
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = spacedBy(12.dp)
+        ) {
+            HeroCard(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Rounded.Balance,
+                title = stringResource(R.string.licenses_btn)
+            ) {
                 context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
             }
-            HeroCard(icon = Icons.Rounded.SettingsEthernet, title = stringResource(R.string.source_code_btn)) {
+            HeroCard(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Rounded.Code,
+                title = stringResource(R.string.source_code_btn)
+            ) {
                 context.startActivity(
-                    Intent(Intent.ACTION_VIEW, "https://github.com/buenotty/Blockfy".toUri())
+                    Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB.toUri())
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-        ) {
-            Text(
-                text = stringResource(R.string.about_story),
-                modifier = Modifier.padding(12.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-        ) {
-            Column(modifier = Modifier.padding(12.dp)) {
+        PreferenceGroup(title = stringResource(R.string.authorship_title)) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = spacedBy(8.dp)) {
                 Text(
-                    text = stringResource(R.string.authorship_title),
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.about_story),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Samuel Bueno — ${stringResource(R.string.fork_author_role)}",
                     style = MaterialTheme.typography.bodyMedium
@@ -166,23 +187,69 @@ fun AboutScreen() {
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-        ) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = stringResource(R.string.privacy_title),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = stringResource(R.string.privacy_desc))
-            }
+        PreferenceGroup(title = stringResource(R.string.privacy_title)) {
+            Text(
+                text = stringResource(R.string.privacy_desc),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(16.dp)
+            )
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 
     if (showQrCodeDialog) {
         QrCodeDialog { showQrCodeDialog = false }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun LanguageSettingsCard() {
+    val context = LocalContext.current
+    var selection by remember { mutableStateOf(AppLocale.currentSelection(context)) }
+
+    PreferenceGroup(title = stringResource(R.string.language_title)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = spacedBy(12.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.language_desc),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            FlowRow(
+                horizontalArrangement = spacedBy(8.dp),
+                verticalArrangement = spacedBy(8.dp)
+            ) {
+                SelectableFilterChip(
+                    selected = selection == AppLocale.AUTO,
+                    label = stringResource(R.string.language_automatic),
+                    onClick = {
+                        AppLocale.apply(context, AppLocale.AUTO)
+                        selection = AppLocale.AUTO
+                    }
+                )
+                SelectableFilterChip(
+                    selected = selection == AppLocale.ENGLISH,
+                    label = stringResource(R.string.language_english),
+                    onClick = {
+                        AppLocale.apply(context, AppLocale.ENGLISH)
+                        selection = AppLocale.ENGLISH
+                    }
+                )
+                SelectableFilterChip(
+                    selected = selection == AppLocale.PORTUGUESE,
+                    label = stringResource(R.string.language_portuguese),
+                    onClick = {
+                        AppLocale.apply(context, AppLocale.PORTUGUESE)
+                        selection = AppLocale.PORTUGUESE
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -192,21 +259,32 @@ fun getVersionName(context: Context): String {
 }
 
 @Composable
-fun HeroCard(icon: ImageVector, title: String, onClick: () -> Unit = {}) {
+fun HeroCard(
+    icon: ImageVector,
+    title: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        modifier = Modifier
-            .padding(4.dp)
-            .clip(RoundedCornerShape(15.dp))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp, horizontal = 8.dp),
+            verticalArrangement = spacedBy(10.dp)
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(32.dp))
-            Text(text = title, style = MaterialTheme.typography.bodySmall)
+            TintedGlyph(icon)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -229,7 +307,7 @@ fun QrCodeDialog(onDismissRequest: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = stringResource(R.string.share_app_title), style = MaterialTheme.typography.titleLarge)
