@@ -391,7 +391,9 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
                 .padding(vertical = 12.dp)
         ) {
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TintedGlyph(Icons.Rounded.VolunteerActivism, wellSize = 48.dp, glyphSize = 26.dp)
