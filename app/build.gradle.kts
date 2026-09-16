@@ -1,3 +1,5 @@
+import java.io.File
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,36 +9,64 @@ plugins {
     kotlin("plugin.serialization") version "2.1.0"
 }
 
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("secrets/keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
+}
+
+fun signingValue(name: String): String? {
+    return System.getenv(name)
+        ?: keystoreProperties.getProperty(name)
+        ?: (project.findProperty(name) as String?)
+}
+
 android {
-    namespace = "com.robingebert.blokky"
+    namespace = "com.buenotty.blockfy"
     compileSdk = 35
 
     defaultConfig {
         applicationId = "com.buenotty.blockfy"
         minSdk = 28
         targetSdk = 35
-        versionCode = 33
-        versionName = "1.8.3"
+        versionCode = 34
+        versionName = "1.9.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val storePath = signingValue("BLOCKFY_STORE_FILE")
+    val storePasswordValue = signingValue("BLOCKFY_STORE_PASSWORD")
+    val keyAliasValue = signingValue("BLOCKFY_KEY_ALIAS")
+    val keyPasswordValue = signingValue("BLOCKFY_KEY_PASSWORD")
+    val storeFileResolved = storePath?.let { path ->
+        val file = File(path)
+        if (file.isAbsolute) file else rootProject.file(path)
+    }
+
     signingConfigs {
-        create("shared") {
-            storeFile = file("blockfy.p12")
-            storePassword = "blockfy_keystore_pass"
-            keyAlias = "blockfy"
-            keyPassword = "blockfy_keystore_pass"
-            storeType = "PKCS12"
+        if (storeFileResolved != null &&
+            storeFileResolved.isFile &&
+            !storePasswordValue.isNullOrBlank() &&
+            !keyAliasValue.isNullOrBlank() &&
+            !keyPasswordValue.isNullOrBlank()
+        ) {
+            create("release") {
+                storeFile = storeFileResolved
+                storePassword = storePasswordValue
+                keyAlias = keyAliasValue
+                keyPassword = keyPasswordValue
+                storeType = "PKCS12"
+            }
         }
     }
 
     buildTypes {
         debug {
-            signingConfig = signingConfigs.getByName("shared")
+            // Use the SDK debug key. Never reuse the Play upload key.
         }
         release {
-            signingConfig = signingConfigs.getByName("shared")
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -60,10 +90,9 @@ android {
     }
 }
 
-
 dependencies {
-
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -87,7 +116,6 @@ dependencies {
     implementation(libs.androidx.icons.extended)
     implementation(libs.androidx.workmanager)
     implementation(libs.androidx.datastore)
-    //implementation(libs.androidx.datastore.core.android)
     implementation(libs.ossLicenses)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.core)
