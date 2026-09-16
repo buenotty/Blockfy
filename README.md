@@ -1,136 +1,44 @@
-# 🛡️ Blockfy — Bloqueador Anti-Pornô & Anti-Doomscrolling para Android
-### *100% Gratuito, Código Aberto, Zero Anúncios & Sem Assinaturas*
+# Blockfy
 
-<p align="center">
-  <img src="app/src/main/res/drawable/ic_policy.xml" width="100" height="100" alt="Blockfy Logo"/>
-</p>
+[English](README.md) · [Português](README.pt.md)
 
-<p align="center">
-  <strong>Blockfy (Block For You)</strong> — Recupere o controle da sua dopamina, proteja sua mente contra pornografia, vença o vício em rolagens infinitas e conquiste foco real.
-</p>
+**Less Reels. More focus. / Menos Reels. Mais foco.**
 
-<p align="center">
-  <a href="https://github.com/buenotty/Blockfy/releases/latest"><img src="https://img.shields.io/github/v/release/buenotty/Blockfy?style=for-the-badge&color=7C83FD&logo=github" alt="Latest Release"/></a>
-  <img src="https://img.shields.io/badge/100%25-GRATUITO%20(SEM%20ASSINATURA)-22C55E?style=for-the-badge" alt="100% Free"/>
-  <img src="https://img.shields.io/badge/0%20ANÚNCIOS-ZERO%20ADS-06B6D4?style=for-the-badge" alt="Zero Ads"/>
-  <img src="https://img.shields.io/badge/Plataforma-Android%209.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Platform"/>
-  <img src="https://img.shields.io/badge/VirusTotal-0%2F70%20Limpo%20(100%25%20Seguro)-brightgreen?style=for-the-badge&logo=virustotal&logoColor=white" alt="VirusTotal Clean"/>
-</p>
+Free, open-source Android app. No ads, no subscription.
+
+Fork of [Blokky](https://github.com/Ronjar/Blokky) by Robin Gebert. Maintained by [Samuel Bueno](https://github.com/buenotty).
 
 ---
 
-## 🎯 Por que o Blockfy existe?
+## Summary
 
-A grande maioria dos aplicativos de bloqueio de pornografia e controle de foco no mercado cobra assinaturas abusivas (**R$ 30 a R$ 60 por mês**), entope a tela com anúncios chatos, rastreia seus dados de navegação ou bloqueia recursos básicos atrás de um paywall.
+Blockfy helps you get off short-video loops (Reels, Shorts, TikTok) and, if you want, block known adult sites on the phone. Accessibility only watches Instagram, YouTube, TikTok, Facebook and X — not banking apps. The adult shield is an on-device DNS filter. The app language defaults to English; Portuguese is in Settings.
 
-O **Blockfy** foi criado com um princípio inegociável: **ferramentas essenciais para proteger a sua mente e a sua vida devem ser acessíveis, limpas e transparentes**.
+## Resumo
 
-- 💎 **100% Gratuito Para Sempre**: Nada de teste de 7 dias, nada de versão "premium".
-- 🚫 **Zero Anúncios**: Sem banners, sem pop-ups, sem propagandas em vídeo.
-- 🔒 **Privacidade Real**: O serviço de bloqueio funciona **100% offline no seu dispositivo**. Seus dados, histórico e hábitos nunca saem do seu celular.
-- 🛡️ **Zero Conflito com Bancos Digitais**: Acessibilidade isolada em Instagram/YouTube/TikTok/Facebook/X. Sem overlay, sem Acesso ao uso e sem permissão de instalar APKs. O serviço nunca lê a janela ativa do Nubank.
+O Blockfy ajuda você a sair do loop de vídeos curtos (Reels, Shorts, TikTok) e, se quiser, bloquear sites adultos conhecidos no próprio celular. A acessibilidade só observa Instagram, YouTube, TikTok, Facebook e X — não apps de banco. O escudo adulto é um filtro DNS no aparelho. O idioma padrão é inglês; português fica em Configurações.
 
 ---
 
-## ✨ Funcionalidades Principais
+## What it does
 
-### 🔞 1. Escudo Anti-Pornô & Conteúdo Adulto (navegadores)
-Bloqueia sites adultos com um filtro DNS local. O tráfego dos bancos **não passa** por esse filtro:
-- **Todos os navegadores da Web**: Chrome, Samsung Internet, Firefox, Brave, Opera, Edge, DuckDuckGo e outros.
-- **Sem leitura da janela ativa**: o Blockfy não chama `getRootInActiveWindow`. Só caminha a árvore do evento do Instagram/YouTube/etc. Trocar para o Nubank não é observado.
-- **Mapeamento de domínios**: OnlyFans, Fatal Model, Privacy, XVideos, Pornhub, XNXX e dezenas de outros.
+- **Reels / Shorts blocker** — Accessibility is limited to Instagram, YouTube, TikTok, Facebook and X. It does not read other apps, including banks.
+- **Daily limits** — Optional per-app quotas that reset at midnight.
+- **Adult site shield** — Optional local DNS VPN. Bank apps stay on your normal connection. Sites are matched as whole names, so a word like `jerome` is not treated as `erome`.
+- **Language** — Default is English. Switch to Portuguese in Settings.
+- **Updates** — Meant to come from Google Play. The app does not install APKs itself.
 
-### ⚡ 2. Dissuasão Psicológica Agressiva
-Tentou abrir pornografia? O Blockfy não apenas fecha a página, ele te arremessa para a Home e solta um aviso direto no topo:
-> *"Você quer destruir sua vida?"*  
-> *"Não vou deixar você errar de novo."*  
-> *"Isso é pior que drogas, saia fora disso."*  
-> *"Pare agora! Isso está destruindo sua mente e sua energia."*
+## Requirements
 
-### 🧱 3. Barreira Anti-Recaída (Anti-Paste)
-Para desativar o Escudo Anti-Pornô dentro do app, não basta clicar em um botão no momento de fraqueza:
-- Você é obrigado a redigir manualmente um texto reflexivo completo sobre os prejuízos da pornografia.
-- **Copiar e colar é estritamente desabilitado**: o menu de colar do Android é bloqueado e qualquer colagem via atalho ou teclado é rejeitada na hora.
-- Só é liberado após digitar 100% dos caracteres, forçando seu córtex pré-frontal a retomar a consciência.
+Android 9 or newer.
 
-### 🚫 4. Anti-Doomscrolling (Vídeos Curtos)
-- **Instagram Reels**: detecta a tela de Reels e devolve para o feed de amigos.
-- **YouTube Shorts**: detecta Shorts e volta para a aba inicial.
-- **TikTok**: fecha o app quando o limite diário é atingido.
-- **Facebook Reels**: bloqueia a reprodução de vídeos curtos.
-- **X (Twitter)**: controla a rolagem infinita.
+## Credits
 
-### ⏳ 5. Limites Diários com Reset Automático à Meia-Noite
-- Defina uma cota diária de uso para cada app (ex.: 15 minutos por dia).
-- Alertas regressivos de tempo na tela a cada 5 minutos e minuto a minuto nos últimos 5 minutos.
-- **Reset Automático à Meia-Noite**: No primeiro uso da manhã, suas métricas estarão limpas (0m usados) sem necessidade de intervenção.
+- **Samuel Bueno** ([@buenotty](https://github.com/buenotty)) — Blockfy maintainer
+- **Robin Gebert** ([@Ronjar](https://github.com/Ronjar)) — original Blokky
 
-### 🧠 6. Choque de Consciência & Modo Inviolável (Hardcore)
-- **Mensagens de Atenção Plena**: Frases reflexivas ao abrir redes sociais para quebrar o transe da dopamina barata.
-- **Modo Inviolável**: Trava as configurações até a meia-noite ou exige desafios complexos para impedir alterações por impulso.
+MIT license. See [LICENSE](LICENSE).
 
-### 🔄 7. Atualizador Automático Integrado (OTA)
-- Verifica novas versões automaticamente ao abrir o app.
-- Baixa o APK oficial diretamente das Releases do GitHub com barra de progresso nativa e inicia a atualização com um toque.
+## Signing (for developers)
 
----
-
-## 🛡️ Segurança e VirusTotal (100% Limpo)
-
-> **0 Detecções no VirusTotal — Aplicativo 100% Seguro e Auditado**
-
-- ✅ **0/70 no VirusTotal**: Totalmente livre de qualquer malware, adware ou spyware.
-- ✅ **Sem permissões perigosas**: Sem overlay, sem Acesso ao uso e sem permissão de instalar APKs. A acessibilidade não observa bancos.
-- ✅ **Código Aberto no GitHub**: Qualquer pessoa pode auditar o código-fonte linha por linha.
-
----
-
-## 📲 Como Baixar e Instalar
-
-### 1. Download do APK Oficial
-Baixe a versão mais recente diretamente na página de [**Releases do GitHub**](https://github.com/buenotty/Blockfy/releases/latest) clicando em **`app-release.apk`**.
-
-### 2. Aviso do Google Play Protect
-Como o APK é distribuído de forma independente fora da Play Store:
-1. Ao instalar, toque em **"Mais detalhes"** (ou na setinha para baixo);
-2. Selecione **"Instalar assim mesmo"**.
-
----
-
-## ⚙️ Como Ativar no seu Celular
-
-1. Abra o Blockfy e ative a **Acessibilidade** (necessária para sair de Reels/Shorts e manter o feed).
-2. (Opcional) Ative o Escudo Anti-Pornô. O Android pede uma vez a VPN de DNS; se o Nubank reclamar da VPN, desligue só esse escudo — a Acessibilidade pode continuar ligada.
-
-### 📱 Samsung (One UI), Motorola e Android 13+
-Se a opção de Acessibilidade não aparecer: Informações do app → 3 pontinhos → **Permitir configurações restritas**, depois volte e ative a Acessibilidade.
-
-### 📱 Xiaomi, HyperOS e MIUI
-1. Em Informações do App Blockfy, marque **"Início Automático"**;
-2. Ative a **Acessibilidade** na lista de permissões especiais.
-
----
-
-## ☕ Apoie o Projeto / Support the Creator
-
-O Blockfy é mantido de forma independente como um projeto 100% gratuito e livre de anúncios. Se o aplicativo ajudou você a recuperar seu tempo, seu foco e sua clareza mental, considere apoiar o desenvolvimento!
-
-### 🇧🇷 Apoio via Pix (Brasil)
-- **Chave Pix Aleatória**: `496f008e-c67d-4175-9fad-e6b3c9bbd248`  
-*(Você também pode copiar a chave com um clique direto dentro do aplicativo no botão "Apoiar o Criador").*
-
-### ⭐ Deixe uma Estrela no GitHub
-Deixar uma estrela no [repositório do Blockfy](https://github.com/buenotty/Blockfy) ajuda mais pessoas que sofrem com vícios digitais a encontrarem o projeto!
-
----
-
-## 👥 Créditos & Autores
-
-- **Desenvolvedor & Mantenedor do Fork**: [Samuel Bueno (@buenotty)](https://github.com/buenotty) — Escudo anti-pornô, anti-recaída, expansão para redes sociais, correção de bugs, limites diários e modernização visual.
-- **Conceito Original**: [Robin Gebert (@Ronjar)](https://github.com/Ronjar) — Criador do conceito original do Blokky.
-
----
-
-## 📄 Licença
-
-Este projeto é disponibilizado sob a licença de código aberto original. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+The Play upload keystore is **not** in this repository. Copy `keystore.properties.example` to `secrets/keystore.properties` and point it at your PKCS12 file. Never commit `*.p12`, `*.jks`, `*.keystore`, or `secrets/`.

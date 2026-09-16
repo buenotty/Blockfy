@@ -5,7 +5,7 @@ permissions:
 
 on:
   push:
-    tags: 
+    tags:
       - 'v*.*.*'
   workflow_dispatch:
 
@@ -27,20 +27,39 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build Signed APK with Gradle
+      - name: Decode upload keystore
+        env:
+          BLOCKFY_STORE_FILE_BASE64: ${{ secrets.BLOCKFY_STORE_FILE_BASE64 }}
+        run: |
+          if [ -z "$BLOCKFY_STORE_FILE_BASE64" ]; then
+            echo "No BLOCKFY_STORE_FILE_BASE64 secret; release APK will be unsigned."
+            exit 0
+          fi
+          echo "$BLOCKFY_STORE_FILE_BASE64" | base64 -d > "${GITHUB_WORKSPACE}/upload-keystore.p12"
+
+      - name: Build release APK
+        env:
+          BLOCKFY_STORE_FILE: ${{ github.workspace }}/upload-keystore.p12
+          BLOCKFY_STORE_PASSWORD: ${{ secrets.BLOCKFY_STORE_PASSWORD }}
+          BLOCKFY_KEY_ALIAS: ${{ secrets.BLOCKFY_KEY_ALIAS }}
+          BLOCKFY_KEY_PASSWORD: ${{ secrets.BLOCKFY_KEY_PASSWORD }}
         run: ./gradlew assembleRelease --stacktrace
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk/release/app-release.apk
-          name: Blockfy ${{ github.ref_name }} — Zero Conflito com Bancos
+          files: app/build/outputs/apk/release/*.apk
+          name: Blockfy ${{ github.ref_name }}
           body: |
-            ## 🛡️ Blockfy ${{ github.ref_name }}
-            
-            ### ✨ O que há de novo:
-            - **Escudo Anti-Pornô voltou a avisar**: o alerta em tela cheia usa full-screen intent. Sem isso o Android 10+ descartava a tela em silêncio.
-            - **Acessibilidade só para Reels/Shorts**: isolada em Instagram, YouTube, TikTok, Facebook e X. Sem overlay, sem Acesso ao uso e sem `REQUEST_INSTALL_PACKAGES`.
-            - **Nunca lê a janela ativa**: o serviço só caminha o `event.source` do app social.
+            ## Blockfy ${{ github.ref_name }}
+
+            Play Store preparation:
+
+            - `applicationId` and namespace are both `com.buenotty.blockfy`
+            - No `REQUEST_INSTALL_PACKAGES`; updates go through Play
+            - Upload keystore is not in the repository
+            - Default language is English, with Portuguese in Settings
+            - Adult-site matching uses whole tokens (e.g. `jerome` is not `erome`)
+            - UI follows the original Blokky Material You layout
           draft: false
           prerelease: false
