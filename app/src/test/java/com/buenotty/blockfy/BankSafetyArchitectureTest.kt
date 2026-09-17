@@ -250,6 +250,20 @@ class BankSafetyArchitectureTest {
         val manifest = readAppFile("src/main/AndroidManifest.xml").readText()
         assertFalse(manifest.contains("REQUEST_INSTALL_PACKAGES"))
         assertTrue(manifest.contains("android:localeConfig"))
+        assertTrue(
+            "unsigned APKs cannot be installed on phones",
+            gradle.contains("isMinifyEnabled = true")
+        )
+        assertTrue(gradle.contains("isShrinkResources = true"))
+        assertTrue(gradle.contains("enableV1Signing = true"))
+        assertTrue(gradle.contains("enableV2Signing = true"))
+        val workflow = File(".github/workflows/release.yml").let { file ->
+            if (file.exists()) file.readText()
+            else File("../.github/workflows/release.yml").readText()
+        }
+        assertFalse(workflow.contains("release APK will be unsigned"))
+        assertTrue(workflow.contains("Refusing to publish an unsigned APK"))
+        assertTrue(workflow.contains("app-release.apk"))
     }
 
     private fun readAppFile(relativeFromApp: String): File {

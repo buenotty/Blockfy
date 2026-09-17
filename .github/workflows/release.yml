@@ -32,8 +32,8 @@ jobs:
           BLOCKFY_STORE_FILE_BASE64: ${{ secrets.BLOCKFY_STORE_FILE_BASE64 }}
         run: |
           if [ -z "$BLOCKFY_STORE_FILE_BASE64" ]; then
-            echo "No BLOCKFY_STORE_FILE_BASE64 secret; release APK will be unsigned."
-            exit 0
+            echo "::error::Missing BLOCKFY_STORE_FILE_BASE64. Refusing to publish an unsigned APK (Android will reject the install)."
+            exit 1
           fi
           echo "$BLOCKFY_STORE_FILE_BASE64" | base64 -d > "${GITHUB_WORKSPACE}/upload-keystore.p12"
 
@@ -48,7 +48,7 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk/release/*.apk
+          files: app/build/outputs/apk/release/app-release.apk
           name: Blockfy ${{ github.ref_name }}
           body: |
             ## Blockfy ${{ github.ref_name }}
