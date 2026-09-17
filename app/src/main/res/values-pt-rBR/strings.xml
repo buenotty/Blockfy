@@ -35,7 +35,7 @@
     <string name="short_videos_label">vídeos curtos</string>
 
     <string name="language_title">Idioma</string>
-    <string name="language_desc">No Brasil o app usa português. Nos outros países, inglês — até você alterar aqui.</string>
+    <string name="language_desc">No Brasil o app abre em português. Fora isso, inglês. Você muda isso aqui se quiser.</string>
     <string name="language_automatic">Automático</string>
     <string name="language_english">English</string>
     <string name="language_portuguese">Português</string>
@@ -63,11 +63,11 @@
     <string name="source_code_btn">Código</string>
     <string name="website_btn">Site</string>
     <string name="authorship_title">Créditos</string>
-    <string name="fork_author_role">Mantenedor do Blockfy</string>
-    <string name="original_author_role">Criador original do Blokky</string>
-    <string name="about_story">O Blockfy ajuda você a sair de Reels, Shorts e feeds parecidos, com limites diários opcionais e um filtro DNS local de sites adultos.\n\nÉ um fork do Blokky, de Robin Gebert, mantido por Samuel Bueno. A ideia original — um bloqueador pequeno e honesto de vídeos curtos — continua no centro do app.</string>
+    <string name="fork_author_role">cuida do Blockfy</string>
+    <string name="original_author_role">fez o Blokky original</string>
+    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. Tem também um filtro DNS no celular para sites adultos, se você ligar.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade fica limitada a Instagram, YouTube, TikTok, Facebook e X para sair de Reels e Shorts. O Blockfy não lê apps de banco.\n\nO escudo adulto opcional usa uma VPN DNS local e não envia o seu histórico. Apps de banco ficam fora dessa VPN.\n\nAs atualizações vêm da Google Play. O Blockfy não instala APKs sozinho.</string>
+    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é uma VPN DNS que roda no seu celular. O histórico de navegação fica aqui. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
     <string name="learn_more">Saiba mais</string>

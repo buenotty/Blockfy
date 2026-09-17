@@ -89,11 +89,12 @@ fun AboutScreen() {
                 modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painterResource(R.drawable.ic_policy),
+                Image(
+                    painter = painterResource(R.drawable.ic_policy),
                     contentDescription = stringResource(R.string.app_name),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
                 )
                 Spacer(modifier = Modifier.size(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -177,11 +178,11 @@ fun AboutScreen() {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Samuel Bueno — ${stringResource(R.string.fork_author_role)}",
+                    text = "Samuel Bueno, ${stringResource(R.string.fork_author_role)}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "Robin Gebert — ${stringResource(R.string.original_author_role)}",
+                    text = "Robin Gebert, ${stringResource(R.string.original_author_role)}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

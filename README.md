@@ -2,31 +2,27 @@
 
 [English](README.md) · [Português](README.pt.md)
 
-**Less Reels. More focus. / Menos Reels. Mais foco.**
+Less Reels. More focus.
 
-Free, open-source Android app. No ads, no subscription.
+Free Android app, open source. No ads and no subscription.
 
-Fork of [Blokky](https://github.com/Ronjar/Blokky) by Robin Gebert. Maintained by [Samuel Bueno](https://github.com/buenotty).
+This is a fork of [Blokky](https://github.com/Ronjar/Blokky) by Robin Gebert. [Samuel Bueno](https://github.com/buenotty) maintains it.
 
----
+## What it is
 
-## Summary
+Blockfy gets you off short video (Reels, Shorts, TikTok). You can also block known adult sites on the phone. Accessibility only watches Instagram, YouTube, TikTok, Facebook, and X. It does not watch banking apps. The adult shield is a DNS filter that stays on the device.
 
-Blockfy helps you get off short-video loops (Reels, Shorts, TikTok) and, if you want, block known adult sites on the phone. Accessibility only watches Instagram, YouTube, TikTok, Facebook and X — not banking apps. The adult shield is an on-device DNS filter. The app language defaults to English; Portuguese is in Settings.
-
-## Resumo
-
-O Blockfy ajuda você a sair do loop de vídeos curtos (Reels, Shorts, TikTok) e, se quiser, bloquear sites adultos conhecidos no próprio celular. A acessibilidade só observa Instagram, YouTube, TikTok, Facebook e X — não apps de banco. O escudo adulto é um filtro DNS no aparelho. O idioma padrão é inglês; português fica em Configurações.
-
----
+If the phone is from Brazil, the app starts in Portuguese. Everywhere else it starts in English. You can change that under the gear on the About screen.
 
 ## What it does
 
-- **Reels / Shorts blocker** — Accessibility is limited to Instagram, YouTube, TikTok, Facebook and X. It does not read other apps, including banks.
-- **Daily limits** — Optional per-app quotas that reset at midnight.
-- **Adult site shield** — Optional local DNS VPN. Bank apps stay on your normal connection. Sites are matched as whole names, so a word like `jerome` is not treated as `erome`.
-- **Language** — Default is English. Switch to Portuguese in Settings.
-- **Updates** — Meant to come from Google Play. The app does not install APKs itself.
+Reels and Shorts: accessibility is limited to Instagram, YouTube, TikTok, Facebook, and X. Other apps, including banks, are left alone.
+
+Daily limits: per-app quotas, if you turn them on. They reset at midnight.
+
+Adult site shield: a local DNS VPN, if you turn it on. Bank apps stay on your normal connection. Hosts are matched as whole names, so `jerome` is not treated as `erome`.
+
+Updates are meant to come from Google Play. The app does not install APKs itself.
 
 ## Requirements
 
@@ -34,11 +30,12 @@ Android 9 or newer.
 
 ## Credits
 
-- **Samuel Bueno** ([@buenotty](https://github.com/buenotty)) — Blockfy maintainer
-- **Robin Gebert** ([@Ronjar](https://github.com/Ronjar)) — original Blokky
+Samuel Bueno ([@buenotty](https://github.com/buenotty)) keeps Blockfy going.
 
-MIT license. See [LICENSE](LICENSE).
+Robin Gebert ([@Ronjar](https://github.com/Ronjar)) made the original Blokky.
+
+MIT. See [LICENSE](LICENSE).
 
 ## Signing (for developers)
 
-The Play upload keystore is **not** in this repository. Copy `keystore.properties.example` to `secrets/keystore.properties` and point it at your PKCS12 file. Never commit `*.p12`, `*.jks`, `*.keystore`, or `secrets/`.
+The Play upload keystore is not in this repo. Copy `keystore.properties.example` to `secrets/keystore.properties` and point it at your PKCS12 file. Do not commit `*.p12`, `*.jks`, `*.keystore`, or `secrets/`.

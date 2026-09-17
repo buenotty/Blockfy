@@ -63,11 +63,11 @@
     <string name="source_code_btn">Source</string>
     <string name="website_btn">Website</string>
     <string name="authorship_title">Credits</string>
-    <string name="fork_author_role">Blockfy maintainer</string>
-    <string name="original_author_role">Original Blokky creator</string>
-    <string name="about_story">Blockfy helps you leave Reels, Shorts and similar feeds, with optional daily limits and an on-device adult-site DNS filter.\n\nIt is a fork of Blokky by Robin Gebert, maintained by Samuel Bueno. The original idea — a small, honest short-video blocker — is still the core of the app.</string>
+    <string name="fork_author_role">keeps Blockfy going</string>
+    <string name="original_author_role">made the original Blokky</string>
+    <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. There is also a DNS filter on the phone for adult sites, if you turn it on.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_desc">Accessibility is limited to Instagram, YouTube, TikTok, Facebook and X so Blockfy can leave Reels and Shorts. It does not read banking apps.\n\nThe optional adult shield uses a local DNS VPN and never uploads your browsing history. Banking apps are excluded from that VPN.\n\nUpdates come from Google Play. Blockfy does not install APKs itself.</string>
+    <string name="privacy_desc">Accessibility only looks at Instagram, YouTube, TikTok, Facebook, and X. That is how Blockfy notices Reels and Shorts. It does not open banking apps.\n\nThe adult shield is a DNS VPN that runs on your phone. Your browsing history stays here. Bank apps keep using your normal connection, outside that VPN.\n\nUpdates are supposed to come from Google Play. Blockfy does not install APKs on its own.</string>
     <string name="share_app_title">Share Blockfy</string>
     <string name="share_app_thanks">Thanks for sharing.</string>
     <string name="learn_more">Learn more</string>
