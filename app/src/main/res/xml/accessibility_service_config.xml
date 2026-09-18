@@ -2,10 +2,14 @@
 <accessibility-service
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_service_description"
+    android:settingsActivity="com.buenotty.blockfy.MainActivity"
     android:packageNames="com.instagram.android,com.google.android.youtube,com.zhiliaoapp.musically,com.facebook.katana,com.twitter.android"
     android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"
     android:canRetrieveWindowContent="true"
+    android:canPerformGestures="false"
+    android:canRequestFilterKeyEvents="false"
+    android:canRequestTouchExplorationMode="false"
     android:isAccessibilityTool="true"
     android:accessibilityFlags="flagReportViewIds" />

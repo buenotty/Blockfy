@@ -1,0 +1,47 @@
+name: Play policy source gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  source-gate:
+    name: Reject Play-forbidden source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: REQUEST_INSTALL_PACKAGES must not appear in app sources
+        run: |
+          set -uo pipefail
+          if grep -RIn "REQUEST_INSTALL_PACKAGES" app/src/main; then
+            echo "::error::Play policy treats REQUEST_INSTALL_PACKAGES as a third-party app store. Remove it from the source tree. Do not add tools:node=remove either; the permission name must not appear at all."
+            exit 1
+          fi
+          if grep -RInE "ACTION_INSTALL_PACKAGE|application/vnd.android.package-archive|androidx.core.content.FileProvider|FILE_PROVIDER_PATHS" app/src/main; then
+            echo "::error::APK install leftovers remain under app/src/main."
+            exit 1
+          fi
+          if [ -f app/src/main/res/xml/file_paths.xml ]; then
+            echo "::error::file_paths.xml is an APK-install FileProvider leftover. Delete it."
+            exit 1
+          fi
+          if [ -f app/blockfy.p12 ]; then
+            echo "::error::Do not keep a keystore in the repository."
+            exit 1
+          fi
+          if grep -n 'com.robingebert.blokky' app/build.gradle.kts; then
+            echo "::error::namespace/applicationId must be com.buenotty.blockfy, not the original Blokky package."
+            exit 1
+          fi
+          if ! grep -q 'namespace = "com.buenotty.blockfy"' app/build.gradle.kts; then
+            echo "::error::namespace must be com.buenotty.blockfy"
+            exit 1
+          fi
+          if ! grep -q 'applicationId = "com.buenotty.blockfy"' app/build.gradle.kts; then
+            echo "::error::applicationId must be com.buenotty.blockfy"
+            exit 1
+          fi
+          echo "Play policy source gate passed."

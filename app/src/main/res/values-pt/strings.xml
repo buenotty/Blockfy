@@ -1,128 +1,158 @@
 <resources>
     <string name="app_name">Blockfy</string>
-    <string name="app_tagline">Menos Reels. Mais Foco.</string>
+    <string name="app_tagline">Menos Reels. Mais foco.</string>
     <string name="title_about">Sobre</string>
+    <string name="btn_back">Voltar</string>
 
-    <string name="accessibility_service_description">O Blockfy utiliza o Serviço de Acessibilidade exclusivamente para detectar e sair de vídeos curtos (Reels e Shorts).</string>
-    <string name="accessibility_service">Serviço de Acessibilidade</string>
-    <string name="accessibility_active">Ativado. Toque para ver configurações.</string>
-    <string name="accessibility_inactive">Não ativado. Toque aqui para ativar.</string>
-
-    <string name="accessibility_dialog_title">Como Ativar o Blockfy</string>
-    <string name="accessibility_dialog_desc" formatted="false">O Blockfy precisa do Serviço de Acessibilidade apenas para detectar a tela de Reels/Shorts e retornar ao feed principal. Não coletamos dados e o app funciona 100% offline.</string>
-
-    <string name="play_protect_title">1. Google Play Protect</string>
-    <string name="play_protect_desc">Se ao instalar o APK aparecer o alerta do Play Protect, toque em \"Mais detalhes\" e depois em \"Instalar assim mesmo\".</string>
-
-    <string name="samsung_title">2. Samsung, Motorola e Android 13+</string>
-    <string name="samsung_desc">Se a opção de acessibilidade estiver cinza com aviso de \"Configuração restrita\":\n\n1. Toque no botão \"1. Abrir Informações do App\" abaixo;\n2. Toque nos 3 pontinhos (⋮) no canto superior direito;\n3. Toque em \"Permitir configurações restritas\" e confirme seu PIN/digital;\n4. Depois volte e toque em \"2. Abrir Acessibilidade\" para ativar o Blockfy.</string>
-
-    <string name="xiaomi_title">3. Xiaomi / HyperOS / MIUI</string>
-    <string name="xiaomi_desc">• Em Informações do App, ative \"Início Automático\".\n• Ao ligar a Acessibilidade, aguarde os 10 segundos da tela de aviso da Xiaomi e confirme em OK.</string>
-
-    <string name="btn_open_app_info">1. Abrir Informações do App (3 pontinhos ⋮)</string>
-    <string name="btn_open_accessibility">2. Abrir Configurações de Acessibilidade</string>
+    <string name="accessibility_service_description">O Blockfy usa Acessibilidade só para detectar Reels e Shorts no Instagram, YouTube, TikTok, Facebook e X e devolver você ao feed. Ele não lê outros aplicativos.</string>
+    <string name="accessibility_service">Serviço de acessibilidade</string>
+    <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
+    <string name="accessibility_inactive">Não concedido. Toque aqui para ativar.</string>
+    <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
+    <string name="accessibility_dialog_desc">O Blockfy usa Acessibilidade para perceber quando você abre Reels ou Shorts e para voltar ao feed. Ele não guarda a sua atividade e não controla outros apps além de sair das telas de vídeo curto.</string>
+    <string name="accessibility_dialog_learn_more">Saiba mais</string>
+    <string name="accessibility_dialog_decline">Recusar</string>
+    <string name="accessibility_dialog_accept">Aceitar</string>
+    <string name="accessibility_dialog_howto">Depois que as configurações de Acessibilidade abrirem, toque em Blockfy em Apps baixados e ative o serviço.</string>
+    <string name="btn_open_accessibility">Abrir configurações de acessibilidade</string>
+    <string name="btn_open_app_info">Abrir informações do app</string>
     <string name="btn_close">Fechar</string>
+    <string name="restricted_settings_hint">Em alguns celulares você precisa permitir configurações restritas na tela de informações do Blockfy.</string>
 
     <string name="instagram_reels">Instagram Reels</string>
     <string name="youtube_shorts">YouTube Shorts</string>
     <string name="tiktok_app">TikTok</string>
-    <string name="block_tiktok_summary">Bloquear TikTok (aplicativo inteiro)</string>
+    <string name="block_tiktok_summary">Bloquear o TikTok (aplicativo inteiro)</string>
     <string name="block_instagram_summary">Bloquear Instagram Reels</string>
     <string name="block_youtube_summary">Bloquear YouTube Shorts</string>
-
+    <string name="facebook_app">Facebook</string>
+    <string name="facebook_reels">Facebook Reels</string>
+    <string name="block_facebook_summary">Bloquear Facebook Reels</string>
+    <string name="x_app">X (Twitter)</string>
+    <string name="block_x_summary">Limitar a rolagem infinita no X</string>
     <string name="daily_limit_format">Limite: %1$d min/dia (usado: %2$d min)</string>
+    <string name="daily_usage_short">%1$d min / %2$d min hoje</string>
+    <string name="short_videos_label">vídeos curtos</string>
 
-    <string name="support_creator_title">Apoiar o Criador</string>
-    <string name="support_creator_subtitle">Gostou do Blockfy? Ajude a manter o projeto ativo via Pix.</string>
+    <string name="language_title">Idioma</string>
+    <string name="language_desc">No Brasil o app abre em português. Fora isso, inglês. Você muda isso aqui se quiser.</string>
+    <string name="language_automatic">Automático</string>
+    <string name="language_english">English</string>
+    <string name="language_portuguese">Português</string>
+
+    <string name="section_apps">Vídeos curtos</string>
+    <string name="section_focus">Foco</string>
+
+    <string name="support_creator_title">Apoiar o projeto</string>
+    <string name="support_creator_subtitle">Pix ou PayPal mantêm o Blockfy gratuito.</string>
     <string name="support_dialog_title">Apoiar o Blockfy</string>
-    <string name="support_dialog_desc" formatted="false">O Blockfy é 100% código aberto, gratuito e sem anúncios. Qualquer apoio via Pix ajuda a manter o app e o desenvolvimento de novas funções!</string>
-    <string name="pix_key_label">Chave Pix Aleatória:</string>
-    <string name="copy_pix_btn">Copiar Chave Pix</string>
-    <string name="pix_copied_toast">Chave Pix copiada para a área de transferência!</string>
-    <string name="star_github_btn">Deixar uma Estrela no GitHub</string>
+    <string name="support_dialog_desc">O Blockfy é gratuito e de código aberto. Se ele te ajuda a sair dos vídeos curtos, você pode apoiar o desenvolvimento via Pix ou PayPal.</string>
+    <string name="pix_key_label">Chave Pix</string>
+    <string name="copy_pix_btn">Copiar chave Pix</string>
+    <string name="pix_copied_toast">Chave Pix copiada</string>
+    <string name="paypal_label">PayPal</string>
+    <string name="copy_paypal_btn">Copiar e-mail do PayPal</string>
+    <string name="open_paypal_btn">Abrir PayPal</string>
+    <string name="paypal_copied_toast">E-mail do PayPal copiado</string>
+    <string name="star_github_btn">Estrela no GitHub</string>
 
     <string name="version_label">Versão: %1$s</string>
-    <string name="check_updates_btn">Buscar Atualizações no GitHub</string>
-    <string name="report_bug_btn">Reportar Bug</string>
+    <string name="check_updates_btn">Abrir Play Store</string>
+    <string name="report_bug_btn">Reportar bug</string>
     <string name="licenses_btn">Licenças</string>
-    <string name="source_code_btn">Código Fonte</string>
-    <string name="authorship_title">Autoria e Desenvolvimento</string>
-    <string name="fork_author_role">Autor do Fork &amp; Mantenedor do Blockfy</string>
-    <string name="original_author_role">Criador do Blokky original</string>
+    <string name="source_code_btn">Código</string>
+    <string name="website_btn">Site</string>
+    <string name="authorship_title">Créditos</string>
+    <string name="fork_author_role">cuida do Blockfy</string>
+    <string name="original_author_role">fez o Blokky original</string>
+    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. Tem também um filtro DNS no celular para sites adultos, se você ligar.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
+    <string name="privacy_title">Privacidade</string>
+    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é uma VPN DNS que roda no seu celular. O histórico de navegação fica aqui. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
+    <string name="share_app_title">Compartilhar o Blockfy</string>
+    <string name="share_app_thanks">Obrigado por compartilhar.</string>
+    <string name="learn_more">Saiba mais</string>
 
-    <string name="privacy_title" formatted="false">Privacidade e Segurança (100% Seguro)</string>
-    <string name="privacy_desc" formatted="false">• Verificado no VirusTotal: 0 detecções em mais de 70 antivírus (100% seguro e livre de ameaças).\n• Zero permissão de Internet: o aplicativo não tem acesso à rede, sendo tecnicamente impossível vazar qualquer dado seu.\n• O Serviço de Acessibilidade é utilizado estritamente para fechar vídeos curtos e retornar à tela inicial.</string>
-    <string name="share_app_title">Compartilhar Blockfy</string>
-
-    <string name="settings_dialog_title">Configurações: %1$s</string>
-    <string name="daily_limit_picker_title">Limite Diário de Uso</string>
-    <string name="daily_limit_picker_desc">Limite quanto tempo você pode assistir vídeos curtos por dia. Ao atingir o limite, eles são bloqueados até meia-noite.</string>
-    <string name="daily_limit_off">Desativado</string>
-    <string name="today_usage_label">Uso hoje: %1$d de %2$d min</string>
-    <string name="reset_usage_btn">Zerar Contador de Hoje</string>
-    <string name="schedule_title">Horários de Bloqueio</string>
+    <string name="settings_dialog_title">Configurações de %1$s</string>
+    <string name="daily_limit_picker_title">Limite diário de Reels / Shorts</string>
+    <string name="daily_limit_picker_desc">Quanto tempo de vídeo curto é permitido por dia. Depois disso, fica bloqueado até meia-noite.</string>
+    <string name="daily_limit_off">Desligado</string>
+    <string name="today_usage_label">Hoje: %1$d de %2$d min</string>
+    <string name="reset_usage_btn">Zerar o contador de hoje</string>
+    <string name="schedule_title">Horário ativo</string>
     <string name="start_time">Início</string>
     <string name="end_time">Fim</string>
     <string name="save_btn">Salvar</string>
     <string name="cancel_btn">Cancelar</string>
+    <string name="app_total_limit_label">Limite diário do app inteiro</string>
+    <string name="app_total_limit_none">Sem limite geral (somente vídeos curtos)</string>
+    <string name="app_total_limit_on">%1$d min para o app inteiro</string>
+    <string name="short_video_limit_label">Limite diário de Reels / Shorts</string>
 
-    <string name="alert_limit_title">Blockfy • Limite Atingido</string>
-    <string name="alert_warning_title">Blockfy • Tempo Restante</string>
-    <string name="toast_limit_reached">Limite diário de %1$d min de %2$s atingido hoje!</string>
-    <string name="toast_remaining_minutes">%1$d minutos restantes de %2$s hoje!</string>
-    <string name="toast_remaining_one_minute">1 minuto restante de %1$s hoje!</string>
+    <string name="alert_limit_title">Blockfy • Limite atingido</string>
+    <string name="alert_warning_title">Blockfy • Alerta de tempo</string>
+    <string name="toast_limit_reached">Limite diário de %1$d min de %2$s atingido.</string>
+    <string name="toast_remaining_minutes">Restam %1$d minutos de %2$s hoje.</string>
+    <string name="toast_remaining_one_minute">Resta 1 minuto de %1$s hoje.</string>
+    <string name="alert_app_total_limit_title">Blockfy • Limite do app atingido</string>
+    <string name="toast_app_total_limit_reached">Limite diário de %1$d min de %2$s atingido.</string>
 
     <string name="disable_dialog_title">Tem certeza?</string>
-    <string name="disable_dialog_desc">Tem certeza de que deseja liberar o feed de vídeos curtos novamente?</string>
+    <string name="disable_dialog_desc">Tem certeza de que quer se permitir a rolagem infinita de novo?</string>
     <string name="disable_dialog_cancel">Mudei de ideia</string>
-    <string name="disable_dialog_confirm">Quero desativar</string>
+    <string name="disable_dialog_confirm">Eu aguento</string>
 
-    <string name="update_checking">Verificando atualizações…</string>
-    <string name="update_latest_title">Você já está atualizado!</string>
-    <string name="update_latest_desc">O Blockfy %s é a versão mais recente disponível.</string>
-    <string name="update_available_title">Nova versão disponível!</string>
-    <string name="update_version_tag">Versão %s</string>
-    <string name="update_size_label">Tamanho: ~%s MB</string>
-    <string name="update_btn_download_install">Baixar e Instalar</string>
-    <string name="update_downloading">Baixando atualização…</string>
-    <string name="update_download_complete">Download concluído!</string>
-    <string name="update_btn_install">Instalar Agora</string>
-    <string name="update_permission_required">Permissão necessária para instalar atualizações deste app.</string>
-    <string name="update_btn_grant_permission">Permitir instalação de apps</string>
-    <string name="update_error_title">Falha ao verificar</string>
-    <string name="update_error_desc">Não foi possível conectar ao GitHub. Verifique sua conexão com a internet.</string>
-    <string name="btn_retry">Tentar novamente</string>
+    <string name="provocation_mode_title">Mensagens de atenção</string>
+    <string name="provocation_mode_desc">Mostrar um aviso curto ao abrir Reels ou Shorts</string>
+    <string name="strict_mode_title">Modo estrito</string>
+    <string name="strict_mode_desc">Travar os limites até meia-noite para não mudar no impulso</string>
+    <string name="strict_mode_midnight_locked_msg">O modo estrito está ligado. As configurações ficam travadas até meia-noite.</string>
+    <string name="strict_mode_midnight_extra">Você escolheu essa trava para proteger o você de amanhã de um impulso curto. Ela só abre depois das 00:00.</string>
+    <string name="strict_mode_keep_focus">Manter a trava</string>
+    <string name="strict_challenge_title">Digite para desbloquear</string>
+    <string name="strict_challenge_instruction">Digite este código na mão. Colar não deve ser o caminho fácil.</string>
+    <string name="strict_challenge_placeholder">Digite o código acima</string>
+    <string name="strict_challenge_confirm">Desbloquear configurações</string>
+    <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
 
-    <string name="app_total_limit_label">Limite Diário do App Completo</string>
-    <string name="short_video_limit_label">Limite Diário de Reels / Shorts</string>
-    <string name="facebook_app">Facebook</string>
-    <string name="facebook_reels">Facebook Reels</string>
-    <string name="block_facebook_summary">Bloquear vídeos curtos do Reels no Facebook</string>
-    <string name="x_app">X (Twitter)</string>
-    <string name="block_x_summary">Controlar rolagem infinita e limite de tempo no X</string>
-    <string name="dashboard_saved_time_title">Economia de Vida &amp; Foco</string>
-    <string name="dashboard_saved_time_desc">Hoje você evitou %s de rolagem inútil</string>
-    <string name="dashboard_videos_avoided">~%d vídeos a menos na mente</string>
-    <string name="dashboard_impulses_blocked">%d impulsos bloqueados hoje</string>
-    <string name="provocation_mode_title">Mensagens de Reflexão</string>
-    <string name="provocation_mode_desc">Avisos reflexivos na abertura de apps para quebrar o transe da dopamina</string>
-    <string name="strict_mode_title">Modo Inviolável (Hardcore)</string>
-    <string name="strict_mode_desc">Trava limites até a meia-noite ou exige desafio complexo contra recaídas</string>
-    <string name="strict_mode_midnight_locked_msg">Modo Inviolável Ativo: Configurações travadas até a meia-noite para proteger seu foco.</string>
-    <string name="strict_challenge_title">Desafio de Fricção de Foco</string>
-    <string name="strict_challenge_instruction">Para desbloquear, digite esta sequência de 30 caracteres sem colar:</string>
-    <string name="strict_challenge_confirm">Desbloquear Configurações</string>
-    <string name="alert_app_total_limit_title">Blockfy • Limite Geral Atingido</string>
-    <string name="toast_app_total_limit_reached">Limite diário de %1$d min do %2$s como um todo atingido!</string>
+    <string name="adult_blocker_title">Escudo de sites adultos</string>
+    <string name="adult_blocker_desc">Bloqueia sites adultos conhecidos no navegador com um filtro DNS local. Apps de banco seguem na conexão normal.</string>
+    <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
+    <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
+    <string name="adult_blocker_reflection_text">Eu sei que a pornografia rouba tempo que eu não recupero e me afasta da pessoa que eu quero ser. Desligar este escudo é uma escolha deliberada de seguir esse impulso. Eu assumo a responsabilidade por essa escolha.</string>
+    <string name="adult_blocker_type_placeholder">Digite exatamente o texto acima</string>
+    <string name="adult_blocker_paste_blocked_warning">Colar está bloqueado. Digite você mesmo.</string>
+    <string name="adult_blocker_confirm_disable">Desligar o escudo</string>
+    <string name="adult_blocker_keep_active">Manter ligado</string>
+    <string name="vpn_notification_title">Escudo adulto ligado</string>
+    <string name="vpn_notification_text">Filtro DNS local ativo. Bancos usam a conexão normal.</string>
+    <string name="vpn_channel_name">Escudo adulto</string>
+    <string name="vpn_alert_channel_name">Alertas do escudo adulto</string>
+    <string name="focus_alerts_channel_name">Alertas do Blockfy</string>
+    <string name="interrupt_go_home">Ir para a tela inicial</string>
+    <string name="adult_block_alert_title">Site adulto bloqueado</string>
+    <string name="adult_block_alert_subtitle">Esta página foi bloqueada</string>
+    <string name="adult_block_alert_body">Você não precisa seguir esse impulso. Feche isto e volte ao que estava fazendo.</string>
+    <string name="adult_block_return_focus">Voltar ao foco (%1$d)</string>
 
-    <string name="adult_blocker_title">Escudo Anti-Pornô &amp; Adulto</string>
-    <string name="adult_blocker_desc">Bloqueia navegação em sites adultos, OnlyFans, Fatal Model, az nude e outros em todos os navegadores com expulsão imediata</string>
-    <string name="adult_blocker_dialog_title">Barreira Anti-Recaída</string>
-    <string name="adult_blocker_dialog_desc">Para desativar o escudo, você precisa digitar manualmente o parágrafo de reflexão abaixo. Não é permitido copiar e colar.</string>
-    <string name="adult_blocker_reflection_text">Eu reconheço conscientemente que a pornografia destrói minha dopamina, rouba meu tempo vital, sabota minha mente e enfraquece minha determinação. Desativar este bloqueio é uma escolha deliberada de ceder a um impulso prejudicial que atrasa meus objetivos de vida. Prometo assumir total responsabilidade por minhas escolhas.</string>
-    <string name="adult_blocker_type_placeholder">Digite exatamente o texto acima...</string>
-    <string name="adult_blocker_paste_blocked_warning">Colar é bloqueado. Digite caractere por caractere.</string>
-    <string name="adult_blocker_confirm_disable">Desativar Escudo</string>
-    <string name="adult_blocker_keep_active">Manter Ativado (Recomendado)</string>
+    <string-array name="adult_block_warnings">
+        <item>Você não precisa jogar a próxima hora fora.</item>
+        <item>Esse impulso passa. Saia da página.</item>
+        <item>O você do futuro não quer essa aba aberta.</item>
+        <item>Pare agora. Proteja o resto do seu dia.</item>
+        <item>Você é mais forte que um loop barato de dopamina.</item>
+        <item>Feche. O resto da sua vida ainda está esperando.</item>
+    </string-array>
+
+    <string-array name="mindfulness_reels_quotes">
+        <item>Você abriu isso de propósito ou no piloto automático?</item>
+        <item>Trinta minutos da vida de estranhos, ou trinta minutos da sua?</item>
+        <item>O feed é infinito. O seu tempo não é.</item>
+        <item>Isso não é descanso. É um transe. Você pode sair.</item>
+        <item>O algoritmo foi feito para te prender. Mostre que não consegue.</item>
+        <item>Você se orgulharia desta hora daqui a um ano?</item>
+        <item>Faça o que veio fazer e saia.</item>
+        <item>Ninguém construiu a vida que queria só rolando a tela.</item>
+        <item>A sua atenção é a coisa mais cara nesta sala.</item>
+        <item>Feche o reel. Levante. Faça a próxima coisa real.</item>
+    </string-array>
 </resources>
