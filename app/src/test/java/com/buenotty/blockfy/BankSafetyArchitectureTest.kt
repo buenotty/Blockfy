@@ -132,6 +132,12 @@ class BankSafetyArchitectureTest {
         assertTrue(manifest.contains("BIND_ACCESSIBILITY_SERVICE"))
         assertTrue(manifest.contains("ReelsBlockAccessibilityService"))
         assertFalse(manifest.contains("REQUEST_INSTALL_PACKAGES"))
+        assertFalse(manifest.contains("FileProvider"))
+        assertFalse(manifest.contains("FILE_PROVIDER_PATHS"))
+        assertFalse(
+            File("app/src/main/res/xml/file_paths.xml").exists() ||
+                File("src/main/res/xml/file_paths.xml").exists()
+        )
         assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
         assertFalse(manifest.contains("QUERY_ALL_PACKAGES"))
         assertFalse(
@@ -264,6 +270,47 @@ class BankSafetyArchitectureTest {
         assertFalse(workflow.contains("release APK will be unsigned"))
         assertTrue(workflow.contains("Refusing to publish an unsigned APK"))
         assertTrue(workflow.contains("app-release.apk"))
+    }
+
+    @Test
+    fun productionSourcesHaveNoThirdPartyStorePermissionOrLeakedKeystore() {
+        val roots = listOf(File("app/src/main"), File("src/main")).filter { it.isDirectory }
+        assertTrue("app/src/main must be present", roots.isNotEmpty())
+        val forbidden = listOf(
+            "REQUEST_INSTALL_PACKAGES",
+            "ACTION_INSTALL_PACKAGE",
+            "application/vnd.android.package-archive",
+            "androidx.core.content.FileProvider",
+            "FILE_PROVIDER_PATHS",
+            "blockfy_keystore_pass",
+        )
+        val hits = mutableListOf<String>()
+        roots.forEach { root ->
+            root.walkTopDown().filter { it.isFile }.forEach { file ->
+                val text = file.readText()
+                for (token in forbidden) {
+                    if (text.contains(token)) {
+                        hits += "${file.path}: $token"
+                    }
+                }
+            }
+        }
+        assertTrue(
+            "Play policy leftovers in app/src/main:\n${hits.joinToString("\n")}",
+            hits.isEmpty()
+        )
+        assertFalse(File("app/blockfy.p12").exists())
+        assertFalse(File("blockfy.p12").exists())
+        assertFalse(
+            File("app/src/main/res/xml/file_paths.xml").exists() ||
+                File("src/main/res/xml/file_paths.xml").exists()
+        )
+        val updater = readAppFile("src/main/java/com/buenotty/blockfy/updater/UpdateManager.kt").readText()
+        assertTrue(updater.contains("play.google.com/store/apps/details"))
+        assertFalse(updater.contains("REQUEST_INSTALL_PACKAGES"))
+        assertFalse(updater.contains("FileProvider"))
+        assertFalse(File("app/src/main/java/com/robingebert").exists())
+        assertFalse(File("src/main/java/com/robingebert").exists())
     }
 
     private fun readAppFile(relativeFromApp: String): File {
