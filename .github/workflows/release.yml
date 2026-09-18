@@ -32,8 +32,8 @@ jobs:
           BLOCKFY_STORE_FILE_BASE64: ${{ secrets.BLOCKFY_STORE_FILE_BASE64 }}
         run: |
           if [ -z "$BLOCKFY_STORE_FILE_BASE64" ]; then
-            echo "No BLOCKFY_STORE_FILE_BASE64 secret; release APK will be unsigned."
-            exit 0
+            echo "::error::Missing BLOCKFY_STORE_FILE_BASE64. Refusing to publish an unsigned APK (Android will reject the install)."
+            exit 1
           fi
           echo "$BLOCKFY_STORE_FILE_BASE64" | base64 -d > "${GITHUB_WORKSPACE}/upload-keystore.p12"
 
@@ -48,18 +48,13 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk/release/*.apk
+          files: app/build/outputs/apk/release/app-release.apk
           name: Blockfy ${{ github.ref_name }}
           body: |
-            ## Blockfy ${{ github.ref_name }}
+            Blockfy ${{ github.ref_name }}
 
-            Play Store preparation:
+            Signed build. If the file name says unsigned, do not install it.
 
-            - `applicationId` and namespace are both `com.buenotty.blockfy`
-            - No `REQUEST_INSTALL_PACKAGES`; updates go through Play
-            - Upload keystore is not in the repository
-            - Default language is English, with Portuguese in Settings
-            - Adult-site matching uses whole tokens (e.g. `jerome` is not `erome`)
-            - UI follows the original Blokky Material You layout
+            The package is `com.buenotty.blockfy`. Updates are meant to come from Play, so the app does not install APKs itself. A phone from Brazil starts in Portuguese. Other regions start in English (change it under the gear). Adult hosts are matched as whole names, so `jerome` is not treated as `erome`. The upload keystore is not in this repo.
           draft: false
           prerelease: false

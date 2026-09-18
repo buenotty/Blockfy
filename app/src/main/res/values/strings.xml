@@ -35,17 +35,25 @@
     <string name="short_videos_label">short videos</string>
 
     <string name="language_title">Language</string>
-    <string name="language_desc">Choose the language used in Blockfy. The default is English.</string>
+    <string name="language_desc">Brazil uses Portuguese. Everywhere else uses English, until you change it here.</string>
+    <string name="language_automatic">Automatic</string>
     <string name="language_english">English</string>
     <string name="language_portuguese">Português</string>
 
+    <string name="section_apps">Short videos</string>
+    <string name="section_focus">Focus</string>
+
     <string name="support_creator_title">Support the project</string>
-    <string name="support_creator_subtitle">Blockfy stays free. A Pix contribution helps keep it that way.</string>
+    <string name="support_creator_subtitle">Pix or PayPal keep Blockfy free.</string>
     <string name="support_dialog_title">Support Blockfy</string>
-    <string name="support_dialog_desc">Blockfy is free and open source. If it helps you stay off short videos, you can support development with Pix.</string>
+    <string name="support_dialog_desc">Blockfy is free and open source. If it helps you stay off short videos, you can support development with Pix or PayPal.</string>
     <string name="pix_key_label">Pix key</string>
     <string name="copy_pix_btn">Copy Pix key</string>
     <string name="pix_copied_toast">Pix key copied</string>
+    <string name="paypal_label">PayPal</string>
+    <string name="copy_paypal_btn">Copy PayPal email</string>
+    <string name="open_paypal_btn">Open PayPal</string>
+    <string name="paypal_copied_toast">PayPal email copied</string>
     <string name="star_github_btn">Star on GitHub</string>
 
     <string name="version_label">Version: %1$s</string>
@@ -55,11 +63,11 @@
     <string name="source_code_btn">Source</string>
     <string name="website_btn">Website</string>
     <string name="authorship_title">Credits</string>
-    <string name="fork_author_role">Blockfy maintainer</string>
-    <string name="original_author_role">Original Blokky creator</string>
-    <string name="about_story">Blockfy helps you leave Reels, Shorts and similar feeds, with optional daily limits and an on-device adult-site DNS filter.\n\nIt is a fork of Blokky by Robin Gebert, maintained by Samuel Bueno. The original idea — a small, honest short-video blocker — is still the core of the app.</string>
+    <string name="fork_author_role">keeps Blockfy going</string>
+    <string name="original_author_role">made the original Blokky</string>
+    <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. There is also a DNS filter on the phone for adult sites, if you turn it on.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_desc">Accessibility is limited to Instagram, YouTube, TikTok, Facebook and X so Blockfy can leave Reels and Shorts. It does not read banking apps.\n\nThe optional adult shield uses a local DNS VPN and never uploads your browsing history. Banking apps are excluded from that VPN.\n\nUpdates come from Google Play. Blockfy does not install APKs itself.</string>
+    <string name="privacy_desc">Accessibility only looks at Instagram, YouTube, TikTok, Facebook, and X. That is how Blockfy notices Reels and Shorts. It does not open banking apps.\n\nThe adult shield is a DNS VPN that runs on your phone. Your browsing history stays here. Bank apps keep using your normal connection, outside that VPN.\n\nUpdates are supposed to come from Google Play. Blockfy does not install APKs on its own.</string>
     <string name="share_app_title">Share Blockfy</string>
     <string name="share_app_thanks">Thanks for sharing.</string>
     <string name="learn_more">Learn more</string>

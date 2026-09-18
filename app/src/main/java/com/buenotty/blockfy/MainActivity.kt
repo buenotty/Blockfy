@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                                             navController.navigate(Screen.About.route)
                                         }) {
                                             Icon(
-                                                Icons.Rounded.Info,
+                                                Icons.Rounded.Settings,
                                                 contentDescription = stringResource(R.string.title_about)
                                             )
                                         }

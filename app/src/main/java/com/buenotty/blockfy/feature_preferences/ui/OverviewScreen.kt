@@ -1,6 +1,9 @@
 package com.buenotty.blockfy.feature_preferences.ui
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.VpnService
 import android.widget.Toast
@@ -18,13 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentCopy
-import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
@@ -34,12 +37,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,12 +52,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,15 +62,18 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.buenotty.blockfy.AppLocale
 import com.buenotty.blockfy.R
+import com.buenotty.blockfy.SupportLinks
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.ui.composables.AccessibilityServiceCard
+import com.buenotty.blockfy.feature_preferences.ui.composables.AppBrandIcon
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultContentDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.EditAppBottomSheet
-import com.buenotty.blockfy.feature_preferences.ui.composables.InstagramColoredIcon
+import com.buenotty.blockfy.feature_preferences.ui.composables.PreferenceGroup
 import com.buenotty.blockfy.feature_preferences.ui.composables.StrictModeDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.SwitchPreference
+import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
+import com.buenotty.blockfy.feature_preferences.ui.composables.TrackedAppIcon
 import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGranted
 import com.buenotty.blockfy.feature_vpn.AdultBlockVpnService
 import org.koin.androidx.compose.koinViewModel
@@ -91,7 +91,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showStrictModeDialog by remember { mutableStateOf(false) }
     var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
     var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
-    val languageTag = remember { mutableStateOf(AppLocale.currentTag(context)) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -108,301 +107,180 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     LaunchedEffect(lifecycleState) {
         if (lifecycleState == Lifecycle.State.RESUMED) {
             isAccessibilityGranted = context.isAccessibilityGranted()
-            languageTag.value = AppLocale.currentTag(context)
         }
     }
 
     Column(
         modifier = Modifier
-            .padding(8.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = spacedBy(20.dp)
     ) {
         AccessibilityServiceCard(isAccessibilityGranted)
-        Spacer(modifier = Modifier.height(12.dp))
 
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8F)
-            ),
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.padding(12.dp), verticalArrangement = spacedBy(10.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Language, contentDescription = null)
-                    Spacer(Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.language_title), style = MaterialTheme.typography.titleMedium)
-                        Text(
-                            stringResource(R.string.language_desc),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-                Row(horizontalArrangement = spacedBy(8.dp)) {
-                    FilterChip(
-                        selected = languageTag.value == AppLocale.ENGLISH,
-                        onClick = {
-                            AppLocale.apply(context, AppLocale.ENGLISH)
-                            languageTag.value = AppLocale.ENGLISH
-                        },
-                        label = { Text(stringResource(R.string.language_english)) }
-                    )
-                    FilterChip(
-                        selected = languageTag.value == AppLocale.PORTUGUESE,
-                        onClick = {
-                            AppLocale.apply(context, AppLocale.PORTUGUESE)
-                            languageTag.value = AppLocale.PORTUGUESE
-                        },
-                        label = { Text(stringResource(R.string.language_portuguese)) }
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8F)
-            ),
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.padding(12.dp), verticalArrangement = spacedBy(12.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Rounded.Psychology, contentDescription = null)
-                    Spacer(Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.provocation_mode_title), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(R.string.provocation_mode_desc), style = MaterialTheme.typography.bodyMedium)
-                    }
-                    Switch(
-                        checked = appSettings.provocationModeEnabled,
-                        onCheckedChange = { overviewViewModel.setProvocationMode(it) }
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Rounded.Lock, contentDescription = null)
-                    Spacer(Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.strict_mode_title), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(R.string.strict_mode_desc), style = MaterialTheme.typography.bodyMedium)
-                    }
-                    Switch(
-                        checked = appSettings.strictModeEnabled,
-                        onCheckedChange = { enabled ->
-                            if (enabled) {
-                                overviewViewModel.setStrictMode(true, "MIDNIGHT")
-                            } else if (overviewViewModel.isStrictLocked()) {
-                                showStrictModeDialog = true
-                            } else {
-                                overviewViewModel.setStrictMode(false)
-                            }
-                        }
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Rounded.Shield, contentDescription = null)
-                    Spacer(Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.adult_blocker_title), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(R.string.adult_blocker_desc), style = MaterialTheme.typography.bodyMedium)
-                    }
-                    Switch(
-                        checked = appSettings.adultContentBlockerEnabled,
-                        onCheckedChange = { enabled ->
-                            if (enabled) {
-                                val prepareIntent = VpnService.prepare(context)
-                                if (prepareIntent != null) {
-                                    vpnPrepareLauncher.launch(prepareIntent)
-                                } else {
-                                    overviewViewModel.setAdultContentBlocker(true)
-                                    AdultBlockVpnService.start(context)
-                                }
-                            } else {
-                                showDisableAdultBlockerDialog = true
-                            }
-                        }
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Column(verticalArrangement = spacedBy(8.dp)) {
-            val instaSummary = if (appSettings.instagram.dailyLimitMinutes > 0) {
-                stringResource(
-                    R.string.daily_limit_format,
+        PreferenceGroup(title = stringResource(R.string.section_apps)) {
+            BlockedAppPreference(
+                title = stringResource(R.string.instagram_reels),
+                summary = dailyLimitSummary(
                     appSettings.instagram.dailyLimitMinutes,
-                    dailyUsage.instagramSeconds / 60
-                )
-            } else {
-                stringResource(R.string.block_instagram_summary)
-            }
-
-            SwitchPreference(
+                    dailyUsage.instagramSeconds,
+                    stringResource(R.string.block_instagram_summary)
+                ),
+                icon = TrackedAppIcon.Instagram,
                 value = appSettings.instagram.blocked,
                 enabled = isAccessibilityGranted,
-                title = stringResource(R.string.instagram_reels),
-                summary = instaSummary,
-                leadingIcon = { InstagramColoredIcon() },
-                settingsIcon = {
-                    IconButton(modifier = it, onClick = {
-                        selectedApp = appSettings.instagram
-                        showSettingsDialog = true
-                    }) {
-                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.instagram_reels))
-                    }
+                showDivider = true,
+                onOpenSettings = {
+                    selectedApp = appSettings.instagram
+                    showSettingsDialog = true
                 }
-            ) {
-                overviewViewModel.updateInstagram(appSettings.instagram.copy(blocked = it))
-            }
+            ) { overviewViewModel.updateInstagram(appSettings.instagram.copy(blocked = it)) }
 
-            val ytSummary = if (appSettings.youtube.dailyLimitMinutes > 0) {
-                stringResource(
-                    R.string.daily_limit_format,
+            BlockedAppPreference(
+                title = stringResource(R.string.youtube_shorts),
+                summary = dailyLimitSummary(
                     appSettings.youtube.dailyLimitMinutes,
-                    dailyUsage.youtubeSeconds / 60
-                )
-            } else {
-                stringResource(R.string.block_youtube_summary)
-            }
-
-            SwitchPreference(
+                    dailyUsage.youtubeSeconds,
+                    stringResource(R.string.block_youtube_summary)
+                ),
+                icon = TrackedAppIcon.YouTube,
                 value = appSettings.youtube.blocked,
                 enabled = isAccessibilityGranted,
-                title = stringResource(R.string.youtube_shorts),
-                summary = ytSummary,
-                leadingIcon = {
-                    Icon(painterResource(R.drawable.ic_youtube), null, tint = Color.Red)
-                },
-                settingsIcon = {
-                    IconButton(modifier = it, onClick = {
-                        selectedApp = appSettings.youtube
-                        showSettingsDialog = true
-                    }) {
-                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.youtube_shorts))
-                    }
+                showDivider = true,
+                onOpenSettings = {
+                    selectedApp = appSettings.youtube
+                    showSettingsDialog = true
                 }
-            ) {
-                overviewViewModel.updateYoutube(appSettings.youtube.copy(blocked = it))
-            }
+            ) { overviewViewModel.updateYoutube(appSettings.youtube.copy(blocked = it)) }
 
-            SwitchPreference(
-                value = appSettings.tiktok.blocked,
-                enabled = isAccessibilityGranted,
+            BlockedAppPreference(
                 title = stringResource(R.string.tiktok_app),
                 summary = stringResource(R.string.block_tiktok_summary),
-                leadingIcon = {
-                    Icon(painterResource(R.drawable.ic_tiktok), null, tint = Color.Unspecified)
-                },
-                settingsIcon = {
-                    IconButton(modifier = it, onClick = {
-                        selectedApp = appSettings.tiktok
-                        showSettingsDialog = true
-                    }) {
-                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.tiktok_app))
-                    }
+                icon = TrackedAppIcon.TikTok,
+                value = appSettings.tiktok.blocked,
+                enabled = isAccessibilityGranted,
+                showDivider = true,
+                onOpenSettings = {
+                    selectedApp = appSettings.tiktok
+                    showSettingsDialog = true
                 }
-            ) {
-                overviewViewModel.updateTikTok(appSettings.tiktok.copy(blocked = it))
-            }
+            ) { overviewViewModel.updateTikTok(appSettings.tiktok.copy(blocked = it)) }
 
-            val fbSummary = if (appSettings.facebook.dailyLimitMinutes > 0) {
-                stringResource(
-                    R.string.daily_limit_format,
+            BlockedAppPreference(
+                title = stringResource(R.string.facebook_reels),
+                summary = dailyLimitSummary(
                     appSettings.facebook.dailyLimitMinutes,
-                    dailyUsage.facebookSeconds / 60
-                )
-            } else {
-                stringResource(R.string.block_facebook_summary)
-            }
-
-            SwitchPreference(
+                    dailyUsage.facebookSeconds,
+                    stringResource(R.string.block_facebook_summary)
+                ),
+                icon = TrackedAppIcon.Facebook,
                 value = appSettings.facebook.blocked,
                 enabled = isAccessibilityGranted,
-                title = stringResource(R.string.facebook_reels),
-                summary = fbSummary,
-                leadingIcon = {
-                    Icon(painterResource(R.drawable.ic_facebook_themed), null, tint = Color.Unspecified)
-                },
-                settingsIcon = {
-                    IconButton(modifier = it, onClick = {
-                        selectedApp = appSettings.facebook
-                        showSettingsDialog = true
-                    }) {
-                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.facebook_reels))
-                    }
+                showDivider = true,
+                onOpenSettings = {
+                    selectedApp = appSettings.facebook
+                    showSettingsDialog = true
                 }
-            ) {
-                overviewViewModel.updateFacebook(appSettings.facebook.copy(blocked = it))
-            }
+            ) { overviewViewModel.updateFacebook(appSettings.facebook.copy(blocked = it)) }
 
-            val xSummary = if (appSettings.x.appTotalDailyLimitMinutes > 0) {
-                stringResource(
-                    R.string.daily_usage_short,
-                    dailyUsage.xTotalSeconds / 60,
-                    appSettings.x.appTotalDailyLimitMinutes
-                )
-            } else {
-                stringResource(R.string.block_x_summary)
+            BlockedAppPreference(
+                title = stringResource(R.string.x_app),
+                summary = if (appSettings.x.appTotalDailyLimitMinutes > 0) {
+                    stringResource(
+                        R.string.daily_usage_short,
+                        dailyUsage.xTotalSeconds / 60,
+                        appSettings.x.appTotalDailyLimitMinutes
+                    )
+                } else {
+                    stringResource(R.string.block_x_summary)
+                },
+                icon = TrackedAppIcon.X,
+                value = appSettings.x.blocked,
+                enabled = isAccessibilityGranted,
+                showDivider = false,
+                onOpenSettings = {
+                    selectedApp = appSettings.x
+                    showSettingsDialog = true
+                }
+            ) { overviewViewModel.updateX(appSettings.x.copy(blocked = it)) }
+        }
+
+        PreferenceGroup(title = stringResource(R.string.section_focus)) {
+            SwitchPreference(
+                value = appSettings.provocationModeEnabled,
+                title = stringResource(R.string.provocation_mode_title),
+                summary = stringResource(R.string.provocation_mode_desc),
+                grouped = true,
+                showDivider = true,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Psychology) }
+            ) { overviewViewModel.setProvocationMode(it) }
+
+            SwitchPreference(
+                value = appSettings.strictModeEnabled,
+                title = stringResource(R.string.strict_mode_title),
+                summary = stringResource(R.string.strict_mode_desc),
+                grouped = true,
+                showDivider = true,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Lock) }
+            ) { enabled ->
+                if (enabled) {
+                    overviewViewModel.setStrictMode(true, "MIDNIGHT")
+                } else if (overviewViewModel.isStrictLocked()) {
+                    showStrictModeDialog = true
+                } else {
+                    overviewViewModel.setStrictMode(false)
+                }
             }
 
             SwitchPreference(
-                value = appSettings.x.blocked,
-                enabled = isAccessibilityGranted,
-                title = stringResource(R.string.x_app),
-                summary = xSummary,
-                leadingIcon = {
-                    Icon(painterResource(R.drawable.ic_x_themed), null, tint = Color.Unspecified)
-                },
-                settingsIcon = {
-                    IconButton(modifier = it, onClick = {
-                        selectedApp = appSettings.x
-                        showSettingsDialog = true
-                    }) {
-                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.x_app))
+                value = appSettings.adultContentBlockerEnabled,
+                title = stringResource(R.string.adult_blocker_title),
+                summary = stringResource(R.string.adult_blocker_desc),
+                grouped = true,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Shield) }
+            ) { enabled ->
+                if (enabled) {
+                    val prepareIntent = VpnService.prepare(context)
+                    if (prepareIntent != null) {
+                        vpnPrepareLauncher.launch(prepareIntent)
+                    } else {
+                        overviewViewModel.setAdultContentBlocker(true)
+                        AdultBlockVpnService.start(context)
                     }
+                } else {
+                    showDisableAdultBlockerDialog = true
                 }
-            ) {
-                overviewViewModel.updateX(appSettings.x.copy(blocked = it))
             }
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8F)
-                ),
-                shape = RoundedCornerShape(15.dp),
+        PreferenceGroup {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { showSupportDialog = true }
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Rounded.VolunteerActivism, contentDescription = null, modifier = Modifier.size(28.dp))
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(R.string.support_creator_title), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(R.string.support_creator_subtitle), style = MaterialTheme.typography.bodyMedium)
-                    }
+                TintedGlyph(Icons.Rounded.VolunteerActivism)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        stringResource(R.string.support_creator_title),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        stringResource(R.string.support_creator_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 
     if (showSettingsDialog) {
@@ -462,51 +340,88 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 }
 
 @Composable
+private fun dailyLimitSummary(limitMinutes: Int, usedSeconds: Long, fallback: String): String {
+    return if (limitMinutes > 0) {
+        stringResource(R.string.daily_limit_format, limitMinutes, usedSeconds / 60)
+    } else {
+        fallback
+    }
+}
+
+@Composable
+private fun BlockedAppPreference(
+    title: String,
+    summary: String,
+    icon: TrackedAppIcon,
+    value: Boolean,
+    enabled: Boolean,
+    showDivider: Boolean,
+    onOpenSettings: () -> Unit,
+    onValueChange: (Boolean) -> Unit,
+) {
+    SwitchPreference(
+        value = value,
+        enabled = enabled,
+        title = title,
+        summary = summary,
+        grouped = true,
+        showDivider = showDivider,
+        leadingIcon = { AppBrandIcon(icon) },
+        settingsIcon = { modifier ->
+            IconButton(modifier = modifier, onClick = onOpenSettings) {
+                Icon(Icons.Rounded.Settings, contentDescription = title)
+            }
+        },
+        onValueChange = onValueChange
+    )
+}
+
+@Composable
 fun SupportCreatorDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
-    val pixKey = "496f008e-c67d-4175-9fad-e6b3c9bbd248"
-    val toastMessage = stringResource(R.string.pix_copied_toast)
+    val pixCopied = stringResource(R.string.pix_copied_toast)
+    val paypalCopied = stringResource(R.string.paypal_copied_toast)
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp)
         ) {
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(Icons.Rounded.VolunteerActivism, contentDescription = null, modifier = Modifier.size(40.dp))
-                Spacer(modifier = Modifier.height(10.dp))
+                TintedGlyph(Icons.Rounded.VolunteerActivism, wellSize = 48.dp, glyphSize = 26.dp)
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(stringResource(R.string.support_dialog_title), style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.support_dialog_desc),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Text(stringResource(R.string.pix_key_label), style = MaterialTheme.typography.labelMedium)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        SelectionContainer {
-                            Text(pixKey, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
-                        }
-                    }
-                }
+                SupportKeyCard(
+                    label = stringResource(R.string.pix_key_label),
+                    value = SupportLinks.PIX_KEY
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                SupportKeyCard(
+                    label = stringResource(R.string.paypal_label),
+                    value = SupportLinks.PAYPAL_EMAIL
+                )
                 Spacer(modifier = Modifier.height(14.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        clipboardManager.setText(AnnotatedString(pixKey))
-                        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
+                        copyPlainText(context, "pix", SupportLinks.PIX_KEY)
+                        Toast.makeText(context, pixCopied, Toast.LENGTH_SHORT).show()
                     }
                 ) {
                     Icon(Icons.Rounded.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -517,8 +432,33 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
+                        copyPlainText(context, "paypal", SupportLinks.PAYPAL_EMAIL)
+                        Toast.makeText(context, paypalCopied, Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    Icon(Icons.Rounded.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.copy_paypal_btn))
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
                         context.startActivity(
-                            Intent(Intent.ACTION_VIEW, "https://github.com/buenotty/Blockfy".toUri())
+                            Intent(Intent.ACTION_VIEW, SupportLinks.PAYPAL_DONATE.toUri())
+                        )
+                    }
+                ) {
+                    Icon(Icons.Rounded.Payments, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.open_paypal_btn))
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB.toUri())
                         )
                     }
                 ) {
@@ -532,6 +472,28 @@ fun SupportCreatorDialog(onDismiss: () -> Unit) {
             }
         }
     }
+}
+
+@Composable
+private fun SupportKeyCard(label: String, value: String) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(modifier = Modifier.height(4.dp))
+            SelectionContainer {
+                Text(value, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
+            }
+        }
+    }
+}
+
+private fun copyPlainText(context: Context, label: String, text: String) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
 }
 
 @Preview

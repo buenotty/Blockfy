@@ -132,6 +132,12 @@ class BankSafetyArchitectureTest {
         assertTrue(manifest.contains("BIND_ACCESSIBILITY_SERVICE"))
         assertTrue(manifest.contains("ReelsBlockAccessibilityService"))
         assertFalse(manifest.contains("REQUEST_INSTALL_PACKAGES"))
+        assertFalse(manifest.contains("FileProvider"))
+        assertFalse(manifest.contains("FILE_PROVIDER_PATHS"))
+        assertFalse(
+            File("app/src/main/res/xml/file_paths.xml").exists() ||
+                File("src/main/res/xml/file_paths.xml").exists()
+        )
         assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
         assertFalse(manifest.contains("QUERY_ALL_PACKAGES"))
         assertFalse(
@@ -204,6 +210,41 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
+    fun languageFollowsBrazilDetectionAndLivesOffTheHomeScreen() {
+        val overview = readAppFile("src/main/java/com/buenotty/blockfy/feature_preferences/ui/OverviewScreen.kt").readText()
+        val about = readAppFile("src/main/java/com/buenotty/blockfy/feature_settings/AboutScreen.kt").readText()
+        val activity = readAppFile("src/main/java/com/buenotty/blockfy/MainActivity.kt").readText()
+        val locales = readAppFile("src/main/res/xml/locales_config.xml").readText()
+        assertFalse(
+            "language chips on home made English look selected while system Portuguese was shown",
+            overview.contains("language_title")
+        )
+        assertTrue(about.contains("language_title"))
+        assertTrue(about.contains("AppLocale.AUTO"))
+        assertTrue(activity.contains("Icons.Rounded.Settings"))
+        assertFalse(activity.contains("Icons.Rounded.Info"))
+        assertTrue(locales.contains("pt-BR"))
+    }
+
+    @Test
+    fun supportTheProjectIncludesPaypalEmail() {
+        val overview = readAppFile("src/main/java/com/buenotty/blockfy/feature_preferences/ui/OverviewScreen.kt").readText()
+        val links = readAppFile("src/main/java/com/buenotty/blockfy/SupportLinks.kt").readText()
+        assertTrue(links.contains("samuellbuenno@gmail.com"))
+        assertTrue(overview.contains("SupportLinks.PAYPAL_EMAIL") || overview.contains("samuellbuenno@gmail.com"))
+    }
+
+    @Test
+    fun dailyLimitChipsDoNotForceWhiteLabelOnPrimary() {
+        val sheet = readAppFile("src/main/java/com/buenotty/blockfy/feature_preferences/ui/composables/EditBlockerBottomSheet.kt").readText()
+        assertFalse(
+            "selected FilterChips used Color.White on a light primary, so the chosen time was unreadable",
+            sheet.contains("selectedLabelColor = Color.White")
+        )
+        assertFalse(sheet.contains("selectedContainerColor = MaterialTheme.colorScheme.primary"))
+    }
+
+    @Test
     fun playStoreIdentityMatchesAndKeepsSigningSecretsOutOfSource() {
         val gradle = readAppFile("build.gradle.kts").readText()
         assertTrue(gradle.contains("namespace = \"com.buenotty.blockfy\""))
@@ -215,6 +256,61 @@ class BankSafetyArchitectureTest {
         val manifest = readAppFile("src/main/AndroidManifest.xml").readText()
         assertFalse(manifest.contains("REQUEST_INSTALL_PACKAGES"))
         assertTrue(manifest.contains("android:localeConfig"))
+        assertTrue(
+            "unsigned APKs cannot be installed on phones",
+            gradle.contains("isMinifyEnabled = true")
+        )
+        assertTrue(gradle.contains("isShrinkResources = true"))
+        assertTrue(gradle.contains("enableV1Signing = true"))
+        assertTrue(gradle.contains("enableV2Signing = true"))
+        val workflow = File(".github/workflows/release.yml").let { file ->
+            if (file.exists()) file.readText()
+            else File("../.github/workflows/release.yml").readText()
+        }
+        assertFalse(workflow.contains("release APK will be unsigned"))
+        assertTrue(workflow.contains("Refusing to publish an unsigned APK"))
+        assertTrue(workflow.contains("app-release.apk"))
+    }
+
+    @Test
+    fun productionSourcesHaveNoThirdPartyStorePermissionOrLeakedKeystore() {
+        val roots = listOf(File("app/src/main"), File("src/main")).filter { it.isDirectory }
+        assertTrue("app/src/main must be present", roots.isNotEmpty())
+        val forbidden = listOf(
+            "REQUEST_INSTALL_PACKAGES",
+            "ACTION_INSTALL_PACKAGE",
+            "application/vnd.android.package-archive",
+            "androidx.core.content.FileProvider",
+            "FILE_PROVIDER_PATHS",
+            "blockfy_keystore_pass",
+        )
+        val hits = mutableListOf<String>()
+        roots.forEach { root ->
+            root.walkTopDown().filter { it.isFile }.forEach { file ->
+                val text = file.readText()
+                for (token in forbidden) {
+                    if (text.contains(token)) {
+                        hits += "${file.path}: $token"
+                    }
+                }
+            }
+        }
+        assertTrue(
+            "Play policy leftovers in app/src/main:\n${hits.joinToString("\n")}",
+            hits.isEmpty()
+        )
+        assertFalse(File("app/blockfy.p12").exists())
+        assertFalse(File("blockfy.p12").exists())
+        assertFalse(
+            File("app/src/main/res/xml/file_paths.xml").exists() ||
+                File("src/main/res/xml/file_paths.xml").exists()
+        )
+        val updater = readAppFile("src/main/java/com/buenotty/blockfy/updater/UpdateManager.kt").readText()
+        assertTrue(updater.contains("play.google.com/store/apps/details"))
+        assertFalse(updater.contains("REQUEST_INSTALL_PACKAGES"))
+        assertFalse(updater.contains("FileProvider"))
+        assertFalse(File("app/src/main/java/com/robingebert").exists())
+        assertFalse(File("src/main/java/com/robingebert").exists())
     }
 
     private fun readAppFile(relativeFromApp: String): File {
