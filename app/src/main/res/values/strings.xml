@@ -85,6 +85,9 @@
     <string name="cancel_btn">Cancel</string>
     <string name="app_total_limit_label">Whole-app daily limit</string>
     <string name="app_total_limit_none">No whole-app limit (short videos only)</string>
+    <string name="app_total_limit_window">Blocks the app during the active hours</string>
+    <string name="daily_limit_always">Always</string>
+    <string name="toast_app_window_blocked">%1$s is blocked during these hours.</string>
     <string name="app_total_limit_on">%1$d min for the whole app</string>
     <string name="short_video_limit_label">Reels / Shorts daily limit</string>
 

@@ -85,6 +85,9 @@
     <string name="cancel_btn">Cancelar</string>
     <string name="app_total_limit_label">Limite diário do app inteiro</string>
     <string name="app_total_limit_none">Sem limite geral (somente vídeos curtos)</string>
+    <string name="app_total_limit_window">Bloqueia o app no horário ativo</string>
+    <string name="daily_limit_always">Sempre</string>
+    <string name="toast_app_window_blocked">%1$s está bloqueado neste horário.</string>
     <string name="app_total_limit_on">%1$d min para o app inteiro</string>
     <string name="short_video_limit_label">Limite diário de Reels / Shorts</string>
 

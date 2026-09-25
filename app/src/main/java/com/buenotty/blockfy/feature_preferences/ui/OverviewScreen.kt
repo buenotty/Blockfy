@@ -114,7 +114,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             )
         }
         if (homeTab == 1) {
-            ConceptsScreen()
+            ConceptsScreen(onSupport = { showSupportDialog = true })
             return@Column
         }
     Column(
@@ -283,7 +283,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         val todayUsed = when (selectedApp.name) {
             appSettings.instagram.name -> dailyUsage.instagramSeconds
             appSettings.youtube.name -> dailyUsage.youtubeSeconds
-            appSettings.tiktok.name -> dailyUsage.tiktokSeconds
+            appSettings.tiktok.name -> dailyUsage.tiktokTotalSeconds
             appSettings.facebook.name -> dailyUsage.facebookSeconds
             appSettings.x.name -> dailyUsage.xTotalSeconds
             else -> 0L
@@ -362,6 +362,7 @@ private fun BlockedAppPreference(
         grouped = true,
         showDivider = showDivider,
         leadingIcon = { AppBrandIcon(icon) },
+        onRowClick = onOpenSettings,
         settingsIcon = { modifier ->
             IconButton(modifier = modifier, onClick = onOpenSettings) {
                 Icon(Icons.Rounded.Settings, contentDescription = title)

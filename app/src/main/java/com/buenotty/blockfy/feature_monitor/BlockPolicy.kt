@@ -59,6 +59,14 @@ object BlockPolicy {
             return BlockVerdict(BlockReason.NONE, appName, packageName)
         }
 
+        if (isWholeAppOnly(appName) &&
+            appConfig.blocked &&
+            appConfig.appTotalDailyLimitMinutes <= 0 &&
+            isWithinInterval(appConfig.blockedStart, appConfig.blockedEnd, minuteOfDay)
+        ) {
+            return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
+        }
+
         if (appConfig.appTotalDailyLimitMinutes > 0 &&
             usedTotalSeconds >= appConfig.appTotalDailyLimitMinutes * 60L
         ) {
@@ -75,6 +83,9 @@ object BlockPolicy {
         minuteOfDay: Int
     ): BlockVerdict {
         val packageName = TrackedPackages.ALL.entries.firstOrNull { it.value == appName }?.key ?: return BlockVerdict(BlockReason.NONE, appName, "")
+        if (isWholeAppOnly(appName)) {
+            return BlockVerdict(BlockReason.NONE, appName, packageName)
+        }
         val appConfig = appConfig(settings, appName)
         if (!isActiveWeekday(appConfig.blockedWeekdays)) {
             return BlockVerdict(BlockReason.NONE, appName, packageName)
@@ -90,6 +101,8 @@ object BlockPolicy {
         }
         return BlockVerdict(BlockReason.NONE, appName, packageName)
     }
+
+    fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X"
 
     fun appConfig(settings: AppSettings, appName: String): App {
         return when (appName) {
