@@ -65,9 +65,9 @@
     <string name="authorship_title">Credits</string>
     <string name="fork_author_role">keeps Blockfy going</string>
     <string name="original_author_role">made the original Blokky</string>
-    <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. There is also a DNS filter on the phone for adult sites, if you turn it on.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
+    <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. Adult blocking, if you turn it on, uses Accessibility to notice adult text in the browser, X, Telegram and Reddit. It does not use a VPN.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_desc">Accessibility only looks at Instagram, YouTube, TikTok, Facebook, and X. That is how Blockfy notices Reels and Shorts. It does not open banking apps.\n\nThe adult shield is a DNS VPN that runs on your phone. Your browsing history stays here. Bank apps keep using your normal connection, outside that VPN.\n\nUpdates are supposed to come from Google Play. Blockfy does not install APKs on its own.</string>
+    <string name="privacy_desc">Accessibility looks at Instagram, YouTube, TikTok, Facebook and X to notice short videos. With adult blocking on, it also reads on-screen text in the browser, X, Telegram and Reddit, and does not store it. It does not open banking apps and it does not use a VPN.\n\nUpdates are supposed to come from Google Play. Blockfy does not install APKs on its own.</string>
     <string name="share_app_title">Share Blockfy</string>
     <string name="share_app_thanks">Thanks for sharing.</string>
     <string name="learn_more">Learn more</string>
@@ -115,7 +115,7 @@
     <string name="strict_locked_banner">Strict mode is on: limits are locked until midnight.</string>
 
     <string name="adult_blocker_title">Adult site shield</string>
-    <string name="adult_blocker_desc">Block known adult sites in the browser with a local DNS filter. Bank apps are left on your normal connection.</string>
+    <string name="adult_blocker_desc">Uses Accessibility to leave adult pages in the browser and adult text in X, Telegram and Reddit. No VPN and no DNS filter.</string>
     <string name="adult_blocker_dialog_title">Turn the shield off?</string>
     <string name="adult_blocker_dialog_desc">Type the paragraph below yourself. Paste is disabled so this cannot be done on autopilot.</string>
     <string name="adult_blocker_reflection_text">I know that pornography steals time I will not get back and pulls me away from the person I want to be. Turning this shield off is a deliberate choice to follow that impulse. I accept responsibility for that choice.</string>

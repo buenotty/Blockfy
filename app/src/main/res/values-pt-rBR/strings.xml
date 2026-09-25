@@ -65,9 +65,9 @@
     <string name="authorship_title">Créditos</string>
     <string name="fork_author_role">cuida do Blockfy</string>
     <string name="original_author_role">fez o Blokky original</string>
-    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. Tem também um filtro DNS no celular para sites adultos, se você ligar.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
+    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para perceber texto adulto no navegador, no X, no Telegram e no Reddit. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é uma VPN DNS que roda no seu celular. O histórico de navegação fica aqui. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
+    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê o texto na tela do navegador, do X, do Telegram e do Reddit, e não guarda esse texto. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
     <string name="learn_more">Saiba mais</string>
@@ -115,7 +115,7 @@
     <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
-    <string name="adult_blocker_desc">Bloqueia sites adultos conhecidos no navegador com um filtro DNS local. Apps de banco seguem na conexão normal.</string>
+    <string name="adult_blocker_desc">Usa a Acessibilidade para sair de páginas adultas no navegador e de texto adulto no X, Telegram e Reddit. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
     <string name="adult_blocker_reflection_text">Eu sei que a pornografia rouba tempo que eu não recupero e me afasta da pessoa que eu quero ser. Desligar este escudo é uma escolha deliberada de seguir esse impulso. Eu assumo a responsabilidade por essa escolha.</string>

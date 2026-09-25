@@ -441,15 +441,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     companion object {
         private const val TAG = "BlockfyService"
-        val SOCIAL_PACKAGES = arrayOf(
-            TrackedPackages.INSTAGRAM,
-            TrackedPackages.YOUTUBE,
-            TrackedPackages.TIKTOK,
-            TrackedPackages.FACEBOOK,
-            TrackedPackages.X,
-            "org.telegram.messenger",
-            "org.telegram.messenger.web",
-            "com.reddit.frontpage"
-        )
+        val SOCIAL_PACKAGES: Array<String> = (
+            TrackedPackages.ALL.keys +
+                AdultContentDetector.IN_APP_TEXT_PACKAGES +
+                AdultContentDetector.BROWSER_PACKAGES
+            ).distinct().toTypedArray()
     }
 }

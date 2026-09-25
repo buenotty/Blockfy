@@ -14,7 +14,9 @@ object AdultContentDetector {
         "com.reddit.frontpage"
     )
 
-    fun watchesInAppText(packageName: String): Boolean = packageName in IN_APP_TEXT_PACKAGES
+    fun watchesInAppText(packageName: String): Boolean {
+        return packageName in IN_APP_TEXT_PACKAGES || packageName in BROWSER_PACKAGES
+    }
 
     val BROWSER_PACKAGES = setOf(
         "com.android.chrome",

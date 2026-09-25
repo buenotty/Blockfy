@@ -1,14 +1,10 @@
 package com.buenotty.blockfy.feature_preferences.ui
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.net.VpnService
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -78,7 +74,6 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.SwitchPreference
 import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
 import com.buenotty.blockfy.feature_preferences.ui.composables.TrackedAppIcon
 import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGranted
-import com.buenotty.blockfy.feature_vpn.AdultBlockVpnService
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,15 +93,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
-
-    val vpnPrepareLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            overviewViewModel.setAdultContentBlocker(true)
-            AdultBlockVpnService.start(context)
-        }
-    }
 
     LaunchedEffect(lifecycleState) {
         if (lifecycleState == Lifecycle.State.RESUMED) {
@@ -238,13 +224,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 leadingIcon = { TintedGlyph(Icons.Rounded.Shield) }
             ) { enabled ->
                 if (enabled) {
-                    val prepareIntent = VpnService.prepare(context)
-                    if (prepareIntent != null) {
-                        vpnPrepareLauncher.launch(prepareIntent)
-                    } else {
-                        overviewViewModel.setAdultContentBlocker(true)
-                        AdultBlockVpnService.start(context)
-                    }
+                    overviewViewModel.setAdultContentBlocker(true)
                 } else {
                     showDisableAdultBlockerDialog = true
                 }
@@ -348,7 +328,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             onDismissRequest = { showDisableAdultBlockerDialog = false },
             onConfirmDisable = {
                 overviewViewModel.setAdultContentBlocker(false)
-                AdultBlockVpnService.stop(context)
                 showDisableAdultBlockerDialog = false
             }
         )
