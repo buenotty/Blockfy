@@ -3,6 +3,7 @@ package com.buenotty.blockfy.feature_monitor
 import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.feature_preferences.repository.models.App
+import java.util.Calendar
 import java.util.TimeZone
 
 enum class BlockReason {
@@ -27,6 +28,13 @@ object BlockPolicy {
         return (((nowMillis + offset) / 60000) % 1440).toInt()
     }
 
+    fun isActiveWeekday(mask: Int, nowMillis: Long = System.currentTimeMillis(), timeZone: TimeZone = TimeZone.getDefault()): Boolean {
+        val calendar = Calendar.getInstance(timeZone)
+        calendar.timeInMillis = nowMillis
+        val bit = 1 shl (calendar.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY)
+        return mask and bit != 0
+    }
+
     fun isWithinInterval(start: Int, end: Int, minute: Int): Boolean {
         return if (start <= end) {
             minute in start..end
@@ -47,6 +55,10 @@ object BlockPolicy {
         val appConfig = appConfig(settings, appName)
         val usedTotalSeconds = totalSeconds(usage, appName)
 
+        if (!isActiveWeekday(appConfig.blockedWeekdays)) {
+            return BlockVerdict(BlockReason.NONE, appName, packageName)
+        }
+
         if (appConfig.appTotalDailyLimitMinutes > 0 &&
             usedTotalSeconds >= appConfig.appTotalDailyLimitMinutes * 60L
         ) {
@@ -64,6 +76,9 @@ object BlockPolicy {
     ): BlockVerdict {
         val packageName = TrackedPackages.ALL.entries.firstOrNull { it.value == appName }?.key ?: return BlockVerdict(BlockReason.NONE, appName, "")
         val appConfig = appConfig(settings, appName)
+        if (!isActiveWeekday(appConfig.blockedWeekdays)) {
+            return BlockVerdict(BlockReason.NONE, appName, packageName)
+        }
         if (!appConfig.blocked || !isWithinInterval(appConfig.blockedStart, appConfig.blockedEnd, minuteOfDay)) {
             return BlockVerdict(BlockReason.NONE, appName, packageName)
         }

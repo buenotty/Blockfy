@@ -4,29 +4,29 @@
     <string name="title_about">About</string>
     <string name="btn_back">Back</string>
 
-    <string name="accessibility_service_description">Blockfy uses Accessibility only to detect Reels and Shorts in Instagram, YouTube, TikTok, Facebook and X, then take you back to the regular feed. It does not read other apps.</string>
+    <string name="accessibility_service_description">Blockfy uses Accessibility to leave Reels and Shorts, and, when adult blocking is on, to notice adult text in X, Telegram and Reddit. It does not store what you type or read.</string>
     <string name="accessibility_service">Accessibility Service</string>
     <string name="accessibility_active">Granted. Tap to open system settings.</string>
-    <string name="accessibility_inactive">Not granted. Tap here to enable it.</string>
+    <string name="accessibility_inactive">Not granted. Without this, Blockfy cannot block anything. Tap to turn it on.</string>
     <string name="accessibility_dialog_title">Accessibility Service</string>
-    <string name="accessibility_dialog_desc">Blockfy uses Accessibility to notice when you open Reels or Shorts and to return you to the feed. It does not store your activity, and it does not control apps other than leaving short-video screens.</string>
+    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses that permission to leave short-video screens and, if you enable adult blocking, to notice adult text in X, Telegram and Reddit. It does not save what you see or type.</string>
     <string name="accessibility_dialog_learn_more">Learn more</string>
     <string name="accessibility_dialog_decline">Decline</string>
     <string name="accessibility_dialog_accept">Accept</string>
-    <string name="accessibility_dialog_howto">After Accessibility settings open, tap Blockfy under Downloaded apps, then turn the service on.</string>
+    <string name="accessibility_dialog_howto">1. Open app info and allow restricted settings, if the phone asks.\n2. Open Accessibility settings.\n3. Under downloaded apps, tap Blockfy.\n4. Turn the service on and confirm.</string>
     <string name="btn_open_accessibility">Open Accessibility Settings</string>
     <string name="btn_open_app_info">Open app info</string>
     <string name="btn_close">Close</string>
     <string name="restricted_settings_hint">On some phones you must first allow restricted settings from the Blockfy app info screen.</string>
 
-    <string name="instagram_reels">Instagram Reels</string>
-    <string name="youtube_shorts">YouTube Shorts</string>
+    <string name="instagram_reels">Instagram</string>
+    <string name="youtube_shorts">YouTube</string>
     <string name="tiktok_app">TikTok</string>
     <string name="block_tiktok_summary">Block TikTok (whole app)</string>
     <string name="block_instagram_summary">Block Instagram Reels</string>
     <string name="block_youtube_summary">Block YouTube Shorts</string>
     <string name="facebook_app">Facebook</string>
-    <string name="facebook_reels">Facebook Reels</string>
+    <string name="facebook_reels">Facebook</string>
     <string name="block_facebook_summary">Block Facebook Reels</string>
     <string name="x_app">X (Twitter)</string>
     <string name="block_x_summary">Limit doomscrolling on X</string>
@@ -154,5 +154,53 @@
         <item>Nobody built a life they wanted by scrolling.</item>
         <item>Your attention is the most expensive thing in this room.</item>
         <item>Close the reel. Stand up. Do the next real thing.</item>
+    </string-array>
+
+    <string name="tab_blocks">Blocks</string>
+    <string name="tab_concepts">Concepts</string>
+    <string name="weekdays_title">Days the block is on</string>
+    <string name="weekday_sun">Sun</string>
+    <string name="weekday_mon">Mon</string>
+    <string name="weekday_tue">Tue</string>
+    <string name="weekday_wed">Wed</string>
+    <string name="weekday_thu">Thu</string>
+    <string name="weekday_fri">Fri</string>
+    <string name="weekday_sat">Sat</string>
+    <string name="minutes_custom_hint">Or type minutes</string>
+    <string name="concepts_intro">A reminder of why these blocks exist, for the day you feel like turning them off.</string>
+    <string name="concepts_shorts_title">Short videos</string>
+    <string name="concepts_shorts_summary">What the feed does to your attention, your work and your mood.</string>
+    <string name="concepts_porn_title">Pornography</string>
+    <string name="concepts_porn_summary">What it costs your character, your relationships and your sex life.</string>
+    <string name="concepts_page">%1$d of %2$d. Swipe sideways.</string>
+    <string name="concepts_next">Next</string>
+    <string name="concepts_swipe_hint">Swipe to read them again</string>
+    <string-array name="concept_shorts_titles">
+        <item>Your work gets thinner</item>
+        <item>Dopamine stops waiting</item>
+        <item>It is built to be endless</item>
+        <item>Sleep and mood pay the bill</item>
+        <item>Other people start to look small</item>
+    </string-array>
+    <string-array name="concept_shorts_bodies">
+        <item>A few minutes becomes an hour because each video ends before your brain decides to stop. The task you opened the phone to do is still waiting, and starting it feels heavier than it did before.</item>
+        <item>Short videos train you to expect a hit every few seconds. Ordinary work, conversation and silence start to feel dull, not because they got worse, but because your reward system got louder.</item>
+        <item>There is no last episode. The next one is already loaded, picked because it is more likely to keep you there. The product is your time, not the video.</item>
+        <item>Late scrolling steals the sleep that would have made tomorrow easier. You wake up more irritable, less patient, and more likely to open the same app again.</item>
+        <item>A feed of other people\'s highlights makes your own day look like a failure. That comparison is not information. It is a side effect of watching strangers perform.</item>
+    </string-array>
+    <string-array name="concept_porn_titles">
+        <item>It trains you to use people</item>
+        <item>Your character erodes in private</item>
+        <item>Relationships get colder</item>
+        <item>Your sex life shrinks</item>
+        <item>You can leave</item>
+    </string-array>
+    <string-array name="concept_porn_bodies">
+        <item>Pornography teaches you to treat another person as a product: available, silent, and discarded when the feeling passes. That habit does not stay on the screen. It shows up in how you look at people who are actually in the room.</item>
+        <item>Doing this in secret splits you in two. You say one thing about who you are and keep another life that you would not defend out loud. Character is what you repeat when nobody is scoring you.</item>
+        <item>A partner is not a stream of novelty. If your arousal depends on strangers, tabs and escalation, the person who loves you starts to feel insufficient. That is not their failure. It is the cost of the habit.</item>
+        <item>Heavy use makes real intimacy slower, more anxious, or harder to enjoy. You need more intensity for the same effect, and an ordinary body next to you stops being enough. That is a damaged appetite, not a high standard.</item>
+        <item>You will find a way around a block if you are determined. The point of the block is the pause: long enough to remember that this does not give you a better life, a clearer mind, or a relationship you can respect.</item>
     </string-array>
 </resources>

@@ -80,6 +80,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             if (event == null) return
             val pkg = event.packageName?.toString() ?: return
+            maybeFlagAdultText(event, pkg)
             if (!TrackedPackages.isTracked(pkg)) {
                 lastCreditPkg = null
                 lastCreditElapsed = 0L
@@ -375,6 +376,69 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    private var lastAdultScanElapsed = 0L
+
+    /**
+     * Reads on-screen and typed text only inside apps that commonly carry
+     * adult content, and only on window changes or typing. Scrolling events
+     * are ignored so the service does not walk the tree on every frame.
+     */
+    private fun maybeFlagAdultText(event: AccessibilityEvent, pkg: String) {
+        if (!settings.adultContentBlockerEnabled) return
+        if (!AdultContentDetector.watchesInAppText(pkg)) return
+        val type = event.eventType
+        if (type != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED &&
+            type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+        ) {
+            return
+        }
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastAdultScanElapsed < 1500L) return
+        lastAdultScanElapsed = now
+
+        val typed = event.text?.joinToString(" ") { it?.toString().orEmpty() }.orEmpty()
+        if (typed.isNotBlank() && AdultContentDetector.isAdultContent(typed)) {
+            leaveAdultScreen()
+            return
+        }
+        if (TrackedPackages.isTracked(pkg)) return
+        if (type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
+        val root = rootFromEvent(event, pkg) ?: return
+        try {
+            val sample = StringBuilder()
+            collectVisibleText(root, sample, remaining = intArrayOf(24))
+            if (sample.isNotEmpty() && AdultContentDetector.isAdultContent(sample.toString())) {
+                leaveAdultScreen()
+            }
+        } finally {
+            root.recycle()
+        }
+    }
+
+    private fun collectVisibleText(node: AccessibilityNodeInfo, out: StringBuilder, remaining: IntArray) {
+        if (remaining[0] <= 0) return
+        remaining[0]--
+        if (node.isVisibleToUser) {
+            node.text?.let { if (it.isNotBlank()) out.append(' ').append(it) }
+            node.contentDescription?.let { if (it.isNotBlank()) out.append(' ').append(it) }
+        }
+        for (i in 0 until node.childCount) {
+            if (remaining[0] <= 0) return
+            val child = node.getChild(i) ?: continue
+            try {
+                collectVisibleText(child, out, remaining)
+            } finally {
+                child.recycle()
+            }
+        }
+    }
+
+    private fun leaveAdultScreen() {
+        val message = AdultContentDetector.getRandomWarning(this)
+        notifyAlert(getString(R.string.adult_blocker_title), message, isFinal = true)
+        performGlobalAction(GLOBAL_ACTION_HOME)
+    }
+
     companion object {
         private const val TAG = "BlockfyService"
         val SOCIAL_PACKAGES = arrayOf(
@@ -382,7 +446,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             TrackedPackages.YOUTUBE,
             TrackedPackages.TIKTOK,
             TrackedPackages.FACEBOOK,
-            TrackedPackages.X
+            TrackedPackages.X,
+            "org.telegram.messenger",
+            "org.telegram.messenger.web",
+            "com.reddit.frontpage"
         )
     }
 }

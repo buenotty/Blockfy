@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Payments
-import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Star
@@ -41,12 +41,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -91,6 +94,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     var showStrictModeDialog by remember { mutableStateOf(false) }
     var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
     var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
+    var homeTab by remember { mutableIntStateOf(0) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
@@ -110,13 +114,32 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         }
     }
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        TabRow(selectedTabIndex = homeTab) {
+            Tab(
+                selected = homeTab == 0,
+                onClick = { homeTab = 0 },
+                text = { Text(stringResource(R.string.tab_blocks)) }
+            )
+            Tab(
+                selected = homeTab == 1,
+                onClick = { homeTab = 1 },
+                text = { Text(stringResource(R.string.tab_concepts)) }
+            )
+        }
+        if (homeTab == 1) {
+            ConceptsScreen()
+            return@Column
+        }
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = spacedBy(20.dp)
     ) {
-        AccessibilityServiceCard(isAccessibilityGranted)
+        if (!isAccessibilityGranted) {
+            AccessibilityServiceCard(isAccessibilityGranted)
+        }
 
         PreferenceGroup(title = stringResource(R.string.section_apps)) {
             BlockedAppPreference(
@@ -205,35 +228,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             ) { overviewViewModel.updateX(appSettings.x.copy(blocked = it)) }
         }
 
-        PreferenceGroup(title = stringResource(R.string.section_focus)) {
-            SwitchPreference(
-                value = appSettings.provocationModeEnabled,
-                title = stringResource(R.string.provocation_mode_title),
-                summary = stringResource(R.string.provocation_mode_desc),
-                grouped = true,
-                showDivider = true,
-                confirmDisable = false,
-                leadingIcon = { TintedGlyph(Icons.Rounded.Psychology) }
-            ) { overviewViewModel.setProvocationMode(it) }
-
-            SwitchPreference(
-                value = appSettings.strictModeEnabled,
-                title = stringResource(R.string.strict_mode_title),
-                summary = stringResource(R.string.strict_mode_desc),
-                grouped = true,
-                showDivider = true,
-                confirmDisable = false,
-                leadingIcon = { TintedGlyph(Icons.Rounded.Lock) }
-            ) { enabled ->
-                if (enabled) {
-                    overviewViewModel.setStrictMode(true, "MIDNIGHT")
-                } else if (overviewViewModel.isStrictLocked()) {
-                    showStrictModeDialog = true
-                } else {
-                    overviewViewModel.setStrictMode(false)
-                }
-            }
-
+        PreferenceGroup(title = stringResource(R.string.adult_blocker_title)) {
             SwitchPreference(
                 value = appSettings.adultContentBlockerEnabled,
                 title = stringResource(R.string.adult_blocker_title),
@@ -252,6 +247,26 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                     }
                 } else {
                     showDisableAdultBlockerDialog = true
+                }
+            }
+        }
+
+        PreferenceGroup(title = stringResource(R.string.section_focus)) {
+            SwitchPreference(
+                value = appSettings.strictModeEnabled,
+                title = stringResource(R.string.strict_mode_title),
+                summary = stringResource(R.string.strict_mode_desc),
+                grouped = true,
+                showDivider = false,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Lock) }
+            ) { enabled ->
+                if (enabled) {
+                    overviewViewModel.setStrictMode(true, "MIDNIGHT")
+                } else if (overviewViewModel.isStrictLocked()) {
+                    showStrictModeDialog = true
+                } else {
+                    overviewViewModel.setStrictMode(false)
                 }
             }
         }
@@ -281,6 +296,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+    }
     }
 
     if (showSettingsDialog) {

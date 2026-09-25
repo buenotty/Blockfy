@@ -9,14 +9,14 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.HourglassBottom
@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_preferences.repository.models.App
@@ -67,6 +69,9 @@ fun EditAppBottomSheet(
     var blockedEnd by remember { mutableIntStateOf(app.blockedEnd) }
     var dailyLimitMinutes by remember { mutableIntStateOf(app.dailyLimitMinutes) }
     var appTotalDailyLimitMinutes by remember { mutableIntStateOf(app.appTotalDailyLimitMinutes) }
+    var blockedWeekdays by remember { mutableIntStateOf(app.blockedWeekdays) }
+    var totalTyped by remember { mutableStateOf(if (app.appTotalDailyLimitMinutes == 0) "" else app.appTotalDailyLimitMinutes.toString()) }
+    var shortsTyped by remember { mutableStateOf(if (app.dailyLimitMinutes == 0) "" else app.dailyLimitMinutes.toString()) }
 
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
@@ -81,20 +86,22 @@ fun EditAppBottomSheet(
                 blockedStart = blockedStart,
                 blockedEnd = blockedEnd,
                 dailyLimitMinutes = dailyLimitMinutes,
-                appTotalDailyLimitMinutes = appTotalDailyLimitMinutes
+                appTotalDailyLimitMinutes = appTotalDailyLimitMinutes,
+                blockedWeekdays = blockedWeekdays
             )
         )
         onDismiss()
     }
 
     ModalBottomSheet(
+        modifier = Modifier.fillMaxHeight(),
         containerColor = MaterialTheme.colorScheme.surface,
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 20.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxHeight()
+                    .padding(vertical = 8.dp, horizontal = 20.dp),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     AppBrandIcon(trackedAppIcon(app.name))
@@ -106,7 +113,44 @@ fun EditAppBottomSheet(
                     )
                 }
 
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.weekdays_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(8.dp))
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val labels = listOf(
+                        R.string.weekday_sun,
+                        R.string.weekday_mon,
+                        R.string.weekday_tue,
+                        R.string.weekday_wed,
+                        R.string.weekday_thu,
+                        R.string.weekday_fri,
+                        R.string.weekday_sat
+                    )
+                    labels.forEachIndexed { index, label ->
+                        val bit = 1 shl index
+                        SelectableFilterChip(
+                            selected = blockedWeekdays and bit != 0,
+                            enabled = !isStrictLocked,
+                            onClick = {
+                                val next = blockedWeekdays xor bit
+                                if (next != 0) blockedWeekdays = next
+                            },
+                            label = stringResource(label)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
 
                 Text(
                     text = stringResource(R.string.schedule_title),
@@ -151,75 +195,6 @@ fun EditAppBottomSheet(
                 Spacer(Modifier.height(20.dp))
 
                 Text(
-                    text = stringResource(R.string.daily_limit_picker_title),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(Modifier.height(8.dp))
-
-                IconRow(icon = Icons.Rounded.Timer) {
-                    Column {
-                        Text(
-                            text = if (dailyLimitMinutes == 0) {
-                                stringResource(R.string.daily_limit_picker_desc)
-                            } else {
-                                "${dailyLimitMinutes} min"
-                            },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(Modifier.height(8.dp))
-
-                        val options = listOf(0, 5, 10, 15, 30, 45, 60)
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            options.forEach { min ->
-                                SelectableFilterChip(
-                                    selected = dailyLimitMinutes == min,
-                                    onClick = { dailyLimitMinutes = min },
-                                    label = if (min == 0) {
-                                        stringResource(R.string.daily_limit_off)
-                                    } else {
-                                        "${min}m"
-                                    },
-                                    enabled = !isStrictLocked
-                                )
-                            }
-                        }
-
-                        if (dailyLimitMinutes > 0) {
-                            Spacer(Modifier.height(10.dp))
-                            val usedMin = todayUsedSeconds / 60
-                            val usedSec = todayUsedSeconds % 60
-                            Text(
-                                text = "${stringResource(R.string.today_usage_label, usedMin.toInt(), dailyLimitMinutes)} (${usedSec}s)",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            if (onResetUsage != null && todayUsedSeconds > 0) {
-                                Spacer(Modifier.height(8.dp))
-                                OutlinedButton(
-                                    onClick = onResetUsage,
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.size(18.dp))
-                                    Spacer(Modifier.width(6.dp))
-                                    Text(stringResource(R.string.reset_usage_btn))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(20.dp))
-
-                Text(
                     text = stringResource(R.string.app_total_limit_label),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary,
@@ -249,7 +224,12 @@ fun EditAppBottomSheet(
                             totalOptions.forEach { min ->
                                 SelectableFilterChip(
                                     selected = appTotalDailyLimitMinutes == min,
-                                    onClick = { if (!isStrictLocked) appTotalDailyLimitMinutes = min },
+                                    onClick = {
+                                        if (!isStrictLocked) {
+                                            appTotalDailyLimitMinutes = min
+                                            totalTyped = if (min == 0) "" else min.toString()
+                                        }
+                                    },
                                     enabled = !isStrictLocked,
                                     label = if (min == 0) {
                                         stringResource(R.string.daily_limit_off)
@@ -257,6 +237,107 @@ fun EditAppBottomSheet(
                                         "${min}m"
                                     }
                                 )
+                            }
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = totalTyped,
+                            onValueChange = { raw ->
+                                val digits = raw.filter { it.isDigit() }.take(4)
+                                totalTyped = digits
+                                appTotalDailyLimitMinutes = digits.toIntOrNull()?.coerceIn(0, 1440) ?: 0
+                            },
+                            enabled = !isStrictLocked,
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            label = { Text(stringResource(R.string.minutes_custom_hint)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+
+
+                Spacer(Modifier.height(20.dp))
+
+                Text(
+                    text = stringResource(R.string.daily_limit_picker_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(8.dp))
+
+                IconRow(icon = Icons.Rounded.Timer) {
+                    Column {
+                        Text(
+                            text = if (dailyLimitMinutes == 0) {
+                                stringResource(R.string.daily_limit_picker_desc)
+                            } else {
+                                "${dailyLimitMinutes} min"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(8.dp))
+
+                        val options = listOf(0, 5, 10, 15, 30, 45, 60)
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            options.forEach { min ->
+                                SelectableFilterChip(
+                                    selected = dailyLimitMinutes == min,
+                                    onClick = {
+                                        dailyLimitMinutes = min
+                                        shortsTyped = if (min == 0) "" else min.toString()
+                                    },
+                                    label = if (min == 0) {
+                                        stringResource(R.string.daily_limit_off)
+                                    } else {
+                                        "${min}m"
+                                    },
+                                    enabled = !isStrictLocked
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = shortsTyped,
+                            onValueChange = { raw ->
+                                val digits = raw.filter { it.isDigit() }.take(4)
+                                shortsTyped = digits
+                                dailyLimitMinutes = digits.toIntOrNull()?.coerceIn(0, 1440) ?: 0
+                            },
+                            enabled = !isStrictLocked,
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            label = { Text(stringResource(R.string.minutes_custom_hint)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        if (dailyLimitMinutes > 0) {
+                            Spacer(Modifier.height(10.dp))
+                            val usedMin = todayUsedSeconds / 60
+                            val usedSec = todayUsedSeconds % 60
+                            Text(
+                                text = "${stringResource(R.string.today_usage_label, usedMin.toInt(), dailyLimitMinutes)} (${usedSec}s)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            if (onResetUsage != null && todayUsedSeconds > 0) {
+                                Spacer(Modifier.height(8.dp))
+                                OutlinedButton(
+                                    onClick = onResetUsage,
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(stringResource(R.string.reset_usage_btn))
+                                }
                             }
                         }
                     }
