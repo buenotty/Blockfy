@@ -1,5 +1,6 @@
 package com.buenotty.blockfy.feature_preferences.ui.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +44,7 @@ fun SwitchPreference(
     leadingIcon: @Composable (() -> Unit),
     settingsIcon: @Composable ((Modifier) -> Unit)? = null,
     confirmDisable: Boolean = true,
+    onRowClick: (() -> Unit)? = null,
     onValueChange: (Boolean) -> Unit,
 ) {
     var showDisableBlockerDialog by remember { mutableStateOf(false) }
@@ -55,12 +57,29 @@ fun SwitchPreference(
         onValueChange(newValue)
     }
 
+    val titleColor = if (enabled) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
+    val summaryColor = if (enabled) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+    }
+    val labels = @Composable {
+        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
+            Text(text = title, style = MaterialTheme.typography.titleMedium, color = titleColor)
+            Text(text = summary, style = MaterialTheme.typography.bodySmall, color = summaryColor)
+        }
+    }
+
     val row = @Composable {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .then(
-                    if (grouped) {
+                    if (onRowClick == null && grouped) {
                         Modifier.toggleable(
                             value = value,
                             enabled = enabled,
@@ -75,27 +94,22 @@ fun SwitchPreference(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            leadingIcon()
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurface
-                    } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                    }
-                )
-                Text(
-                    text = summary,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
-                    }
-                )
+            if (onRowClick != null) {
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable(enabled = enabled, onClick = onRowClick),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    leadingIcon()
+                    Spacer(modifier = Modifier.width(12.dp))
+                    labels()
+                }
+            } else {
+                leadingIcon()
+                Spacer(modifier = Modifier.width(12.dp))
+                labels()
             }
             Switch(
                 checked = value,
@@ -123,11 +137,17 @@ fun SwitchPreference(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .toggleable(
-                    value = value,
-                    enabled = enabled,
-                    role = Role.Switch,
-                    onValueChange = { edit(it) }
+                .then(
+                    if (onRowClick == null) {
+                        Modifier.toggleable(
+                            value = value,
+                            enabled = enabled,
+                            role = Role.Switch,
+                            onValueChange = { edit(it) }
+                        )
+                    } else {
+                        Modifier
+                    }
                 ),
             shape = RoundedCornerShape(16.dp)
         ) {

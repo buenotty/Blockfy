@@ -7,6 +7,17 @@ import java.util.Locale
 
 object AdultContentDetector {
 
+    val IN_APP_TEXT_PACKAGES = setOf(
+        "com.twitter.android",
+        "org.telegram.messenger",
+        "org.telegram.messenger.web",
+        "com.reddit.frontpage"
+    )
+
+    fun watchesInAppText(packageName: String): Boolean {
+        return packageName in IN_APP_TEXT_PACKAGES || packageName in BROWSER_PACKAGES
+    }
+
     val BROWSER_PACKAGES = setOf(
         "com.android.chrome",
         "com.sec.android.app.sbrowser",

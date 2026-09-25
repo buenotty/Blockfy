@@ -11,5 +11,7 @@ data class App(
     val blockedTimer: Int,
     val features: List<Feature>,
     val dailyLimitMinutes: Int = 0,
-    val appTotalDailyLimitMinutes: Int = 0
+    val appTotalDailyLimitMinutes: Int = 0,
+    /** Bits 0–6 are Sunday–Saturday. 127 means every day. */
+    val blockedWeekdays: Int = 127
 )

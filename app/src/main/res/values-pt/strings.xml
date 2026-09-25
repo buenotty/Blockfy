@@ -4,29 +4,29 @@
     <string name="title_about">Sobre</string>
     <string name="btn_back">Voltar</string>
 
-    <string name="accessibility_service_description">O Blockfy usa Acessibilidade só para detectar Reels e Shorts no Instagram, YouTube, TikTok, Facebook e X e devolver você ao feed. Ele não lê outros aplicativos.</string>
+    <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para perceber texto adulto no X, Telegram e Reddit. Ele não guarda o que você digita ou lê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
     <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
-    <string name="accessibility_inactive">Não concedido. Toque aqui para ativar.</string>
+    <string name="accessibility_inactive">Não concedido. Sem isso o app não bloqueia nada. Toque para ativar.</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
-    <string name="accessibility_dialog_desc">O Blockfy usa Acessibilidade para perceber quando você abre Reels ou Shorts e para voltar ao feed. Ele não guarda a sua atividade e não controla outros apps além de sair das telas de vídeo curto.</string>
+    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para sair das telas de vídeo curto e, se você ligar o bloqueio adulto, para perceber texto adulto no X, Telegram e Reddit. Nada do que você vê ou digita fica salvo.</string>
     <string name="accessibility_dialog_learn_more">Saiba mais</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
-    <string name="accessibility_dialog_howto">Depois que as configurações de Acessibilidade abrirem, toque em Blockfy em Apps baixados e ative o serviço.</string>
+    <string name="accessibility_dialog_howto">1. Abra as informações do app e permita configurações restritas, se o celular pedir.\n2. Abra as configurações de Acessibilidade.\n3. Em apps baixados, toque em Blockfy.\n4. Ative o serviço e confirme.</string>
     <string name="btn_open_accessibility">Abrir configurações de acessibilidade</string>
     <string name="btn_open_app_info">Abrir informações do app</string>
     <string name="btn_close">Fechar</string>
     <string name="restricted_settings_hint">Em alguns celulares você precisa permitir configurações restritas na tela de informações do Blockfy.</string>
 
-    <string name="instagram_reels">Instagram Reels</string>
-    <string name="youtube_shorts">YouTube Shorts</string>
+    <string name="instagram_reels">Instagram</string>
+    <string name="youtube_shorts">YouTube</string>
     <string name="tiktok_app">TikTok</string>
     <string name="block_tiktok_summary">Bloquear o TikTok (aplicativo inteiro)</string>
     <string name="block_instagram_summary">Bloquear Instagram Reels</string>
     <string name="block_youtube_summary">Bloquear YouTube Shorts</string>
     <string name="facebook_app">Facebook</string>
-    <string name="facebook_reels">Facebook Reels</string>
+    <string name="facebook_reels">Facebook</string>
     <string name="block_facebook_summary">Bloquear Facebook Reels</string>
     <string name="x_app">X (Twitter)</string>
     <string name="block_x_summary">Limitar a rolagem infinita no X</string>
@@ -65,9 +65,9 @@
     <string name="authorship_title">Créditos</string>
     <string name="fork_author_role">cuida do Blockfy</string>
     <string name="original_author_role">fez o Blokky original</string>
-    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. Tem também um filtro DNS no celular para sites adultos, se você ligar.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
+    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para perceber texto adulto no navegador, no X, no Telegram e no Reddit. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é uma VPN DNS que roda no seu celular. O histórico de navegação fica aqui. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
+    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê o texto na tela do navegador, do X, do Telegram e do Reddit, e não guarda esse texto. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
     <string name="learn_more">Saiba mais</string>
@@ -85,6 +85,9 @@
     <string name="cancel_btn">Cancelar</string>
     <string name="app_total_limit_label">Limite diário do app inteiro</string>
     <string name="app_total_limit_none">Sem limite geral (somente vídeos curtos)</string>
+    <string name="app_total_limit_window">Bloqueia o app no horário ativo</string>
+    <string name="daily_limit_always">Sempre</string>
+    <string name="toast_app_window_blocked">%1$s está bloqueado neste horário.</string>
     <string name="app_total_limit_on">%1$d min para o app inteiro</string>
     <string name="short_video_limit_label">Limite diário de Reels / Shorts</string>
 
@@ -115,7 +118,7 @@
     <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
-    <string name="adult_blocker_desc">Bloqueia sites adultos conhecidos no navegador com um filtro DNS local. Apps de banco seguem na conexão normal.</string>
+    <string name="adult_blocker_desc">Usa a Acessibilidade para sair de páginas adultas no navegador e de texto adulto no X, Telegram e Reddit. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
     <string name="adult_blocker_reflection_text">Eu sei que a pornografia rouba tempo que eu não recupero e me afasta da pessoa que eu quero ser. Desligar este escudo é uma escolha deliberada de seguir esse impulso. Eu assumo a responsabilidade por essa escolha.</string>
@@ -154,5 +157,53 @@
         <item>Ninguém construiu a vida que queria só rolando a tela.</item>
         <item>A sua atenção é a coisa mais cara nesta sala.</item>
         <item>Feche o reel. Levante. Faça a próxima coisa real.</item>
+    </string-array>
+
+    <string name="tab_blocks">Bloqueios</string>
+    <string name="tab_concepts">Conceitos</string>
+    <string name="weekdays_title">Dias em que o bloqueio vale</string>
+    <string name="weekday_sun">Dom</string>
+    <string name="weekday_mon">Seg</string>
+    <string name="weekday_tue">Ter</string>
+    <string name="weekday_wed">Qua</string>
+    <string name="weekday_thu">Qui</string>
+    <string name="weekday_fri">Sex</string>
+    <string name="weekday_sat">Sáb</string>
+    <string name="minutes_custom_hint">Ou digite os minutos</string>
+    <string name="concepts_intro">Um lembrete de por que esses bloqueios existem, para o dia em que der vontade de desligar tudo.</string>
+    <string name="concepts_shorts_title">Vídeos curtos</string>
+    <string name="concepts_shorts_summary">O que o feed faz com a sua atenção, o seu trabalho e o seu humor.</string>
+    <string name="concepts_porn_title">Pornografia</string>
+    <string name="concepts_porn_summary">O que isso custa à sua índole, aos seus relacionamentos e à sua vida sexual.</string>
+    <string name="concepts_page">%1$d de %2$d. Deslize para o lado.</string>
+    <string name="concepts_next">Próximo</string>
+    <string name="concepts_swipe_hint">Deslize para ler de novo</string>
+    <string-array name="concept_shorts_titles">
+        <item>O trabalho fica mais raso</item>
+        <item>A dopamina para de esperar</item>
+        <item>Foi feito para não acabar</item>
+        <item>Sono e humor pagam a conta</item>
+        <item>As outras pessoas ficam pequenas</item>
+    </string-array>
+    <string-array name="concept_shorts_bodies">
+        <item>Alguns minutos viram uma hora porque cada vídeo acaba antes de você decidir parar. A tarefa que te fez abrir o celular continua esperando, e começar ela pesa mais do que pesava antes.</item>
+        <item>Vídeo curto te treina a esperar um estímulo a cada poucos segundos. Trabalho comum, conversa e silêncio passam a parecer sem graça, não porque pioraram, mas porque o seu sistema de recompensa ficou mais barulhento.</item>
+        <item>Não existe último episódio. O próximo já está carregado, escolhido porque tem mais chance de te manter ali. O produto é o seu tempo, não o vídeo.</item>
+        <item>Rolar de madrugada rouba o sono que deixaria o dia seguinte mais fácil. Você acorda mais irritado, menos paciente, e mais propenso a abrir o mesmo app de novo.</item>
+        <item>Um feed de destaques de outras pessoas faz o seu próprio dia parecer um fracasso. Essa comparação não é informação. É um efeito de assistir estranhos se exibindo.</item>
+    </string-array>
+    <string-array name="concept_porn_titles">
+        <item>Isso te treina a usar pessoas</item>
+        <item>A índole se desgasta no segredo</item>
+        <item>Os relacionamentos esfriam</item>
+        <item>A vida sexual encolhe</item>
+        <item>Dá para sair</item>
+    </string-array>
+    <string-array name="concept_porn_bodies">
+        <item>Pornografia ensina a tratar outra pessoa como produto: disponível, calada e descartada quando a sensação passa. Esse hábito não fica na tela. Ele aparece no jeito de olhar para quem está de verdade no mesmo lugar que você.</item>
+        <item>Fazer isso escondido te parte em dois. Você fala uma coisa sobre quem é e mantém outra vida que não defenderia em voz alta. Índole é o que você repete quando ninguém está te avaliando.</item>
+        <item>Uma parceria não é uma sequência de novidade. Se a sua excitação depende de desconhecidos, abas e de ir cada vez mais longe, a pessoa que te ama começa a parecer insuficiente. Isso não é falha dela. É o preço do hábito.</item>
+        <item>O uso pesado deixa a intimidade real mais lenta, mais ansiosa ou mais difícil de aproveitar. Você precisa de mais intensidade para o mesmo efeito, e um corpo comum ao seu lado deixa de bastar. Isso é apetite danificado, não um padrão alto.</item>
+        <item>Se você estiver decidido, vai achar um jeito de burlar o bloqueio. O bloqueio existe para criar uma pausa: tempo bastante para lembrar que isso não te dá uma vida melhor, uma cabeça mais clara, nem um relacionamento que você respeite.</item>
     </string-array>
 </resources>

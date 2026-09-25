@@ -85,6 +85,20 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
+    fun tiktokAndXBlockOnScheduleWithoutAShortsQuota() {
+        val settings = AppSettings(
+            tiktok = AppSettings().tiktok.copy(blocked = true, dailyLimitMinutes = 30, appTotalDailyLimitMinutes = 0),
+            x = AppSettings().x.copy(blocked = true, dailyLimitMinutes = 115, appTotalDailyLimitMinutes = 0)
+        )
+        val tiktok = BlockPolicy.evaluate(TrackedPackages.TIKTOK, settings, DailyUsage(), minuteOfDay = 60)
+        val x = BlockPolicy.evaluate(TrackedPackages.X, settings, DailyUsage(), minuteOfDay = 60)
+        assertEquals(BlockReason.SCHEDULE, tiktok.reason)
+        assertEquals(BlockReason.SCHEDULE, x.reason)
+        assertFalse(BlockPolicy.evaluateShorts("TikTok", settings, DailyUsage(), 60).shouldBlock)
+        assertFalse(BlockPolicy.evaluateShorts("X", settings, DailyUsage(), 60).shouldBlock)
+    }
+
+    @Test
     fun totalAppLimitBlocksEvenWhenFeatureToggleIsOff() {
         val settings = AppSettings(
             tiktok = AppSettings().tiktok.copy(blocked = false, appTotalDailyLimitMinutes = 15)
@@ -172,14 +186,13 @@ class BankSafetyArchitectureTest {
     }
 
     @Test
-    fun adultBlockAlertSurvivesBackgroundActivityStartRestrictions() {
+    fun adultBlockUsesAccessibilityInsteadOfVpn() {
         val manifest = readAppFile("src/main/AndroidManifest.xml").readText()
-        val vpn = readAppFile("src/main/java/com/buenotty/blockfy/feature_vpn/AdultBlockVpnService.kt").readText()
-        assertTrue(
-            "a background service cannot start InterruptActivity on Android 10+ without a full-screen intent",
-            vpn.contains("setFullScreenIntent")
-        )
-        assertTrue(manifest.contains("USE_FULL_SCREEN_INTENT"))
+        val service = readAppFile("src/main/java/com/buenotty/blockfy/feature_accessibility/ReelsBlockAccessibilityService.kt").readText()
+        assertFalse(manifest.contains("VpnService"))
+        assertFalse(manifest.contains("AdultBlockVpnService"))
+        assertTrue(service.contains("GLOBAL_ACTION_HOME"))
+        assertTrue(service.contains("watchesInAppText"))
         assertTrue(manifest.contains("android:showWhenLocked=\"true\""))
         assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
     }

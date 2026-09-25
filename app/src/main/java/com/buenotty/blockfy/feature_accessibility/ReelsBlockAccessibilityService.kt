@@ -19,6 +19,7 @@ import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.datastore.DataStoreManager
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
+import com.buenotty.blockfy.feature_monitor.BlockReason
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
@@ -80,6 +81,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             if (event == null) return
             val pkg = event.packageName?.toString() ?: return
+            maybeFlagAdultText(event, pkg)
             if (!TrackedPackages.isTracked(pkg)) {
                 lastCreditPkg = null
                 lastCreditElapsed = 0L
@@ -116,11 +118,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val isShortsVisible = when (appName) {
             "Instagram" -> isNodeVisible(root, "com.instagram.android:id/clips_swipe_refresh_container")
             "YouTube" -> isNodeVisible(root, "com.google.android.youtube:id/reel_watch_fragment_root")
-            "TikTok" -> true
             "Facebook" -> isNodeVisible(root, "com.facebook.katana:id/fb_shorts_container") ||
                 isNodeVisible(root, "com.facebook.katana:id/reels_viewer") ||
                 isNodeWithTextVisible(root, "Reels")
-            "X" -> appConfig.blocked
             else -> false
         }
 
@@ -130,30 +130,39 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val totalVerdict = BlockPolicy.evaluate(pkg, settings, currentUsage, minute)
         if (totalVerdict.shouldBlock) {
             val limit = appConfig.appTotalDailyLimitMinutes
-            notifyAlert(
-                getString(R.string.alert_app_total_limit_title),
-                getString(R.string.toast_app_total_limit_reached, limit, appName),
-                isFinal = true
-            )
+            val title = if (totalVerdict.reason == BlockReason.SCHEDULE) {
+                getString(R.string.alert_limit_title)
+            } else {
+                getString(R.string.alert_app_total_limit_title)
+            }
+            val message = if (totalVerdict.reason == BlockReason.SCHEDULE) {
+                getString(R.string.toast_app_window_blocked, appName)
+            } else {
+                getString(R.string.toast_app_total_limit_reached, limit, appName)
+            }
+            notifyAlert(title, message, isFinal = true)
             serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
             exitTheDoom(null) { performGlobalAction(GLOBAL_ACTION_HOME) }
             return
         }
 
-        if (!isShortsVisible) return
-
-        if (settings.provocationModeEnabled) {
-            val now = System.currentTimeMillis()
-            val lastReelsTime = lastReelsProvocation[appName] ?: 0L
-            if (now - lastReelsTime > 180_000L) {
-                lastReelsProvocation[appName] = now
-                notifyAlert(
-                    getString(R.string.app_name),
-                    MindfulnessProvocationEngine.getRandomReelsQuote(this),
-                    isFinal = false
+        if (BlockPolicy.isWholeAppOnly(appName)) {
+            if (appName == "TikTok") {
+                maybeProvoke(appName)
+            }
+            if (appConfig.blocked && appConfig.appTotalDailyLimitMinutes > 0) {
+                checkAndNotifyRemainingTime(
+                    appName,
+                    BlockPolicy.totalSeconds(currentUsage, appName),
+                    appConfig.appTotalDailyLimitMinutes
                 )
             }
+            return
         }
+
+        if (!isShortsVisible) return
+
+        maybeProvoke(appName)
 
         val shortsVerdict = BlockPolicy.evaluateShorts(appName, settings, currentUsage, minute)
         if (!shortsVerdict.shouldBlock) {
@@ -172,6 +181,19 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         notifyAlert(title, msg, isFinal = true)
         serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         exitShorts(appName, root)
+    }
+
+    private fun maybeProvoke(appName: String) {
+        if (!settings.provocationModeEnabled) return
+        val now = System.currentTimeMillis()
+        val lastReelsTime = lastReelsProvocation[appName] ?: 0L
+        if (now - lastReelsTime <= 180_000L) return
+        lastReelsProvocation[appName] = now
+        notifyAlert(
+            getString(R.string.app_name),
+            MindfulnessProvocationEngine.getRandomReelsQuote(this),
+            isFinal = false
+        )
     }
 
     private fun creditUsage(pkg: String, appName: String, shortsVisible: Boolean) {
@@ -375,14 +397,75 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    private var lastAdultScanElapsed = 0L
+
+    /**
+     * Reads on-screen and typed text only inside apps that commonly carry
+     * adult content, and only on window changes or typing. Scrolling events
+     * are ignored so the service does not walk the tree on every frame.
+     */
+    private fun maybeFlagAdultText(event: AccessibilityEvent, pkg: String) {
+        if (!settings.adultContentBlockerEnabled) return
+        if (!AdultContentDetector.watchesInAppText(pkg)) return
+        val type = event.eventType
+        if (type != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED &&
+            type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+        ) {
+            return
+        }
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastAdultScanElapsed < 1500L) return
+        lastAdultScanElapsed = now
+
+        val typed = event.text?.joinToString(" ") { it?.toString().orEmpty() }.orEmpty()
+        if (typed.isNotBlank() && AdultContentDetector.isAdultContent(typed)) {
+            leaveAdultScreen()
+            return
+        }
+        if (TrackedPackages.isTracked(pkg)) return
+        if (type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
+        val root = rootFromEvent(event, pkg) ?: return
+        try {
+            val sample = StringBuilder()
+            collectVisibleText(root, sample, remaining = intArrayOf(24))
+            if (sample.isNotEmpty() && AdultContentDetector.isAdultContent(sample.toString())) {
+                leaveAdultScreen()
+            }
+        } finally {
+            root.recycle()
+        }
+    }
+
+    private fun collectVisibleText(node: AccessibilityNodeInfo, out: StringBuilder, remaining: IntArray) {
+        if (remaining[0] <= 0) return
+        remaining[0]--
+        if (node.isVisibleToUser) {
+            node.text?.let { if (it.isNotBlank()) out.append(' ').append(it) }
+            node.contentDescription?.let { if (it.isNotBlank()) out.append(' ').append(it) }
+        }
+        for (i in 0 until node.childCount) {
+            if (remaining[0] <= 0) return
+            val child = node.getChild(i) ?: continue
+            try {
+                collectVisibleText(child, out, remaining)
+            } finally {
+                child.recycle()
+            }
+        }
+    }
+
+    private fun leaveAdultScreen() {
+        val message = AdultContentDetector.getRandomWarning(this)
+        notifyAlert(getString(R.string.adult_blocker_title), message, isFinal = true)
+        performGlobalAction(GLOBAL_ACTION_HOME)
+    }
+
     companion object {
         private const val TAG = "BlockfyService"
-        val SOCIAL_PACKAGES = arrayOf(
-            TrackedPackages.INSTAGRAM,
-            TrackedPackages.YOUTUBE,
-            TrackedPackages.TIKTOK,
-            TrackedPackages.FACEBOOK,
-            TrackedPackages.X
-        )
+        val SOCIAL_PACKAGES: Array<String> = (
+            TrackedPackages.ALL.keys +
+                AdultContentDetector.IN_APP_TEXT_PACKAGES +
+                AdultContentDetector.BROWSER_PACKAGES
+            ).distinct().toTypedArray()
     }
 }

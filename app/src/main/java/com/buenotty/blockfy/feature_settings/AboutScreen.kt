@@ -58,17 +58,23 @@ import androidx.core.net.toUri
 import com.buenotty.blockfy.AppLocale
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.SupportLinks
+import androidx.compose.material.icons.rounded.Psychology
+import androidx.compose.runtime.collectAsState
+import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.ui.composables.PreferenceGroup
 import com.buenotty.blockfy.feature_preferences.ui.composables.SelectableFilterChip
+import com.buenotty.blockfy.feature_preferences.ui.composables.SwitchPreference
 import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
+import org.koin.androidx.compose.koinViewModel
 import com.buenotty.blockfy.updater.UpdateManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import qrcode.QRCode
 import java.io.ByteArrayOutputStream
 
 @Composable
-fun AboutScreen() {
+fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     val context = LocalContext.current
+    val appSettings by overviewViewModel.appSettings.collectAsState()
     var showQrCodeDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -78,6 +84,17 @@ fun AboutScreen() {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = spacedBy(20.dp)
     ) {
+        PreferenceGroup(title = stringResource(R.string.provocation_mode_title)) {
+            SwitchPreference(
+                value = appSettings.provocationModeEnabled,
+                title = stringResource(R.string.provocation_mode_title),
+                summary = stringResource(R.string.provocation_mode_desc),
+                grouped = true,
+                showDivider = false,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Psychology) }
+            ) { overviewViewModel.setProvocationMode(it) }
+        }
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
