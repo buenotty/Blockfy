@@ -64,7 +64,7 @@ class InterruptActivity : ComponentActivity() {
         setContent {
             BlokkyTheme {
                 InterruptScreen(
-                    kind = kindState.value,
+                    alertKind = kindState.value,
                     title = titleState.value,
                     message = messageState.value,
                     onDismiss = { dismiss(kindState.value) }
@@ -121,17 +121,17 @@ class InterruptActivity : ComponentActivity() {
 
 @Composable
 private fun InterruptScreen(
-    kind: String,
+    alertKind: String,
     title: String,
     message: String,
     onDismiss: () -> Unit
 ) {
-    val isAdult = kind == InterruptActivity.KIND_ADULT
-    val isMindfulness = kind == InterruptActivity.KIND_MINDFULNESS
+    val isAdult = alertKind == InterruptActivity.KIND_ADULT
+    val isMindfulness = alertKind == InterruptActivity.KIND_MINDFULNESS
     val autoSeconds = if (isMindfulness || isAdult) 4 else 0
-    var secondsRemaining by remember(kind, message) { mutableIntStateOf(autoSeconds) }
+    var secondsRemaining by remember(alertKind, message) { mutableIntStateOf(autoSeconds) }
 
-    LaunchedEffect(kind, message, autoSeconds) {
+    LaunchedEffect(alertKind, message, autoSeconds) {
         if (autoSeconds <= 0) return@LaunchedEffect
         secondsRemaining = autoSeconds
         while (secondsRemaining > 0) {
