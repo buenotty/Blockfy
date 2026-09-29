@@ -20,7 +20,7 @@ Reels e Shorts: a acessibilidade fica só no Instagram, YouTube, TikTok, Faceboo
 
 Limite diário: cota por aplicativo, se você ligar. Zera à meia-noite.
 
-Escudo de site adulto: uma VPN DNS local, se você ligar. App de banco continua na conexão normal. Os sites entram pelo nome inteiro, então `jerome` não vira `erome`.
+Escudo de conteúdo adulto, se você ligar: a Acessibilidade lê o texto na tela e o digitado em navegadores, X, Telegram e Reddit, analisa no celular e nunca guarda nem envia. Sem VPN. Apps de banco nunca são observados. Veja [PRIVACY.md](PRIVACY.md). Os sites entram pelo nome inteiro, então `jerome` não vira `erome`.
 
 As atualizações devem vir da Google Play. O app não instala APK sozinho.
 

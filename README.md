@@ -20,7 +20,7 @@ Reels and Shorts: accessibility is limited to Instagram, YouTube, TikTok, Facebo
 
 Daily limits: per-app quotas, if you turn them on. They reset at midnight.
 
-Adult site shield: a local DNS VPN, if you turn it on. Bank apps stay on your normal connection. Hosts are matched as whole names, so `jerome` is not treated as `erome`.
+Adult content shield, if you turn it on: Accessibility reads on-screen and typed text in browsers, X, Telegram and Reddit, checks it on the phone and never stores or sends it. No VPN. Bank apps are never watched. See [PRIVACY.md](PRIVACY.md). Hosts are matched as whole names, so `jerome` is not treated as `erome`.
 
 Updates are meant to come from Google Play. The app does not install APKs itself.
 
