@@ -28,6 +28,14 @@ As atualizações devem vir da Google Play. O app não instala APK sozinho.
 
 Android 9 ou mais novo.
 
+## Apoie o projeto
+
+O Blockfy é grátis, sem anúncios e sem pedido de doação dentro do app. Se ele te ajuda, dá pra apoiar por aqui no GitHub:
+
+- Pix: `496f008e-c67d-4175-9fad-e6b3c9bbd248`
+- PayPal: [paypal.me/donate](https://www.paypal.com/donate/?business=samuellbuenno%40gmail.com&currency_code=BRL) (samuellbuenno@gmail.com)
+- Ou só deixe uma estrela no repositório.
+
 ## Créditos
 
 Samuel Bueno ([@buenotty](https://github.com/buenotty)) cuida do Blockfy.

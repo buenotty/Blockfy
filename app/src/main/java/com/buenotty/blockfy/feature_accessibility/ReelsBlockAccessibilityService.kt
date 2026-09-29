@@ -81,7 +81,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             if (event == null) return
             val pkg = event.packageName?.toString() ?: return
-            maybeFlagAdultText(event, pkg)
+            maybeFlagAdultSite(event, pkg)
             if (!TrackedPackages.isTracked(pkg)) {
                 lastCreditPkg = null
                 lastCreditElapsed = 0L
@@ -412,12 +412,17 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
      * adult content, and only on window changes or typing. Scrolling events
      * are ignored so the service does not walk the tree on every frame.
      */
-    private fun maybeFlagAdultText(event: AccessibilityEvent, pkg: String) {
+    /**
+     * Adult-site blocking reads ONLY the browser's address bar, not any other
+     * text on screen and not what you type inside apps. It never inspects
+     * banking, messaging or social-app content.
+     */
+    private fun maybeFlagAdultSite(event: AccessibilityEvent, pkg: String) {
         if (!settings.adultContentBlockerEnabled) return
-        if (!AdultContentDetector.watchesInAppText(pkg)) return
+        if (pkg !in AdultContentDetector.BROWSER_PACKAGES) return
         val type = event.eventType
-        if (type != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED &&
-            type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+        if (type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+            type != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
         ) {
             return
         }
@@ -425,19 +430,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         if (now - lastAdultScanElapsed < 1500L) return
         lastAdultScanElapsed = now
 
-        if (event.isPassword) return
-        val typed = event.text?.joinToString(" ") { it?.toString().orEmpty() }.orEmpty()
-        if (typed.isNotBlank() && AdultContentDetector.isAdultContent(typed)) {
-            leaveAdultScreen()
-            return
-        }
-        if (TrackedPackages.isTracked(pkg)) return
-        if (type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
         val root = rootFromEvent(event, pkg) ?: return
         try {
-            val sample = StringBuilder()
-            collectVisibleText(root, sample, remaining = intArrayOf(24))
-            if (sample.isNotEmpty() && AdultContentDetector.isAdultContent(sample.toString())) {
+            val addressBarText = findAddressBarText(root, remaining = intArrayOf(MAX_ADDRESS_BAR_SCAN_NODES))
+            if (addressBarText != null && AdultContentDetector.isAdultContent(addressBarText)) {
                 leaveAdultScreen()
             }
         } finally {
@@ -445,23 +441,31 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun collectVisibleText(node: AccessibilityNodeInfo, out: StringBuilder, remaining: IntArray) {
-        if (remaining[0] <= 0) return
+    /**
+     * The address bar is the one editable field browsers keep visible at the
+     * top of the window. We do not know each browser's exact view id, so we
+     * look for a visible, non-password EditText instead.
+     */
+    private fun findAddressBarText(node: AccessibilityNodeInfo, remaining: IntArray): String? {
+        if (remaining[0] <= 0) return null
         remaining[0]--
-        if (node.isVisibleToUser && !node.isPassword) {
-            node.text?.let { if (it.isNotBlank()) out.append(' ').append(it) }
-            node.contentDescription?.let { if (it.isNotBlank()) out.append(' ').append(it) }
+        if (node.isVisibleToUser && !node.isPassword && node.className == "android.widget.EditText") {
+            val text = node.text?.toString()
+            if (!text.isNullOrBlank()) return text
         }
         for (i in 0 until node.childCount) {
-            if (remaining[0] <= 0) return
+            if (remaining[0] <= 0) return null
             val child = node.getChild(i) ?: continue
             try {
-                collectVisibleText(child, out, remaining)
+                val found = findAddressBarText(child, remaining)
+                if (found != null) return found
             } finally {
                 child.recycle()
             }
         }
+        return null
     }
+
 
     private fun leaveAdultScreen() {
         val message = AdultContentDetector.getRandomWarning(this)
@@ -473,10 +477,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val TAG = "BlockfyService"
         private const val MAX_CREDIT_SECONDS = 3L
         private const val FLUSH_INTERVAL_MILLIS = 10_000L
+        private const val MAX_ADDRESS_BAR_SCAN_NODES = 40
         val SOCIAL_PACKAGES: Array<String> = (
-            TrackedPackages.ALL.keys +
-                AdultContentDetector.IN_APP_TEXT_PACKAGES +
-                AdultContentDetector.BROWSER_PACKAGES
+            TrackedPackages.ALL.keys + AdultContentDetector.BROWSER_PACKAGES
             ).distinct().toTypedArray()
     }
 }

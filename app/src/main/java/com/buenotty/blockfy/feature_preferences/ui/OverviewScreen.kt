@@ -1,7 +1,5 @@
 package com.buenotty.blockfy.feature_preferences.ui
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -24,11 +22,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -62,7 +58,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.buenotty.blockfy.R
-import com.buenotty.blockfy.SupportLinks
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.ui.composables.AccessibilityServiceCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.AppBrandIcon
@@ -85,7 +80,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
     var selectedApp by remember { mutableStateOf(appSettings.instagram) }
     var showSettingsDialog by remember { mutableStateOf(false) }
-    var showSupportDialog by remember { mutableStateOf(false) }
     var showStrictModeDialog by remember { mutableStateOf(false) }
     var showDisableAdultBlockerDialog by remember { mutableStateOf(false) }
     var isAccessibilityGranted by remember { mutableStateOf(context.isAccessibilityGranted()) }
@@ -114,7 +108,7 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             )
         }
         if (homeTab == 1) {
-            ConceptsScreen(onSupport = { showSupportDialog = true })
+            ConceptsScreen()
             return@Column
         }
     Column(
@@ -251,30 +245,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        PreferenceGroup {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showSupportDialog = true }
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TintedGlyph(Icons.Rounded.VolunteerActivism)
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        stringResource(R.string.support_creator_title),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        stringResource(R.string.support_creator_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-
         Spacer(modifier = Modifier.height(8.dp))
     }
     }
@@ -317,10 +287,6 @@ fun SettingsScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
                 showStrictModeDialog = false
             }
         )
-    }
-
-    if (showSupportDialog) {
-        SupportCreatorDialog(onDismiss = { showSupportDialog = false })
     }
 
     if (showDisableAdultBlockerDialog) {
@@ -370,126 +336,6 @@ private fun BlockedAppPreference(
         },
         onValueChange = onValueChange
     )
-}
-
-@Composable
-fun SupportCreatorDialog(onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    val pixCopied = stringResource(R.string.pix_copied_toast)
-    val paypalCopied = stringResource(R.string.paypal_copied_toast)
-
-    Dialog(onDismissRequest = onDismiss) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TintedGlyph(Icons.Rounded.VolunteerActivism, wellSize = 48.dp, glyphSize = 26.dp)
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(R.string.support_dialog_title), style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    stringResource(R.string.support_dialog_desc),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                SupportKeyCard(
-                    label = stringResource(R.string.pix_key_label),
-                    value = SupportLinks.PIX_KEY
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                SupportKeyCard(
-                    label = stringResource(R.string.paypal_label),
-                    value = SupportLinks.PAYPAL_EMAIL
-                )
-                Spacer(modifier = Modifier.height(14.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        copyPlainText(context, "pix", SupportLinks.PIX_KEY)
-                        Toast.makeText(context, pixCopied, Toast.LENGTH_SHORT).show()
-                    }
-                ) {
-                    Icon(Icons.Rounded.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.copy_pix_btn))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        copyPlainText(context, "paypal", SupportLinks.PAYPAL_EMAIL)
-                        Toast.makeText(context, paypalCopied, Toast.LENGTH_SHORT).show()
-                    }
-                ) {
-                    Icon(Icons.Rounded.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.copy_paypal_btn))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, SupportLinks.PAYPAL_DONATE.toUri())
-                        )
-                    }
-                ) {
-                    Icon(Icons.Rounded.Payments, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.open_paypal_btn))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB.toUri())
-                        )
-                    }
-                ) {
-                    Icon(Icons.Rounded.Star, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.star_github_btn))
-                }
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.btn_close))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SupportKeyCard(label: String, value: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(modifier = Modifier.height(4.dp))
-            SelectionContainer {
-                Text(value, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
-            }
-        }
-    }
-}
-
-fun copyPlainText(context: Context, label: String, text: String) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
 }
 
 @Preview

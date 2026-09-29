@@ -4,12 +4,12 @@
     <string name="title_about">Sobre</string>
     <string name="btn_back">Voltar</string>
 
-    <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para perceber texto adulto no X, Telegram e Reddit. Ele não guarda o que você digita ou lê.</string>
+    <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Ele não lê mensagens, conversas nem o que você digita em outros apps, e não guarda o que lê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
     <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
     <string name="accessibility_inactive">Não concedido. Sem isso o app não bloqueia nada. Toque para ativar.</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
-    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê o texto na tela e o que você digita em navegadores, X, Telegram e Reddit, só para achar palavras adultas. O texto é analisado no seu celular, nunca é salvo nem enviado, e campos de senha são ignorados. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
+    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê a barra de endereço do seu navegador para comparar o site que você está visitando com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
     <string name="accessibility_dialog_learn_more">Saiba mais</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
@@ -43,19 +43,6 @@
     <string name="section_apps">Vídeos curtos</string>
     <string name="section_focus">Foco</string>
 
-    <string name="support_creator_title">Apoiar o projeto</string>
-    <string name="support_creator_subtitle">Pix ou PayPal mantêm o Blockfy gratuito.</string>
-    <string name="support_dialog_title">Apoiar o Blockfy</string>
-    <string name="support_dialog_desc">O Blockfy é gratuito e de código aberto. Se ele te ajuda a sair dos vídeos curtos, você pode apoiar o desenvolvimento via Pix ou PayPal.</string>
-    <string name="pix_key_label">Chave Pix</string>
-    <string name="copy_pix_btn">Copiar chave Pix</string>
-    <string name="pix_copied_toast">Chave Pix copiada</string>
-    <string name="paypal_label">PayPal</string>
-    <string name="copy_paypal_btn">Copiar e-mail do PayPal</string>
-    <string name="open_paypal_btn">Abrir PayPal</string>
-    <string name="paypal_copied_toast">E-mail do PayPal copiado</string>
-    <string name="star_github_btn">Estrela no GitHub</string>
-
     <string name="version_label">Versão: %1$s</string>
     <string name="check_updates_btn">Abrir Play Store</string>
     <string name="report_bug_btn">Reportar bug</string>
@@ -65,9 +52,9 @@
     <string name="authorship_title">Créditos</string>
     <string name="fork_author_role">cuida do Blockfy</string>
     <string name="original_author_role">fez o Blokky original</string>
-    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para perceber texto adulto no navegador, no X, no Telegram e no Reddit. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
+    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê o texto na tela do navegador, do X, do Telegram e do Reddit, e não guarda esse texto. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
+    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê a barra de endereço do seu navegador para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
     <string name="learn_more">Saiba mais</string>
@@ -118,7 +105,7 @@
     <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
-    <string name="adult_blocker_desc">Usa a Acessibilidade para sair de páginas adultas no navegador e de texto adulto no X, Telegram e Reddit. Sem VPN e sem filtro DNS.</string>
+    <string name="adult_blocker_desc">Usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
     <string name="adult_blocker_reflection_text">Eu sei que a pornografia rouba tempo que eu não recupero e me afasta da pessoa que eu quero ser. Desligar este escudo é uma escolha deliberada de seguir esse impulso. Eu assumo a responsabilidade por essa escolha.</string>

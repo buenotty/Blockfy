@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Shield
-import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -37,11 +36,11 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
 import kotlinx.coroutines.launch
 
 @Composable
-fun ConceptsScreen(onSupport: () -> Unit) {
+fun ConceptsScreen() {
     val topic = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ConceptTopic?>(null) }
     val selected = topic.value
     if (selected == null) {
-        ConceptMenu(onPick = { topic.value = it }, onSupport = onSupport)
+        ConceptMenu(onPick = { topic.value = it })
     } else {
         ConceptCards(topic = selected, onBack = { topic.value = null })
     }
@@ -50,7 +49,7 @@ fun ConceptsScreen(onSupport: () -> Unit) {
 private enum class ConceptTopic { SHORTS, PORN }
 
 @Composable
-private fun ConceptMenu(onPick: (ConceptTopic) -> Unit, onSupport: () -> Unit) {
+private fun ConceptMenu(onPick: (ConceptTopic) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -73,12 +72,6 @@ private fun ConceptMenu(onPick: (ConceptTopic) -> Unit, onSupport: () -> Unit) {
             summary = stringResource(R.string.concepts_porn_summary),
             icon = Icons.Rounded.Shield,
             onClick = { onPick(ConceptTopic.PORN) }
-        )
-        ConceptChoice(
-            title = stringResource(R.string.support_creator_title),
-            summary = stringResource(R.string.support_creator_subtitle),
-            icon = Icons.Rounded.VolunteerActivism,
-            onClick = onSupport
         )
     }
 }

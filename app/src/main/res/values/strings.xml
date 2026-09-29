@@ -4,12 +4,12 @@
     <string name="title_about">About</string>
     <string name="btn_back">Back</string>
 
-    <string name="accessibility_service_description">Blockfy uses Accessibility to leave Reels and Shorts, and, when adult blocking is on, to notice adult text in X, Telegram and Reddit. It does not store what you type or read.</string>
+    <string name="accessibility_service_description">Blockfy uses Accessibility to leave short-video screens and, with adult blocking on, to check the address bar of your browser against a list of adult sites. It does not read messages, chats, or anything you type in other apps, and does not save what it reads.</string>
     <string name="accessibility_service">Accessibility Service</string>
     <string name="accessibility_active">Granted. Tap to open system settings.</string>
     <string name="accessibility_inactive">Not granted. Without this, Blockfy cannot block anything. Tap to turn it on.</string>
     <string name="accessibility_dialog_title">Accessibility Service</string>
-    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses this permission to detect and leave short-video screens (Instagram, YouTube, TikTok, Facebook, X) and to count time in those apps. If you turn on adult blocking, it also reads the text on screen and what you type in browsers, X, Telegram and Reddit, only to spot adult words. The text is checked on your phone, is never saved or sent anywhere, and password fields are ignored. Blockfy does not open banking apps. By tapping Accept you agree to this use.</string>
+    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses this permission to detect and leave short-video screens (Instagram, YouTube, TikTok, Facebook, X) and to count time in those apps. If you turn on adult blocking, it also reads your browser\'s address bar to check the site you are visiting against a list of adult sites. It never reads messages, chats, passwords, or anything typed inside other apps, and does not save or send what it reads. Blockfy does not open banking apps. By tapping Accept you agree to this use.</string>
     <string name="accessibility_dialog_learn_more">Learn more</string>
     <string name="accessibility_dialog_decline">Decline</string>
     <string name="accessibility_dialog_accept">Accept</string>
@@ -43,19 +43,6 @@
     <string name="section_apps">Short videos</string>
     <string name="section_focus">Focus</string>
 
-    <string name="support_creator_title">Support the project</string>
-    <string name="support_creator_subtitle">Pix or PayPal keep Blockfy free.</string>
-    <string name="support_dialog_title">Support Blockfy</string>
-    <string name="support_dialog_desc">Blockfy is free and open source. If it helps you stay off short videos, you can support development with Pix or PayPal.</string>
-    <string name="pix_key_label">Pix key</string>
-    <string name="copy_pix_btn">Copy Pix key</string>
-    <string name="pix_copied_toast">Pix key copied</string>
-    <string name="paypal_label">PayPal</string>
-    <string name="copy_paypal_btn">Copy PayPal email</string>
-    <string name="open_paypal_btn">Open PayPal</string>
-    <string name="paypal_copied_toast">PayPal email copied</string>
-    <string name="star_github_btn">Star on GitHub</string>
-
     <string name="version_label">Version: %1$s</string>
     <string name="check_updates_btn">Open Play Store</string>
     <string name="report_bug_btn">Report bug</string>
@@ -65,9 +52,9 @@
     <string name="authorship_title">Credits</string>
     <string name="fork_author_role">keeps Blockfy going</string>
     <string name="original_author_role">made the original Blokky</string>
-    <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. Adult blocking, if you turn it on, uses Accessibility to notice adult text in the browser, X, Telegram and Reddit. It does not use a VPN.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
+    <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. Adult blocking, if you turn it on, uses Accessibility to check your browser\'s address bar against a list of adult sites. It does not use a VPN.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_desc">Accessibility looks at Instagram, YouTube, TikTok, Facebook and X to notice short videos. With adult blocking on, it also reads on-screen text in the browser, X, Telegram and Reddit, and does not store it. It does not open banking apps and it does not use a VPN.\n\nUpdates are supposed to come from Google Play. Blockfy does not install APKs on its own.</string>
+    <string name="privacy_desc">Accessibility watches Instagram, YouTube, TikTok, Facebook and X to detect short videos. With adult blocking on, it also reads your browser\'s address bar to check it against a list of adult sites; it never reads messages, chats or anything typed in other apps, and does not save what it reads. It does not open banking apps and does not use a VPN.\n\nUpdates should come from Google Play. Blockfy does not install APKs by itself.\n\nIf you find this app useful, you can support it on GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Share Blockfy</string>
     <string name="share_app_thanks">Thanks for sharing.</string>
     <string name="learn_more">Learn more</string>
@@ -118,7 +105,7 @@
     <string name="strict_locked_banner">Strict mode is on: limits are locked until midnight.</string>
 
     <string name="adult_blocker_title">Adult site shield</string>
-    <string name="adult_blocker_desc">Uses Accessibility to leave adult pages in the browser and adult text in X, Telegram and Reddit. No VPN and no DNS filter.</string>
+    <string name="adult_blocker_desc">Uses Accessibility to check your browser\'s address bar against a list of adult sites. No VPN and no DNS filter.</string>
     <string name="adult_blocker_dialog_title">Turn the shield off?</string>
     <string name="adult_blocker_dialog_desc">Type the paragraph below yourself. Paste is disabled so this cannot be done on autopilot.</string>
     <string name="adult_blocker_reflection_text">I know that pornography steals time I will not get back and pulls me away from the person I want to be. Turning this shield off is a deliberate choice to follow that impulse. I accept responsibility for that choice.</string>
