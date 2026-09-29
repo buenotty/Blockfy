@@ -1,7 +1,6 @@
 package com.buenotty.blockfy.feature_preferences.ui.composables
 
 import android.content.Intent
-import android.net.Uri
 import android.provider.Settings
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
@@ -21,9 +20,10 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Accessibility
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.buenotty.blockfy.R
@@ -124,7 +125,7 @@ fun AccessibilityServiceCard(
             }
             Switch(
                 checked = isAccessibilityGranted,
-                onCheckedChange = { update(it) }
+                onCheckedChange = null
             )
         }
     }
@@ -144,7 +145,7 @@ fun AccessibilityServiceDialog(
 
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = false)
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -176,14 +177,16 @@ fun AccessibilityServiceDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(
+                TextButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.parse("package:${context.packageName}")
-                            }
-                        )
+                        runCatching {
+                            context.startActivity(
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = "package:${context.packageName}".toUri()
+                                }
+                            )
+                        }
                     }
                 ) {
                     Text(
@@ -193,23 +196,27 @@ fun AccessibilityServiceDialog(
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                        onDismissRequest()
-                    }
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.btn_open_accessibility),
-                        textAlign = TextAlign.Center,
-                        maxLines = 2
-                    )
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = onDismissRequest
+                    ) {
+                        Text(stringResource(R.string.accessibility_dialog_decline), maxLines = 1)
+                    }
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            runCatching {
+                                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                            }
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(stringResource(R.string.accessibility_dialog_accept), maxLines = 1)
+                    }
                 }
             }
         }

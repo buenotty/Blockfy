@@ -110,6 +110,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onDestroy() {
         super.onDestroy()
+        flushUsage()
         serviceScope.cancel()
     }
 
@@ -119,8 +120,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             "Instagram" -> isNodeVisible(root, "com.instagram.android:id/clips_swipe_refresh_container")
             "YouTube" -> isNodeVisible(root, "com.google.android.youtube:id/reel_watch_fragment_root")
             "Facebook" -> isNodeVisible(root, "com.facebook.katana:id/fb_shorts_container") ||
-                isNodeVisible(root, "com.facebook.katana:id/reels_viewer") ||
-                isNodeWithTextVisible(root, "Reels")
+                isNodeVisible(root, "com.facebook.katana:id/reels_viewer")
             else -> false
         }
 
@@ -196,19 +196,39 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         )
     }
 
+    private val pendingTotal = mutableMapOf<String, Long>()
+    private val pendingShorts = mutableMapOf<String, Long>()
+    private var lastFlushElapsed = 0L
+
     private fun creditUsage(pkg: String, appName: String, shortsVisible: Boolean) {
         val now = SystemClock.elapsedRealtime()
         if (lastCreditPkg != pkg || lastCreditElapsed == 0L) {
+            flushUsage()
             lastCreditPkg = pkg
             lastCreditElapsed = now
+            lastFlushElapsed = now
             return
         }
-        val delta = ((now - lastCreditElapsed) / 1000L).coerceAtMost(3L)
-        if (delta <= 0L) return
-        lastCreditElapsed = now
+        val delta = ((now - lastCreditElapsed) / 1000L).coerceAtMost(MAX_CREDIT_SECONDS)
+        if (delta > 0L) {
+            lastCreditElapsed = now
+            pendingTotal.merge(appName, delta, Long::plus)
+            if (shortsVisible) pendingShorts.merge(appName, delta, Long::plus)
+        }
+        if (now - lastFlushElapsed >= FLUSH_INTERVAL_MILLIS) flushUsage()
+    }
+
+    /** One DataStore write per interval instead of one per accessibility event. */
+    private fun flushUsage() {
+        lastFlushElapsed = SystemClock.elapsedRealtime()
+        if (pendingTotal.isEmpty() && pendingShorts.isEmpty()) return
+        val total = pendingTotal.toMap()
+        val shorts = pendingShorts.toMap()
+        pendingTotal.clear()
+        pendingShorts.clear()
         serviceScope.launch {
-            dataStore.addTotalAppUsage(appName, delta)
-            if (shortsVisible) dataStore.addUsage(appName, delta)
+            total.forEach { (app, seconds) -> dataStore.addTotalAppUsage(app, seconds) }
+            shorts.forEach { (app, seconds) -> dataStore.addUsage(app, seconds) }
         }
     }
 
@@ -360,18 +380,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun isNodeWithTextVisible(root: AccessibilityNodeInfo, text: String): Boolean {
-        return try {
-            val nodes = root.findAccessibilityNodeInfosByText(text)
-            if (nodes.isNullOrEmpty()) return false
-            val visible = nodes.any { it.isVisibleToUser }
-            nodes.forEach { it.recycle() }
-            visible
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     /**
      * Walk up from the event source. Never inspect whichever window is in
      * front — that would include Nubank after the user switches apps.
@@ -417,6 +425,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         if (now - lastAdultScanElapsed < 1500L) return
         lastAdultScanElapsed = now
 
+        if (event.isPassword) return
         val typed = event.text?.joinToString(" ") { it?.toString().orEmpty() }.orEmpty()
         if (typed.isNotBlank() && AdultContentDetector.isAdultContent(typed)) {
             leaveAdultScreen()
@@ -439,7 +448,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private fun collectVisibleText(node: AccessibilityNodeInfo, out: StringBuilder, remaining: IntArray) {
         if (remaining[0] <= 0) return
         remaining[0]--
-        if (node.isVisibleToUser) {
+        if (node.isVisibleToUser && !node.isPassword) {
             node.text?.let { if (it.isNotBlank()) out.append(' ').append(it) }
             node.contentDescription?.let { if (it.isNotBlank()) out.append(' ').append(it) }
         }
@@ -462,6 +471,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     companion object {
         private const val TAG = "BlockfyService"
+        private const val MAX_CREDIT_SECONDS = 3L
+        private const val FLUSH_INTERVAL_MILLIS = 10_000L
         val SOCIAL_PACKAGES: Array<String> = (
             TrackedPackages.ALL.keys +
                 AdultContentDetector.IN_APP_TEXT_PACKAGES +

@@ -34,7 +34,7 @@ private val BlockfyShapes = Shapes(
 )
 
 @Composable
-fun BlokkyTheme(
+fun BlockfyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit

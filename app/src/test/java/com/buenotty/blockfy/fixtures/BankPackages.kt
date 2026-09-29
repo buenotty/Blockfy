@@ -1,10 +1,6 @@
-package com.buenotty.blockfy.feature_monitor
+package com.buenotty.blockfy.fixtures
 
-/**
- * Banking and payment apps that must never share Blockfy's network path.
- * Used only to exclude them from the DNS shield so Pix/login keep using the
- * device's normal connection.
- */
+/** Banking apps that Blockfy must never watch or block (test fixture). */
 object BankPackages {
     val ALL: Set<String> = setOf(
         "com.nu.production",

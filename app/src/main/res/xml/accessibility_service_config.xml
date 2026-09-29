@@ -11,5 +11,4 @@
     android:canPerformGestures="false"
     android:canRequestFilterKeyEvents="false"
     android:canRequestTouchExplorationMode="false"
-    android:isAccessibilityTool="true"
     android:accessibilityFlags="flagReportViewIds" />

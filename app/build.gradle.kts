@@ -23,19 +23,16 @@ fun signingValue(name: String): String? {
 
 android {
     namespace = "com.buenotty.blockfy"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.buenotty.blockfy"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 36
         versionName = "1.9.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
-        }
     }
 
     val storePath = signingValue("BLOCKFY_STORE_FILE")
@@ -116,18 +113,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.datetime)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.androidx.workmanager)
-    implementation(libs.protobuf.javalite)
     implementation(libs.androidx.icons.extended)
-    implementation(libs.androidx.workmanager)
     implementation(libs.androidx.datastore)
     implementation(libs.ossLicenses)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel)
-    implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.qrcode)
 }

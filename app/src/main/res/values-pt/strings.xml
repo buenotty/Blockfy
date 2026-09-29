@@ -9,7 +9,7 @@
     <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
     <string name="accessibility_inactive">Não concedido. Sem isso o app não bloqueia nada. Toque para ativar.</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
-    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para sair das telas de vídeo curto e, se você ligar o bloqueio adulto, para perceber texto adulto no X, Telegram e Reddit. Nada do que você vê ou digita fica salvo.</string>
+    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê o texto na tela e o que você digita em navegadores, X, Telegram e Reddit, só para achar palavras adultas. O texto é analisado no seu celular, nunca é salvo nem enviado, e campos de senha são ignorados. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
     <string name="accessibility_dialog_learn_more">Saiba mais</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
@@ -206,4 +206,5 @@
         <item>O uso pesado deixa a intimidade real mais lenta, mais ansiosa ou mais difícil de aproveitar. Você precisa de mais intensidade para o mesmo efeito, e um corpo comum ao seu lado deixa de bastar. Isso é apetite danificado, não um padrão alto.</item>
         <item>Se você estiver decidido, vai achar um jeito de burlar o bloqueio. O bloqueio existe para criar uma pausa: tempo bastante para lembrar que isso não te dá uma vida melhor, uma cabeça mais clara, nem um relacionamento que você respeite.</item>
     </string-array>
+    <string name="privacy_policy_btn">Política de privacidade</string>
 </resources>

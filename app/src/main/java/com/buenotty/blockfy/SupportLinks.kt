@@ -6,5 +6,6 @@ object SupportLinks {
     const val PAYPAL_DONATE =
         "https://www.paypal.com/donate/?business=samuellbuenno%40gmail.com&currency_code=BRL"
     const val GITHUB = "https://github.com/buenotty/Blockfy"
+    const val PRIVACY_POLICY = "https://github.com/buenotty/Blockfy/blob/main/PRIVACY.md"
     const val GITHUB_ISSUES = "https://github.com/buenotty/Blockfy/issues"
 }

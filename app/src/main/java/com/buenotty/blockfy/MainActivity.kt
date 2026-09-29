@@ -1,10 +1,10 @@
 package com.buenotty.blockfy
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,64 +20,35 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.buenotty.blockfy.feature_accessibility.AdultBlockAlertScreen
 import com.buenotty.blockfy.navigation.AppNavigation
 import com.buenotty.blockfy.navigation.Screen
-import com.buenotty.blockfy.ui.theme.BlokkyTheme
+import com.buenotty.blockfy.ui.theme.BlockfyTheme
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val EXTRA_ADULT_BLOCK_WARNING = "extra_adult_block_warning"
-    }
-
-    private var adultBlockWarning by mutableStateOf<String?>(null)
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        intent.getStringExtra(EXTRA_ADULT_BLOCK_WARNING)?.let {
-            adultBlockWarning = it
-        }
-    }
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (savedInstanceState == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+                notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-        adultBlockWarning = intent.getStringExtra(EXTRA_ADULT_BLOCK_WARNING)
 
         setContent {
-            BlokkyTheme {
-                val warning = adultBlockWarning
-                if (warning != null) {
-                    AdultBlockAlertScreen(
-                        quote = warning,
-                        onDismiss = {
-                            adultBlockWarning = null
-                            val homeIntent = Intent(Intent.ACTION_MAIN).apply {
-                                addCategory(Intent.CATEGORY_HOME)
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                            startActivity(homeIntent)
-                            finish()
-                        }
-                    )
-                } else {
+            BlockfyTheme {
+                run {
                     val navController = rememberNavController()
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),

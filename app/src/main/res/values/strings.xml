@@ -9,7 +9,7 @@
     <string name="accessibility_active">Granted. Tap to open system settings.</string>
     <string name="accessibility_inactive">Not granted. Without this, Blockfy cannot block anything. Tap to turn it on.</string>
     <string name="accessibility_dialog_title">Accessibility Service</string>
-    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses that permission to leave short-video screens and, if you enable adult blocking, to notice adult text in X, Telegram and Reddit. It does not save what you see or type.</string>
+    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses this permission to detect and leave short-video screens (Instagram, YouTube, TikTok, Facebook, X) and to count time in those apps. If you turn on adult blocking, it also reads the text on screen and what you type in browsers, X, Telegram and Reddit, only to spot adult words. The text is checked on your phone, is never saved or sent anywhere, and password fields are ignored. Blockfy does not open banking apps. By tapping Accept you agree to this use.</string>
     <string name="accessibility_dialog_learn_more">Learn more</string>
     <string name="accessibility_dialog_decline">Decline</string>
     <string name="accessibility_dialog_accept">Accept</string>
@@ -206,4 +206,5 @@
         <item>Heavy use makes real intimacy slower, more anxious, or harder to enjoy. You need more intensity for the same effect, and an ordinary body next to you stops being enough. That is a damaged appetite, not a high standard.</item>
         <item>You will find a way around a block if you are determined. The point of the block is the pause: long enough to remember that this does not give you a better life, a clearer mind, or a relationship you can respect.</item>
     </string-array>
+    <string name="privacy_policy_btn">Privacy policy</string>
 </resources>

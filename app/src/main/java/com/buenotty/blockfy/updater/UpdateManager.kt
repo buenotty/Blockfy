@@ -23,18 +23,10 @@ object UpdateManager {
             Intent.ACTION_VIEW,
             "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
         )
-        val github = Intent(
-            Intent.ACTION_VIEW,
-            "https://github.com/buenotty/Blockfy/releases/latest".toUri()
-        )
         try {
             context.startActivity(play)
         } catch (_: Exception) {
-            try {
-                context.startActivity(web)
-            } catch (_: Exception) {
-                context.startActivity(github)
-            }
+            runCatching { context.startActivity(web) }
         }
     }
 }
