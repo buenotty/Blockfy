@@ -52,8 +52,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.DialogProperties
 import com.buenotty.blockfy.R
+
+private const val MAX_TYPED_JUMP = 24
 
 @Composable
 fun DisableAdultContentDialog(
@@ -179,7 +184,9 @@ fun DisableAdultContentDialog(
                             val isPasteFromClipboard = !clipboardText.isNullOrBlank() &&
                                 newText.contains(clipboardText) &&
                                 !typedText.contains(clipboardText)
-                            val isAbnormalJump = lenDiff > 3
+                            // Swipe typing and keyboard suggestions insert a whole word at once, so only a
+                            // big jump counts as a paste.
+                            val isAbnormalJump = lenDiff > MAX_TYPED_JUMP
 
                             if (isPasteFromClipboard || isAbnormalJump) {
                                 pasteBlockedWarning = true
@@ -194,6 +201,11 @@ fun DisableAdultContentDialog(
                                 style = MaterialTheme.typography.bodySmall
                             )
                         },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrectEnabled = false,
+                            keyboardType = KeyboardType.Password
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 110.dp),

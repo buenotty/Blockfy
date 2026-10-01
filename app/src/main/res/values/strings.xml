@@ -1,37 +1,20 @@
 <resources>
     <string name="app_name">Blockfy</string>
     <string name="app_tagline">Less Reels. More focus.</string>
-    <string name="title_about">About</string>
     <string name="btn_back">Back</string>
 
     <string name="accessibility_service_description">Blockfy uses Accessibility to leave short-video screens and, with adult blocking on, to check the address bar of your browser against a list of adult sites. It does not read messages, chats, or anything you type in other apps, and does not save what it reads.</string>
     <string name="accessibility_service">Accessibility Service</string>
-    <string name="accessibility_active">Granted. Tap to open system settings.</string>
-    <string name="accessibility_inactive">Not granted. Without this, Blockfy cannot block anything. Tap to turn it on.</string>
     <string name="accessibility_dialog_title">Accessibility Service</string>
     <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses this permission to detect and leave short-video screens (Instagram, YouTube, TikTok, Facebook, X) and to count time in those apps. If you turn on adult blocking, it also reads your browser\'s address bar to check the site you are visiting against a list of adult sites. It never reads messages, chats, passwords, or anything typed inside other apps, and does not save or send what it reads. Blockfy does not open banking apps. By tapping Accept you agree to this use.</string>
-    <string name="accessibility_dialog_learn_more">Learn more</string>
     <string name="accessibility_dialog_decline">Decline</string>
     <string name="accessibility_dialog_accept">Accept</string>
     <string name="accessibility_dialog_howto">1. Open app info and allow restricted settings, if the phone asks.\n2. Open Accessibility settings.\n3. Under downloaded apps, tap Blockfy.\n4. Turn the service on and confirm.</string>
-    <string name="btn_open_accessibility">Open Accessibility Settings</string>
     <string name="btn_open_app_info">Open app info</string>
     <string name="btn_close">Close</string>
     <string name="restricted_settings_hint">On some phones you must first allow restricted settings from the Blockfy app info screen.</string>
 
-    <string name="instagram_reels">Instagram</string>
-    <string name="youtube_shorts">YouTube</string>
-    <string name="tiktok_app">TikTok</string>
-    <string name="block_tiktok_summary">Block TikTok (whole app)</string>
-    <string name="block_instagram_summary">Block Instagram Reels</string>
-    <string name="block_youtube_summary">Block YouTube Shorts</string>
-    <string name="facebook_app">Facebook</string>
-    <string name="facebook_reels">Facebook</string>
-    <string name="block_facebook_summary">Block Facebook Reels</string>
     <string name="x_app">X (Twitter)</string>
-    <string name="block_x_summary">Limit doomscrolling on X</string>
-    <string name="daily_limit_format">Limit: %1$d min/day (used: %2$d min)</string>
-    <string name="daily_usage_short">%1$d min / %2$d min today</string>
     <string name="short_videos_label">short videos</string>
 
     <string name="language_title">Language</string>
@@ -48,7 +31,6 @@
     <string name="report_bug_btn">Report bug</string>
     <string name="licenses_btn">Licenses</string>
     <string name="source_code_btn">Source</string>
-    <string name="website_btn">Website</string>
     <string name="authorship_title">Credits</string>
     <string name="fork_author_role">keeps Blockfy going</string>
     <string name="original_author_role">made the original Blokky</string>
@@ -57,26 +39,14 @@
     <string name="privacy_desc">Accessibility watches Instagram, YouTube, TikTok, Facebook and X to detect short videos. With adult blocking on, it also reads your browser\'s address bar to check it against a list of adult sites; it never reads messages, chats or anything typed in other apps, and does not save what it reads. It does not open banking apps and does not use a VPN.\n\nUpdates should come from Google Play. Blockfy does not install APKs by itself.\n\nIf you find this app useful, you can support it on GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Share Blockfy</string>
     <string name="share_app_thanks">Thanks for sharing.</string>
-    <string name="learn_more">Learn more</string>
 
-    <string name="settings_dialog_title">Settings for %1$s</string>
-    <string name="daily_limit_picker_title">Daily limit for Reels / Shorts</string>
-    <string name="daily_limit_picker_desc">How long short videos are allowed each day. After that, they stay blocked until midnight.</string>
-    <string name="daily_limit_off">Off</string>
     <string name="today_usage_label">Today: %1$d of %2$d min</string>
     <string name="reset_usage_btn">Reset today\'s counter</string>
-    <string name="schedule_title">Active hours</string>
     <string name="start_time">Start</string>
     <string name="end_time">End</string>
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
-    <string name="app_total_limit_label">Whole-app daily limit</string>
-    <string name="app_total_limit_none">No whole-app limit (short videos only)</string>
-    <string name="app_total_limit_window">Blocks the app during the active hours</string>
-    <string name="daily_limit_always">Always</string>
     <string name="toast_app_window_blocked">%1$s is blocked during these hours.</string>
-    <string name="app_total_limit_on">%1$d min for the whole app</string>
-    <string name="short_video_limit_label">Reels / Shorts daily limit</string>
 
     <string name="alert_limit_title">Blockfy • Limit reached</string>
     <string name="alert_warning_title">Blockfy • Time alert</string>
@@ -98,10 +68,6 @@
     <string name="strict_mode_midnight_locked_msg">Strict mode is on. Settings stay locked until midnight.</string>
     <string name="strict_mode_midnight_extra">You chose this lock to protect future-you from a short impulse. It unlocks after 00:00.</string>
     <string name="strict_mode_keep_focus">Keep the lock</string>
-    <string name="strict_challenge_title">Type to unlock</string>
-    <string name="strict_challenge_instruction">Type this code by hand. Copy and paste will not help much if you slow down and read it.</string>
-    <string name="strict_challenge_placeholder">Type the code above</string>
-    <string name="strict_challenge_confirm">Unlock settings</string>
     <string name="strict_locked_banner">Strict mode is on: limits are locked until midnight.</string>
 
     <string name="adult_blocker_title">Adult site shield</string>
@@ -113,16 +79,7 @@
     <string name="adult_blocker_paste_blocked_warning">Paste is blocked. Type it yourself.</string>
     <string name="adult_blocker_confirm_disable">Turn shield off</string>
     <string name="adult_blocker_keep_active">Keep it on</string>
-    <string name="vpn_notification_title">Adult shield is on</string>
-    <string name="vpn_notification_text">Local DNS filter is active. Banks use your normal connection.</string>
-    <string name="vpn_channel_name">Adult shield</string>
-    <string name="vpn_alert_channel_name">Adult shield alerts</string>
     <string name="focus_alerts_channel_name">Blockfy alerts</string>
-    <string name="interrupt_go_home">Go to Home</string>
-    <string name="adult_block_alert_title">Adult site blocked</string>
-    <string name="adult_block_alert_subtitle">This page was blocked</string>
-    <string name="adult_block_alert_body">You do not have to follow that impulse. Close this and go back to what you were doing.</string>
-    <string name="adult_block_return_focus">Back to focus (%1$d)</string>
 
     <string-array name="adult_block_warnings">
         <item>You do not have to throw the next hour away.</item>
@@ -146,8 +103,6 @@
         <item>Close the reel. Stand up. Do the next real thing.</item>
     </string-array>
 
-    <string name="tab_blocks">Blocks</string>
-    <string name="tab_concepts">Concepts</string>
     <string name="weekdays_title">Days the block is on</string>
     <string name="weekday_sun">Sun</string>
     <string name="weekday_mon">Mon</string>
@@ -156,7 +111,6 @@
     <string name="weekday_thu">Thu</string>
     <string name="weekday_fri">Fri</string>
     <string name="weekday_sat">Sat</string>
-    <string name="minutes_custom_hint">Or type minutes</string>
     <string name="concepts_intro">A reminder of why these blocks exist, for the day you feel like turning them off.</string>
     <string name="concepts_shorts_title">Short videos</string>
     <string name="concepts_shorts_summary">What the feed does to your attention, your work and your mood.</string>
@@ -164,7 +118,6 @@
     <string name="concepts_porn_summary">What it costs your character, your relationships and your sex life.</string>
     <string name="concepts_page">%1$d / %2$d</string>
     <string name="concepts_next">Next</string>
-    <string name="concepts_swipe_hint">Swipe to read them again</string>
     <string-array name="concept_shorts_titles">
         <item>Your work gets thinner</item>
         <item>Dopamine stops waiting</item>
@@ -228,7 +181,6 @@
     <string name="edit_rule_limit">Daily limit</string>
     <string name="edit_rule_always_desc">Blocked during the hours below, as soon as you open it.</string>
     <string name="edit_rule_limit_desc">Free to use up to the limit during the hours below. After that it is blocked.</string>
-    <string name="minutes_field_label">Minutes per day</string>
     <string name="minutes_suffix">min</string>
     <string name="minutes_less">Less</string>
     <string name="minutes_more">More</string>

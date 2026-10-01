@@ -55,6 +55,12 @@ class ManifestAndDetectorTest {
         assertTrue(config.contains("com.instagram.android"))
         assertTrue(config.contains("flagReportViewIds"))
         assertFalse(config.contains("flagRetrieveInteractiveWindows"))
+        assertFalse("typed text is never read", config.contains("typeViewTextChanged"))
+        assertTrue(
+            "without this flag Android hides the Reels containers the service looks for",
+            config.contains("flagIncludeNotImportantViews")
+        )
+        assertFalse(config.contains("telegram") || config.contains("reddit"))
         assertTrue(config.contains("canPerformGestures=\"false\""))
         BankPackages.ALL.forEach { bank ->
             assertFalse("a11y config must not include $bank", config.contains(bank))

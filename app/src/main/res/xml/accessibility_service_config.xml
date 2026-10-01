@@ -4,11 +4,11 @@
     android:description="@string/accessibility_service_description"
     android:settingsActivity="com.buenotty.blockfy.MainActivity"
     android:packageNames="com.instagram.android,com.google.android.youtube,com.zhiliaoapp.musically,com.facebook.katana,com.twitter.android,com.android.chrome,com.sec.android.app.sbrowser,org.mozilla.firefox,com.brave.browser,com.microsoft.emmx,com.opera.browser,com.opera.mini.native,com.opera.gx,com.duckduckgo.mobile.android,com.vivaldi.browser,com.mi.globalbrowser,com.android.browser,com.kiwibrowser.browser,com.yandex.browser,com.coloros.browser,com.vivo.browser"
-    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewTextChanged"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"
     android:canRetrieveWindowContent="true"
     android:canPerformGestures="false"
     android:canRequestFilterKeyEvents="false"
     android:canRequestTouchExplorationMode="false"
-    android:accessibilityFlags="flagReportViewIds" />
+    android:accessibilityFlags="flagReportViewIds|flagIncludeNotImportantViews" />

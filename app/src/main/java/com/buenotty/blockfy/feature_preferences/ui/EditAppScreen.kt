@@ -56,7 +56,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -148,10 +147,10 @@ private fun EditAppForm(
     var enabled by rememberSaveable(saved.name) { mutableStateOf(true) }
     var wholeApp by rememberSaveable(saved.name) { mutableStateOf(saved.wholeApp) }
     var limitMode by rememberSaveable(saved.name) { mutableStateOf(savedLimit > 0) }
-    var minutes by rememberSaveable(saved.name) { mutableIntStateOf(if (savedLimit > 0) savedLimit else 30) }
-    var start by rememberSaveable(saved.name) { mutableIntStateOf(saved.blockedStart) }
-    var end by rememberSaveable(saved.name) { mutableIntStateOf(saved.blockedEnd) }
-    var days by rememberSaveable(saved.name) { mutableIntStateOf(saved.blockedWeekdays) }
+    var minutes by rememberSaveable(saved.name) { mutableStateOf(if (savedLimit > 0) savedLimit else 30) }
+    var start by rememberSaveable(saved.name) { mutableStateOf(saved.blockedStart) }
+    var end by rememberSaveable(saved.name) { mutableStateOf(saved.blockedEnd) }
+    var days by rememberSaveable(saved.name) { mutableStateOf(saved.blockedWeekdays) }
 
     var showStartPicker by remember { mutableStateOf(false) }
     var showEndPicker by remember { mutableStateOf(false) }

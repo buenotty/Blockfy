@@ -1,37 +1,20 @@
 <resources>
     <string name="app_name">Blockfy</string>
     <string name="app_tagline">Menos Reels. Mais foco.</string>
-    <string name="title_about">Sobre</string>
     <string name="btn_back">Voltar</string>
 
     <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Ele não lê mensagens, conversas nem o que você digita em outros apps, e não guarda o que lê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
-    <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
-    <string name="accessibility_inactive">Não concedido. Sem isso o app não bloqueia nada. Toque para ativar.</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
     <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê a barra de endereço do seu navegador para comparar o site que você está visitando com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
-    <string name="accessibility_dialog_learn_more">Saiba mais</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
     <string name="accessibility_dialog_howto">1. Abra as informações do app e permita configurações restritas, se o celular pedir.\n2. Abra as configurações de Acessibilidade.\n3. Em apps baixados, toque em Blockfy.\n4. Ative o serviço e confirme.</string>
-    <string name="btn_open_accessibility">Abrir configurações de acessibilidade</string>
     <string name="btn_open_app_info">Abrir informações do app</string>
     <string name="btn_close">Fechar</string>
     <string name="restricted_settings_hint">Em alguns celulares você precisa permitir configurações restritas na tela de informações do Blockfy.</string>
 
-    <string name="instagram_reels">Instagram</string>
-    <string name="youtube_shorts">YouTube</string>
-    <string name="tiktok_app">TikTok</string>
-    <string name="block_tiktok_summary">Bloquear o TikTok (aplicativo inteiro)</string>
-    <string name="block_instagram_summary">Bloquear Instagram Reels</string>
-    <string name="block_youtube_summary">Bloquear YouTube Shorts</string>
-    <string name="facebook_app">Facebook</string>
-    <string name="facebook_reels">Facebook</string>
-    <string name="block_facebook_summary">Bloquear Facebook Reels</string>
     <string name="x_app">X (Twitter)</string>
-    <string name="block_x_summary">Limitar a rolagem infinita no X</string>
-    <string name="daily_limit_format">Limite: %1$d min/dia (usado: %2$d min)</string>
-    <string name="daily_usage_short">%1$d min / %2$d min hoje</string>
     <string name="short_videos_label">vídeos curtos</string>
 
     <string name="language_title">Idioma</string>
@@ -48,7 +31,6 @@
     <string name="report_bug_btn">Reportar bug</string>
     <string name="licenses_btn">Licenças</string>
     <string name="source_code_btn">Código</string>
-    <string name="website_btn">Site</string>
     <string name="authorship_title">Créditos</string>
     <string name="fork_author_role">cuida do Blockfy</string>
     <string name="original_author_role">fez o Blokky original</string>
@@ -57,26 +39,14 @@
     <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê a barra de endereço do seu navegador para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
-    <string name="learn_more">Saiba mais</string>
 
-    <string name="settings_dialog_title">Configurações de %1$s</string>
-    <string name="daily_limit_picker_title">Limite diário de Reels / Shorts</string>
-    <string name="daily_limit_picker_desc">Quanto tempo de vídeo curto é permitido por dia. Depois disso, fica bloqueado até meia-noite.</string>
-    <string name="daily_limit_off">Desligado</string>
     <string name="today_usage_label">Hoje: %1$d de %2$d min</string>
     <string name="reset_usage_btn">Zerar o contador de hoje</string>
-    <string name="schedule_title">Horário ativo</string>
     <string name="start_time">Início</string>
     <string name="end_time">Fim</string>
     <string name="save_btn">Salvar</string>
     <string name="cancel_btn">Cancelar</string>
-    <string name="app_total_limit_label">Limite diário do app inteiro</string>
-    <string name="app_total_limit_none">Sem limite geral (somente vídeos curtos)</string>
-    <string name="app_total_limit_window">Bloqueia o app no horário ativo</string>
-    <string name="daily_limit_always">Sempre</string>
     <string name="toast_app_window_blocked">%1$s está bloqueado neste horário.</string>
-    <string name="app_total_limit_on">%1$d min para o app inteiro</string>
-    <string name="short_video_limit_label">Limite diário de Reels / Shorts</string>
 
     <string name="alert_limit_title">Blockfy • Limite atingido</string>
     <string name="alert_warning_title">Blockfy • Alerta de tempo</string>
@@ -98,10 +68,6 @@
     <string name="strict_mode_midnight_locked_msg">O modo estrito está ligado. As configurações ficam travadas até meia-noite.</string>
     <string name="strict_mode_midnight_extra">Você escolheu essa trava para proteger o você de amanhã de um impulso curto. Ela só abre depois das 00:00.</string>
     <string name="strict_mode_keep_focus">Manter a trava</string>
-    <string name="strict_challenge_title">Digite para desbloquear</string>
-    <string name="strict_challenge_instruction">Digite este código na mão. Colar não deve ser o caminho fácil.</string>
-    <string name="strict_challenge_placeholder">Digite o código acima</string>
-    <string name="strict_challenge_confirm">Desbloquear configurações</string>
     <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
@@ -113,16 +79,7 @@
     <string name="adult_blocker_paste_blocked_warning">Colar está bloqueado. Digite você mesmo.</string>
     <string name="adult_blocker_confirm_disable">Desligar o escudo</string>
     <string name="adult_blocker_keep_active">Manter ligado</string>
-    <string name="vpn_notification_title">Escudo adulto ligado</string>
-    <string name="vpn_notification_text">Filtro DNS local ativo. Bancos usam a conexão normal.</string>
-    <string name="vpn_channel_name">Escudo adulto</string>
-    <string name="vpn_alert_channel_name">Alertas do escudo adulto</string>
     <string name="focus_alerts_channel_name">Alertas do Blockfy</string>
-    <string name="interrupt_go_home">Ir para a tela inicial</string>
-    <string name="adult_block_alert_title">Site adulto bloqueado</string>
-    <string name="adult_block_alert_subtitle">Esta página foi bloqueada</string>
-    <string name="adult_block_alert_body">Você não precisa seguir esse impulso. Feche isto e volte ao que estava fazendo.</string>
-    <string name="adult_block_return_focus">Voltar ao foco (%1$d)</string>
 
     <string-array name="adult_block_warnings">
         <item>Você não precisa jogar a próxima hora fora.</item>
@@ -146,8 +103,6 @@
         <item>Feche o reel. Levante. Faça a próxima coisa real.</item>
     </string-array>
 
-    <string name="tab_blocks">Bloqueios</string>
-    <string name="tab_concepts">Conceitos</string>
     <string name="weekdays_title">Dias em que o bloqueio vale</string>
     <string name="weekday_sun">Dom</string>
     <string name="weekday_mon">Seg</string>
@@ -156,7 +111,6 @@
     <string name="weekday_thu">Qui</string>
     <string name="weekday_fri">Sex</string>
     <string name="weekday_sat">Sáb</string>
-    <string name="minutes_custom_hint">Ou digite os minutos</string>
     <string name="concepts_intro">Um lembrete de por que esses bloqueios existem, para o dia em que der vontade de desligar tudo.</string>
     <string name="concepts_shorts_title">Vídeos curtos</string>
     <string name="concepts_shorts_summary">O que o feed faz com a sua atenção, o seu trabalho e o seu humor.</string>
@@ -164,7 +118,6 @@
     <string name="concepts_porn_summary">O que isso custa à sua índole, aos seus relacionamentos e à sua vida sexual.</string>
     <string name="concepts_page">%1$d / %2$d</string>
     <string name="concepts_next">Próximo</string>
-    <string name="concepts_swipe_hint">Deslize para ler de novo</string>
     <string-array name="concept_shorts_titles">
         <item>O trabalho fica mais raso</item>
         <item>A dopamina para de esperar</item>
@@ -228,7 +181,6 @@
     <string name="edit_rule_limit">Limite por dia</string>
     <string name="edit_rule_always_desc">Bloqueado nos horários abaixo, assim que você abrir.</string>
     <string name="edit_rule_limit_desc">Liberado até o limite nos horários abaixo. Depois disso fica bloqueado.</string>
-    <string name="minutes_field_label">Minutos por dia</string>
     <string name="minutes_suffix">min</string>
     <string name="minutes_less">Menos</string>
     <string name="minutes_more">Mais</string>
