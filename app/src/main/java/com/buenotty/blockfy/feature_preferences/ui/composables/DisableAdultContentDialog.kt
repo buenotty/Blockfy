@@ -63,7 +63,9 @@ private const val MAX_TYPED_JUMP = 24
 @Composable
 fun DisableAdultContentDialog(
     onDismissRequest: () -> Unit,
-    onConfirmDisable: () -> Unit
+    onConfirmDisable: () -> Unit,
+    streakDays: Int = 0,
+    why: String = ""
 ) {
     val targetText = stringResource(R.string.adult_blocker_reflection_text)
     var typedText by remember { mutableStateOf("") }
@@ -145,6 +147,11 @@ fun DisableAdultContentDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
+
+                if (streakDays > 0) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    StakesBanner(streakDays = streakDays, why = why)
+                }
 
                 Spacer(modifier = Modifier.height(14.dp))
 

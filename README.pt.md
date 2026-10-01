@@ -21,7 +21,7 @@ Se o celular for do Brasil, o app começa em português. Nos outros lugares come
 - **Escudo de sites adultos**, se você ligar: a Acessibilidade lê só a barra de endereço do navegador e compara com uma lista de sites adultos no próprio celular. Nada é guardado nem enviado. Sem VPN. Os sites entram pelo nome inteiro, então `jerome` não vira `erome`.
 - **Modo estrito** até a meia-noite: você ainda pode deixar bloqueios mais rígidos, mas não desligar nem afrouxar. Fora do modo estrito, afrouxar um bloqueio faz você esperar alguns segundos e confirmar.
 - Aba **Conceitos**: leituras curtas sobre por que esses bloqueios existem, para o dia em que você quiser desligá-los.
-- **Diagnóstico** (aba Ajustes): mostra se o serviço está conectado e o que ele viu por último, para achar o motivo quando um bloqueio não dispara.
+- **Sequência de dias limpos**: um dia é limpo quando você não desliga nem afrouxa nada. Perder a sequência deve doer, então o app mostra o que você perderia antes de você fazer.
 
 As atualizações devem vir da Google Play. O app não instala APK sozinho. Guia de publicação: [docs/PUBLICAR_NA_PLAY.md](docs/PUBLICAR_NA_PLAY.md).
 

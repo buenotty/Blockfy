@@ -107,6 +107,7 @@ fun EditAppScreen(
     val settings by viewModel.appSettings.collectAsState()
     val usage by viewModel.dailyUsage.collectAsState()
     val loaded by viewModel.isLoaded.collectAsState()
+    val streak by viewModel.streak.collectAsState()
 
     if (!loaded) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
@@ -117,6 +118,7 @@ fun EditAppScreen(
         saved = BlockPolicy.appConfig(settings, appName),
         settings = settings,
         usage = usage,
+        streakDays = streak.current,
         locked = settings.isStrictLocked(),
         onSave = { viewModel.updateApp(it) },
         onResetUsage = { viewModel.resetDailyUsage(appName) },
@@ -137,6 +139,7 @@ private fun EditAppForm(
     saved: App,
     settings: AppSettings,
     usage: DailyUsage,
+    streakDays: Int,
     locked: Boolean,
     onSave: (App) -> Unit,
     onResetUsage: () -> Unit,
@@ -339,6 +342,8 @@ private fun EditAppForm(
             title = stringResource(R.string.loosen_title),
             message = stringResource(R.string.loosen_msg),
             confirmLabel = stringResource(R.string.loosen_confirm),
+            streakDays = streakDays,
+            why = settings.myWhy,
             onDismissRequest = { showLoosenConfirm = false },
             onConfirmation = {
                 showLoosenConfirm = false

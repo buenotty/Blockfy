@@ -21,7 +21,7 @@ If the phone is from Brazil, the app starts in Portuguese. Everywhere else it st
 - **Adult site shield**, if you turn it on: Accessibility reads only the browser's address bar and compares it with a list of adult sites on the phone. Nothing is stored or sent. No VPN. Hosts match as whole names, so `jerome` is not treated as `erome`.
 - **Strict mode** until midnight: you can still make blocks stricter, but not turn them off or loosen them. Outside strict mode, loosening a block makes you wait a few seconds and confirm.
 - **Concepts** tab: short readings on why these blocks exist, for the day you want to turn them off.
-- **Diagnostics** (Settings tab): shows whether the service is connected and what it last saw, so a block that does not fire can be debugged.
+- **Clean-day streak**: a day is clean when you do not switch anything off or loosen it. Losing the streak is meant to hurt, so the app shows what you would lose before you do it.
 
 Updates are meant to come from Google Play. The app does not install APKs itself. Publishing guide (Portuguese): [docs/PUBLICAR_NA_PLAY.md](docs/PUBLICAR_NA_PLAY.md).
 

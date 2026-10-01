@@ -47,11 +47,6 @@ object ShortsDetector {
         return scanForFragment(root, fragments, intArrayOf(MAX_SCANNED_NODES))
     }
 
-    /** Collects distinct view ids for the Diagnostics card. Ids only, never on-screen text. */
-    fun collectViewIds(root: AccessibilityNodeInfo, out: MutableSet<String>, limit: Int = 40) {
-        collect(root, out, limit, intArrayOf(MAX_SCANNED_NODES))
-    }
-
     private fun hasVisibleId(root: AccessibilityNodeInfo, id: String): Boolean = try {
         val nodes = root.findAccessibilityNodeInfosByViewId(id)
         val visible = !nodes.isNullOrEmpty() && nodes.any { it.isVisibleToUser }
@@ -104,20 +99,5 @@ object ShortsDetector {
             }
         }
         return false
-    }
-
-    private fun collect(node: AccessibilityNodeInfo, out: MutableSet<String>, limit: Int, budget: IntArray) {
-        if (budget[0] <= 0 || out.size >= limit) return
-        budget[0]--
-        if (node.isVisibleToUser) node.viewIdResourceName?.let { out += it }
-        for (i in 0 until node.childCount) {
-            if (budget[0] <= 0 || out.size >= limit) return
-            val child = node.getChild(i) ?: continue
-            try {
-                collect(child, out, limit, budget)
-            } finally {
-                child.recycle()
-            }
-        }
     }
 }

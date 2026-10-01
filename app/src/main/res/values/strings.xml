@@ -110,40 +110,48 @@
     <string name="weekday_thu">Thu</string>
     <string name="weekday_fri">Fri</string>
     <string name="weekday_sat">Sat</string>
-    <string name="concepts_intro">A reminder of why these blocks exist, for the day you feel like turning them off.</string>
-    <string name="concepts_shorts_title">Short videos</string>
-    <string name="concepts_shorts_summary">What the feed does to your attention, your work and your mood.</string>
+    <string name="concepts_intro">Blocking buys you breathing room. What changes your life is what you come to believe about yourself and what you do next. Read in order. No rush, and no lying to yourself.</string>
+    <string name="concepts_shorts_title">The feed against you</string>
+    <string name="concepts_shorts_summary">You are not weak. You are up against a product built to keep you.</string>
     <string name="concepts_porn_title">Pornography</string>
-    <string name="concepts_porn_summary">What it costs your character, your relationships and your sex life.</string>
+    <string name="concepts_porn_summary">What it takes from your character, your relationships and your freedom.</string>
     <string name="concepts_page">%1$d / %2$d</string>
     <string name="concepts_next">Next</string>
     <string-array name="concept_shorts_titles">
-        <item>Your work gets thinner</item>
-        <item>Dopamine stops waiting</item>
-        <item>It is built to be endless</item>
+        <item>You are not weak. You are up against a product</item>
+        <item>One more, and one more, and one more</item>
+        <item>You train what you repeat</item>
+        <item>Your work gets shallow</item>
         <item>Sleep and mood pay the bill</item>
-        <item>Other people start to look small</item>
+        <item>Other people\'s showcase versus your whole day</item>
+        <item>You can get out, and it is lighter than it looks</item>
     </string-array>
     <string-array name="concept_shorts_bodies">
-        <item>A few minutes becomes an hour because each video ends before your brain decides to stop. The task you opened the phone to do is still waiting, and starting it feels heavier than it did before.</item>
-        <item>Short videos train you to expect a hit every few seconds. Ordinary work, conversation and silence start to feel dull, not because they got worse, but because your reward system got louder.</item>
-        <item>There is no last episode. The next one is already loaded, picked because it is more likely to keep you there. The product is your time, not the video.</item>
-        <item>Late scrolling steals the sleep that would have made tomorrow easier. You wake up more irritable, less patient, and more likely to open the same app again.</item>
-        <item>A feed of other people\'s highlights makes your own day look like a failure. That comparison is not information. It is a side effect of watching strangers perform.</item>
+        <item>Whole teams of engineers and data scientists work so that you stay one more minute. Every swipe is measured, tested and tuned. If you feel you cannot stop, that does not prove you are weak: it proves the product works. But knowing that does not take your responsibility away. Now that you know, the question is: what are you going to do about it?</item>
+        <item>There is no last episode. The next video is already loaded, picked because it is the one most likely to hold you. No video ends in a way that makes you stand up. The product is not the video. The product is your attention, sold in batches. Until you decide the limit, someone else decides it for you.</item>
+        <item>With every short video you train yourself to expect something new every few seconds. The more you train, the duller reading, talking, working or sitting in silence feels. The world did not get boring: your reward system got spoiled. The good news is that what is learned can be unlearned, and many people feel a difference after a few weeks away from the feed.</item>
+        <item>Every time you drop a task to peek at the feed, your focus takes a while to come back. People who keep interrupting themselves deliver half-done work and end the day more tired. The thing you say you have no time for is often buried under a pile of videos.</item>
+        <item>Scrolling at night steals the sleep that would make tomorrow easier. You wake up more irritable, with less patience, and more likely to open the same app again. It is a loop: tiredness asks for the feed, and the feed adds to the tiredness.</item>
+        <item>You see the best minute of thousands of people\'s lives, edited, filtered and rehearsed, and compare it with your whole unedited day. You always lose. That feeling of falling behind is not information about your life. It is a side effect of staring at other people\'s showcase.</item>
+        <item>The first week is the worst: your hand goes to the phone on its own and your body asks for the stimulus. After that the urge usually fades. Many people report more calm, more sleep and more drive in the first weeks. You are not giving up something valuable. You are trading what consumes you for what builds you.</item>
     </string-array>
     <string-array name="concept_porn_titles">
         <item>It trains you to use people</item>
-        <item>Your character erodes in private</item>
-        <item>Relationships get colder</item>
-        <item>Your sex life shrinks</item>
-        <item>You can leave</item>
+        <item>Character wears down in secret</item>
+        <item>You do not know who you are watching</item>
+        <item>The shame cycle</item>
+        <item>Relationships cool off</item>
+        <item>Sex life shrinks</item>
+        <item>You can get out, and you will recognize yourself</item>
     </string-array>
     <string-array name="concept_porn_bodies">
-        <item>Pornography teaches you to treat another person as a product: available, silent, and discarded when the feeling passes. That habit does not stay on the screen. It shows up in how you look at people who are actually in the room.</item>
-        <item>Doing this in secret splits you in two. You say one thing about who you are and keep another life that you would not defend out loud. Character is what you repeat when nobody is scoring you.</item>
-        <item>A partner is not a stream of novelty. If your arousal depends on strangers, tabs and escalation, the person who loves you starts to feel insufficient. That is not their failure. It is the cost of the habit.</item>
-        <item>Heavy use makes real intimacy slower, more anxious, or harder to enjoy. You need more intensity for the same effect, and an ordinary body next to you stops being enough. That is a damaged appetite, not a high standard.</item>
-        <item>You will find a way around a block if you are determined. The point of the block is the pause: long enough to remember that this does not give you a better life, a clearer mind, or a relationship you can respect.</item>
+        <item>Pornography teaches you to treat another person as a product: available, silent and discarded when the feeling passes. That habit does not stay on the screen. It shows in how you look at people who are really there with you. Every click is practice, and you are always practicing something.</item>
+        <item>Doing this in secret splits you in two. You say one thing about who you are and keep another life you would not defend out loud. Character is what you repeat when no one is judging you. The secret weighs more than the act, and the longer it lasts, the more it costs.</item>
+        <item>Part of this content involves exploitation, coercion or people who never agreed to be seen. You have no way of knowing which. Every click feeds an industry where someone\'s suffering can be the product. It is hard to keep saying "I do not hurt anyone" while looking at that squarely.</item>
+        <item>The cycle is usually: tension, use, short relief, shame, tension again. Shame does not pull you away from the habit: it creates the stress that asks for the next relief. That is why punishing yourself does not work. What breaks the cycle is the next action: leave the room, call someone, go back to the plan.</item>
+        <item>A partnership is not a stream of novelty. If your arousal starts to depend on strangers, tabs and going further and further, the person who loves you starts to look insufficient. That is not their failing. It is the price of the habit. And the person beside you often feels more than you imagine.</item>
+        <item>Heavy use can make real intimacy slower, more anxious or harder to enjoy. Many people report needing more intensity for the same effect, until an ordinary body beside them stops being enough. That is not a high standard: it is a dysregulated appetite, and appetite can be retrained.</item>
+        <item>If you are set on it, you will find a way around any block. The block exists to create a pause: enough time to remember this does not give you a better life, a clearer head or a relationship you respect. The first weeks are the hardest. After that, many people describe more clarity and more presence. Relapses happen; what counts is the direction.</item>
     </string-array>
     <string name="privacy_policy_btn">Privacy policy</string>
     <string name="nav_blocks">Blocks</string>
@@ -195,7 +203,7 @@
     <string name="discard_keep">Keep editing</string>
     <string name="discard_confirm">Discard</string>
     <string name="saved_toast">Saved</string>
-    <string name="concepts_hero_title">Why block?</string>
+    <string name="concepts_hero_title">Change your mind first</string>
     <string name="concepts_points">%1$d reflections</string>
     <string name="concepts_prev">Previous</string>
     <string name="concepts_done">Done</string>
@@ -258,8 +266,8 @@
     <string name="concepts_habits_summary">How a habit becomes a compulsion, and what to do when the urge hits.</string>
     <string name="concepts_focus_title">Focus and ADHD</string>
     <string name="concepts_focus_summary">Tips for trouble paying attention, with or without a diagnosis.</string>
-    <string name="concepts_plan_title">Your plan in practice</string>
-    <string name="concepts_plan_summary">Simple steps to set up Blockfy and keep going.</string>
+    <string name="concepts_plan_title">Your plan</string>
+    <string name="concepts_plan_summary">Simple steps to set Blockfy up and keep going.</string>
     <string name="concepts_help_title">When to get help</string>
     <string name="concepts_help_summary">Signs that an app alone is not enough, and where to find support.</string>
     <string-array name="concept_habits_titles">
@@ -297,6 +305,7 @@
         <item>If you have or suspect ADHD, treatment is decided with a psychiatrist, neurologist or psychologist, and may include therapy and, when indicated, medication. No app replaces that. Never start or stop a medication on your own.</item>
     </string-array>
     <string-array name="concept_plan_titles">
+        <item>Write your reason</item>
         <item>Start small</item>
         <item>A limit you can keep</item>
         <item>App limit vs Reels limit</item>
@@ -305,12 +314,13 @@
         <item>Review every week</item>
     </string-array>
     <string-array name="concept_plan_bodies">
+        <item>Before you set anything up, write in one sentence why you want to change. In the Concepts tab, tap "My reason". It shows on your home screen and at the moment you try to give up. When the urge speaks loud, it is your own calm, honest voice that will answer.</item>
         <item>Turn on just one or two apps at first. A limit you keep is worth more than ten you switch off. When it gets easy, add the next one.</item>
-        <item>If you use 3 hours a day today, start with 2 and lower it week by week. An impossible limit only leads to turning the block off and giving up.</item>
+        <item>If you use 3 hours a day today, start with 2 and lower it week by week. An impossible limit only leads to turning the block off and giving up. Protect your clean-day streak: it is worth more than any extra minute.</item>
         <item>You can have, for example, 1 hour of Instagram a day but only 15 minutes of Reels. It is the most realistic combination: you keep what is useful (messages, friends, work) and cut the endless feed. Set it in each app: one rule for the whole app and another for Reels/Shorts.</item>
         <item>Nights are often the riskiest hours. In Settings, choose the days and hours when blocks apply, for example the Night preset. The hours are the same for every app.</item>
         <item>Turn on strict mode in a moment of motivation. Until midnight you can only make blocks stricter, never looser. It is an agreement you make with yourself before the urge arrives.</item>
-        <item>Once a week, look at today\'s summary, your blocks and what worked. Adjust what is too hard or too easy. The goal is not a perfect app setup, it is to have time and attention left for what matters to you.</item>
+        <item>Once a week, look at your streak, your blocks and what worked. Adjust what is too hard or too easy. The goal is not a perfect app setup: it is to have time and attention left for what matters to you.</item>
     </string-array>
     <string-array name="concept_help_titles">
         <item>An app is a tool, not a treatment</item>
@@ -380,5 +390,99 @@
         <item>You are building a new habit. At first it is heavy, then it gets light.</item>
         <item>Keep the block on. Your calmer self decided for you.</item>
         <item>One limit kept is worth more than ten promises.</item>
+    </string-array>
+    <string name="setup_title">Let\'s get everything ready</string>
+    <string name="setup_subtitle">Blockfy needs two permissions to work. Without them, nothing gets blocked.</string>
+    <string name="setup_step1_title">Accessibility</string>
+    <string name="setup_step1_desc">Lets Blockfy notice when you open Reels, Shorts or a blocked app, and take you out of it.</string>
+    <string name="setup_step2_title">Battery</string>
+    <string name="setup_step2_desc">Stops the phone from putting Blockfy to sleep. Without it, the blocks can stop working after a while.</string>
+    <string name="setup_btn_accessibility">Turn on Accessibility</string>
+    <string name="setup_btn_battery">Disable battery optimization</string>
+    <string name="setup_done">Done</string>
+    <string name="setup_continue">Continue</string>
+    <string name="setup_skip_battery">Continue without this (not recommended)</string>
+    <string name="hero_label">Clean days</string>
+    <string name="hero_write_why">Write my reason for changing</string>
+    <string name="milestone_next">%1$d days to reach %2$d</string>
+    <string name="milestone_max">You are past the biggest milestone. Keep going.</string>
+    <string name="tier_0">Day one starts now. The first step is the hardest.</string>
+    <string name="tier_1">The first days are the hardest. Do not throw them away.</string>
+    <string name="tier_2">You are past the worst of it. Protect what you built.</string>
+    <string name="tier_3">A whole week. That is proof you can do this.</string>
+    <string name="tier_4">Two weeks. The old habit is losing strength.</string>
+    <string name="tier_5">A month and more. In practice, you became someone else.</string>
+    <string name="tier_6">Three months. This is a new way of living.</string>
+    <string name="streak_lost">You threw away %1$d clean days today. Start again: tomorrow counts.</string>
+    <string name="streak_broken">Today the streak broke. Start again tomorrow.</string>
+    <string name="stake_title">You are about to lose %1$d clean days</string>
+    <string name="stake_body">This resets your streak to zero. Is it worth it?</string>
+    <string name="stake_why">You wrote: “%1$s”</string>
+    <string name="concepts_path_title">The path</string>
+    <string name="concepts_progress">%1$d of %2$d read</string>
+    <string name="concepts_done_badge">Done</string>
+    <string name="concepts_continue">Continue</string>
+    <string name="why_title">My reason</string>
+    <string name="why_add">Write my reason</string>
+    <string name="why_edit">Edit</string>
+    <string name="why_hint">Why do you want to change? One honest sentence. It will appear when you are tempted to give up.</string>
+    <string name="why_placeholder">I want to be present for my family, finish my degree, respect myself again...</string>
+    <string name="why_save">Save</string>
+    <string name="why_dialog_title">Why do you want to change?</string>
+    <string name="concepts_time_title">What it really costs</string>
+    <string name="concepts_time_summary">Do the math on your hours. Then decide.</string>
+    <string name="concepts_mindset_title">Your mind decides</string>
+    <string name="concepts_mindset_summary">What you believe about yourself shapes what you do. This is where change begins.</string>
+    <string name="concepts_relapse_title">Slipping without quitting</string>
+    <string name="concepts_relapse_summary">You will slip. What matters is the next hour.</string>
+    <string-array name="concept_time_titles">
+        <item>Do the math</item>
+        <item>Ten years</item>
+        <item>What you would do with those hours</item>
+        <item>The cost that does not show</item>
+        <item>The most common regret</item>
+        <item>Start by winning back one hour</item>
+    </string-array>
+    <string-array name="concept_time_bodies">
+        <item>Two hours a day on the phone is 14 hours a week and about 730 hours a year: more than 30 full 24-hour days, every year. Three hours a day is over 45 days a year. Look at your average and multiply by 365. That is the part of your life you hand over every year.</item>
+        <item>Keeping your current average for ten years, that is 300 to 450 whole days of your life looking at a screen, close to a year or more without sleeping. What book, course, body, business or relationship would fit in that time? This is not exaggeration for effect. It is just arithmetic.</item>
+        <item>If someone gave you 700 free hours a year, what would you do? Learning a language well takes, for many people, hundreds of hours. Changing your body, starting a business, finishing a course: it all fits in hours. You already have those hours. They are just going somewhere else.</item>
+        <item>Time in the feed does not show up as a cost anywhere. No one bills you, you do not feel you lost anything. It is the most expensive cost there is precisely because it is invisible. You can earn money back. You cannot earn years back.</item>
+        <item>Hardly anyone near the end of life says they regret looking at their phone less. Regret is usually about what was not done: the person not visited, the project left in a drawer, the time not lived. Today you can still choose differently.</item>
+        <item>You do not need to win everything back today. Win back one hour. One hour a day is 365 hours a year, over 15 days. Pick one thing that matters to you, put that hour on your calendar and protect it like a non-negotiable commitment. That is how a life changes: one hour at a time.</item>
+    </string-array>
+    <string-array name="concept_mindset_titles">
+        <item>What you believe already decides for you</item>
+        <item>You are not your habit</item>
+        <item>The brain is not destiny</item>
+        <item>Every block kept is a vote</item>
+        <item>Discomfort is the training</item>
+        <item>Stop bargaining in the moment</item>
+        <item>Responsibility without guilt</item>
+    </string-array>
+    <string-array name="concept_mindset_bodies">
+        <item>If you believe you are an addict and will be like this forever, every slip becomes proof and every hard day becomes a sentence. If you believe you are learning to change, the same slip becomes information. Same situation, two stories, two futures. You do not choose the facts of your past, but you choose the story you tell about them. Start by swapping "I am like this" for "I am learning to be different".</item>
+        <item>"I am an addict" is an identity. "I have a habit I am changing" is a situation. Identity sticks; situations change. For some people, acknowledging the problem in support groups is an important part of the path, and that is valid. The point here is different: do not turn the problem into a sentence. You are much bigger than the worst thing you do.</item>
+        <item>The brain keeps adapting throughout life. What you repeat gets stronger; what you stop repeating gets weaker. That is true for the bad habit and for the new one. It is not magic and it is not fast, but it is real: every time you choose differently, you strengthen the new path and weaken the old one.</item>
+        <item>Every time you keep what you agreed with yourself, you vote for who you want to be: someone who keeps their word. You do not have to win the election today. You only need more votes than your old self. In 30 days you will have concrete evidence that you are that person. Self-trust is not declared: it is built, one clean day at a time.</item>
+        <item>The restlessness that squeezes is the discomfort of a habit being undone, not a sign that you are wrong. People who wait to feel good before changing never change. You will miss it, you will be bored, you will not know what to do with your hands. Getting through that is the training, the same discomfort as building muscle. When it hurts, remember: this is how it works.</item>
+        <item>You will not feel like changing when the urge of the habit arrives. So decide beforehand, without depending on willpower. Simple rules set with a calm head reduce the battle in the moment. "If I feel like opening the feed, then I stand up and drink a glass of water." Research on implementation intentions suggests this kind of if-then helps people do what they planned.</item>
+        <item>Being hard on yourself is not humiliating yourself. It is owning it: "this is on me, and I can change." Guilt looks back and paralyzes. Responsibility looks forward and acts. You are not to blame for what the product was designed to do. But you are responsible for what you do from now on. And that is the best news: what depends on you is exactly what can change.</item>
+    </string-array>
+    <string-array name="concept_relapse_titles">
+        <item>You will slip. Plan for it</item>
+        <item>The "since I already ruined it" effect</item>
+        <item>Shame feeds it; clarity solves it</item>
+        <item>Starting over is not going back to zero</item>
+        <item>Thought about turning the block off? That is a signal</item>
+        <item>When relapses become a pattern</item>
+    </string-array>
+    <string-array name="concept_relapse_bodies">
+        <item>Almost everyone who changes a hard habit slips along the way. It is not an exception: it is part of the process. Decide now what you will do the day after a slip. People with a plan to come back return faster, and people without one are often gone for weeks.</item>
+        <item>"Since I already broke the streak, I might as well." That thought turns a ten-minute slip into a lost week. The slip happens. What decides the outcome is the second click, the second hour. Stop at the first. Closing the screen right after is a win, even on the worst day.</item>
+        <item>Shame asks for relief, and the easiest relief is the same habit. Instead of punishing yourself, ask: what happened before? Tiredness, boredom, a fight, loneliness, late night? Write the trigger down. Every well-analysed relapse is a map of what you need to protect.</item>
+        <item>The streak goes back to zero. What you learned does not. Every clean day taught you something about your triggers, your hours and your defenses. Starting over is starting with more information than last time. And today is the first day of a new streak, which could be the biggest one yet.</item>
+        <item>If you thought about turning Blockfy off, something is pressing on you: anxiety, boredom, tiredness, an argument. The problem is not the block, it is what is asking for it to get out of the way. Wait 15 minutes. Drink water. Talk to someone. Then decide. If you still turn it off, turn it back on the same day.</item>
+        <item>If you try and cannot, many times, even though you really want to, that is not a character flaw. It may be a sign that something lies underneath, such as anxiety, depression, ADHD or trauma, and help from a psychologist or psychiatrist shortens the path a lot. Asking for help is not giving up: it is the most efficient decision there is.</item>
     </string-array>
 </resources>

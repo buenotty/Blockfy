@@ -63,7 +63,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var lastDeepScanElapsed = 0L
     private var lastDeepShorts = false
     private var lastEventElapsed = 0L
-    private var lastViewIdScanElapsed = 0L
 
     private val pendingTotal = mutableMapOf<String, Long>()
     private val pendingShorts = mutableMapOf<String, Long>()
@@ -73,7 +72,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        ServiceDiagnostics.setConnected(true)
         serviceScope.launch {
             dataStore.appSettingsFlow.collect {
                 settings = it
@@ -120,7 +118,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 info.packageNames = wanted.toTypedArray()
                 serviceInfo = info
                 appliedScope = wanted
-                ServiceDiagnostics.onScope(wanted.filter { it != ListeningScope.NOTHING })
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating the listening scope", e)
             }
@@ -173,16 +170,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onInterrupt() = Unit
 
-    override fun onUnbind(intent: Intent?): Boolean {
-        ServiceDiagnostics.setConnected(false)
-        return super.onUnbind(intent)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         runCatching { unregisterReceiver(screenOnReceiver) }
         flushUsage()
-        ServiceDiagnostics.setConnected(false)
         serviceScope.cancel()
     }
 
@@ -192,7 +183,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         // Reading the screen is the expensive part, so only do it when something needs it: the
         // Reels/Shorts rule, the mindfulness reminder or the open Diagnostics card.
         val needShorts = canHaveShorts && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
-        val root = if (needShorts || ServiceDiagnostics.collectingViewIds) rootFromEvent(event, pkg) else null
+        val root = if (needShorts) rootFromEvent(event, pkg) else null
         try {
             process(pkg, appName, app, canHaveShorts && needShorts, root)
         } finally {
@@ -216,7 +207,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val shortsForCredit = shortsVisible || (canScan && !deep && lastDeepShorts)
 
         creditUsage(pkg, appName, shortsForCredit)
-        if (root != null) collectViewIdsIfRequested(root, nowElapsed)
 
         val usage = usageWithPending()
         val verdict = BlockPolicy.evaluate(
@@ -225,7 +215,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             usage = usage,
             shortsVisible = shortsVisible
         )
-        ServiceDiagnostics.onEvent(pkg, shortsVisible, describe(verdict))
 
         if (verdict.shouldBlock) {
             enforce(verdict, app, root)
@@ -256,13 +245,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun shortsLabel(appName: String) = if (appName == "YouTube") "YouTube Shorts" else "$appName Reels"
 
-    private fun describe(verdict: BlockVerdict): String = when (verdict.reason) {
-        BlockReason.NONE -> "ok"
-        BlockReason.SCHEDULE -> if (verdict.wholeApp) "blocked: whole app" else "blocked: Reels/Shorts"
-        BlockReason.DAILY_LIMIT -> "blocked: Reels/Shorts limit reached"
-        BlockReason.TOTAL_LIMIT -> "blocked: app limit reached"
-    }
-
     /** Alert once per episode, but keep pushing the user out until the app actually leaves. */
     private fun enforce(verdict: BlockVerdict, app: App, root: AccessibilityNodeInfo?) {
         val appName = verdict.appName
@@ -282,7 +264,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 else -> getString(R.string.alert_app_total_limit_title) to
                     getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
             }
-            notifyAlert(title, message, isFinal = true)
+            notifyAlert(title, withWhy(message), isFinal = true)
             serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         }
 
@@ -291,6 +273,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         } else {
             exitShorts(appName, root)
         }
+    }
+
+    /** Adds the user's own reason for changing under a block message, when they wrote one. */
+    private fun withWhy(message: String): String {
+        val why = settings.myWhy
+        return if (why.isBlank()) message else "$message\n\u201C$why\u201D"
     }
 
     private fun maybeProvoke(appName: String) {
@@ -352,15 +340,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             total.forEach { (app, seconds) -> dataStore.addTotalAppUsage(app, seconds) }
             shorts.forEach { (app, seconds) -> dataStore.addUsage(app, seconds) }
         }
-    }
-
-    private fun collectViewIdsIfRequested(root: AccessibilityNodeInfo, now: Long) {
-        if (!ServiceDiagnostics.collectingViewIds) return
-        if (now - lastViewIdScanElapsed < VIEW_ID_SCAN_INTERVAL_MILLIS) return
-        lastViewIdScanElapsed = now
-        val ids = linkedSetOf<String>()
-        ShortsDetector.collectViewIds(root, ids)
-        ServiceDiagnostics.onViewIds(ids.toList())
     }
 
     private fun exitShorts(appName: String, root: AccessibilityNodeInfo?) {
@@ -619,7 +598,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun leaveAdultScreen() {
         val message = AdultContentDetector.getRandomWarning(this)
-        notifyAlert(getString(R.string.adult_blocker_title), message, isFinal = true)
+        notifyAlert(getString(R.string.adult_blocker_title), withWhy(message), isFinal = true)
         performGlobalAction(GLOBAL_ACTION_HOME)
     }
 
@@ -633,7 +612,6 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val DEEP_SCAN_INTERVAL_MILLIS = 700L
         private const val MIN_EVENT_GAP_MILLIS = 150L
         private const val SCOPE_REFRESH_MILLIS = 30_000L
-        private const val VIEW_ID_SCAN_INTERVAL_MILLIS = 1_000L
         private const val EPISODE_GAP_MILLIS = 8_000L
         private const val PROVOCATION_INTERVAL_MILLIS = 180_000L
         private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L

@@ -110,40 +110,48 @@
     <string name="weekday_thu">Qui</string>
     <string name="weekday_fri">Sex</string>
     <string name="weekday_sat">Sáb</string>
-    <string name="concepts_intro">Um lembrete de por que esses bloqueios existem, para o dia em que der vontade de desligar tudo.</string>
-    <string name="concepts_shorts_title">Vídeos curtos</string>
-    <string name="concepts_shorts_summary">O que o feed faz com a sua atenção, o seu trabalho e o seu humor.</string>
+    <string name="concepts_intro">Bloquear dá fôlego. O que muda a sua vida é o que você passa a acreditar sobre si mesmo e o que faz a partir daí. Leia na ordem. Sem pressa e sem se enganar.</string>
+    <string name="concepts_shorts_title">O feed contra você</string>
+    <string name="concepts_shorts_summary">Você não é fraco. Você está contra um produto feito para te prender.</string>
     <string name="concepts_porn_title">Pornografia</string>
-    <string name="concepts_porn_summary">O que isso custa à sua índole, aos seus relacionamentos e à sua vida sexual.</string>
+    <string name="concepts_porn_summary">O que ela tira do seu caráter, dos seus relacionamentos e da sua liberdade.</string>
     <string name="concepts_page">%1$d / %2$d</string>
     <string name="concepts_next">Próximo</string>
     <string-array name="concept_shorts_titles">
-        <item>O trabalho fica mais raso</item>
-        <item>A dopamina para de esperar</item>
-        <item>Foi feito para não acabar</item>
+        <item>Você não é fraco. Você está contra um produto</item>
+        <item>Mais um, e mais um, e mais um</item>
+        <item>Você treina o que repete</item>
+        <item>O trabalho que fica raso</item>
         <item>Sono e humor pagam a conta</item>
-        <item>As outras pessoas ficam pequenas</item>
+        <item>A vitrine dos outros e o seu dia inteiro</item>
+        <item>Dá para sair, e é mais leve do que parece</item>
     </string-array>
     <string-array name="concept_shorts_bodies">
-        <item>Alguns minutos viram uma hora porque cada vídeo acaba antes de você decidir parar. A tarefa que te fez abrir o celular continua esperando, e começar ela pesa mais do que pesava antes.</item>
-        <item>Vídeo curto te treina a esperar um estímulo a cada poucos segundos. Trabalho comum, conversa e silêncio passam a parecer sem graça, não porque pioraram, mas porque o seu sistema de recompensa ficou mais barulhento.</item>
-        <item>Não existe último episódio. O próximo já está carregado, escolhido porque tem mais chance de te manter ali. O produto é o seu tempo, não o vídeo.</item>
-        <item>Rolar de madrugada rouba o sono que deixaria o dia seguinte mais fácil. Você acorda mais irritado, menos paciente, e mais propenso a abrir o mesmo app de novo.</item>
-        <item>Um feed de destaques de outras pessoas faz o seu próprio dia parecer um fracasso. Essa comparação não é informação. É um efeito de assistir estranhos se exibindo.</item>
+        <item>Equipes inteiras de engenheiros e cientistas de dados trabalham para que você fique mais um minuto. Cada deslizar de dedo é medido, testado e ajustado. Se você sente que não consegue parar, isso não prova que você é fraco: prova que o produto funciona. Mas saber disso não te tira a responsabilidade. Agora que você sabe, a pergunta é: o que você vai fazer a respeito?</item>
+        <item>Não existe último episódio. O próximo vídeo já está carregado, escolhido porque é o que tem mais chance de te segurar. Nenhum vídeo termina de um jeito que te faça levantar. O produto não é o vídeo. O produto é a sua atenção, vendida em lotes. Enquanto você não decidir o limite, alguém decide por você.</item>
+        <item>A cada vídeo curto você treina esperar uma novidade a cada poucos segundos. Quanto mais treina, mais sem graça parecem ler, conversar, trabalhar ou ficar em silêncio. O mundo não ficou chato: o seu sistema de recompensa ficou mal acostumado. A boa notícia é que o que se aprende pode ser reaprendido, e muita gente sente a diferença em algumas semanas longe do feed.</item>
+        <item>Toda vez que você larga uma tarefa para espiar o feed, o seu foco leva tempo para voltar. Quem vive se interrompendo entrega o trabalho pela metade e termina o dia mais cansado. Aquilo que você diz que não tem tempo de fazer costuma estar debaixo de uma pilha de vídeos.</item>
+        <item>Rolar de madrugada rouba o sono que deixaria o dia seguinte mais fácil. Você acorda mais irritado, com menos paciência, e mais propenso a abrir o mesmo app de novo. É um ciclo: o cansaço pede o feed, e o feed aumenta o cansaço.</item>
+        <item>Você vê o melhor minuto da vida de milhares de pessoas, editado, filtrado e ensaiado, e compara com o seu dia inteiro, sem edição. Perde sempre. Essa sensação de estar ficando para trás não é informação sobre a sua vida. É efeito colateral de ficar olhando a vitrine dos outros.</item>
+        <item>A primeira semana é a pior: a mão vai sozinha ao celular e o corpo pede o estímulo. Depois a vontade costuma diminuir. Muita gente relata mais calma, mais sono e mais vontade de fazer coisas nas primeiras semanas. Você não está abrindo mão de algo valioso. Está trocando o que te consome por aquilo que te constrói.</item>
     </string-array>
     <string-array name="concept_porn_titles">
         <item>Isso te treina a usar pessoas</item>
         <item>A índole se desgasta no segredo</item>
+        <item>Você não sabe a quem está assistindo</item>
+        <item>O ciclo da vergonha</item>
         <item>Os relacionamentos esfriam</item>
         <item>A vida sexual encolhe</item>
-        <item>Dá para sair</item>
+        <item>Dá para sair, e você vai se reconhecer</item>
     </string-array>
     <string-array name="concept_porn_bodies">
-        <item>Pornografia ensina a tratar outra pessoa como produto: disponível, calada e descartada quando a sensação passa. Esse hábito não fica na tela. Ele aparece no jeito de olhar para quem está de verdade no mesmo lugar que você.</item>
-        <item>Fazer isso escondido te parte em dois. Você fala uma coisa sobre quem é e mantém outra vida que não defenderia em voz alta. Índole é o que você repete quando ninguém está te avaliando.</item>
-        <item>Uma parceria não é uma sequência de novidade. Se a sua excitação depende de desconhecidos, abas e de ir cada vez mais longe, a pessoa que te ama começa a parecer insuficiente. Isso não é falha dela. É o preço do hábito.</item>
-        <item>O uso pesado deixa a intimidade real mais lenta, mais ansiosa ou mais difícil de aproveitar. Você precisa de mais intensidade para o mesmo efeito, e um corpo comum ao seu lado deixa de bastar. Isso é apetite danificado, não um padrão alto.</item>
-        <item>Se você estiver decidido, vai achar um jeito de burlar o bloqueio. O bloqueio existe para criar uma pausa: tempo bastante para lembrar que isso não te dá uma vida melhor, uma cabeça mais clara, nem um relacionamento que você respeite.</item>
+        <item>Pornografia ensina a tratar outra pessoa como produto: disponível, calada e descartada quando a sensação passa. Esse hábito não fica na tela. Ele aparece no jeito de olhar para quem está de verdade no mesmo lugar que você. Cada clique é um treino, e você sempre treina alguma coisa.</item>
+        <item>Fazer isso escondido te parte em dois. Você fala uma coisa sobre quem é e mantém outra vida que não defenderia em voz alta. Índole é o que você repete quando ninguém está te avaliando. O segredo pesa mais do que o ato, e quanto mais tempo ele dura, mais caro fica.</item>
+        <item>Parte desse conteúdo envolve exploração, coerção ou pessoas que nunca consentiram em ser vistas. Você não tem como saber qual. Cada clique alimenta uma indústria em que o sofrimento de alguém pode ser o produto. É difícil sustentar um "não faço mal a ninguém" olhando isso de frente.</item>
+        <item>O ciclo costuma ser: tensão, uso, alívio curto, vergonha, tensão de novo. A vergonha não te afasta do hábito: ela cria o estresse que pede o próximo alívio. Por isso se punir não funciona. O que quebra o ciclo é a ação seguinte: sair do lugar, ligar para alguém, voltar ao plano.</item>
+        <item>Uma parceria não é uma sequência de novidade. Se a sua excitação passa a depender de desconhecidos, abas e de ir cada vez mais longe, a pessoa que te ama começa a parecer insuficiente. Isso não é falha dela. É o preço do hábito. E quem está ao seu lado costuma sentir mais do que você imagina.</item>
+        <item>O uso pesado pode deixar a intimidade real mais lenta, mais ansiosa ou mais difícil de aproveitar. Muita gente relata precisar de mais intensidade para o mesmo efeito, e um corpo comum ao lado deixa de bastar. Isso não é padrão alto: é apetite desregulado, e apetite também se reeduca.</item>
+        <item>Se você estiver decidido, vai achar um jeito de burlar qualquer bloqueio. O bloqueio existe para criar uma pausa: tempo bastante para lembrar que isso não te dá uma vida melhor, uma cabeça mais clara nem um relacionamento que você respeite. As primeiras semanas são as mais difíceis. Depois, muita gente descreve mais clareza e mais presença. Recaídas acontecem; o que conta é a direção.</item>
     </string-array>
     <string name="privacy_policy_btn">Política de privacidade</string>
     <string name="nav_blocks">Bloqueios</string>
@@ -195,7 +203,7 @@
     <string name="discard_keep">Continuar editando</string>
     <string name="discard_confirm">Descartar</string>
     <string name="saved_toast">Salvo</string>
-    <string name="concepts_hero_title">Por que bloquear?</string>
+    <string name="concepts_hero_title">Mude a mente primeiro</string>
     <string name="concepts_points">%1$d reflexões</string>
     <string name="concepts_prev">Anterior</string>
     <string name="concepts_done">Concluir</string>
@@ -258,7 +266,7 @@
     <string name="concepts_habits_summary">Como um hábito vira compulsão e o que fazer na hora da vontade.</string>
     <string name="concepts_focus_title">Foco e TDAH</string>
     <string name="concepts_focus_summary">Dicas para quem tem dificuldade de manter a atenção, com ou sem diagnóstico.</string>
-    <string name="concepts_plan_title">Seu plano na prática</string>
+    <string name="concepts_plan_title">Seu plano</string>
     <string name="concepts_plan_summary">Passos simples para configurar o Blockfy e continuar.</string>
     <string name="concepts_help_title">Quando procurar ajuda</string>
     <string name="concepts_help_summary">Sinais de que só o aplicativo não basta e onde achar apoio.</string>
@@ -297,6 +305,7 @@
         <item>Se você tem ou suspeita de TDAH, o tratamento é decidido com psiquiatra, neurologista ou psicólogo, e pode incluir terapia e, quando indicado, medicação. Aplicativo nenhum substitui isso. Nunca comece nem pare um remédio por conta própria.</item>
     </string-array>
     <string-array name="concept_plan_titles">
+        <item>Escreva o seu porquê</item>
         <item>Comece pequeno</item>
         <item>Um limite que você consegue cumprir</item>
         <item>Limite do app x limite de Reels</item>
@@ -305,12 +314,13 @@
         <item>Revise toda semana</item>
     </string-array>
     <string-array name="concept_plan_bodies">
+        <item>Antes de configurar qualquer coisa, escreva em uma frase por que você quer mudar. Na aba Conceitos, toque em "Meu porquê". Ele aparece na sua tela inicial e na hora em que você tentar desistir. Quando a vontade falar alto, é a sua própria voz, calma e sincera, que vai responder.</item>
         <item>Ligue só um ou dois apps no começo. Um limite que você cumpre vale mais do que dez que você desliga. Quando ficar fácil, adicione o próximo.</item>
-        <item>Se hoje você usa 3 horas por dia, comece com 2 e vá baixando semana a semana. Um limite impossível só leva a desligar o bloqueio e desistir.</item>
+        <item>Se hoje você usa 3 horas por dia, comece com 2 e vá baixando semana a semana. Um limite impossível só leva a desligar o bloqueio e desistir. Proteja a sua sequência de dias limpos: ela vale mais do que qualquer minuto extra.</item>
         <item>Dá para ter, por exemplo, 1 hora de Instagram por dia e só 15 minutos de Reels. É a combinação mais realista: você mantém o que é útil (mensagens, amigos, trabalho) e corta o feed sem fim. Configure em cada app: uma regra para o app inteiro e outra para Reels/Shorts.</item>
         <item>Noite e madrugada costumam ser os horários de maior risco. Em Ajustes, escolha os dias e horários em que os bloqueios valem, por exemplo o modelo Noite. Os horários são os mesmos para todos os apps.</item>
         <item>Ligue o modo estrito num momento de motivação. Até a meia-noite você só poderá deixar os bloqueios mais rígidos, nunca mais frouxos. É um combinado que você faz com você mesmo antes de a vontade chegar.</item>
-        <item>Uma vez por semana, olhe o resumo de hoje, os bloqueios e o que funcionou. Ajuste o que estiver difícil demais ou fácil demais. O objetivo não é ter o app perfeito, é sobrar tempo e atenção para o que importa para você.</item>
+        <item>Uma vez por semana, olhe a sua sequência, os bloqueios e o que funcionou. Ajuste o que estiver difícil demais ou fácil demais. O objetivo não é ter o app perfeito: é sobrar tempo e atenção para o que importa para você.</item>
     </string-array>
     <string-array name="concept_help_titles">
         <item>App é ferramenta, não tratamento</item>
@@ -380,5 +390,99 @@
         <item>Você está construindo um hábito novo. No começo pesa, depois fica leve.</item>
         <item>Mantenha o bloqueio ligado. Seu eu mais calmo decidiu por você.</item>
         <item>Vale mais um limite cumprido do que dez promessas.</item>
+    </string-array>
+    <string name="setup_title">Vamos deixar tudo pronto</string>
+    <string name="setup_subtitle">O Blockfy precisa de duas permissões para funcionar. Sem elas, nada é bloqueado.</string>
+    <string name="setup_step1_title">Acessibilidade</string>
+    <string name="setup_step1_desc">Permite ao Blockfy perceber quando você abre Reels, Shorts ou um app bloqueado e tirar você de lá.</string>
+    <string name="setup_step2_title">Bateria</string>
+    <string name="setup_step2_desc">Impede o celular de colocar o Blockfy em suspensão. Sem isso, os bloqueios podem parar de funcionar depois de um tempo.</string>
+    <string name="setup_btn_accessibility">Ativar Acessibilidade</string>
+    <string name="setup_btn_battery">Desativar otimização da bateria</string>
+    <string name="setup_done">Pronto</string>
+    <string name="setup_continue">Continuar</string>
+    <string name="setup_skip_battery">Continuar sem isso (não recomendado)</string>
+    <string name="hero_label">Dias limpos</string>
+    <string name="hero_write_why">Escrever o meu porquê</string>
+    <string name="milestone_next">Faltam %1$d dias para chegar a %2$d</string>
+    <string name="milestone_max">Você passou do maior marco. Continue.</string>
+    <string name="tier_0">O primeiro dia começa agora. O primeiro passo é o mais difícil.</string>
+    <string name="tier_1">Os primeiros dias são os mais difíceis. Não jogue fora.</string>
+    <string name="tier_2">Você já passou do pior. Proteja o que construiu.</string>
+    <string name="tier_3">Uma semana inteira. Isso é prova de que você consegue.</string>
+    <string name="tier_4">Duas semanas. O hábito antigo está perdendo força.</string>
+    <string name="tier_5">Um mês ou mais. Na prática, você virou outra pessoa.</string>
+    <string name="tier_6">Três meses. Isso é um novo jeito de viver.</string>
+    <string name="streak_lost">Você jogou fora %1$d dias limpos hoje. Recomece: amanhã vale de novo.</string>
+    <string name="streak_broken">Hoje a sequência quebrou. Recomece amanhã.</string>
+    <string name="stake_title">Você está prestes a perder %1$d dias limpos</string>
+    <string name="stake_body">Isso zera a sua sequência. Vale a pena?</string>
+    <string name="stake_why">Você escreveu: “%1$s”</string>
+    <string name="concepts_path_title">A trilha</string>
+    <string name="concepts_progress">%1$d de %2$d lidos</string>
+    <string name="concepts_done_badge">Concluído</string>
+    <string name="concepts_continue">Continuar</string>
+    <string name="why_title">Meu porquê</string>
+    <string name="why_add">Escrever meu porquê</string>
+    <string name="why_edit">Editar</string>
+    <string name="why_hint">Por que você quer mudar? Uma frase sincera. Ela vai aparecer quando você pensar em desistir.</string>
+    <string name="why_placeholder">Quero estar presente para minha família, terminar minha faculdade, voltar a me respeitar...</string>
+    <string name="why_save">Salvar</string>
+    <string name="why_dialog_title">Por que você quer mudar?</string>
+    <string name="concepts_time_title">Quanto isso custa de verdade</string>
+    <string name="concepts_time_summary">Faça a conta das suas horas. Depois decida.</string>
+    <string name="concepts_mindset_title">Sua mente decide</string>
+    <string name="concepts_mindset_summary">O que você acredita sobre si mesmo molda o que você faz. A mudança começa aqui.</string>
+    <string name="concepts_relapse_title">Tropeçar sem desistir</string>
+    <string name="concepts_relapse_summary">Você vai tropeçar. O que importa é a próxima hora.</string>
+    <string-array name="concept_time_titles">
+        <item>Faça a conta</item>
+        <item>Dez anos</item>
+        <item>O que você faria com essas horas</item>
+        <item>O custo que não aparece</item>
+        <item>O arrependimento mais comum</item>
+        <item>Comece recuperando uma hora</item>
+    </string-array>
+    <string-array name="concept_time_bodies">
+        <item>Duas horas por dia no celular são 14 horas por semana e cerca de 730 horas por ano: mais de 30 dias inteiros, de 24 horas, todo ano. Três horas por dia passam de 45 dias por ano. Olhe a sua média de uso e multiplique por 365. Esse é o tempo da sua vida que você entrega todos os anos.</item>
+        <item>Mantendo a sua média atual por dez anos, são de 300 a 450 dias inteiros da sua vida olhando para uma tela, quase um ano ou mais sem dormir. Que livro, curso, corpo, negócio ou relacionamento caberia nesse tempo? Não é exagero de efeito. É só aritmética.</item>
+        <item>Se alguém te desse 700 horas livres por ano, o que você faria? Aprender bem um idioma leva, para muita gente, centenas de horas. Mudar o corpo, abrir um negócio, terminar um curso: tudo isso cabe em horas. Você já tem essas horas. Elas só estão indo para outro lugar.</item>
+        <item>O tempo no feed não aparece como gasto em lugar nenhum. Ninguém te cobra, você não sente que perdeu. É o gasto mais caro que existe justamente por ser invisível. Dinheiro você recupera. Os anos, não.</item>
+        <item>Dificilmente alguém no fim da vida diz que se arrepende de ter olhado menos para o celular. O arrependimento costuma ser sobre o que não foi feito: a pessoa que não foi visitada, o projeto que ficou na gaveta, o tempo que não foi vivido. Hoje ainda dá para escolher diferente.</item>
+        <item>Você não precisa recuperar tudo hoje. Recupere uma hora. Uma hora por dia são 365 horas por ano, mais de 15 dias. Escolha uma coisa que importa para você, coloque essa hora no calendário e proteja como um compromisso inegociável. É assim que a vida muda: uma hora de cada vez.</item>
+    </string-array>
+    <string-array name="concept_mindset_titles">
+        <item>O que você acredita já decide por você</item>
+        <item>Você não é o seu hábito</item>
+        <item>O cérebro não é destino</item>
+        <item>Cada bloqueio cumprido é um voto</item>
+        <item>O desconforto é o treino</item>
+        <item>Pare de negociar na hora da vontade</item>
+        <item>Responsabilidade sem culpa</item>
+    </string-array>
+    <string-array name="concept_mindset_bodies">
+        <item>Se você acredita que é viciado e vai ser assim para sempre, cada deslize vira prova e cada dia difícil vira sentença. Se acredita que está aprendendo a mudar, o mesmo deslize vira informação. A mesma situação, duas histórias, dois futuros. Você não escolhe os fatos do seu passado, mas escolhe a história que conta sobre eles. Comece trocando a frase "eu sou assim" por "eu estou aprendendo a ser diferente".</item>
+        <item>"Eu sou viciado" é uma identidade. "Eu tenho um hábito que estou mudando" é uma situação. Identidade gruda; situação muda. Para algumas pessoas, reconhecer o problema em grupos de apoio é parte importante do caminho, e isso é válido. O ponto aqui é outro: não transformar o problema em sentença. Você é muito maior do que a pior coisa que faz.</item>
+        <item>O cérebro continua se adaptando ao longo da vida. O que você repete se fortalece; o que você para de repetir enfraquece. Isso vale para o hábito ruim e vale para o novo. Não é mágica nem é rápido, mas é real: toda vez que você escolhe diferente, você reforça o caminho novo e enfraquece o antigo.</item>
+        <item>Cada vez que você cumpre o que combinou consigo, você vota em quem quer ser: alguém que cumpre a própria palavra. Você não precisa ganhar a eleição hoje. Basta somar mais votos do que o seu eu antigo. Em 30 dias você terá evidências concretas de que é essa pessoa. A confiança em si mesmo não se declara: se constrói, dia limpo por dia limpo.</item>
+        <item>A inquietação que aperta é o desconforto de um hábito sendo desfeito, não um sinal de que você está errado. Quem espera se sentir bem para mudar nunca muda. Você vai sentir falta, vai ter tédio, vai ficar sem saber o que fazer com as mãos. Atravessar isso é o treino, o mesmo desconforto de quem constrói músculo. Quando doer, lembre: é assim que funciona.</item>
+        <item>Você não vai ter vontade de mudar quando a vontade do hábito chegar. Por isso decida antes, sem depender de vontade. Regras simples, definidas com a cabeça tranquila, reduzem a batalha na hora. "Se eu sentir vontade de abrir o feed, então levanto e bebo um copo de água." Pesquisas sobre intenções de implementação indicam que esse tipo de se-então ajuda a cumprir o que se planeja.</item>
+        <item>Pegar pesado consigo não é se humilhar. É assumir: "isso é comigo, e eu posso mudar". Culpa olha para trás e paralisa. Responsabilidade olha para a frente e age. Você não é culpado pelo que o produto foi projetado para fazer. Mas é responsável pelo que faz a partir de agora. E essa é a melhor notícia: o que depende de você é exatamente o que dá para mudar.</item>
+    </string-array>
+    <string-array name="concept_relapse_titles">
+        <item>Vai haver um tropeço. Planeje-o</item>
+        <item>O efeito "já que estraguei"</item>
+        <item>A vergonha alimenta; a clareza resolve</item>
+        <item>Recomeçar não é voltar ao zero</item>
+        <item>Pensou em desligar o bloqueio? Isso é um sinal</item>
+        <item>Quando as recaídas viram padrão</item>
+    </string-array>
+    <string-array name="concept_relapse_bodies">
+        <item>Quase todo mundo que muda um hábito difícil tropeça no caminho. Não é exceção: é parte do processo. Decida agora o que você vai fazer no dia seguinte a um deslize. Quem tem um plano de retorno volta mais rápido, e quem não tem costuma ficar semanas fora.</item>
+        <item>"Já que quebrei a sequência, vou aproveitar." Esse pensamento transforma um deslize de dez minutos em uma semana perdida. O deslize acontece. O que decide o resultado é o segundo clique, a segunda hora. Pare no primeiro. Fechar a tela logo depois é uma vitória, mesmo no pior dia.</item>
+        <item>A vergonha pede alívio, e o alívio mais fácil é o mesmo hábito. Em vez de se castigar, pergunte: o que aconteceu antes? Cansaço, tédio, briga, solidão, madrugada? Anote o gatilho. Cada recaída bem analisada é um mapa do que você precisa proteger.</item>
+        <item>A sequência volta para zero. O que você aprendeu, não. Cada dia limpo ensinou algo sobre os seus gatilhos, os seus horários e as suas defesas. Recomeçar é recomeçar com mais informação do que da última vez. E o dia de hoje é o primeiro de uma nova sequência, que pode ser a maior de todas.</item>
+        <item>Se você pensou em desligar o Blockfy, algo está pressionando: ansiedade, tédio, cansaço, uma discussão. O problema não é o bloqueio, é o que está pedindo para ele sair do caminho. Espere 15 minutos. Beba água. Fale com alguém. Depois decida. Se mesmo assim desligar, volte a ligar no mesmo dia.</item>
+        <item>Se você tenta e não consegue, várias vezes, mesmo querendo muito, isso não é falta de caráter. Pode ser sinal de que existe algo por baixo, como ansiedade, depressão, TDAH ou trauma, e a ajuda de um psicólogo ou psiquiatra encurta muito o caminho. Procurar ajuda não é desistir: é a decisão mais eficiente que existe.</item>
     </string-array>
 </resources>

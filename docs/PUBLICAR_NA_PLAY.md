@@ -77,7 +77,11 @@ Respostas coerentes com o código atual:
 - **Público-alvo e classificação:** o app trata de bloqueio de pornografia, mas não mostra conteúdo adulto. Responda ao questionário de classificação com honestidade; o resultado típico é livre ou 12+.
 - **Verificação de desenvolvedor (Android, Brasil):** o Google passa a exigir que apps instalados em aparelhos certificados venham de desenvolvedores verificados. Apps publicados pela Play fazem parte desse processo; confirme o prazo e os passos no Play Console.
 
+## 6.1 Permissão de bateria (declaração obrigatória)
+
+O app pede ao Android para não ser suspenso (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`), como outros apps de bloqueio fazem. A Play restringe essa permissão e pode pedir uma declaração no Play Console. Use este texto: "O Blockfy bloqueia apps no horário que o usuário configurou. Se o sistema suspender o serviço de acessibilidade para economizar bateria, os bloqueios deixam de funcionar sem aviso, e a função principal do app falha. O pedido aparece uma única vez, na configuração inicial, e o usuário pode recusar." **Risco:** se a Play recusar a declaração, remova a permissão do `AndroidManifest.xml` e use só a tela de ajustes de bateria do sistema.
+
 ## 7. Depois de publicar
 
-- Vá em **Ajustes → Diagnóstico** no app se algum bloqueio falhar e mande um print para quem mantém o código.
-- Os apps de rede social mudam a tela deles sem avisar. Se Reels/Shorts deixarem de ser detectados depois de uma atualização do Instagram ou do YouTube, a detecção precisa de ajuste (o Diagnóstico mostra o que está disponível).
+- Use o painel **Android vitals** do Play Console para acompanhar bateria, travamentos e despertares do app nos testadores da beta.
+- Os apps de rede social mudam a tela deles sem avisar. Se Reels/Shorts deixarem de ser detectados depois de uma atualização do Instagram ou do YouTube, a detecção precisa de ajuste (peça aos testadores uma gravação de tela do problema).

@@ -19,6 +19,8 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
 
+const val MAX_WHY_LENGTH = 200
+
 class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewModel() {
 
     val appSettings: StateFlow<AppSettings> =
@@ -53,7 +55,7 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = StreakInfo(current = 0, best = 0, todayClean = false, lastDays = List(7) { DayState.EMPTY })
+            initialValue = StreakInfo(current = 0, best = 0, todayClean = false, lostDays = 0, lastDays = List(7) { DayState.EMPTY })
         )
 
     init {
@@ -118,6 +120,16 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         if (settings.accessibilityWasGranted && BlockPolicy.hasAnyProtection(settings)) {
             viewModelScope.launch { dataStoreManager.markLoosened() }
         }
+    }
+
+    fun setSetupDone() = update { it.copy(setupDone = true) }
+
+    fun setMyWhy(text: String) = update { it.copy(myWhy = text.trim().take(MAX_WHY_LENGTH)) }
+
+    /** Remembers how far the user got in a concept topic; never moves backwards. */
+    fun markConceptRead(topicRoute: String, cardsRead: Int) = update { settings ->
+        val previous = settings.conceptsRead[topicRoute] ?: 0
+        if (cardsRead <= previous) settings else settings.copy(conceptsRead = settings.conceptsRead + (topicRoute to cardsRead))
     }
 
     fun setOnboardingDone() = update { it.copy(onboardingDone = true) }

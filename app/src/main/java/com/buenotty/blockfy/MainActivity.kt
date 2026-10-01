@@ -26,6 +26,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGranted
+import com.buenotty.blockfy.feature_setup.SetupScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -64,6 +72,19 @@ class MainActivity : AppCompatActivity() {
                 val viewModel: OverviewViewModel = koinViewModel()
                 val loaded by viewModel.isLoaded.collectAsState()
                 val settings by viewModel.appSettings.collectAsState()
+                val context = LocalContext.current
+                var accessibilityOn by remember { mutableStateOf(context.isAccessibilityGranted()) }
+                LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                    accessibilityOn = context.isAccessibilityGranted()
+                }
+
+                // Remember that Accessibility was on; finding it off later, with blocks set up, means the
+                // user switched it off, which throws today's streak away.
+                LaunchedEffect(accessibilityOn, loaded, settings.setupDone) {
+                    if (loaded && settings.setupDone) {
+                        if (accessibilityOn) viewModel.noteAccessibilityGranted() else viewModel.noteAccessibilityMissing()
+                    }
+                }
 
                 when {
                     // Wait for the stored settings so the notice never flashes for people who
@@ -74,6 +95,9 @@ class MainActivity : AppCompatActivity() {
                             .background(MaterialTheme.colorScheme.background)
                     )
                     !settings.onboardingDone -> NoticeScreen(onAccept = viewModel::setOnboardingDone)
+                    // Accessibility and background running come first. The same screen comes back if
+                    // Accessibility is ever found switched off.
+                    !settings.setupDone || !accessibilityOn -> SetupScreen(onFinish = viewModel::setSetupDone)
                     else -> {
                         LaunchedEffect(Unit) { askForNotificationsOnce() }
                         MainScaffold()

@@ -29,6 +29,7 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.ScheduleEditor
 @Composable
 fun ScheduleSettingsCard(
     saved: AppSettings,
+    streakDays: Int,
     onSave: (start: Int, end: Int, weekdays: Int) -> Unit
 ) {
     var start by remember(saved.scheduleStart) { mutableStateOf(saved.scheduleStart) }
@@ -84,6 +85,8 @@ fun ScheduleSettingsCard(
             title = stringResource(R.string.loosen_title),
             message = stringResource(R.string.loosen_msg),
             confirmLabel = stringResource(R.string.loosen_confirm),
+            streakDays = streakDays,
+            why = saved.myWhy,
             onDismissRequest = { showConfirm = false },
             onConfirmation = {
                 showConfirm = false

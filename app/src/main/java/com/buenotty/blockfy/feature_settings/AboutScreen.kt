@@ -84,7 +84,8 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = spacedBy(20.dp)
     ) {
-        ScheduleSettingsCard(saved = appSettings, onSave = overviewViewModel::setSchedule)
+        val streak by overviewViewModel.streak.collectAsState()
+        ScheduleSettingsCard(saved = appSettings, streakDays = streak.current, onSave = overviewViewModel::setSchedule)
 
         PreferenceGroup(title = stringResource(R.string.provocation_mode_title)) {
             SwitchPreference(
@@ -241,9 +242,6 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        BatteryCard()
-
-        DiagnosticsCard()
 
         Spacer(modifier = Modifier.height(8.dp))
     }

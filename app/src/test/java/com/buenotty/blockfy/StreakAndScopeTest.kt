@@ -51,10 +51,13 @@ class StreakAndScopeTest {
     }
 
     @Test
-    fun looseningTodayBreaksTodayButKeepsHistory() {
+    fun looseningTodayThrowsTheStreakAway() {
         val usage = DailyUsage(date = today.toString(), loosened = true)
         val info = streak(listOf(day(2, true), day(1, true)), usage)
-        assertEquals(2, info.current)
+        // The two clean days are thrown away, and the screen says how many were lost.
+        assertEquals(0, info.current)
+        assertEquals(2, info.lostDays)
+        assertEquals(2, info.best)
         assertFalse(info.todayClean)
         assertEquals(DayState.BROKEN, info.lastDays.last())
     }

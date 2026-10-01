@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,6 +49,8 @@ fun DisableBlockerDialog(
     title: String = stringResource(R.string.disable_dialog_title),
     message: String = stringResource(R.string.disable_dialog_desc),
     confirmLabel: String = stringResource(R.string.disable_dialog_confirm),
+    streakDays: Int = 0,
+    why: String = "",
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -72,6 +75,10 @@ fun DisableBlockerDialog(
                     modifier = Modifier.size(56.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+                if (streakDays > 0) {
+                    StakesBanner(streakDays = streakDays, why = why)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
                 Text(
                     text = message,
                     modifier = Modifier.fillMaxWidth(),
@@ -150,4 +157,46 @@ fun TimedFilledButton(
 @Composable
 fun DisableBlockerDialogPreview() {
     DisableBlockerDialog({}, {})
+}
+
+
+/** Makes the cost of giving up concrete: the clean days that would be lost, and the user's own reason. */
+@Composable
+fun StakesBanner(streakDays: Int, why: String, modifier: Modifier = Modifier) {
+    androidx.compose.material3.Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        )
+    ) {
+        Column(modifier = Modifier.padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Rounded.LocalFireDepartment,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp)
+            )
+            Text(
+                text = stringResource(R.string.stake_title, streakDays),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = stringResource(R.string.stake_body),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            if (why.isNotBlank()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = stringResource(R.string.stake_why, why),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
 }
