@@ -50,94 +50,6 @@ import androidx.compose.ui.window.DialogProperties
 import com.buenotty.blockfy.R
 
 @Composable
-fun AccessibilityServiceCard(
-    isAccessibilityGranted: Boolean
-) {
-    var showAccessibilityServiceDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
-    val update: (Boolean) -> Unit = {
-        if (isAccessibilityGranted) {
-            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        } else {
-            showAccessibilityServiceDialog = true
-        }
-    }
-
-    val containerColor = if (!isAccessibilityGranted) {
-        MaterialTheme.colorScheme.errorContainer
-    } else {
-        MaterialTheme.colorScheme.primaryContainer
-    }
-    val onContainer = if (!isAccessibilityGranted) {
-        MaterialTheme.colorScheme.onErrorContainer
-    } else {
-        MaterialTheme.colorScheme.onPrimaryContainer
-    }
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .toggleable(
-                value = isAccessibilityGranted,
-                role = Role.Switch,
-                onValueChange = update
-            ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(onContainer.copy(alpha = 0.14f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    modifier = Modifier.size(22.dp),
-                    imageVector = Icons.Rounded.Accessibility,
-                    contentDescription = null,
-                    tint = onContainer
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.accessibility_service),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = onContainer
-                )
-                Text(
-                    text = if (isAccessibilityGranted) {
-                        stringResource(R.string.accessibility_active)
-                    } else {
-                        stringResource(R.string.accessibility_inactive)
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = onContainer.copy(alpha = 0.8f)
-                )
-            }
-            Switch(
-                checked = isAccessibilityGranted,
-                onCheckedChange = null
-            )
-        }
-    }
-
-    if (showAccessibilityServiceDialog) {
-        AccessibilityServiceDialog {
-            showAccessibilityServiceDialog = false
-        }
-    }
-}
-
-@Composable
 fun AccessibilityServiceDialog(
     onDismissRequest: () -> Unit
 ) {
@@ -232,10 +144,4 @@ fun android.content.Context.isAccessibilityGranted(): Boolean {
     }
     val enabled = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
     return enabled?.contains("ReelsBlockAccessibilityService") == true
-}
-
-@Preview
-@Composable
-fun AccessibilityServiceCardPreview() {
-    AccessibilityServiceCard(false)
 }

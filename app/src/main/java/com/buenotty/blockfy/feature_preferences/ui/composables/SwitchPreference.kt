@@ -112,9 +112,10 @@ fun SwitchPreference(
                 Spacer(modifier = Modifier.width(12.dp))
                 labels()
             }
+            val rowIsToggleable = onRowClick == null
             Switch(
                 checked = value,
-                onCheckedChange = { edit(it) },
+                onCheckedChange = if (rowIsToggleable) null else { checked -> edit(checked) },
                 enabled = enabled
             )
             if (settingsIcon != null) {

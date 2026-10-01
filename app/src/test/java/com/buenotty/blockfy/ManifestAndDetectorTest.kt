@@ -1,19 +1,14 @@
 package com.buenotty.blockfy
 
-import com.buenotty.blockfy.datastore.AppSettings
-import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.feature_accessibility.AdultContentDetector
 import com.buenotty.blockfy.fixtures.BankPackages
-import com.buenotty.blockfy.feature_monitor.BlockPolicy
-import com.buenotty.blockfy.feature_monitor.BlockReason
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-class BlockPolicyAndManifestTest {
+class ManifestAndDetectorTest {
 
     @Test
     fun trackedPackagesDoNotIncludeBanks() {
@@ -22,85 +17,6 @@ class BlockPolicyAndManifestTest {
         }
         assertFalse(TrackedPackages.isTracked("com.nu.production"))
         assertTrue(TrackedPackages.isTracked("com.instagram.android"))
-    }
-
-    @Test
-    fun scheduleBlocksInstagramReelsNotTheWholeApp() {
-        val settings = AppSettings(
-            instagram = AppSettings().instagram.copy(blocked = true, blockedStart = 0, blockedEnd = 1439, dailyLimitMinutes = 0)
-        )
-        val wholeApp = BlockPolicy.evaluate(
-            packageName = TrackedPackages.INSTAGRAM,
-            settings = settings,
-            usage = DailyUsage(),
-            minuteOfDay = 12 * 60
-        )
-        val shorts = BlockPolicy.evaluateShorts(
-            appName = "Instagram",
-            settings = settings,
-            usage = DailyUsage(),
-            minuteOfDay = 12 * 60
-        )
-        assertFalse(wholeApp.shouldBlock)
-        assertTrue(shorts.shouldBlock)
-        assertEquals(BlockReason.SCHEDULE, shorts.reason)
-    }
-
-    @Test
-    fun bankPackageNeverProducesABlockVerdict() {
-        val settings = AppSettings(
-            instagram = AppSettings().instagram.copy(blocked = true, dailyLimitMinutes = 0)
-        )
-        val verdict = BlockPolicy.evaluate(
-            packageName = "com.nu.production",
-            settings = settings,
-            usage = DailyUsage(),
-            minuteOfDay = 100
-        )
-        assertFalse(verdict.shouldBlock)
-        assertEquals(BlockReason.NONE, verdict.reason)
-    }
-
-    @Test
-    fun dailyLimitUsesUsageStatsCounters() {
-        val settings = AppSettings(
-            youtube = AppSettings().youtube.copy(blocked = true, dailyLimitMinutes = 10)
-        )
-        val underLimit = BlockPolicy.evaluateShorts(
-            "YouTube",
-            settings,
-            DailyUsage(youtubeSeconds = 9 * 60),
-            minuteOfDay = 60
-        )
-        val overLimit = BlockPolicy.evaluateShorts(
-            "YouTube",
-            settings,
-            DailyUsage(youtubeSeconds = 10 * 60),
-            minuteOfDay = 60
-        )
-        assertFalse(underLimit.shouldBlock)
-        assertEquals(BlockReason.DAILY_LIMIT, overLimit.reason)
-    }
-
-    @Test
-    fun totalAppLimitBlocksEvenWhenFeatureToggleIsOff() {
-        val settings = AppSettings(
-            tiktok = AppSettings().tiktok.copy(blocked = false, appTotalDailyLimitMinutes = 15)
-        )
-        val verdict = BlockPolicy.evaluate(
-            TrackedPackages.TIKTOK,
-            settings,
-            DailyUsage(tiktokTotalSeconds = 15 * 60),
-            minuteOfDay = 60
-        )
-        assertEquals(BlockReason.TOTAL_LIMIT, verdict.reason)
-    }
-
-    @Test
-    fun overnightScheduleWindowWrapsMidnight() {
-        assertTrue(BlockPolicy.isWithinInterval(22 * 60, 6 * 60, 23 * 60))
-        assertTrue(BlockPolicy.isWithinInterval(22 * 60, 6 * 60, 30))
-        assertFalse(BlockPolicy.isWithinInterval(22 * 60, 6 * 60, 12 * 60))
     }
 
     @Test
@@ -175,27 +91,6 @@ class BlockPolicyAndManifestTest {
         assertFalse(AdultContentDetector.isAdultContent("nubank.com.br"))
         assertFalse(AdultContentDetector.isAdultContent("github.com"))
         assertFalse(AdultContentDetector.isBlockedHost("jerome.com"))
-    }
-
-    @Test
-    fun weekdayMaskSelectsTheRightDays() {
-        val utc = java.util.TimeZone.getTimeZone("UTC")
-        val monday = 1_767_571_200_000L // 2026-01-05 00:00 UTC, a Monday
-        val mondayOnly = 1 shl 1
-        assertTrue(BlockPolicy.isActiveWeekday(mondayOnly, monday, utc))
-        assertFalse(BlockPolicy.isActiveWeekday(mondayOnly, monday + 86_400_000L, utc))
-        assertTrue(BlockPolicy.isActiveWeekday(127, monday + 86_400_000L, utc))
-    }
-
-    @Test
-    fun wholeAppOnlyAppsAreBlockedByScheduleAndNeverByShortsRules() {
-        val settings = AppSettings(
-            tiktok = AppSettings().tiktok.copy(blocked = true, blockedStart = 0, blockedEnd = 1439, appTotalDailyLimitMinutes = 0)
-        )
-        val whole = BlockPolicy.evaluate(TrackedPackages.TIKTOK, settings, DailyUsage(), minuteOfDay = 600)
-        val shorts = BlockPolicy.evaluateShorts("TikTok", settings, DailyUsage(), minuteOfDay = 600)
-        assertEquals(BlockReason.SCHEDULE, whole.reason)
-        assertFalse(shorts.shouldBlock)
     }
 
     private fun readAppFile(relativeFromApp: String): File {

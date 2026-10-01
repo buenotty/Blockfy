@@ -15,12 +15,9 @@ class DataStoreManager(private val context: Context) {
         if (current.date == today) current else DailyUsage(date = today)
     }
 
-    suspend fun updateAppSettings(settings: AppSettings) {
-        context.appSettingsStore.updateData { settings }
-    }
-
-    suspend fun update(settings: AppSettings) {
-        updateAppSettings(settings)
+    /** Read-modify-write inside DataStore, so two quick changes can never overwrite each other. */
+    suspend fun updateSettings(transform: (AppSettings) -> AppSettings) {
+        context.appSettingsStore.updateData(transform)
     }
 
     private fun getTodayDateString(): String {
@@ -34,62 +31,23 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
-    suspend fun getTodayUsage(): DailyUsage {
-        return ensureTodayUsage()
-    }
-
-    suspend fun addUsage(appName: String, seconds: Long) {
+    private suspend fun updateToday(transform: (DailyUsage) -> DailyUsage) {
         val today = getTodayDateString()
         context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            when (appName) {
-                "Instagram" -> base.copy(instagramSeconds = base.instagramSeconds + seconds)
-                "YouTube" -> base.copy(youtubeSeconds = base.youtubeSeconds + seconds)
-                "TikTok" -> base.copy(tiktokSeconds = base.tiktokSeconds + seconds)
-                "Facebook" -> base.copy(facebookSeconds = base.facebookSeconds + seconds)
-                else -> base
-            }
+            transform(if (current.date == today) current else DailyUsage(date = today))
         }
     }
 
-    suspend fun addTotalAppUsage(appName: String, seconds: Long) {
-        val today = getTodayDateString()
-        context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            when (appName) {
-                "Instagram" -> base.copy(instagramTotalSeconds = base.instagramTotalSeconds + seconds)
-                "YouTube" -> base.copy(youtubeTotalSeconds = base.youtubeTotalSeconds + seconds)
-                "TikTok" -> base.copy(tiktokTotalSeconds = base.tiktokTotalSeconds + seconds)
-                "Facebook" -> base.copy(facebookTotalSeconds = base.facebookTotalSeconds + seconds)
-                "X" -> base.copy(xTotalSeconds = base.xTotalSeconds + seconds)
-                else -> base
-            }
-        }
+    suspend fun addUsage(appName: String, seconds: Long) = updateToday { it.plusShorts(appName, seconds) }
+
+    suspend fun addTotalAppUsage(appName: String, seconds: Long) = updateToday { it.plusTotal(appName, seconds) }
+
+    suspend fun recordBlockedDistraction(estimatedSecondsSaved: Long = 300L) = updateToday {
+        it.copy(
+            blockedAttemptsToday = it.blockedAttemptsToday + 1,
+            savedSeconds = it.savedSeconds + estimatedSecondsSaved
+        )
     }
 
-    suspend fun recordBlockedDistraction(estimatedSecondsSaved: Long = 300L) {
-        val today = getTodayDateString()
-        context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            base.copy(
-                blockedAttemptsToday = base.blockedAttemptsToday + 1,
-                savedSeconds = base.savedSeconds + estimatedSecondsSaved
-            )
-        }
-    }
-
-    suspend fun resetUsage(appName: String) {
-        val today = getTodayDateString()
-        context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            when (appName) {
-                "Instagram" -> base.copy(instagramSeconds = 0L, instagramTotalSeconds = 0L)
-                "YouTube" -> base.copy(youtubeSeconds = 0L, youtubeTotalSeconds = 0L)
-                "TikTok" -> base.copy(tiktokSeconds = 0L, tiktokTotalSeconds = 0L)
-                "Facebook" -> base.copy(facebookSeconds = 0L, facebookTotalSeconds = 0L)
-                "X" -> base.copy(xTotalSeconds = 0L)
-                else -> base
-            }
-        }
-    }
+    suspend fun resetUsage(appName: String) = updateToday { it.resetApp(appName) }
 }

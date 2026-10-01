@@ -90,4 +90,10 @@ data class AppSettings(
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
     val adultContentBlockerEnabled: Boolean = false
-)
+) {
+    /** True while strict mode forbids loosening any block. A midnight lock expires by itself. */
+    fun isStrictLocked(nowMillis: Long = System.currentTimeMillis()): Boolean {
+        if (!strictModeEnabled) return false
+        return if (strictModeType == "MIDNIGHT") nowMillis < strictModeLockedUntilEpoch else true
+    }
+}

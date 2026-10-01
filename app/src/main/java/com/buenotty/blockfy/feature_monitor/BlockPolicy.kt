@@ -21,11 +21,21 @@ data class BlockVerdict(
     val shouldBlock: Boolean get() = reason != BlockReason.NONE
 }
 
+/**
+ * One rule for every app:
+ *
+ *  1. The master switch (`blocked`) must be on.
+ *  2. The moment must be inside the schedule (weekday + hours).
+ *  3. The scope decides what is blocked: Reels/Shorts only, or the whole app.
+ *  4. With no limit the scope is blocked for the whole schedule. With a limit it is
+ *     allowed until the day's usage reaches it.
+ */
 object BlockPolicy {
 
     fun currentMinuteOfDay(nowMillis: Long = System.currentTimeMillis(), timeZone: TimeZone = TimeZone.getDefault()): Int {
-        val offset = timeZone.getOffset(nowMillis)
-        return (((nowMillis + offset) / 60000) % 1440).toInt()
+        val calendar = Calendar.getInstance(timeZone)
+        calendar.timeInMillis = nowMillis
+        return calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
     }
 
     fun isActiveWeekday(mask: Int, nowMillis: Long = System.currentTimeMillis(), timeZone: TimeZone = TimeZone.getDefault()): Boolean {
@@ -43,66 +53,67 @@ object BlockPolicy {
         }
     }
 
+    /**
+     * Whether the app's schedule covers this moment. A window that crosses midnight
+     * (22:00-06:00) belongs to the weekday it starts on, so the 02:00 part of a Friday
+     * night window still counts as Friday.
+     */
+    fun isScheduleActive(
+        app: App,
+        nowMillis: Long = System.currentTimeMillis(),
+        timeZone: TimeZone = TimeZone.getDefault()
+    ): Boolean {
+        val calendar = Calendar.getInstance(timeZone)
+        calendar.timeInMillis = nowMillis
+        val minute = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
+        if (!isWithinInterval(app.blockedStart, app.blockedEnd, minute)) return false
+        var dayIndex = calendar.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
+        val crossesMidnight = app.blockedStart > app.blockedEnd
+        if (crossesMidnight && minute <= app.blockedEnd) {
+            dayIndex = (dayIndex + 6) % 7
+        }
+        return app.blockedWeekdays and (1 shl dayIndex) != 0
+    }
+
+    fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X"
+
+    fun isWholeScope(app: App): Boolean = isWholeAppOnly(app.name) || app.wholeApp
+
+    fun limitMinutes(app: App): Int =
+        if (isWholeScope(app)) app.appTotalDailyLimitMinutes else app.dailyLimitMinutes
+
+    fun usedSeconds(app: App, usage: DailyUsage): Long =
+        if (isWholeScope(app)) totalSeconds(usage, app.name) else featureSeconds(usage, app.name)
+
+    /**
+     * @param shortsVisible whether a Reels/Shorts screen is on display right now. It only
+     * matters when the scope is Reels/Shorts; whole-app rules ignore it.
+     */
     fun evaluate(
         packageName: String,
         settings: AppSettings,
         usage: DailyUsage,
-        minuteOfDay: Int
+        nowMillis: Long = System.currentTimeMillis(),
+        shortsVisible: Boolean = true,
+        timeZone: TimeZone = TimeZone.getDefault()
     ): BlockVerdict {
         val appName = TrackedPackages.displayName(packageName)
             ?: return BlockVerdict(BlockReason.NONE, "", packageName)
+        val none = BlockVerdict(BlockReason.NONE, appName, packageName)
 
-        val appConfig = appConfig(settings, appName)
-        val usedTotalSeconds = totalSeconds(usage, appName)
+        val app = appConfig(settings, appName)
+        if (!app.blocked) return none
+        if (!isScheduleActive(app, nowMillis, timeZone)) return none
 
-        if (!isActiveWeekday(appConfig.blockedWeekdays)) {
-            return BlockVerdict(BlockReason.NONE, appName, packageName)
-        }
+        val whole = isWholeScope(app)
+        if (!whole && !shortsVisible) return none
 
-        if (isWholeAppOnly(appName) &&
-            appConfig.blocked &&
-            appConfig.appTotalDailyLimitMinutes <= 0 &&
-            isWithinInterval(appConfig.blockedStart, appConfig.blockedEnd, minuteOfDay)
-        ) {
-            return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
-        }
-
-        if (appConfig.appTotalDailyLimitMinutes > 0 &&
-            usedTotalSeconds >= appConfig.appTotalDailyLimitMinutes * 60L
-        ) {
-            return BlockVerdict(BlockReason.TOTAL_LIMIT, appName, packageName)
-        }
-
-        return BlockVerdict(BlockReason.NONE, appName, packageName)
+        val limit = limitMinutes(app)
+        if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
+        if (usedSeconds(app, usage) < limit * 60L) return none
+        val reason = if (whole) BlockReason.TOTAL_LIMIT else BlockReason.DAILY_LIMIT
+        return BlockVerdict(reason, appName, packageName)
     }
-
-    fun evaluateShorts(
-        appName: String,
-        settings: AppSettings,
-        usage: DailyUsage,
-        minuteOfDay: Int
-    ): BlockVerdict {
-        val packageName = TrackedPackages.ALL.entries.firstOrNull { it.value == appName }?.key ?: return BlockVerdict(BlockReason.NONE, appName, "")
-        if (isWholeAppOnly(appName)) {
-            return BlockVerdict(BlockReason.NONE, appName, packageName)
-        }
-        val appConfig = appConfig(settings, appName)
-        if (!isActiveWeekday(appConfig.blockedWeekdays)) {
-            return BlockVerdict(BlockReason.NONE, appName, packageName)
-        }
-        if (!appConfig.blocked || !isWithinInterval(appConfig.blockedStart, appConfig.blockedEnd, minuteOfDay)) {
-            return BlockVerdict(BlockReason.NONE, appName, packageName)
-        }
-        if (appConfig.dailyLimitMinutes <= 0) {
-            return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
-        }
-        if (featureSeconds(usage, appName) >= appConfig.dailyLimitMinutes * 60L) {
-            return BlockVerdict(BlockReason.DAILY_LIMIT, appName, packageName)
-        }
-        return BlockVerdict(BlockReason.NONE, appName, packageName)
-    }
-
-    fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X"
 
     fun appConfig(settings: AppSettings, appName: String): App {
         return when (appName) {
