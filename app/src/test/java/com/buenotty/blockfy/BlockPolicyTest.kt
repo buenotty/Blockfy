@@ -167,4 +167,40 @@ class BlockPolicyTest {
         assertFalse(s.isStrictLocked(nowMillis = 1_000L))
         assertFalse(AppSettings().isStrictLocked())
     }
+
+    private fun app(
+        start: Int = 0, end: Int = 1439, days: Int = 127, limit: Int = 0,
+        whole: Boolean = false, blocked: Boolean = true
+    ) = App(
+        name = "Instagram", blocked = blocked, blockedStart = start, blockedEnd = end,
+        blockedTimer = 0, features = emptyList(), dailyLimitMinutes = if (whole) 0 else limit,
+        appTotalDailyLimitMinutes = if (whole) limit else 0, blockedWeekdays = days, wholeApp = whole
+    )
+
+    @Test
+    fun turningOffOrRaisingTheLimitIsLoosening() {
+        assertTrue(BlockPolicy.isLoosening(app(), app(blocked = false)))
+        assertTrue(BlockPolicy.isLoosening(app(limit = 30), app(limit = 45)))
+        assertTrue(BlockPolicy.isLoosening(app(limit = 0), app(limit = 30)))
+        assertTrue(BlockPolicy.isLoosening(app(whole = true), app(whole = false)))
+    }
+
+    @Test
+    fun makingABlockStricterIsNeverLoosening() {
+        assertFalse(BlockPolicy.isLoosening(app(limit = 30), app(limit = 15)))
+        assertFalse(BlockPolicy.isLoosening(app(limit = 30), app(limit = 0)))
+        assertFalse(BlockPolicy.isLoosening(app(whole = false), app(whole = true)))
+        assertFalse(BlockPolicy.isLoosening(app(blocked = false), app(blocked = true)))
+        assertFalse(BlockPolicy.isLoosening(app(start = 9 * 60, end = 18 * 60), app()))
+        assertFalse(BlockPolicy.isLoosening(app(days = 1 shl 1), app(days = 127)))
+    }
+
+    @Test
+    fun shrinkingOrShiftingTheScheduleIsLoosening() {
+        assertTrue(BlockPolicy.isLoosening(app(), app(start = 9 * 60, end = 18 * 60)))
+        assertTrue(BlockPolicy.isLoosening(app(), app(days = 0b0111110)))
+        // Same length, different hours: the old hours are no longer covered.
+        assertTrue(BlockPolicy.isLoosening(app(start = 22 * 60, end = 6 * 60), app(start = 23 * 60, end = 7 * 60)))
+        assertFalse(BlockPolicy.isLoosening(app(start = 22 * 60, end = 6 * 60), app(start = 21 * 60, end = 7 * 60)))
+    }
 }

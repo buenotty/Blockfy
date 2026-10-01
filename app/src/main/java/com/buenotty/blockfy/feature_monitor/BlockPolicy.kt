@@ -54,10 +54,17 @@ object BlockPolicy {
     }
 
     /**
-     * Whether the app's schedule covers this moment. A window that crosses midnight
-     * (22:00-06:00) belongs to the weekday it starts on, so the 02:00 part of a Friday
-     * night window still counts as Friday.
+     * Whether the schedule covers [minute] of weekday [dayIndex] (0 = Sunday). A window that
+     * crosses midnight (22:00-06:00) belongs to the weekday it starts on, so the 02:00 part of a
+     * Friday night window still counts as Friday.
      */
+    fun scheduleCovers(app: App, dayIndex: Int, minute: Int): Boolean {
+        if (!isWithinInterval(app.blockedStart, app.blockedEnd, minute)) return false
+        val crossesMidnight = app.blockedStart > app.blockedEnd
+        val windowDay = if (crossesMidnight && minute <= app.blockedEnd) (dayIndex + 6) % 7 else dayIndex
+        return app.blockedWeekdays and (1 shl windowDay) != 0
+    }
+
     fun isScheduleActive(
         app: App,
         nowMillis: Long = System.currentTimeMillis(),
@@ -66,13 +73,34 @@ object BlockPolicy {
         val calendar = Calendar.getInstance(timeZone)
         calendar.timeInMillis = nowMillis
         val minute = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
-        if (!isWithinInterval(app.blockedStart, app.blockedEnd, minute)) return false
-        var dayIndex = calendar.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
-        val crossesMidnight = app.blockedStart > app.blockedEnd
-        if (crossesMidnight && minute <= app.blockedEnd) {
-            dayIndex = (dayIndex + 6) % 7
+        return scheduleCovers(app, calendar.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY, minute)
+    }
+
+    /**
+     * True when [new] lets the user use the app in some situation where [old] would have blocked
+     * it: the block is switched off, the scope narrows, the limit grows, or any minute of the
+     * week stops being covered. Strict mode forbids these and the editor asks for a pause first.
+     */
+    fun isLoosening(old: App, new: App): Boolean {
+        if (!old.blocked) return false
+        if (!new.blocked) return true
+
+        val oldWhole = isWholeScope(old)
+        val newWhole = isWholeScope(new)
+        if (oldWhole && !newWhole) return true
+        if (oldWhole == newWhole) {
+            val oldLimit = limitMinutes(old)
+            val newLimit = limitMinutes(new)
+            if (oldLimit == 0 && newLimit > 0) return true
+            if (oldLimit > 0 && newLimit > oldLimit) return true
         }
-        return app.blockedWeekdays and (1 shl dayIndex) != 0
+
+        for (day in 0 until 7) {
+            for (minute in 0 until 1440) {
+                if (scheduleCovers(old, day, minute) && !scheduleCovers(new, day, minute)) return true
+            }
+        }
+        return false
     }
 
     fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X"

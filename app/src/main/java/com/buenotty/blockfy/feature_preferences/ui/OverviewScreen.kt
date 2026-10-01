@@ -108,6 +108,7 @@ fun BlocksScreen(
                 when {
                     wantsOn && !isAccessibilityGranted -> showAccessibilityDialog = true
                     wantsOn -> viewModel.setAdultContentBlocker(true)
+                    strictLocked -> showStrictDialog = true
                     else -> showDisableAdultDialog = true
                 }
             }

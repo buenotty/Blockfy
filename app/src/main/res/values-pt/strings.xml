@@ -64,11 +64,11 @@
     <string name="provocation_mode_title">Mensagens de atenção</string>
     <string name="provocation_mode_desc">Mostrar um aviso curto ao abrir Reels ou Shorts</string>
     <string name="strict_mode_title">Modo estrito</string>
-    <string name="strict_mode_desc">Travar os limites até meia-noite para não mudar no impulso</string>
-    <string name="strict_mode_midnight_locked_msg">O modo estrito está ligado. As configurações ficam travadas até meia-noite.</string>
-    <string name="strict_mode_midnight_extra">Você escolheu essa trava para proteger o você de amanhã de um impulso curto. Ela só abre depois das 00:00.</string>
+    <string name="strict_mode_desc">Até a meia-noite você só pode deixar os bloqueios mais rígidos, nunca mais frouxos</string>
+    <string name="strict_mode_midnight_locked_msg">Modo estrito ligado. Até a meia-noite você não pode afrouxar nem desligar nenhum bloqueio.</string>
+    <string name="strict_mode_midnight_extra">Você escolheu essa trava para proteger o você do futuro de um impulso. Ainda dá para deixar os bloqueios mais rígidos, e a trava acaba depois das 00:00.</string>
     <string name="strict_mode_keep_focus">Manter a trava</string>
-    <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
+    <string name="strict_locked_banner">Modo estrito ligado: até a meia-noite você pode deixar os bloqueios mais rígidos, mas não mais frouxos.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
     <string name="adult_blocker_desc">Usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Sem VPN e sem filtro DNS.</string>
@@ -228,4 +228,7 @@
     <string name="alert_blocked_title">Blockfy • Bloqueado</string>
     <string name="toast_shorts_window_blocked">%1$s: Reels e Shorts estão bloqueados agora.</string>
     <string name="focus_reminders_channel_name">Lembretes do Blockfy</string>
+    <string name="loosen_title">Afrouxar este bloqueio?</string>
+    <string name="loosen_msg">Essas mudanças deixam você usar o app mais do que antes. Espere alguns segundos e pense se é isso mesmo que você quer.</string>
+    <string name="loosen_confirm">Afrouxar</string>
 </resources>

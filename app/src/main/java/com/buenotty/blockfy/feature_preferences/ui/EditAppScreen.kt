@@ -83,6 +83,7 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.FULL_DAY_END
 import com.buenotty.blockfy.feature_preferences.ui.composables.FULL_DAY_START
 import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
 import com.buenotty.blockfy.feature_preferences.ui.composables.SelectableFilterChip
+import com.buenotty.blockfy.feature_preferences.ui.composables.StrictModeDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.TimePickerDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.WEEKEND_MASK
 import com.buenotty.blockfy.feature_preferences.ui.composables.WORKDAYS_MASK
@@ -155,7 +156,8 @@ private fun EditAppForm(
     var showStartPicker by remember { mutableStateOf(false) }
     var showEndPicker by remember { mutableStateOf(false) }
     var showDiscard by remember { mutableStateOf(false) }
-    var showDisableConfirm by remember { mutableStateOf(false) }
+    var showLoosenConfirm by remember { mutableStateOf(false) }
+    var showStrictDialog by remember { mutableStateOf(false) }
 
     val isWhole = wholeOnly || wholeApp
     val draft = saved.copy(
@@ -170,13 +172,21 @@ private fun EditAppForm(
     val dirty = draft != saved
     val minutesValid = !limitMode || minutes in 1..MAX_MINUTES
     val hoursValid = start != end
-    val canSave = !locked && dirty && minutesValid && hoursValid
+    // Strict mode still lets the user make a block stricter; it only refuses to loosen one.
+    val loosening = BlockPolicy.isLoosening(saved, draft)
+    val canSave = dirty && minutesValid && hoursValid && !(locked && loosening)
 
-    fun requestClose() {
-        if (dirty && !locked) showDiscard = true else onClose()
+    fun commit() {
+        onSave(draft)
+        Toast.makeText(context, R.string.saved_toast, Toast.LENGTH_SHORT).show()
+        onClose()
     }
 
-    BackHandler(enabled = dirty && !locked) { showDiscard = true }
+    fun requestClose() {
+        if (dirty) showDiscard = true else onClose()
+    }
+
+    BackHandler(enabled = dirty) { showDiscard = true }
 
     Box(Modifier.fillMaxSize().imePadding()) {
         Scaffold(
@@ -206,9 +216,7 @@ private fun EditAppForm(
                         Button(
                             onClick = {
                                 focusManager.clearFocus()
-                                onSave(draft)
-                                Toast.makeText(context, R.string.saved_toast, Toast.LENGTH_SHORT).show()
-                                onClose()
+                                if (loosening) showLoosenConfirm = true else commit()
                             },
                             enabled = canSave,
                             shape = RoundedCornerShape(16.dp),
@@ -238,7 +246,7 @@ private fun EditAppForm(
             ) {
                 RuleSummaryCard(draft = draft)
 
-                if (locked) LockedBanner()
+                if (locked) LockedBanner(blocking = loosening)
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -263,9 +271,12 @@ private fun EditAppForm(
                         }
                         Switch(
                             checked = enabled,
-                            enabled = !locked,
                             onCheckedChange = { wantsOn ->
-                                if (wantsOn) enabled = true else showDisableConfirm = true
+                                when {
+                                    wantsOn -> enabled = true
+                                    locked && saved.blocked -> showStrictDialog = true
+                                    else -> enabled = false
+                                }
                             }
                         )
                     }
@@ -283,7 +294,6 @@ private fun EditAppForm(
                             first = stringResource(R.string.edit_scope_only, shortsFeatureLabel(saved.name)),
                             second = stringResource(R.string.app_scope_whole),
                             secondSelected = wholeApp,
-                            enabled = !locked,
                             onSelect = { wholeApp = it }
                         )
                     }
@@ -294,7 +304,6 @@ private fun EditAppForm(
                         first = stringResource(R.string.edit_rule_always),
                         second = stringResource(R.string.edit_rule_limit),
                         secondSelected = limitMode,
-                        enabled = !locked,
                         onSelect = { limitMode = it }
                     )
                     Text(
@@ -305,7 +314,6 @@ private fun EditAppForm(
                     if (limitMode) {
                         MinutesPicker(
                             minutes = minutes,
-                            enabled = !locked,
                             onChange = { minutes = it },
                             onDone = { focusManager.clearFocus() }
                         )
@@ -324,19 +332,16 @@ private fun EditAppForm(
                     ) {
                         SelectableFilterChip(
                             selected = start == FULL_DAY_START && end == FULL_DAY_END,
-                            enabled = !locked,
                             label = stringResource(R.string.schedule_all_day),
                             onClick = { start = FULL_DAY_START; end = FULL_DAY_END }
                         )
                         SelectableFilterChip(
                             selected = start == NIGHT_START && end == NIGHT_END,
-                            enabled = !locked,
                             label = stringResource(R.string.preset_night),
                             onClick = { start = NIGHT_START; end = NIGHT_END }
                         )
                         SelectableFilterChip(
                             selected = start == WORK_START && end == WORK_END,
-                            enabled = !locked,
                             label = stringResource(R.string.preset_work),
                             onClick = { start = WORK_START; end = WORK_END }
                         )
@@ -345,14 +350,12 @@ private fun EditAppForm(
                         TimeField(
                             label = stringResource(R.string.start_time),
                             value = start.toTime(),
-                            enabled = !locked,
                             onClick = { showStartPicker = true },
                             modifier = Modifier.weight(1f)
                         )
                         TimeField(
                             label = stringResource(R.string.end_time),
                             value = end.toTime(),
-                            enabled = !locked,
                             onClick = { showEndPicker = true },
                             modifier = Modifier.weight(1f)
                         )
@@ -383,19 +386,16 @@ private fun EditAppForm(
                     ) {
                         SelectableFilterChip(
                             selected = days == ALL_DAYS_MASK,
-                            enabled = !locked,
                             label = stringResource(R.string.weekdays_everyday),
                             onClick = { days = ALL_DAYS_MASK }
                         )
                         SelectableFilterChip(
                             selected = days == WORKDAYS_MASK,
-                            enabled = !locked,
                             label = stringResource(R.string.weekdays_workdays),
                             onClick = { days = WORKDAYS_MASK }
                         )
                         SelectableFilterChip(
                             selected = days == WEEKEND_MASK,
-                            enabled = !locked,
                             label = stringResource(R.string.weekdays_weekend),
                             onClick = { days = WEEKEND_MASK }
                         )
@@ -412,7 +412,6 @@ private fun EditAppForm(
                             val bit = 1 shl index
                             SelectableFilterChip(
                                 selected = days and bit != 0,
-                                enabled = !locked,
                                 label = stringResource(label),
                                 onClick = {
                                     val next = days xor bit
@@ -453,14 +452,20 @@ private fun EditAppForm(
             onConfirm = { end = it; showEndPicker = false }
         )
     }
-    if (showDisableConfirm) {
+    if (showLoosenConfirm) {
         DisableBlockerDialog(
-            onDismissRequest = { showDisableConfirm = false },
+            title = stringResource(R.string.loosen_title),
+            message = stringResource(R.string.loosen_msg),
+            confirmLabel = stringResource(R.string.loosen_confirm),
+            onDismissRequest = { showLoosenConfirm = false },
             onConfirmation = {
-                enabled = false
-                showDisableConfirm = false
+                showLoosenConfirm = false
+                commit()
             }
         )
+    }
+    if (showStrictDialog) {
+        StrictModeDialog(onDismiss = { showStrictDialog = false })
     }
     if (showDiscard) {
         AlertDialog(
@@ -518,13 +523,13 @@ private fun RuleSummaryCard(draft: App) {
 }
 
 @Composable
-private fun LockedBanner() {
+private fun LockedBanner(blocking: Boolean) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer
+            containerColor = if (blocking) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = if (blocking) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer
         )
     ) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -559,7 +564,7 @@ private fun TwoChoice(
     first: String,
     second: String,
     secondSelected: Boolean,
-    enabled: Boolean,
+    enabled: Boolean = true,
     onSelect: (Boolean) -> Unit
 ) {
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
@@ -582,7 +587,7 @@ private fun TwoChoice(
 private fun TimeField(
     label: String,
     value: String,
-    enabled: Boolean,
+    enabled: Boolean = true,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -607,7 +612,7 @@ private fun TimeField(
 @Composable
 private fun MinutesPicker(
     minutes: Int,
-    enabled: Boolean,
+    enabled: Boolean = true,
     onChange: (Int) -> Unit,
     onDone: () -> Unit
 ) {

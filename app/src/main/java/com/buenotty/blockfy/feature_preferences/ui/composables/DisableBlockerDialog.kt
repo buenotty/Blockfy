@@ -45,6 +45,9 @@ import com.buenotty.blockfy.R
 fun DisableBlockerDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
+    title: String = stringResource(R.string.disable_dialog_title),
+    message: String = stringResource(R.string.disable_dialog_desc),
+    confirmLabel: String = stringResource(R.string.disable_dialog_confirm),
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -58,7 +61,7 @@ fun DisableBlockerDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(R.string.disable_dialog_title),
+                    text = title,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -70,7 +73,7 @@ fun DisableBlockerDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = stringResource(R.string.disable_dialog_desc),
+                    text = message,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -84,7 +87,7 @@ fun DisableBlockerDialog(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TimedFilledButton(
-                        text = stringResource(R.string.disable_dialog_confirm),
+                        text = confirmLabel,
                         onClick = onConfirmation,
                         modifier = Modifier
                             .height(48.dp)

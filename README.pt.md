@@ -10,19 +10,20 @@ Fork do [Blokky](https://github.com/Ronjar/Blokky), do Robin Gebert. Quem manté
 
 ## O que é
 
-O Blockfy tira você do vídeo curto (Reels, Shorts, TikTok). Dá para bloquear sites adultos conhecidos no próprio celular. A acessibilidade só observa Instagram, YouTube, TikTok, Facebook e X. Não observa apps de banco. O escudo adulto é um filtro DNS que fica no aparelho.
+O Blockfy tira você de vídeo curto (Reels, Shorts, TikTok) e pode manter você longe de sites adultos. Ele usa o serviço de Acessibilidade do Android, só para Instagram, YouTube, TikTok, Facebook, X e navegadores. Nunca observa apps de banco, mensagens nem o que você digita em outros apps. Veja [PRIVACY.md](PRIVACY.md).
 
-Se o celular é do Brasil, o app abre em português. Fora isso, abre em inglês. Dá para mudar isso na engrenagem da tela Sobre.
+Se o celular for do Brasil, o app começa em português. Nos outros lugares começa em inglês. Dá para mudar na aba Ajustes.
 
-## O que ele faz
+## O que faz
 
-Reels e Shorts: a acessibilidade fica só no Instagram, YouTube, TikTok, Facebook e X. Os outros apps, inclusive banco, ele não mexe.
+- **Uma regra por app.** Escolha o que bloquear (só Reels/Shorts ou o app inteiro), como (bloquear direto ou liberar um limite diário em minutos) e quando (horários e dias da semana). Um resumo em frase no topo do editor diz exatamente o que vai acontecer.
+- **Limites diários** zeram à meia-noite e são contados na hora, então o limite vale assim que você o atinge.
+- **Escudo de sites adultos**, se você ligar: a Acessibilidade lê só a barra de endereço do navegador e compara com uma lista de sites adultos no próprio celular. Nada é guardado nem enviado. Sem VPN. Os sites entram pelo nome inteiro, então `jerome` não vira `erome`.
+- **Modo estrito** até a meia-noite: você ainda pode deixar bloqueios mais rígidos, mas não desligar nem afrouxar. Fora do modo estrito, afrouxar um bloqueio faz você esperar alguns segundos e confirmar.
+- Aba **Conceitos**: leituras curtas sobre por que esses bloqueios existem, para o dia em que você quiser desligá-los.
+- **Diagnóstico** (aba Ajustes): mostra se o serviço está conectado e o que ele viu por último, para achar o motivo quando um bloqueio não dispara.
 
-Limite diário: cota por aplicativo, se você ligar. Zera à meia-noite.
-
-Escudo de conteúdo adulto, se você ligar: a Acessibilidade lê o texto na tela e o digitado em navegadores, X, Telegram e Reddit, analisa no celular e nunca guarda nem envia. Sem VPN. Apps de banco nunca são observados. Veja [PRIVACY.md](PRIVACY.md). Os sites entram pelo nome inteiro, então `jerome` não vira `erome`.
-
-As atualizações devem vir da Google Play. O app não instala APK sozinho.
+As atualizações devem vir da Google Play. O app não instala APK sozinho. Guia de publicação: [docs/PUBLICAR_NA_PLAY.md](docs/PUBLICAR_NA_PLAY.md).
 
 ## Requisitos
 

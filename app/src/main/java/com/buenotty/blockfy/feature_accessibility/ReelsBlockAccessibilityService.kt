@@ -476,13 +476,37 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
         val root = rootFromEvent(event, pkg) ?: return
         try {
-            val addressBarText = findAddressBarText(root, remaining = intArrayOf(MAX_ADDRESS_BAR_SCAN_NODES))
+            val addressBarText = readAddressBar(root, pkg)
             if (addressBarText != null && AdultContentDetector.isAdultContent(addressBarText)) {
                 leaveAdultScreen()
             }
         } finally {
             root.recycle()
         }
+    }
+
+    /**
+     * Known address-bar view ids first (exact and cheap), then the generic "first visible,
+     * non-password EditText" search for browsers whose ids we do not know.
+     */
+    private fun readAddressBar(root: AccessibilityNodeInfo, pkg: String): String? {
+        val ids = (ADDRESS_BAR_IDS[pkg] ?: emptyList()) + "$pkg:id/url_bar"
+        for (id in ids) {
+            val nodes = try {
+                root.findAccessibilityNodeInfosByViewId(id)
+            } catch (_: Exception) {
+                null
+            } ?: continue
+            var text: String? = null
+            for (node in nodes) {
+                if (text == null && node.isVisibleToUser && !node.isPassword) {
+                    text = node.text?.toString()?.takeIf { it.isNotBlank() }
+                }
+                node.recycle()
+            }
+            if (text != null) return text
+        }
+        return findAddressBarText(root, remaining = intArrayOf(MAX_ADDRESS_BAR_SCAN_NODES))
     }
 
     /**
@@ -530,6 +554,17 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L
         private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
         private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L
+
+        private val ADDRESS_BAR_IDS = mapOf(
+            "com.android.chrome" to listOf("com.android.chrome:id/url_bar"),
+            "com.sec.android.app.sbrowser" to listOf("com.sec.android.app.sbrowser:id/location_bar_edit_text"),
+            "org.mozilla.firefox" to listOf(
+                "org.mozilla.firefox:id/mozac_browser_toolbar_url_view",
+                "org.mozilla.firefox:id/url_bar_title"
+            ),
+            "com.opera.browser" to listOf("com.opera.browser:id/url_field"),
+            "com.duckduckgo.mobile.android" to listOf("com.duckduckgo.mobile.android:id/omnibarTextInput")
+        )
 
         val SOCIAL_PACKAGES: Array<String> = (
             TrackedPackages.ALL.keys + AdultContentDetector.BROWSER_PACKAGES
