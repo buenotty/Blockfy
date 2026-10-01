@@ -52,6 +52,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.buenotty.blockfy.feature_onboarding.NoticeScreen
 import androidx.core.net.toUri
 import com.buenotty.blockfy.AppLocale
 import com.buenotty.blockfy.R
@@ -73,6 +75,7 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     val context = LocalContext.current
     val appSettings by overviewViewModel.appSettings.collectAsState()
     var showQrCodeDialog by remember { mutableStateOf(false) }
+    var showNotice by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -81,6 +84,8 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = spacedBy(20.dp)
     ) {
+        ScheduleSettingsCard(saved = appSettings, onSave = overviewViewModel::setSchedule)
+
         PreferenceGroup(title = stringResource(R.string.provocation_mode_title)) {
             SwitchPreference(
                 value = appSettings.provocationModeEnabled,
@@ -223,9 +228,31 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
+        PreferenceGroup(title = stringResource(R.string.notice_title)) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.notice_reread_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                TextButton(onClick = { showNotice = true }) {
+                    Text(stringResource(R.string.notice_reread_btn))
+                }
+            }
+        }
+
         DiagnosticsCard()
 
         Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    if (showNotice) {
+        Dialog(
+            onDismissRequest = { showNotice = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            NoticeScreen(onAccept = { showNotice = false })
+        }
     }
 
     if (showQrCodeDialog) {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
+import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 
 @Composable
@@ -142,17 +144,19 @@ private fun Stat(value: String, label: String, modifier: Modifier = Modifier) {
 
 /**
  * One app. Tapping the card opens its rules; the switch only turns the whole block on or off,
- * so the two actions can never be confused.
+ * so the two actions can never be confused. Each active rule gets its own line and, when it has a
+ * limit, its own progress bar.
  */
 @Composable
 fun AppBlockCard(
     app: App,
-    usedSeconds: Long,
+    usage: DailyUsage,
     onToggle: (Boolean) -> Unit,
     onOpen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val limit = BlockPolicy.limitMinutes(app)
+    val wholeOn = BlockPolicy.wholeRuleOn(app)
+    val shortsOn = BlockPolicy.shortsRuleOn(app)
     Card(
         onClick = onOpen,
         modifier = modifier.fillMaxWidth(),
@@ -169,24 +173,15 @@ fun AppBlockCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
-                    if (app.blocked) {
-                        Text(
-                            text = "${scopeLabel(app)} · ${ruleLabel(app)}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = "${hoursLabel(app.blockedStart, app.blockedEnd)} · ${daysLabel(app.blockedWeekdays)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    } else {
+                    if (!app.blocked) {
                         Text(
                             text = stringResource(R.string.app_state_off),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else if (!wholeOn && !shortsOn) {
+                        Text(
+                            text = stringResource(R.string.app_no_rule),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -195,23 +190,56 @@ fun AppBlockCard(
                 Spacer(Modifier.width(8.dp))
                 Switch(checked = app.blocked, onCheckedChange = onToggle)
             }
-            if (app.blocked && limit > 0) {
-                Spacer(Modifier.height(10.dp))
-                val usedMinutes = (usedSeconds / 60).toInt()
-                val over = usedSeconds >= limit * 60L
-                LinearProgressIndicator(
-                    progress = { (usedSeconds.toFloat() / (limit * 60f)).coerceIn(0f, 1f) },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.today_usage_label, usedMinutes, limit),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            if (app.blocked) {
+                if (wholeOn) {
+                    RuleLine(
+                        label = stringResource(R.string.app_scope_whole),
+                        limitMinutes = app.appTotalDailyLimitMinutes,
+                        usedSeconds = BlockPolicy.totalSeconds(usage, app.name)
+                    )
+                }
+                if (shortsOn) {
+                    RuleLine(
+                        label = shortsFeatureLabel(app.name),
+                        limitMinutes = app.dailyLimitMinutes,
+                        usedSeconds = BlockPolicy.featureSeconds(usage, app.name)
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun RuleLine(label: String, limitMinutes: Int, usedSeconds: Long) {
+    Spacer(Modifier.height(10.dp))
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = limitLabel(limitMinutes),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+    if (limitMinutes > 0) {
+        val over = usedSeconds >= limitMinutes * 60L
+        Spacer(Modifier.height(4.dp))
+        LinearProgressIndicator(
+            progress = { (usedSeconds.toFloat() / (limitMinutes * 60f)).coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth(),
+            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = stringResource(R.string.today_usage_label, (usedSeconds / 60).toInt(), limitMinutes),
+            style = MaterialTheme.typography.labelMedium,
+            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -249,6 +277,42 @@ fun ToggleCard(
             }
             Spacer(Modifier.width(8.dp))
             Switch(checked = checked, onCheckedChange = null, enabled = enabled)
+        }
+    }
+}
+
+/** Shows the global hours and days and links to where they are changed. */
+@Composable
+fun ScheduleSummaryCard(
+    summary: String,
+    onOpen: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onOpen,
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TintedGlyph(Icons.Rounded.Schedule)
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.schedule_link_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    summary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            TextButton(onClick = onOpen) { Text(stringResource(R.string.schedule_change_btn)) }
         }
     }
 }

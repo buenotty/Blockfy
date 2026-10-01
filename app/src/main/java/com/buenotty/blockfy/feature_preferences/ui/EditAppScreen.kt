@@ -41,7 +41,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -72,41 +71,37 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
+import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.repository.models.App
-import com.buenotty.blockfy.feature_preferences.ui.composables.ALL_DAYS_MASK
 import com.buenotty.blockfy.feature_preferences.ui.composables.AppBrandIcon
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableBlockerDialog
-import com.buenotty.blockfy.feature_preferences.ui.composables.FULL_DAY_END
-import com.buenotty.blockfy.feature_preferences.ui.composables.FULL_DAY_START
 import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
 import com.buenotty.blockfy.feature_preferences.ui.composables.SelectableFilterChip
 import com.buenotty.blockfy.feature_preferences.ui.composables.StrictModeDialog
-import com.buenotty.blockfy.feature_preferences.ui.composables.TimePickerDialog
-import com.buenotty.blockfy.feature_preferences.ui.composables.WEEKEND_MASK
-import com.buenotty.blockfy.feature_preferences.ui.composables.WORKDAYS_MASK
 import com.buenotty.blockfy.feature_preferences.ui.composables.appDisplayName
 import com.buenotty.blockfy.feature_preferences.ui.composables.daysLabel
 import com.buenotty.blockfy.feature_preferences.ui.composables.hoursLabel
 import com.buenotty.blockfy.feature_preferences.ui.composables.shortsFeatureLabel
-import com.buenotty.blockfy.feature_preferences.ui.composables.toTime
 import com.buenotty.blockfy.feature_preferences.ui.composables.trackedAppIcon
 import org.koin.androidx.compose.koinViewModel
 
 private const val MAX_MINUTES = 1440
 private const val MINUTES_STEP = 5
 private val MINUTE_SHORTCUTS = listOf(15, 30, 45, 60, 90, 120)
-private const val NIGHT_START = 22 * 60
-private const val NIGHT_END = 6 * 60
-private const val WORK_START = 9 * 60
-private const val WORK_END = 18 * 60
+private const val DEFAULT_WHOLE_MINUTES = 60
+private const val DEFAULT_SHORTS_MINUTES = 15
+
+/** What one rule does: nothing, block outright, or allow some minutes a day. */
+private enum class RuleMode { OFF, BLOCK, LIMIT }
 
 @Composable
 fun EditAppScreen(
     appName: String,
     onClose: () -> Unit,
+    onOpenSchedule: () -> Unit,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
     val settings by viewModel.appSettings.collectAsState()
@@ -120,61 +115,72 @@ fun EditAppScreen(
 
     EditAppForm(
         saved = BlockPolicy.appConfig(settings, appName),
+        settings = settings,
         usage = usage,
         locked = settings.isStrictLocked(),
         onSave = { viewModel.updateApp(it) },
         onResetUsage = { viewModel.resetDailyUsage(appName) },
+        onOpenSchedule = onOpenSchedule,
         onClose = onClose
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+private fun modeOf(ruleOn: Boolean, limit: Int) = when {
+    !ruleOn -> RuleMode.OFF
+    limit > 0 -> RuleMode.LIMIT
+    else -> RuleMode.BLOCK
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditAppForm(
     saved: App,
+    settings: AppSettings,
     usage: DailyUsage,
     locked: Boolean,
     onSave: (App) -> Unit,
     onResetUsage: () -> Unit,
+    onOpenSchedule: () -> Unit,
     onClose: () -> Unit
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val wholeOnly = BlockPolicy.isWholeAppOnly(saved.name)
-    val savedLimit = BlockPolicy.limitMinutes(saved)
 
     // The draft is remembered by app name only, so a background settings update (for example the
     // usage counter) can never wipe what the user is typing.
     var enabled by rememberSaveable(saved.name) { mutableStateOf(true) }
-    var wholeApp by rememberSaveable(saved.name) { mutableStateOf(saved.wholeApp) }
-    var limitMode by rememberSaveable(saved.name) { mutableStateOf(savedLimit > 0) }
-    var minutes by rememberSaveable(saved.name) { mutableStateOf(if (savedLimit > 0) savedLimit else 30) }
-    var start by rememberSaveable(saved.name) { mutableStateOf(saved.blockedStart) }
-    var end by rememberSaveable(saved.name) { mutableStateOf(saved.blockedEnd) }
-    var days by rememberSaveable(saved.name) { mutableStateOf(saved.blockedWeekdays) }
+    var wholeMode by rememberSaveable(saved.name) {
+        mutableStateOf(modeOf(BlockPolicy.wholeRuleOn(saved), saved.appTotalDailyLimitMinutes))
+    }
+    var wholeMinutes by rememberSaveable(saved.name) {
+        mutableStateOf(saved.appTotalDailyLimitMinutes.takeIf { it > 0 } ?: DEFAULT_WHOLE_MINUTES)
+    }
+    var shortsMode by rememberSaveable(saved.name) {
+        mutableStateOf(modeOf(BlockPolicy.shortsRuleOn(saved), saved.dailyLimitMinutes))
+    }
+    var shortsMinutes by rememberSaveable(saved.name) {
+        mutableStateOf(saved.dailyLimitMinutes.takeIf { it > 0 } ?: DEFAULT_SHORTS_MINUTES)
+    }
 
-    var showStartPicker by remember { mutableStateOf(false) }
-    var showEndPicker by remember { mutableStateOf(false) }
-    var showDiscard by remember { mutableStateOf(false) }
     var showLoosenConfirm by remember { mutableStateOf(false) }
     var showStrictDialog by remember { mutableStateOf(false) }
+    var showDiscard by remember { mutableStateOf(false) }
 
-    val isWhole = wholeOnly || wholeApp
     val draft = saved.copy(
         blocked = enabled,
-        wholeApp = if (wholeOnly) false else wholeApp,
-        blockedStart = start,
-        blockedEnd = end,
-        blockedWeekdays = days,
-        dailyLimitMinutes = if (!isWhole && limitMode) minutes else 0,
-        appTotalDailyLimitMinutes = if (isWhole && limitMode) minutes else 0
+        wholeApp = wholeMode != RuleMode.OFF,
+        appTotalDailyLimitMinutes = if (wholeMode == RuleMode.LIMIT) wholeMinutes else 0,
+        shortsRuleOn = shortsMode != RuleMode.OFF,
+        dailyLimitMinutes = if (shortsMode == RuleMode.LIMIT) shortsMinutes else 0
     )
     val dirty = draft != saved
-    val minutesValid = !limitMode || minutes in 1..MAX_MINUTES
-    val hoursValid = start != end
+    val minutesValid = (wholeMode != RuleMode.LIMIT || wholeMinutes in 1..MAX_MINUTES) &&
+        (wholeOnly || shortsMode != RuleMode.LIMIT || shortsMinutes in 1..MAX_MINUTES)
+
     // Strict mode still lets the user make a block stricter; it only refuses to loosen one.
     val loosening = BlockPolicy.isLoosening(saved, draft)
-    val canSave = dirty && minutesValid && hoursValid && !(locked && loosening)
+    val canSave = dirty && minutesValid && !(locked && loosening)
 
     fun commit() {
         onSave(draft)
@@ -244,7 +250,7 @@ private fun EditAppForm(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                RuleSummaryCard(draft = draft)
+                RuleSummaryCard(draft = draft, settings = settings)
 
                 if (locked) LockedBanner(blocking = loosening)
 
@@ -282,176 +288,52 @@ private fun EditAppForm(
                     }
                 }
 
-                SectionCard(title = stringResource(R.string.edit_section_scope)) {
-                    if (wholeOnly) {
-                        Text(
-                            stringResource(R.string.edit_scope_whole_only_hint, appDisplayName(saved.name)),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    } else {
-                        TwoChoice(
-                            first = stringResource(R.string.edit_scope_only, shortsFeatureLabel(saved.name)),
-                            second = stringResource(R.string.app_scope_whole),
-                            secondSelected = wholeApp,
-                            onSelect = { wholeApp = it }
-                        )
-                    }
-                }
+                RuleCard(
+                    title = stringResource(R.string.rule_whole_title),
+                    description = stringResource(R.string.rule_whole_desc),
+                    mode = wholeMode,
+                    allowOff = !wholeOnly,
+                    minutes = wholeMinutes,
+                    onModeChange = { wholeMode = it },
+                    onMinutesChange = { wholeMinutes = it },
+                    onDone = { focusManager.clearFocus() },
+                    usedSeconds = BlockPolicy.totalSeconds(usage, saved.name),
+                    savedLimit = saved.appTotalDailyLimitMinutes,
+                    canReset = !locked,
+                    onReset = onResetUsage
+                )
 
-                SectionCard(title = stringResource(R.string.edit_section_rule)) {
-                    TwoChoice(
-                        first = stringResource(R.string.edit_rule_always),
-                        second = stringResource(R.string.edit_rule_limit),
-                        secondSelected = limitMode,
-                        onSelect = { limitMode = it }
-                    )
-                    Text(
-                        stringResource(if (limitMode) R.string.edit_rule_limit_desc else R.string.edit_rule_always_desc),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    if (limitMode) {
-                        MinutesPicker(
-                            minutes = minutes,
-                            onChange = { minutes = it },
-                            onDone = { focusManager.clearFocus() }
-                        )
-                    }
-                }
-
-                SectionCard(title = stringResource(R.string.edit_section_when)) {
-                    Text(
-                        stringResource(R.string.edit_hours_title),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        SelectableFilterChip(
-                            selected = start == FULL_DAY_START && end == FULL_DAY_END,
-                            label = stringResource(R.string.schedule_all_day),
-                            onClick = { start = FULL_DAY_START; end = FULL_DAY_END }
-                        )
-                        SelectableFilterChip(
-                            selected = start == NIGHT_START && end == NIGHT_END,
-                            label = stringResource(R.string.preset_night),
-                            onClick = { start = NIGHT_START; end = NIGHT_END }
-                        )
-                        SelectableFilterChip(
-                            selected = start == WORK_START && end == WORK_END,
-                            label = stringResource(R.string.preset_work),
-                            onClick = { start = WORK_START; end = WORK_END }
-                        )
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        TimeField(
-                            label = stringResource(R.string.start_time),
-                            value = start.toTime(),
-                            onClick = { showStartPicker = true },
-                            modifier = Modifier.weight(1f)
-                        )
-                        TimeField(
-                            label = stringResource(R.string.end_time),
-                            value = end.toTime(),
-                            onClick = { showEndPicker = true },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    if (!hoursValid) {
-                        Text(
-                            stringResource(R.string.hours_error_equal),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    } else if (start > end) {
-                        Text(
-                            stringResource(R.string.hours_crosses_midnight),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        stringResource(R.string.weekdays_title),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        SelectableFilterChip(
-                            selected = days == ALL_DAYS_MASK,
-                            label = stringResource(R.string.weekdays_everyday),
-                            onClick = { days = ALL_DAYS_MASK }
-                        )
-                        SelectableFilterChip(
-                            selected = days == WORKDAYS_MASK,
-                            label = stringResource(R.string.weekdays_workdays),
-                            onClick = { days = WORKDAYS_MASK }
-                        )
-                        SelectableFilterChip(
-                            selected = days == WEEKEND_MASK,
-                            label = stringResource(R.string.weekdays_weekend),
-                            onClick = { days = WEEKEND_MASK }
-                        )
-                    }
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        val labels = listOf(
-                            R.string.weekday_sun, R.string.weekday_mon, R.string.weekday_tue, R.string.weekday_wed,
-                            R.string.weekday_thu, R.string.weekday_fri, R.string.weekday_sat
-                        )
-                        labels.forEachIndexed { index, label ->
-                            val bit = 1 shl index
-                            SelectableFilterChip(
-                                selected = days and bit != 0,
-                                label = stringResource(label),
-                                onClick = {
-                                    val next = days xor bit
-                                    if (next != 0) days = next
-                                }
-                            )
-                        }
-                    }
-                }
-
-                if (limitMode && saved.blocked) {
-                    TodayUsageCard(
-                        usedSeconds = BlockPolicy.usedSeconds(draft, usage),
-                        limitMinutes = minutes,
+                if (!wholeOnly) {
+                    RuleCard(
+                        title = stringResource(R.string.rule_shorts_title, shortsFeatureLabel(saved.name)),
+                        description = stringResource(R.string.rule_shorts_desc),
+                        mode = shortsMode,
+                        allowOff = true,
+                        minutes = shortsMinutes,
+                        onModeChange = { shortsMode = it },
+                        onMinutesChange = { shortsMinutes = it },
+                        onDone = { focusManager.clearFocus() },
+                        usedSeconds = BlockPolicy.featureSeconds(usage, saved.name),
+                        savedLimit = saved.dailyLimitMinutes,
                         canReset = !locked,
                         onReset = onResetUsage
                     )
+                    if (wholeMode == RuleMode.LIMIT && shortsMode == RuleMode.LIMIT && shortsMinutes > wholeMinutes) {
+                        Text(
+                            stringResource(R.string.limits_hint_shorts_above_whole),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
+
+                ScheduleLinkCard(settings = settings, onOpen = onOpenSchedule)
 
                 Spacer(Modifier.height(8.dp))
             }
         }
     }
 
-    if (showStartPicker) {
-        TimePickerDialog(
-            initialTime = start,
-            title = stringResource(R.string.start_time),
-            onDismiss = { showStartPicker = false },
-            onConfirm = { start = it; showStartPicker = false }
-        )
-    }
-    if (showEndPicker) {
-        TimePickerDialog(
-            initialTime = end,
-            title = stringResource(R.string.end_time),
-            onDismiss = { showEndPicker = false },
-            onConfirm = { end = it; showEndPicker = false }
-        )
-    }
     if (showLoosenConfirm) {
         DisableBlockerDialog(
             title = stringResource(R.string.loosen_title),
@@ -487,21 +369,44 @@ private fun EditAppForm(
 }
 
 @Composable
-private fun RuleSummaryCard(draft: App) {
+private fun RuleSummaryCard(draft: App, settings: AppSettings) {
     val name = appDisplayName(draft.name)
-    val whole = BlockPolicy.isWholeScope(draft)
-    val subject = if (whole) {
-        stringResource(R.string.subject_whole, name)
-    } else {
-        stringResource(R.string.subject_shorts, name, shortsFeatureLabel(draft.name))
-    }
-    val days = daysLabel(draft.blockedWeekdays)
-    val hours = hoursLabel(draft.blockedStart, draft.blockedEnd)
-    val limit = BlockPolicy.limitMinutes(draft)
-    val sentence = when {
-        !draft.blocked -> stringResource(R.string.summary_off, name)
-        limit > 0 -> stringResource(R.string.summary_limit, subject, limit, days, hours)
-        else -> stringResource(R.string.summary_always, subject, days, hours)
+    val wholeOn = BlockPolicy.wholeRuleOn(draft)
+    val shortsOn = BlockPolicy.shortsRuleOn(draft)
+    val subject = stringResource(R.string.subject_shorts, name, shortsFeatureLabel(draft.name))
+
+    val lines = buildList {
+        if (!draft.blocked) {
+            add(stringResource(R.string.summary_off, name))
+        } else if (!wholeOn && !shortsOn) {
+            add(stringResource(R.string.summary_none, name))
+        } else {
+            if (wholeOn) {
+                add(
+                    if (draft.appTotalDailyLimitMinutes > 0) {
+                        stringResource(R.string.summary_whole_limit, name, draft.appTotalDailyLimitMinutes)
+                    } else {
+                        stringResource(R.string.summary_whole_block, name)
+                    }
+                )
+            }
+            if (shortsOn) {
+                add(
+                    if (draft.dailyLimitMinutes > 0) {
+                        stringResource(R.string.summary_shorts_limit, subject, draft.dailyLimitMinutes)
+                    } else {
+                        stringResource(R.string.summary_shorts_block, subject)
+                    }
+                )
+            }
+            add(
+                stringResource(
+                    R.string.summary_schedule,
+                    daysLabel(settings.scheduleWeekdays),
+                    hoursLabel(settings.scheduleStart, settings.scheduleEnd)
+                )
+            )
+        }
     }
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -511,13 +416,15 @@ private fun RuleSummaryCard(draft: App) {
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                stringResource(R.string.summary_title),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(sentence, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(R.string.summary_title), style = MaterialTheme.typography.labelLarge)
+            lines.forEachIndexed { index, line ->
+                Text(
+                    line,
+                    style = if (index == 0) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (index == 0) FontWeight.SemiBold else FontWeight.Normal
+                )
+            }
         }
     }
 }
@@ -541,7 +448,47 @@ private fun LockedBanner(blocking: Boolean) {
 }
 
 @Composable
-private fun SectionCard(title: String, content: @Composable () -> Unit) {
+private fun ScheduleLinkCard(settings: AppSettings, onOpen: () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionTitle(stringResource(R.string.schedule_link_title))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    "${daysLabel(settings.scheduleWeekdays)} · ${hoursLabel(settings.scheduleStart, settings.scheduleEnd)}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    stringResource(R.string.schedule_link_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                TextButton(onClick = onOpen) { Text(stringResource(R.string.schedule_link_btn)) }
+            }
+        }
+    }
+}
+
+/** One rule: off, block, or a daily limit with a hard-to-get-wrong minutes picker. */
+@Composable
+private fun RuleCard(
+    title: String,
+    description: String,
+    mode: RuleMode,
+    allowOff: Boolean,
+    minutes: Int,
+    onModeChange: (RuleMode) -> Unit,
+    onMinutesChange: (Int) -> Unit,
+    onDone: () -> Unit,
+    usedSeconds: Long,
+    savedLimit: Int,
+    canReset: Boolean,
+    onReset: () -> Unit
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionTitle(title)
         Card(
@@ -553,53 +500,77 @@ private fun SectionCard(title: String, content: @Composable () -> Unit) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                content()
+                Text(
+                    description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                val modes = if (allowOff) listOf(RuleMode.OFF, RuleMode.BLOCK, RuleMode.LIMIT) else listOf(RuleMode.BLOCK, RuleMode.LIMIT)
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                    modes.forEachIndexed { index, option ->
+                        SegmentedButton(
+                            selected = mode == option,
+                            onClick = { onModeChange(option) },
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = modes.size)
+                        ) {
+                            Text(
+                                stringResource(
+                                    when (option) {
+                                        RuleMode.OFF -> R.string.mode_off
+                                        RuleMode.BLOCK -> R.string.edit_rule_always
+                                        RuleMode.LIMIT -> R.string.edit_rule_limit
+                                    }
+                                ),
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+                Text(
+                    stringResource(
+                        when (mode) {
+                            RuleMode.OFF -> R.string.edit_rule_off_desc
+                            RuleMode.BLOCK -> R.string.edit_rule_always_desc
+                            RuleMode.LIMIT -> R.string.edit_rule_limit_desc
+                        }
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                if (mode == RuleMode.LIMIT) {
+                    MinutesPicker(minutes = minutes, onChange = onMinutesChange, onDone = onDone)
+                    if (savedLimit > 0 && usedSeconds > 0) {
+                        UsageRow(usedSeconds = usedSeconds, limitMinutes = savedLimit, canReset = canReset, onReset = onReset)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun TwoChoice(
-    first: String,
-    second: String,
-    secondSelected: Boolean,
-    enabled: Boolean = true,
-    onSelect: (Boolean) -> Unit
-) {
-    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        SegmentedButton(
-            selected = !secondSelected,
-            onClick = { onSelect(false) },
-            enabled = enabled,
-            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
-        ) { Text(first, maxLines = 1) }
-        SegmentedButton(
-            selected = secondSelected,
-            onClick = { onSelect(true) },
-            enabled = enabled,
-            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
-        ) { Text(second, maxLines = 1) }
-    }
-}
-
-@Composable
-private fun TimeField(
-    label: String,
-    value: String,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    OutlinedCard(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+private fun UsageRow(usedSeconds: Long, limitMinutes: Int, canReset: Boolean, onReset: () -> Unit) {
+    val limitSeconds = limitMinutes.coerceAtLeast(1) * 60L
+    val over = usedSeconds >= limitSeconds
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        LinearProgressIndicator(
+            progress = { (usedSeconds.toFloat() / limitSeconds).coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth(),
+            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        )
+        Text(
+            stringResource(R.string.today_usage_label, (usedSeconds / 60).toInt(), limitMinutes),
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+        )
+        OutlinedButton(
+            onClick = onReset,
+            enabled = canReset,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.reset_usage_btn))
         }
     }
 }
@@ -612,7 +583,6 @@ private fun TimeField(
 @Composable
 private fun MinutesPicker(
     minutes: Int,
-    enabled: Boolean = true,
     onChange: (Int) -> Unit,
     onDone: () -> Unit
 ) {
@@ -634,7 +604,7 @@ private fun MinutesPicker(
         ) {
             FilledIconButton(
                 onClick = { onChange((minutes - MINUTES_STEP).coerceAtLeast(MINUTES_STEP)) },
-                enabled = enabled && minutes > MINUTES_STEP,
+                enabled = minutes > MINUTES_STEP,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(Icons.Rounded.Remove, contentDescription = stringResource(R.string.minutes_less))
@@ -646,7 +616,6 @@ private fun MinutesPicker(
                     text = digits
                     onChange((digits.toIntOrNull() ?: 0).coerceAtMost(MAX_MINUTES))
                 },
-                enabled = enabled,
                 singleLine = true,
                 isError = invalid,
                 textStyle = MaterialTheme.typography.headlineSmall.copy(textAlign = TextAlign.Center),
@@ -657,7 +626,7 @@ private fun MinutesPicker(
             )
             FilledIconButton(
                 onClick = { onChange((minutes + MINUTES_STEP).coerceAtMost(MAX_MINUTES)) },
-                enabled = enabled && minutes < MAX_MINUTES,
+                enabled = minutes < MAX_MINUTES,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.minutes_more))
@@ -680,44 +649,9 @@ private fun MinutesPicker(
             MINUTE_SHORTCUTS.forEach { option ->
                 SelectableFilterChip(
                     selected = minutes == option,
-                    enabled = enabled,
                     label = "$option ${stringResource(R.string.minutes_suffix)}",
                     onClick = { onChange(option) }
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun TodayUsageCard(
-    usedSeconds: Long,
-    limitMinutes: Int,
-    canReset: Boolean,
-    onReset: () -> Unit
-) {
-    val limitSeconds = limitMinutes.coerceAtLeast(1) * 60L
-    val over = usedSeconds >= limitSeconds
-    SectionCard(title = stringResource(R.string.today_title)) {
-        LinearProgressIndicator(
-            progress = { (usedSeconds.toFloat() / limitSeconds).coerceIn(0f, 1f) },
-            modifier = Modifier.fillMaxWidth(),
-            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-        )
-        Text(
-            stringResource(R.string.today_usage_label, (usedSeconds / 60).toInt(), limitMinutes),
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (over) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
-        )
-        if (usedSeconds > 0) {
-            OutlinedButton(
-                onClick = onReset,
-                enabled = canReset,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(Icons.Rounded.RestartAlt, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.reset_usage_btn))
             }
         }
     }

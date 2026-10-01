@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,11 +18,14 @@ import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,9 +35,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.buenotty.blockfy.feature_onboarding.NoticeScreen
+import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.navigation.AppNavigation
 import com.buenotty.blockfy.navigation.Screen
 import com.buenotty.blockfy.ui.theme.BlockfyTheme
+import org.koin.androidx.compose.koinViewModel
 
 private data class TopLevelTab(val screen: Screen, val label: Int, val icon: ImageVector)
 
@@ -47,62 +55,86 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        if (savedInstanceState == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-                notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-
         setContent {
             BlockfyTheme {
-                val navController = rememberNavController()
-                val currentRoute = navController.currentRoute()
-                val currentTab = TABS.firstOrNull { it.screen.route == currentRoute }
+                val viewModel: OverviewViewModel = koinViewModel()
+                val loaded by viewModel.isLoaded.collectAsState()
+                val settings by viewModel.appSettings.collectAsState()
 
-                // Detail pages (edit app, read a concept) bring their own top bar and hide the tabs.
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                    topBar = {
-                        if (currentTab != null) {
-                            CenterAlignedTopAppBar(
-                                title = {
-                                    Text(
-                                        stringResource(
-                                            if (currentTab.screen == Screen.Blocks) R.string.app_name else currentTab.label
-                                        )
-                                    )
-                                }
-                            )
-                        }
-                    },
-                    bottomBar = {
-                        if (currentTab != null) {
-                            NavigationBar {
-                                TABS.forEach { tab ->
-                                    NavigationBarItem(
-                                        selected = tab.screen.route == currentRoute,
-                                        onClick = { navController.openTab(tab.screen) },
-                                        icon = { Icon(tab.icon, contentDescription = null) },
-                                        label = { Text(stringResource(tab.label)) }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                ) { padding ->
-                    AppNavigation(
-                        navController = navController,
-                        modifier = Modifier.padding(padding)
+                when {
+                    // Wait for the stored settings so the notice never flashes for people who
+                    // already accepted it.
+                    !loaded -> Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
                     )
+                    !settings.onboardingDone -> NoticeScreen(onAccept = viewModel::setOnboardingDone)
+                    else -> {
+                        LaunchedEffect(Unit) { askForNotificationsOnce() }
+                        MainScaffold()
+                    }
                 }
             }
         }
+    }
+
+    private fun askForNotificationsOnce() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !NotificationManagerCompat.from(this).areNotificationsEnabled()
+        ) {
+            notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MainScaffold() {
+    val navController = rememberNavController()
+    val currentRoute = navController.currentRoute()
+    val currentTab = TABS.firstOrNull { it.screen.route == currentRoute }
+
+    // Detail pages (edit app, read a concept) bring their own top bar and hide the tabs.
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            if (currentTab != null) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            stringResource(
+                                if (currentTab.screen == Screen.Blocks) R.string.app_name else currentTab.label
+                            )
+                        )
+                    }
+                )
+            }
+        },
+        bottomBar = {
+            if (currentTab != null) {
+                NavigationBar {
+                    TABS.forEach { tab ->
+                        NavigationBarItem(
+                            selected = tab.screen.route == currentRoute,
+                            onClick = { navController.openTab(tab.screen) },
+                            icon = { Icon(tab.icon, contentDescription = null) },
+                            label = { Text(stringResource(tab.label)) }
+                        )
+                    }
+                }
+            }
+        }
+    ) { padding ->
+        AppNavigation(
+            navController = navController,
+            modifier = Modifier.padding(padding)
+        )
     }
 }
 

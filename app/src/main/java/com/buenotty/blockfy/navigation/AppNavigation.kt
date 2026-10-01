@@ -22,7 +22,10 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         modifier = modifier
     ) {
         composable(Screen.Blocks.route) {
-            BlocksScreen(onEditApp = { navController.navigate(Screen.EditApp.create(it)) })
+            BlocksScreen(
+                onEditApp = { navController.navigate(Screen.EditApp.create(it)) },
+                onOpenSchedule = { navController.navigate(Screen.Settings.route) }
+            )
         }
         composable(Screen.Concepts.route) {
             ConceptsHomeScreen(onOpenTopic = { navController.navigate(Screen.ConceptTopic.create(it.route)) })
@@ -34,7 +37,8 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         ) { entry ->
             EditAppScreen(
                 appName = entry.arguments?.getString(Screen.EditApp.ARG).orEmpty(),
-                onClose = { navController.popBackStack() }
+                onClose = { navController.popBackStack() },
+                onOpenSchedule = { navController.navigate(Screen.Settings.route) }
             )
         }
         composable(

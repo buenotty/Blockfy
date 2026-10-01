@@ -1,5 +1,7 @@
 package com.buenotty.blockfy.feature_preferences.ui
 
+import androidx.annotation.ArrayRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Autorenew
+import androidx.compose.material.icons.rounded.CenterFocusStrong
+import androidx.compose.material.icons.rounded.Checklist
+import androidx.compose.material.icons.rounded.HealthAndSafety
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.Button
@@ -51,9 +57,26 @@ import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
 import kotlinx.coroutines.launch
 
-enum class ConceptTopic(val route: String) {
-    SHORTS("shorts"),
-    PORN("porn");
+enum class ConceptTopic(
+    val route: String,
+    @StringRes val title: Int,
+    @StringRes val summary: Int,
+    @ArrayRes val titles: Int,
+    @ArrayRes val bodies: Int,
+    val icon: ImageVector
+) {
+    SHORTS("shorts", R.string.concepts_shorts_title, R.string.concepts_shorts_summary,
+        R.array.concept_shorts_titles, R.array.concept_shorts_bodies, Icons.Rounded.Psychology),
+    PORN("porn", R.string.concepts_porn_title, R.string.concepts_porn_summary,
+        R.array.concept_porn_titles, R.array.concept_porn_bodies, Icons.Rounded.Shield),
+    HABITS("habits", R.string.concepts_habits_title, R.string.concepts_habits_summary,
+        R.array.concept_habits_titles, R.array.concept_habits_bodies, Icons.Rounded.Autorenew),
+    FOCUS("focus", R.string.concepts_focus_title, R.string.concepts_focus_summary,
+        R.array.concept_focus_titles, R.array.concept_focus_bodies, Icons.Rounded.CenterFocusStrong),
+    PLAN("plan", R.string.concepts_plan_title, R.string.concepts_plan_summary,
+        R.array.concept_plan_titles, R.array.concept_plan_bodies, Icons.Rounded.Checklist),
+    HELP("help", R.string.concepts_help_title, R.string.concepts_help_summary,
+        R.array.concept_help_titles, R.array.concept_help_bodies, Icons.Rounded.HealthAndSafety);
 
     companion object {
         fun fromRoute(route: String?): ConceptTopic = entries.firstOrNull { it.route == route } ?: SHORTS
@@ -61,14 +84,10 @@ enum class ConceptTopic(val route: String) {
 }
 
 @Composable
-private fun ConceptTopic.titles(): Array<String> = stringArrayResource(
-    if (this == ConceptTopic.SHORTS) R.array.concept_shorts_titles else R.array.concept_porn_titles
-)
+private fun ConceptTopic.titles(): Array<String> = stringArrayResource(titles)
 
 @Composable
-private fun ConceptTopic.bodies(): Array<String> = stringArrayResource(
-    if (this == ConceptTopic.SHORTS) R.array.concept_shorts_bodies else R.array.concept_porn_bodies
-)
+private fun ConceptTopic.bodies(): Array<String> = stringArrayResource(bodies)
 
 /** The Concepts tab: a short reminder of why the blocks exist, then the topics to read. */
 @Composable
@@ -99,20 +118,15 @@ fun ConceptsHomeScreen(onOpenTopic: (ConceptTopic) -> Unit) {
             }
         }
 
-        TopicCard(
-            title = stringResource(R.string.concepts_shorts_title),
-            summary = stringResource(R.string.concepts_shorts_summary),
-            points = ConceptTopic.SHORTS.titles().size,
-            icon = Icons.Rounded.Psychology,
-            onClick = { onOpenTopic(ConceptTopic.SHORTS) }
-        )
-        TopicCard(
-            title = stringResource(R.string.concepts_porn_title),
-            summary = stringResource(R.string.concepts_porn_summary),
-            points = ConceptTopic.PORN.titles().size,
-            icon = Icons.Rounded.Shield,
-            onClick = { onOpenTopic(ConceptTopic.PORN) }
-        )
+        ConceptTopic.entries.forEach { topic ->
+            TopicCard(
+                title = stringResource(topic.title),
+                summary = stringResource(topic.summary),
+                points = topic.titles().size,
+                icon = topic.icon,
+                onClick = { onOpenTopic(topic) }
+            )
+        }
     }
 }
 
@@ -169,9 +183,7 @@ fun ConceptDetailScreen(topic: ConceptTopic, onBack: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { count })
     val scope = rememberCoroutineScope()
     val page = pagerState.currentPage
-    val screenTitle = stringResource(
-        if (topic == ConceptTopic.SHORTS) R.string.concepts_shorts_title else R.string.concepts_porn_title
-    )
+    val screenTitle = stringResource(topic.title)
 
     Scaffold(
         topBar = {

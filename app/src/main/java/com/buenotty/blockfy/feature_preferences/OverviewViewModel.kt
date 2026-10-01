@@ -91,6 +91,12 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         )
     }
 
+    fun setSchedule(start: Int, end: Int, weekdays: Int) = update {
+        it.copy(scheduleStart = start, scheduleEnd = end, scheduleWeekdays = weekdays)
+    }
+
+    fun setOnboardingDone() = update { it.copy(onboardingDone = true) }
+
     fun resetDailyUsage(appName: String) {
         viewModelScope.launch { dataStoreManager.resetUsage(appName) }
     }

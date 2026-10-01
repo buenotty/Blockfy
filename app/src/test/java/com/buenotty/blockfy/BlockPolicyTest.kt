@@ -18,7 +18,7 @@ class BlockPolicyTest {
 
     private val utc = TimeZone.getTimeZone("UTC")
 
-    /** 2026-01-05 is a Monday. Day 0 = Monday, 6 = Sunday. */
+    /** 2026-01-05 is a Monday. Offset 0 = Monday ... 6 = Sunday. */
     private fun at(dayOffsetFromMonday: Int, hour: Int, minute: Int = 0): Long {
         val calendar = Calendar.getInstance(utc)
         calendar.clear()
@@ -36,57 +36,82 @@ class BlockPolicyTest {
         shortsVisible: Boolean = true
     ) = BlockPolicy.evaluate(pkg, s, usage, now, shortsVisible, utc)
 
+    private fun app(
+        blocked: Boolean = true,
+        whole: Boolean = false,
+        wholeLimit: Int = 0,
+        shorts: Boolean = true,
+        shortsLimit: Int = 0
+    ) = App(
+        name = "Instagram", blocked = blocked, blockedStart = 0, blockedEnd = 1439, blockedTimer = 0,
+        features = emptyList(), dailyLimitMinutes = shortsLimit, appTotalDailyLimitMinutes = wholeLimit,
+        wholeApp = whole, shortsRuleOn = shorts
+    )
+
+    // ---- the two independent rules --------------------------------------------------------
+
     @Test
     fun masterSwitchOffMeansNothingIsEverBlocked() {
         val s = settings {
             it.copy(
-                instagram = it.instagram.copy(blocked = false, dailyLimitMinutes = 1),
+                instagram = it.instagram.copy(blocked = false, dailyLimitMinutes = 1, wholeApp = true, appTotalDailyLimitMinutes = 1),
                 tiktok = it.tiktok.copy(blocked = false, appTotalDailyLimitMinutes = 1)
             )
         }
-        val heavyUsage = DailyUsage(instagramSeconds = 9_999, tiktokTotalSeconds = 9_999)
+        val heavyUsage = DailyUsage(instagramSeconds = 9_999, instagramTotalSeconds = 9_999, tiktokTotalSeconds = 9_999)
         assertFalse(evaluate(TrackedPackages.INSTAGRAM, s, heavyUsage).shouldBlock)
         assertFalse(evaluate(TrackedPackages.TIKTOK, s, heavyUsage).shouldBlock)
     }
 
     @Test
-    fun shortsScopeBlocksOnlyWhileShortsAreOnScreen() {
+    fun shortsRuleBlocksOnlyWhileShortsAreOnScreen() {
         val s = settings { it.copy(instagram = it.instagram.copy(blocked = true)) }
-        assertEquals(BlockReason.SCHEDULE, evaluate(TrackedPackages.INSTAGRAM, s, shortsVisible = true).reason)
+        val onScreen = evaluate(TrackedPackages.INSTAGRAM, s, shortsVisible = true)
+        assertEquals(BlockReason.SCHEDULE, onScreen.reason)
+        assertFalse(onScreen.wholeApp)
         assertEquals(BlockReason.NONE, evaluate(TrackedPackages.INSTAGRAM, s, shortsVisible = false).reason)
     }
 
     @Test
-    fun wholeAppScopeBlocksEvenWhenNoShortsAreVisible() {
-        val s = settings { it.copy(instagram = it.instagram.copy(blocked = true, wholeApp = true)) }
-        assertEquals(BlockReason.SCHEDULE, evaluate(TrackedPackages.INSTAGRAM, s, shortsVisible = false).reason)
+    fun wholeAppRuleBlocksEvenWithoutShorts() {
+        val s = settings { it.copy(instagram = it.instagram.copy(blocked = true, wholeApp = true, shortsRuleOn = false)) }
+        val verdict = evaluate(TrackedPackages.INSTAGRAM, s, shortsVisible = false)
+        assertEquals(BlockReason.SCHEDULE, verdict.reason)
+        assertTrue(verdict.wholeApp)
     }
 
     @Test
-    fun tiktokAndXAreAlwaysWholeApp() {
+    fun oneHourOfInstagramButOnlyFifteenMinutesOfReels() {
         val s = settings {
             it.copy(
-                tiktok = it.tiktok.copy(blocked = true),
-                x = it.x.copy(blocked = true)
+                instagram = it.instagram.copy(
+                    blocked = true, wholeApp = true, appTotalDailyLimitMinutes = 60,
+                    shortsRuleOn = true, dailyLimitMinutes = 15
+                )
             )
         }
-        assertEquals(BlockReason.SCHEDULE, evaluate(TrackedPackages.TIKTOK, s, shortsVisible = false).reason)
-        assertEquals(BlockReason.SCHEDULE, evaluate(TrackedPackages.X, s, shortsVisible = false).reason)
-    }
+        // 20 minutes in the app, 10 of them in Reels: nothing is blocked yet.
+        val early = DailyUsage(instagramTotalSeconds = 20 * 60, instagramSeconds = 10 * 60)
+        assertFalse(evaluate(TrackedPackages.INSTAGRAM, s, early, shortsVisible = true).shouldBlock)
 
-    @Test
-    fun shortsLimitUsesShortsSecondsAndBlocksAtTheLimit() {
-        val s = settings { it.copy(youtube = it.youtube.copy(blocked = true, dailyLimitMinutes = 10)) }
-        val under = evaluate(TrackedPackages.YOUTUBE, s, DailyUsage(youtubeSeconds = 9 * 60 + 59))
-        val over = evaluate(TrackedPackages.YOUTUBE, s, DailyUsage(youtubeSeconds = 10 * 60))
-        assertFalse(under.shouldBlock)
-        assertEquals(BlockReason.DAILY_LIMIT, over.reason)
+        // 15 minutes of Reels: Reels are blocked, the rest of the app is still free.
+        val reelsDone = DailyUsage(instagramTotalSeconds = 30 * 60, instagramSeconds = 15 * 60)
+        val onReels = evaluate(TrackedPackages.INSTAGRAM, s, reelsDone, shortsVisible = true)
+        assertEquals(BlockReason.DAILY_LIMIT, onReels.reason)
+        assertFalse(onReels.wholeApp)
+        assertFalse(evaluate(TrackedPackages.INSTAGRAM, s, reelsDone, shortsVisible = false).shouldBlock)
+
+        // One hour in the app: everything is blocked, Reels on screen or not.
+        val appDone = DailyUsage(instagramTotalSeconds = 60 * 60, instagramSeconds = 5 * 60)
+        val whole = evaluate(TrackedPackages.INSTAGRAM, s, appDone, shortsVisible = false)
+        assertEquals(BlockReason.TOTAL_LIMIT, whole.reason)
+        assertTrue(whole.wholeApp)
     }
 
     @Test
     fun wholeAppLimitUsesTotalSecondsNotShortsSeconds() {
         val s = settings {
-            it.copy(instagram = it.instagram.copy(blocked = true, wholeApp = true, appTotalDailyLimitMinutes = 20))
+            it.copy(instagram = it.instagram.copy(blocked = true, wholeApp = true, appTotalDailyLimitMinutes = 20, shortsRuleOn = false))
         }
         val shortsOnly = evaluate(TrackedPackages.INSTAGRAM, s, DailyUsage(instagramSeconds = 3_000, instagramTotalSeconds = 60))
         val total = evaluate(TrackedPackages.INSTAGRAM, s, DailyUsage(instagramTotalSeconds = 20 * 60))
@@ -95,15 +120,35 @@ class BlockPolicyTest {
     }
 
     @Test
-    fun outsideTheScheduleNothingIsBlockedEvenOverTheLimit() {
+    fun shortsLimitBlocksAtTheLimit() {
+        val s = settings { it.copy(youtube = it.youtube.copy(blocked = true, dailyLimitMinutes = 10)) }
+        assertFalse(evaluate(TrackedPackages.YOUTUBE, s, DailyUsage(youtubeSeconds = 9 * 60 + 59)).shouldBlock)
+        assertEquals(BlockReason.DAILY_LIMIT, evaluate(TrackedPackages.YOUTUBE, s, DailyUsage(youtubeSeconds = 10 * 60)).reason)
+    }
+
+    @Test
+    fun tiktokAndXAreAlwaysWholeApp() {
+        val s = settings { it.copy(tiktok = it.tiktok.copy(blocked = true), x = it.x.copy(blocked = true)) }
+        assertTrue(evaluate(TrackedPackages.TIKTOK, s, shortsVisible = false).wholeApp)
+        assertEquals(BlockReason.SCHEDULE, evaluate(TrackedPackages.X, s, shortsVisible = false).reason)
+    }
+
+    @Test
+    fun bankPackagesNeverProduceAVerdict() {
+        val s = settings { it.copy(instagram = it.instagram.copy(blocked = true, wholeApp = true)) }
+        BankPackages.ALL.forEach { bank ->
+            assertEquals(BlockReason.NONE, evaluate(bank, s).reason)
+        }
+    }
+
+    // ---- global schedule -------------------------------------------------------------------
+
+    @Test
+    fun outsideTheGlobalScheduleNothingIsBlockedEvenOverTheLimit() {
         val s = settings {
             it.copy(
-                tiktok = it.tiktok.copy(
-                    blocked = true,
-                    blockedStart = 22 * 60,
-                    blockedEnd = 23 * 60,
-                    appTotalDailyLimitMinutes = 1
-                )
+                scheduleStart = 22 * 60, scheduleEnd = 23 * 60,
+                tiktok = it.tiktok.copy(blocked = true, appTotalDailyLimitMinutes = 1)
             )
         }
         val usage = DailyUsage(tiktokTotalSeconds = 5_000)
@@ -112,25 +157,19 @@ class BlockPolicyTest {
     }
 
     @Test
-    fun weekdayMaskSelectsTheRightDays() {
-        val mondayOnly = AppSettings().instagram.copy(blocked = true, blockedWeekdays = 1 shl 1)
-        assertTrue(BlockPolicy.isScheduleActive(mondayOnly, at(0, 12), utc))
-        assertFalse(BlockPolicy.isScheduleActive(mondayOnly, at(1, 12), utc))
+    fun globalWeekdaysSelectTheRightDays() {
+        val s = settings { it.copy(scheduleWeekdays = 1 shl 1, instagram = it.instagram.copy(blocked = true)) }
+        assertTrue(evaluate(TrackedPackages.INSTAGRAM, s, now = at(0, 12)).shouldBlock)
+        assertFalse(evaluate(TrackedPackages.INSTAGRAM, s, now = at(1, 12)).shouldBlock)
         assertTrue(BlockPolicy.isActiveWeekday(127, at(3, 12), utc))
     }
 
     @Test
     fun overnightWindowBelongsToTheDayItStarts() {
-        val fridayNight = App(
-            name = "Instagram", blocked = true, blockedStart = 22 * 60, blockedEnd = 6 * 60,
-            blockedTimer = 0, features = emptyList(), blockedWeekdays = 1 shl 5
-        )
-        // Friday 23:00 and Saturday 02:00 are both part of Friday's window.
+        val fridayNight = AppSettings(scheduleStart = 22 * 60, scheduleEnd = 6 * 60, scheduleWeekdays = 1 shl 5)
         assertTrue(BlockPolicy.isScheduleActive(fridayNight, at(4, 23), utc))
         assertTrue(BlockPolicy.isScheduleActive(fridayNight, at(5, 2), utc))
-        // Saturday 23:00 starts Saturday's window, which is not selected.
         assertFalse(BlockPolicy.isScheduleActive(fridayNight, at(5, 23), utc))
-        // Friday 02:00 is the tail of Thursday's window.
         assertFalse(BlockPolicy.isScheduleActive(fridayNight, at(4, 2), utc))
         assertFalse(BlockPolicy.isScheduleActive(fridayNight, at(4, 12), utc))
     }
@@ -142,13 +181,39 @@ class BlockPolicyTest {
         assertFalse(BlockPolicy.isWithinInterval(22 * 60, 6 * 60, 12 * 60))
     }
 
+    // ---- loosening -------------------------------------------------------------------------
+
     @Test
-    fun bankPackagesNeverProduceAVerdict() {
-        val s = settings { it.copy(instagram = it.instagram.copy(blocked = true, wholeApp = true)) }
-        BankPackages.ALL.forEach { bank ->
-            assertEquals(BlockReason.NONE, evaluate(bank, s).reason)
-        }
+    fun turningOffDroppingARuleOrRaisingALimitIsLoosening() {
+        assertTrue(BlockPolicy.isLoosening(app(), app(blocked = false)))
+        assertTrue(BlockPolicy.isLoosening(app(shorts = true), app(shorts = false)))
+        assertTrue(BlockPolicy.isLoosening(app(whole = true), app(whole = false)))
+        assertTrue(BlockPolicy.isLoosening(app(shortsLimit = 15), app(shortsLimit = 30)))
+        assertTrue(BlockPolicy.isLoosening(app(shortsLimit = 0), app(shortsLimit = 15)))
+        assertTrue(BlockPolicy.isLoosening(app(whole = true, wholeLimit = 60), app(whole = true, wholeLimit = 90)))
     }
+
+    @Test
+    fun makingABlockStricterIsNeverLoosening() {
+        assertFalse(BlockPolicy.isLoosening(app(shortsLimit = 30), app(shortsLimit = 15)))
+        assertFalse(BlockPolicy.isLoosening(app(shortsLimit = 30), app(shortsLimit = 0)))
+        assertFalse(BlockPolicy.isLoosening(app(whole = false), app(whole = true)))
+        assertFalse(BlockPolicy.isLoosening(app(shorts = false), app(shorts = true)))
+        assertFalse(BlockPolicy.isLoosening(app(blocked = false), app(blocked = true)))
+    }
+
+    @Test
+    fun narrowingOrShiftingTheScheduleIsLoosening() {
+        val all = AppSettings()
+        assertTrue(BlockPolicy.isScheduleLoosening(all, all.copy(scheduleStart = 9 * 60, scheduleEnd = 18 * 60)))
+        assertTrue(BlockPolicy.isScheduleLoosening(all, all.copy(scheduleWeekdays = 0b0111110)))
+        val night = all.copy(scheduleStart = 22 * 60, scheduleEnd = 6 * 60)
+        assertTrue(BlockPolicy.isScheduleLoosening(night, night.copy(scheduleStart = 23 * 60, scheduleEnd = 7 * 60)))
+        assertFalse(BlockPolicy.isScheduleLoosening(night, night.copy(scheduleStart = 21 * 60, scheduleEnd = 7 * 60)))
+        assertFalse(BlockPolicy.isScheduleLoosening(AppSettings(scheduleStart = 9 * 60, scheduleEnd = 18 * 60), all))
+    }
+
+    // ---- usage and strict mode --------------------------------------------------------------
 
     @Test
     fun usageHelpersNeverCountXTwiceAndResetCleanly() {
@@ -166,41 +231,5 @@ class BlockPolicyTest {
         assertTrue(s.isStrictLocked(nowMillis = 999L))
         assertFalse(s.isStrictLocked(nowMillis = 1_000L))
         assertFalse(AppSettings().isStrictLocked())
-    }
-
-    private fun app(
-        start: Int = 0, end: Int = 1439, days: Int = 127, limit: Int = 0,
-        whole: Boolean = false, blocked: Boolean = true
-    ) = App(
-        name = "Instagram", blocked = blocked, blockedStart = start, blockedEnd = end,
-        blockedTimer = 0, features = emptyList(), dailyLimitMinutes = if (whole) 0 else limit,
-        appTotalDailyLimitMinutes = if (whole) limit else 0, blockedWeekdays = days, wholeApp = whole
-    )
-
-    @Test
-    fun turningOffOrRaisingTheLimitIsLoosening() {
-        assertTrue(BlockPolicy.isLoosening(app(), app(blocked = false)))
-        assertTrue(BlockPolicy.isLoosening(app(limit = 30), app(limit = 45)))
-        assertTrue(BlockPolicy.isLoosening(app(limit = 0), app(limit = 30)))
-        assertTrue(BlockPolicy.isLoosening(app(whole = true), app(whole = false)))
-    }
-
-    @Test
-    fun makingABlockStricterIsNeverLoosening() {
-        assertFalse(BlockPolicy.isLoosening(app(limit = 30), app(limit = 15)))
-        assertFalse(BlockPolicy.isLoosening(app(limit = 30), app(limit = 0)))
-        assertFalse(BlockPolicy.isLoosening(app(whole = false), app(whole = true)))
-        assertFalse(BlockPolicy.isLoosening(app(blocked = false), app(blocked = true)))
-        assertFalse(BlockPolicy.isLoosening(app(start = 9 * 60, end = 18 * 60), app()))
-        assertFalse(BlockPolicy.isLoosening(app(days = 1 shl 1), app(days = 127)))
-    }
-
-    @Test
-    fun shrinkingOrShiftingTheScheduleIsLoosening() {
-        assertTrue(BlockPolicy.isLoosening(app(), app(start = 9 * 60, end = 18 * 60)))
-        assertTrue(BlockPolicy.isLoosening(app(), app(days = 0b0111110)))
-        // Same length, different hours: the old hours are no longer covered.
-        assertTrue(BlockPolicy.isLoosening(app(start = 22 * 60, end = 6 * 60), app(start = 23 * 60, end = 7 * 60)))
-        assertFalse(BlockPolicy.isLoosening(app(start = 22 * 60, end = 6 * 60), app(start = 21 * 60, end = 7 * 60)))
     }
 }

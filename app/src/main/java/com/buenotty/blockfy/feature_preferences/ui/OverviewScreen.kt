@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.buenotty.blockfy.R
-import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import com.buenotty.blockfy.feature_preferences.ui.composables.AccessibilityServiceDialog
@@ -35,7 +34,10 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultConte
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableBlockerDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.ProtectionStatusCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
+import com.buenotty.blockfy.feature_preferences.ui.composables.ScheduleSummaryCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.StrictModeDialog
+import com.buenotty.blockfy.feature_preferences.ui.composables.daysLabel
+import com.buenotty.blockfy.feature_preferences.ui.composables.hoursLabel
 import com.buenotty.blockfy.feature_preferences.ui.composables.TodaySummaryCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.ToggleCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGranted
@@ -44,6 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BlocksScreen(
     onEditApp: (String) -> Unit,
+    onOpenSchedule: () -> Unit,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -88,11 +91,16 @@ fun BlocksScreen(
 
         TodaySummaryCard(blocks = usage.blockedAttemptsToday, savedSeconds = usage.savedSeconds)
 
+        ScheduleSummaryCard(
+            summary = "${daysLabel(settings.scheduleWeekdays)} · ${hoursLabel(settings.scheduleStart, settings.scheduleEnd)}",
+            onOpen = onOpenSchedule
+        )
+
         SectionTitle(stringResource(R.string.section_apps))
         listOf(settings.instagram, settings.youtube, settings.tiktok, settings.facebook, settings.x).forEach { app ->
             AppBlockCard(
                 app = app,
-                usedSeconds = BlockPolicy.usedSeconds(app, usage),
+                usage = usage,
                 onToggle = { toggleApp(app, it) },
                 onOpen = { onEditApp(app.name) }
             )

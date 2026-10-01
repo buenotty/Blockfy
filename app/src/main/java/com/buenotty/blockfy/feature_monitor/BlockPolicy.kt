@@ -16,19 +16,25 @@ enum class BlockReason {
 data class BlockVerdict(
     val reason: BlockReason,
     val appName: String,
-    val packageName: String
+    val packageName: String,
+    /** True when the whole app is blocked, false when only Reels/Shorts are. */
+    val wholeApp: Boolean = false
 ) {
     val shouldBlock: Boolean get() = reason != BlockReason.NONE
 }
 
 /**
- * One rule for every app:
+ * The rules, in one place:
  *
- *  1. The master switch (`blocked`) must be on.
- *  2. The moment must be inside the schedule (weekday + hours).
- *  3. The scope decides what is blocked: Reels/Shorts only, or the whole app.
- *  4. With no limit the scope is blocked for the whole schedule. With a limit it is
- *     allowed until the day's usage reaches it.
+ *  1. The app's master switch must be on.
+ *  2. The moment must be inside the global schedule (hours and weekdays, shared by every app).
+ *  3. The whole-app rule, if on, either blocks the app (limit 0) or allows N minutes a day of
+ *     total use.
+ *  4. The Reels/Shorts rule, if on and a short-video screen is showing, either blocks it
+ *     (limit 0) or allows N minutes a day of short-video use.
+ *
+ * The two rules are independent, so "one hour of Instagram, but only 15 minutes of Reels" is
+ * simply a whole-app limit of 60 plus a Reels limit of 15.
  */
 object BlockPolicy {
 
@@ -54,50 +60,36 @@ object BlockPolicy {
     }
 
     /**
-     * Whether the schedule covers [minute] of weekday [dayIndex] (0 = Sunday). A window that
+     * Whether a schedule covers [minute] of weekday [dayIndex] (0 = Sunday). A window that
      * crosses midnight (22:00-06:00) belongs to the weekday it starts on, so the 02:00 part of a
      * Friday night window still counts as Friday.
      */
-    fun scheduleCovers(app: App, dayIndex: Int, minute: Int): Boolean {
-        if (!isWithinInterval(app.blockedStart, app.blockedEnd, minute)) return false
-        val crossesMidnight = app.blockedStart > app.blockedEnd
-        val windowDay = if (crossesMidnight && minute <= app.blockedEnd) (dayIndex + 6) % 7 else dayIndex
-        return app.blockedWeekdays and (1 shl windowDay) != 0
+    fun scheduleCovers(start: Int, end: Int, weekdays: Int, dayIndex: Int, minute: Int): Boolean {
+        if (!isWithinInterval(start, end, minute)) return false
+        val crossesMidnight = start > end
+        val windowDay = if (crossesMidnight && minute <= end) (dayIndex + 6) % 7 else dayIndex
+        return weekdays and (1 shl windowDay) != 0
     }
 
     fun isScheduleActive(
-        app: App,
+        settings: AppSettings,
         nowMillis: Long = System.currentTimeMillis(),
         timeZone: TimeZone = TimeZone.getDefault()
     ): Boolean {
         val calendar = Calendar.getInstance(timeZone)
         calendar.timeInMillis = nowMillis
         val minute = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
-        return scheduleCovers(app, calendar.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY, minute)
+        val day = calendar.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY
+        return scheduleCovers(settings.scheduleStart, settings.scheduleEnd, settings.scheduleWeekdays, day, minute)
     }
 
-    /**
-     * True when [new] lets the user use the app in some situation where [old] would have blocked
-     * it: the block is switched off, the scope narrows, the limit grows, or any minute of the
-     * week stops being covered. Strict mode forbids these and the editor asks for a pause first.
-     */
-    fun isLoosening(old: App, new: App): Boolean {
-        if (!old.blocked) return false
-        if (!new.blocked) return true
-
-        val oldWhole = isWholeScope(old)
-        val newWhole = isWholeScope(new)
-        if (oldWhole && !newWhole) return true
-        if (oldWhole == newWhole) {
-            val oldLimit = limitMinutes(old)
-            val newLimit = limitMinutes(new)
-            if (oldLimit == 0 && newLimit > 0) return true
-            if (oldLimit > 0 && newLimit > oldLimit) return true
-        }
-
+    /** True when [new] stops covering any minute of the week that [old] covered. */
+    fun isScheduleLoosening(old: AppSettings, new: AppSettings): Boolean {
         for (day in 0 until 7) {
             for (minute in 0 until 1440) {
-                if (scheduleCovers(old, day, minute) && !scheduleCovers(new, day, minute)) return true
+                val before = scheduleCovers(old.scheduleStart, old.scheduleEnd, old.scheduleWeekdays, day, minute)
+                val after = scheduleCovers(new.scheduleStart, new.scheduleEnd, new.scheduleWeekdays, day, minute)
+                if (before && !after) return true
             }
         }
         return false
@@ -105,17 +97,39 @@ object BlockPolicy {
 
     fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X"
 
-    fun isWholeScope(app: App): Boolean = isWholeAppOnly(app.name) || app.wholeApp
+    /** TikTok and X can only be limited as a whole, so for them this rule is always on. */
+    fun wholeRuleOn(app: App): Boolean = isWholeAppOnly(app.name) || app.wholeApp
 
-    fun limitMinutes(app: App): Int =
-        if (isWholeScope(app)) app.appTotalDailyLimitMinutes else app.dailyLimitMinutes
+    fun shortsRuleOn(app: App): Boolean = !isWholeAppOnly(app.name) && app.shortsRuleOn
 
-    fun usedSeconds(app: App, usage: DailyUsage): Long =
-        if (isWholeScope(app)) totalSeconds(usage, app.name) else featureSeconds(usage, app.name)
+    private fun limitLoosened(oldLimit: Int, newLimit: Int): Boolean = when {
+        oldLimit <= 0 -> newLimit > 0
+        else -> newLimit > oldLimit
+    }
+
+    /**
+     * True when [new] lets the user use the app in some situation where [old] would have blocked
+     * it: the master switch goes off, a rule is dropped, or a limit grows. Hours and weekdays are
+     * global and checked with [isScheduleLoosening]. Strict mode forbids all of these, and the
+     * editor asks for a pause before accepting them.
+     */
+    fun isLoosening(old: App, new: App): Boolean {
+        if (!old.blocked) return false
+        if (!new.blocked) return true
+        if (wholeRuleOn(old)) {
+            if (!wholeRuleOn(new)) return true
+            if (limitLoosened(old.appTotalDailyLimitMinutes, new.appTotalDailyLimitMinutes)) return true
+        }
+        if (shortsRuleOn(old)) {
+            if (!shortsRuleOn(new)) return true
+            if (limitLoosened(old.dailyLimitMinutes, new.dailyLimitMinutes)) return true
+        }
+        return false
+    }
 
     /**
      * @param shortsVisible whether a Reels/Shorts screen is on display right now. It only
-     * matters when the scope is Reels/Shorts; whole-app rules ignore it.
+     * matters for the Reels/Shorts rule; the whole-app rule ignores it.
      */
     fun evaluate(
         packageName: String,
@@ -131,16 +145,23 @@ object BlockPolicy {
 
         val app = appConfig(settings, appName)
         if (!app.blocked) return none
-        if (!isScheduleActive(app, nowMillis, timeZone)) return none
+        if (!isScheduleActive(settings, nowMillis, timeZone)) return none
 
-        val whole = isWholeScope(app)
-        if (!whole && !shortsVisible) return none
-
-        val limit = limitMinutes(app)
-        if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
-        if (usedSeconds(app, usage) < limit * 60L) return none
-        val reason = if (whole) BlockReason.TOTAL_LIMIT else BlockReason.DAILY_LIMIT
-        return BlockVerdict(reason, appName, packageName)
+        if (wholeRuleOn(app)) {
+            val limit = app.appTotalDailyLimitMinutes
+            if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName, wholeApp = true)
+            if (totalSeconds(usage, appName) >= limit * 60L) {
+                return BlockVerdict(BlockReason.TOTAL_LIMIT, appName, packageName, wholeApp = true)
+            }
+        }
+        if (shortsRuleOn(app) && shortsVisible) {
+            val limit = app.dailyLimitMinutes
+            if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
+            if (featureSeconds(usage, appName) >= limit * 60L) {
+                return BlockVerdict(BlockReason.DAILY_LIMIT, appName, packageName)
+            }
+        }
+        return none
     }
 
     fun appConfig(settings: AppSettings, appName: String): App {
@@ -154,6 +175,7 @@ object BlockPolicy {
         }
     }
 
+    /** Seconds spent on Reels/Shorts today. */
     fun featureSeconds(usage: DailyUsage, appName: String): Long {
         return when (appName) {
             "Instagram" -> usage.instagramSeconds
@@ -165,6 +187,7 @@ object BlockPolicy {
         }
     }
 
+    /** Seconds spent anywhere in the app today. */
     fun totalSeconds(usage: DailyUsage, appName: String): Long {
         return when (appName) {
             "Instagram" -> usage.instagramTotalSeconds

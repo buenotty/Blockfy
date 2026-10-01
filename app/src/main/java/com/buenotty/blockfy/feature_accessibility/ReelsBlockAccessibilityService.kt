@@ -22,6 +22,7 @@ import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_monitor.BlockReason
 import com.buenotty.blockfy.feature_monitor.BlockVerdict
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
+import com.buenotty.blockfy.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -135,53 +136,70 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun handleTrackedApp(pkg: String, appName: String, root: AccessibilityNodeInfo) {
         val app = BlockPolicy.appConfig(settings, appName)
-        val wholeScope = BlockPolicy.isWholeScope(app)
+        val canHaveShorts = !BlockPolicy.isWholeAppOnly(appName)
         val nowElapsed = SystemClock.elapsedRealtime()
 
-        // Whole-app rules never look at the screen. Otherwise run the cheap id lookup on
-        // every event and the slower fallback scan at most twice a second. Enforcement only
-        // trusts what this very event saw, so leaving Reels never triggers one stray "back".
-        val deep = !wholeScope && nowElapsed - lastDeepScanElapsed >= DEEP_SCAN_INTERVAL_MILLIS
+        // Run the cheap id lookup on every event and the slower fallback scan at most twice a
+        // second. Enforcement only trusts what this very event saw, so leaving Reels never
+        // triggers one stray "back".
+        val deep = canHaveShorts && nowElapsed - lastDeepScanElapsed >= DEEP_SCAN_INTERVAL_MILLIS
         if (deep) lastDeepScanElapsed = nowElapsed
-        val shortsVisible = !wholeScope && ShortsDetector.isVisible(appName, root, deepScan = deep)
+        val shortsVisible = canHaveShorts && ShortsDetector.isVisible(appName, root, deepScan = deep)
         if (deep) lastDeepShorts = shortsVisible
         // Time counting may lean on the last deep scan so a fallback-detected Reels session
         // is not under-counted between scans.
-        val shortsForCredit = shortsVisible || (!wholeScope && !deep && lastDeepShorts)
+        val shortsForCredit = shortsVisible || (canHaveShorts && !deep && lastDeepShorts)
 
         creditUsage(pkg, appName, shortsForCredit)
         collectViewIdsIfRequested(root, nowElapsed)
 
+        val usage = usageWithPending()
         val verdict = BlockPolicy.evaluate(
             packageName = pkg,
             settings = settings,
-            usage = usageWithPending(),
+            usage = usage,
             shortsVisible = shortsVisible
         )
-        ServiceDiagnostics.onEvent(pkg, shortsVisible, describe(verdict, wholeScope))
+        ServiceDiagnostics.onEvent(pkg, shortsVisible, describe(verdict))
 
         if (verdict.shouldBlock) {
-            enforce(verdict, BlockPolicy.limitMinutes(app), wholeScope, root)
+            enforce(verdict, app, root)
             return
         }
 
         if (shortsVisible || appName == "TikTok") maybeProvoke(appName)
 
-        val limit = BlockPolicy.limitMinutes(app)
-        if (app.blocked && limit > 0 && (wholeScope || shortsVisible) && BlockPolicy.isScheduleActive(app)) {
-            checkAndNotifyRemainingTime(appName, BlockPolicy.usedSeconds(app, usageWithPending()), limit)
+        if (app.blocked && BlockPolicy.isScheduleActive(settings)) {
+            if (BlockPolicy.wholeRuleOn(app) && app.appTotalDailyLimitMinutes > 0) {
+                checkAndNotifyRemainingTime(
+                    key = "$appName:whole",
+                    label = appName,
+                    usedSeconds = BlockPolicy.totalSeconds(usage, appName),
+                    limitMinutes = app.appTotalDailyLimitMinutes
+                )
+            }
+            if (BlockPolicy.shortsRuleOn(app) && shortsVisible && app.dailyLimitMinutes > 0) {
+                checkAndNotifyRemainingTime(
+                    key = "$appName:shorts",
+                    label = shortsLabel(appName),
+                    usedSeconds = BlockPolicy.featureSeconds(usage, appName),
+                    limitMinutes = app.dailyLimitMinutes
+                )
+            }
         }
     }
 
-    private fun describe(verdict: BlockVerdict, wholeScope: Boolean): String = when (verdict.reason) {
+    private fun shortsLabel(appName: String) = if (appName == "YouTube") "YouTube Shorts" else "$appName Reels"
+
+    private fun describe(verdict: BlockVerdict): String = when (verdict.reason) {
         BlockReason.NONE -> "ok"
-        BlockReason.SCHEDULE -> if (wholeScope) "blocked: schedule (whole app)" else "blocked: schedule (shorts)"
-        BlockReason.DAILY_LIMIT -> "blocked: daily limit (shorts)"
-        BlockReason.TOTAL_LIMIT -> "blocked: daily limit (whole app)"
+        BlockReason.SCHEDULE -> if (verdict.wholeApp) "blocked: whole app" else "blocked: Reels/Shorts"
+        BlockReason.DAILY_LIMIT -> "blocked: Reels/Shorts limit reached"
+        BlockReason.TOTAL_LIMIT -> "blocked: app limit reached"
     }
 
     /** Alert once per episode, but keep pushing the user out until the app actually leaves. */
-    private fun enforce(verdict: BlockVerdict, limitMinutes: Int, wholeScope: Boolean, root: AccessibilityNodeInfo) {
+    private fun enforce(verdict: BlockVerdict, app: App, root: AccessibilityNodeInfo) {
         val appName = verdict.appName
         val now = SystemClock.elapsedRealtime()
         val newEpisode = now - (lastBlockElapsed[appName] ?: 0L) > EPISODE_GAP_MILLIS
@@ -189,21 +207,21 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
         if (newEpisode) {
             val (title, message) = when (verdict.reason) {
-                BlockReason.SCHEDULE -> getString(R.string.alert_blocked_title) to if (wholeScope) {
+                BlockReason.SCHEDULE -> getString(R.string.alert_blocked_title) to if (verdict.wholeApp) {
                     getString(R.string.toast_app_window_blocked, appName)
                 } else {
                     getString(R.string.toast_shorts_window_blocked, appName)
                 }
                 BlockReason.DAILY_LIMIT -> getString(R.string.alert_limit_title) to
-                    getString(R.string.toast_limit_reached, limitMinutes, getString(R.string.short_videos_label))
+                    getString(R.string.toast_limit_reached, app.dailyLimitMinutes, shortsLabel(appName))
                 else -> getString(R.string.alert_app_total_limit_title) to
-                    getString(R.string.toast_app_total_limit_reached, limitMinutes, appName)
+                    getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
             }
             notifyAlert(title, message, isFinal = true)
             serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         }
 
-        if (wholeScope) {
+        if (verdict.wholeApp) {
             exitTheDoom(null) { performGlobalAction(GLOBAL_ACTION_HOME) }
         } else {
             exitShorts(appName, root)
@@ -321,19 +339,19 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun checkAndNotifyRemainingTime(appName: String, usedSeconds: Long, limitMinutes: Int) {
+    private fun checkAndNotifyRemainingTime(key: String, label: String, usedSeconds: Long, limitMinutes: Int) {
         val remainingSeconds = limitMinutes * 60L - usedSeconds
         if (remainingSeconds <= 0L) return
         val remainingMinutes = ((remainingSeconds + 59L) / 60L).toInt()
-        val lastWarned = lastWarnedMinutes[appName] ?: -1
+        val lastWarned = lastWarnedMinutes[key] ?: -1
         if (remainingMinutes == lastWarned) return
         val shouldWarn = remainingMinutes <= 5 || remainingMinutes % 5 == 0
         if (!shouldWarn) return
-        lastWarnedMinutes[appName] = remainingMinutes
+        lastWarnedMinutes[key] = remainingMinutes
         val minText = if (remainingMinutes == 1) {
-            getString(R.string.toast_remaining_one_minute, appName)
+            getString(R.string.toast_remaining_one_minute, label)
         } else {
-            getString(R.string.toast_remaining_minutes, remainingMinutes, appName)
+            getString(R.string.toast_remaining_minutes, remainingMinutes, label)
         }
         notifyAlert(getString(R.string.alert_warning_title), minText, isFinal = false)
     }
@@ -411,7 +429,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             ensureChannels(manager)
             val builder = NotificationCompat.Builder(this, if (isFinal) ALERT_CHANNEL else REMINDER_CHANNEL)
-                .setSmallIcon(R.drawable.ic_policy)
+                .setSmallIcon(R.drawable.ic_stat_blockfy)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(if (isFinal) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_LOW)

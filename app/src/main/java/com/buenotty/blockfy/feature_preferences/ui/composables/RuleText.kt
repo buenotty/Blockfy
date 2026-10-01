@@ -3,8 +3,6 @@ package com.buenotty.blockfy.feature_preferences.ui.composables
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.buenotty.blockfy.R
-import com.buenotty.blockfy.feature_monitor.BlockPolicy
-import com.buenotty.blockfy.feature_preferences.repository.models.App
 import java.util.Locale
 
 /** Text helpers shared by the app cards and the edit screen, so both always say the same thing. */
@@ -20,14 +18,6 @@ fun Int.toTime(): String = String.format(Locale.ROOT, "%02d:%02d", this / 60, th
 @Composable
 fun appDisplayName(name: String): String =
     if (name == "X") stringResource(R.string.x_app) else name
-
-/** Name of the short-video feature of an app, or "Whole app" when everything is blocked. */
-@Composable
-fun scopeLabel(app: App): String = when {
-    BlockPolicy.isWholeScope(app) -> stringResource(R.string.app_scope_whole)
-    app.name == "YouTube" -> stringResource(R.string.app_scope_shorts)
-    else -> stringResource(R.string.app_scope_reels)
-}
 
 @Composable
 fun shortsFeatureLabel(appName: String): String =
@@ -61,7 +51,5 @@ fun hoursLabel(start: Int, end: Int): String =
     }
 
 @Composable
-fun ruleLabel(app: App): String {
-    val limit = BlockPolicy.limitMinutes(app)
-    return if (limit > 0) stringResource(R.string.app_rule_limit, limit) else stringResource(R.string.app_rule_blocked)
-}
+fun limitLabel(limitMinutes: Int): String =
+    if (limitMinutes > 0) stringResource(R.string.app_rule_limit, limitMinutes) else stringResource(R.string.app_rule_blocked)

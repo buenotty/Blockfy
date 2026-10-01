@@ -15,7 +15,6 @@
     <string name="restricted_settings_hint">Em alguns celulares você precisa permitir configurações restritas na tela de informações do Blockfy.</string>
 
     <string name="x_app">X (Twitter)</string>
-    <string name="short_videos_label">vídeos curtos</string>
 
     <string name="language_title">Idioma</string>
     <string name="language_desc">No Brasil o app abre em português. Fora isso, inglês. Você muda isso aqui se quiser.</string>
@@ -173,31 +172,23 @@
     <string name="weekdays_weekend">Fim de semana</string>
     <string name="edit_enable_title">Bloqueio ligado</string>
     <string name="edit_enable_desc">Desligue para pausar tudo neste app.</string>
-    <string name="edit_section_scope">O que bloquear</string>
-    <string name="edit_scope_only">Só %1$s</string>
-    <string name="edit_scope_whole_only_hint">O %1$s não tem uma tela separada de vídeos curtos, então o app inteiro é bloqueado.</string>
-    <string name="edit_section_rule">Como bloquear</string>
     <string name="edit_rule_always">Bloquear</string>
     <string name="edit_rule_limit">Limite por dia</string>
-    <string name="edit_rule_always_desc">Bloqueado nos horários abaixo, assim que você abrir.</string>
-    <string name="edit_rule_limit_desc">Liberado até o limite nos horários abaixo. Depois disso fica bloqueado.</string>
+    <string name="edit_rule_always_desc">Bloqueado nos horários programados, assim que você abrir.</string>
+    <string name="edit_rule_limit_desc">Liberado até o limite nos horários programados. Depois disso fica bloqueado.</string>
     <string name="minutes_suffix">min</string>
     <string name="minutes_less">Menos</string>
     <string name="minutes_more">Mais</string>
     <string name="minutes_error">Digite de 1 a 1440 minutos.</string>
-    <string name="edit_section_when">Quando</string>
     <string name="edit_hours_title">Horário</string>
     <string name="preset_night">Noite 22:00 às 06:00</string>
     <string name="preset_work">Trabalho 09:00 às 18:00</string>
     <string name="hours_error_equal">Início e fim precisam ser diferentes.</string>
     <string name="hours_crosses_midnight">Termina no dia seguinte</string>
     <string name="subject_shorts">%2$s do %1$s</string>
-    <string name="subject_whole">%1$s (app inteiro)</string>
     <string name="hours_range">das %1$s às %2$s</string>
     <string name="summary_title">Resumo</string>
     <string name="summary_off">O bloqueio de %1$s está desligado.</string>
-    <string name="summary_always">%1$s fica bloqueado: %2$s, %3$s.</string>
-    <string name="summary_limit">%1$s tem limite de %2$d min por dia: %3$s, %4$s.</string>
     <string name="edit_save_and_enable">Ligar e salvar</string>
     <string name="discard_title">Descartar alterações?</string>
     <string name="discard_msg">Você mudou configurações que ainda não foram salvas.</string>
@@ -231,4 +222,110 @@
     <string name="loosen_title">Afrouxar este bloqueio?</string>
     <string name="loosen_msg">Essas mudanças deixam você usar o app mais do que antes. Espere alguns segundos e pense se é isso mesmo que você quer.</string>
     <string name="loosen_confirm">Afrouxar</string>
+    <string name="rule_whole_title">App inteiro</string>
+    <string name="rule_whole_desc">Limita ou bloqueia todo o uso do app.</string>
+    <string name="rule_shorts_title">%1$s</string>
+    <string name="rule_shorts_desc">Limita ou bloqueia só os vídeos curtos.</string>
+    <string name="mode_off">Sem regra</string>
+    <string name="edit_rule_off_desc">Esta regra não é aplicada.</string>
+    <string name="limits_hint_shorts_above_whole">O limite de Reels/Shorts é maior que o do app inteiro, então o do app inteiro vai bloquear primeiro.</string>
+    <string name="schedule_link_title">Horários e dias</string>
+    <string name="schedule_link_desc">Iguais para todos os apps. Mude em Ajustes.</string>
+    <string name="schedule_link_btn">Abrir Ajustes</string>
+    <string name="schedule_change_btn">Alterar</string>
+    <string name="app_no_rule">Nenhuma regra ligada</string>
+    <string name="summary_none">Nenhuma regra ligada para %1$s.</string>
+    <string name="summary_whole_block">%1$s: app inteiro bloqueado.</string>
+    <string name="summary_whole_limit">%1$s: app inteiro limitado a %2$d min por dia.</string>
+    <string name="summary_shorts_block">%1$s: bloqueio total.</string>
+    <string name="summary_shorts_limit">%1$s: limitado a %2$d min por dia.</string>
+    <string name="summary_schedule">Vale: %1$s, %2$s (igual para todos os apps).</string>
+    <string name="schedule_card_title">Horários e dias</string>
+    <string name="schedule_card_desc">Quando seus bloqueios e limites valem. Isso vale para todos os apps.</string>
+    <string name="schedule_save_btn">Salvar horários e dias</string>
+    <string name="notice_title">Aviso importante</string>
+    <string name="notice_reread_desc">O que o Blockfy é, e o que ele não é.</string>
+    <string name="notice_reread_btn">Ler de novo</string>
+    <string name="notice_next">Continuar</string>
+    <string name="notice_accept">Entendi, vamos começar</string>
+    <string name="notice_1_title">Bem-vindo ao Blockfy</string>
+    <string name="notice_1_body">O Blockfy foi feito para ajudar quem quer reduzir hábitos que ficaram difíceis de controlar: vídeos curtos sem fim, pornografia e uso excessivo do celular. Também pode ajudar quem lida com compulsões, dependência de telas e dificuldade de foco, como no TDAH. Ele funciona colocando barreiras e limites no seu celular.</string>
+    <string name="notice_2_title">Nada funciona sem o seu esforço</string>
+    <string name="notice_2_body">Nenhum aplicativo muda um hábito sozinho. O Blockfy bloqueia, avisa e limita, mas quem decide continuar é você. Vai haver dias difíceis, e você vai poder desligar os bloqueios. O resultado depende da sua vontade, de uma rotina e das pessoas ao seu redor.</string>
+    <string name="notice_3_title">Se não melhorar, procure ajuda</string>
+    <string name="notice_3_body">O Blockfy não é tratamento, não faz diagnóstico e não substitui acompanhamento profissional. Se um hábito ruim persistir, atrapalhar sua vida ou causar sofrimento, vale consultar um psicólogo ou um psiquiatra. No Brasil, o CVV atende pelo 188, de graça, 24 horas por dia.</string>
+    <string name="concepts_habits_title">Impulsos e hábitos</string>
+    <string name="concepts_habits_summary">Como um hábito vira compulsão e o que fazer na hora da vontade.</string>
+    <string name="concepts_focus_title">Foco e TDAH</string>
+    <string name="concepts_focus_summary">Dicas para quem tem dificuldade de manter a atenção, com ou sem diagnóstico.</string>
+    <string name="concepts_plan_title">Seu plano na prática</string>
+    <string name="concepts_plan_summary">Passos simples para configurar o Blockfy e continuar.</string>
+    <string name="concepts_help_title">Quando procurar ajuda</string>
+    <string name="concepts_help_summary">Sinais de que só o aplicativo não basta e onde achar apoio.</string>
+    <string-array name="concept_habits_titles">
+        <item>A vontade passa</item>
+        <item>Gatilho, rotina e recompensa</item>
+        <item>Coloque atrito a seu favor</item>
+        <item>O "só mais um" é a armadilha</item>
+        <item>Substitua, não apenas proíba</item>
+        <item>Tropeçar não é fracassar</item>
+        <item>Conte para alguém</item>
+    </string-array>
+    <string-array name="concept_habits_bodies">
+        <item>Um impulso costuma subir, chegar ao pico e cair em alguns minutos, mesmo que você não faça nada. Esperar de 10 a 20 minutos fazendo outra coisa tira boa parte da força dele. Quando a vontade vier, diga a si mesmo: "vou esperar 15 minutos". Muitas vezes ela já passou.</item>
+        <item>Todo hábito tem um gatilho (tédio, ansiedade, cansaço, o celular na mão), uma rotina (abrir o app) e uma recompensa (alívio rápido). Para mudar, descubra o seu gatilho e troque a rotina, em vez de só brigar com a vontade. Anote por uns dias: quando e por que você abre o app?</item>
+        <item>Quanto mais passos entre você e o impulso, menos você cede. Deixe o celular longe da cama, tire os apps da tela inicial e mantenha o Blockfy ligado. É para isso que serve o bloqueio: transformar o impulso de dois toques em algo difícil de fazer.</item>
+        <item>O feed foi feito para não ter fim. Decidir o limite antes de abrir, e deixar o app aplicar, funciona melhor do que decidir na hora, quando a vontade já está forte. Quem decide no calor do momento costuma perder.</item>
+        <item>Proibir sem oferecer outra coisa deixa um vazio. Tenha uma alternativa pronta para o seu horário de maior risco: caminhar, ligar para alguém, um livro, um banho, um jogo de tabuleiro, exercício. Planeje isso antes de precisar.</item>
+        <item>Recair não apaga o que você já avançou. O que pesa é abandonar tudo depois de um deslize. Percebeu que escorregou? Volte ao plano no mesmo dia, sem se punir. Culpa em excesso costuma alimentar o ciclo em vez de quebrá-lo.</item>
+        <item>Segredo alimenta compulsão. Ter uma pessoa de confiança sabendo do seu objetivo costuma ajudar a manter o compromisso nos dias ruins. Pode ser um amigo, um familiar ou um profissional.</item>
+    </string-array>
+    <string-array name="concept_focus_titles">
+        <item>O Blockfy não diagnostica</item>
+        <item>Vídeos curtos treinam a distração</item>
+        <item>Menos decisões, mais regras prontas</item>
+        <item>Um passo de cada vez</item>
+        <item>Sono, comida e movimento</item>
+        <item>Tratamento é com profissional</item>
+    </string-array>
+    <string-array name="concept_focus_bodies">
+        <item>Dificuldade de atenção pode ter muitas causas: TDAH, ansiedade, depressão, sono ruim, excesso de telas, estresse. Só um profissional de saúde consegue avaliar o seu caso. O Blockfy ajuda com o ambiente (menos distração), não com o diagnóstico.</item>
+        <item>Trocar de estímulo a cada poucos segundos pode acostumar o cérebro a recompensas rápidas, e tarefas longas passam a parecer mais difíceis e chatas. Cortar o feed infinito costuma ser um dos passos mais eficazes para recuperar a capacidade de se concentrar.</item>
+        <item>Quem tem dificuldade de atenção costuma se beneficiar de regras prontas: horários fixos, limites automáticos, poucas escolhas na hora. Configurar o Blockfy uma vez poupa força de vontade depois, porque você não precisa decidir toda vez.</item>
+        <item>Divida a tarefa em blocos de 10 a 25 minutos, com uma pausa curta entre eles. Deixe o celular em outro cômodo durante o bloco. Comece pelo menor pedaço possível: o difícil costuma ser começar, e não continuar.</item>
+        <item>Dormir mal piora a atenção e o controle dos impulsos. Atividade física, luz do dia e refeições regulares ajudam. Antes de se culpar por falta de disciplina, olhe o básico do corpo.</item>
+        <item>Se você tem ou suspeita de TDAH, o tratamento é decidido com psiquiatra, neurologista ou psicólogo, e pode incluir terapia e, quando indicado, medicação. Aplicativo nenhum substitui isso. Nunca comece nem pare um remédio por conta própria.</item>
+    </string-array>
+    <string-array name="concept_plan_titles">
+        <item>Comece pequeno</item>
+        <item>Um limite que você consegue cumprir</item>
+        <item>Limite do app x limite de Reels</item>
+        <item>Horários que protegem</item>
+        <item>Use o modo estrito</item>
+        <item>Revise toda semana</item>
+    </string-array>
+    <string-array name="concept_plan_bodies">
+        <item>Ligue só um ou dois apps no começo. Um limite que você cumpre vale mais do que dez que você desliga. Quando ficar fácil, adicione o próximo.</item>
+        <item>Se hoje você usa 3 horas por dia, comece com 2 e vá baixando semana a semana. Um limite impossível só leva a desligar o bloqueio e desistir.</item>
+        <item>Dá para ter, por exemplo, 1 hora de Instagram por dia e só 15 minutos de Reels. É a combinação mais realista: você mantém o que é útil (mensagens, amigos, trabalho) e corta o feed sem fim. Configure em cada app: uma regra para o app inteiro e outra para Reels/Shorts.</item>
+        <item>Noite e madrugada costumam ser os horários de maior risco. Em Ajustes, escolha os dias e horários em que os bloqueios valem, por exemplo o modelo Noite. Os horários são os mesmos para todos os apps.</item>
+        <item>Ligue o modo estrito num momento de motivação. Até a meia-noite você só poderá deixar os bloqueios mais rígidos, nunca mais frouxos. É um combinado que você faz com você mesmo antes de a vontade chegar.</item>
+        <item>Uma vez por semana, olhe o resumo de hoje, os bloqueios e o que funcionou. Ajuste o que estiver difícil demais ou fácil demais. O objetivo não é ter o app perfeito, é sobrar tempo e atenção para o que importa para você.</item>
+    </string-array>
+    <string-array name="concept_help_titles">
+        <item>App é ferramenta, não tratamento</item>
+        <item>Sinais de alerta</item>
+        <item>Psicólogo ou psiquiatra?</item>
+        <item>Onde encontrar ajuda no Brasil</item>
+        <item>Se você pensa em se machucar</item>
+        <item>Pedir ajuda é força</item>
+    </string-array>
+    <string-array name="concept_help_bodies">
+        <item>O Blockfy cria barreiras. Ele não trata a causa do hábito, que pode ser ansiedade, solidão, depressão, trauma, TDAH ou outra coisa. Se a causa continua lá, o impulso tende a voltar por outro caminho.</item>
+        <item>Vale procurar um profissional se: você tenta parar e não consegue, várias vezes; o hábito atrapalha trabalho, estudos, sono ou relacionamentos; você sente culpa, vergonha ou ansiedade intensas; usa o hábito para fugir de emoções ruins; esconde ou mente sobre ele; ou está com o humor muito baixo.</item>
+        <item>O psicólogo faz terapia (por exemplo, a cognitivo-comportamental), que ajuda a entender gatilhos e criar estratégias. O psiquiatra é médico: avalia e diagnostica condições como TDAH, depressão e ansiedade, e pode prescrever medicação quando necessário. Muitas pessoas usam os dois. Se estiver em dúvida por onde começar, comece por um deles.</item>
+        <item>Pelo SUS, procure a UBS (posto de saúde) do seu bairro ou um CAPS, que atende sofrimento psíquico e, no caso do CAPS AD, uso problemático de álcool e outras drogas. O CVV (188, gratuito, 24 horas) oferece conversa de apoio emocional por telefone, chat e e-mail.</item>
+        <item>Procure ajuda agora: ligue para o CVV no 188, para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Você não precisa passar por isso sozinho, e esse sentimento pode melhorar com apoio.</item>
+        <item>Pedir ajuda não é fraqueza nem exagero. Quanto antes você procurar, mais simples costuma ser o caminho. Este aplicativo pode ficar ao seu lado, mas as pessoas e os profissionais é que fazem a diferença.</item>
+    </string-array>
 </resources>

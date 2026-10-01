@@ -15,7 +15,6 @@
     <string name="restricted_settings_hint">On some phones you must first allow restricted settings from the Blockfy app info screen.</string>
 
     <string name="x_app">X (Twitter)</string>
-    <string name="short_videos_label">short videos</string>
 
     <string name="language_title">Language</string>
     <string name="language_desc">Brazil uses Portuguese. Everywhere else uses English, until you change it here.</string>
@@ -173,31 +172,23 @@
     <string name="weekdays_weekend">Weekend</string>
     <string name="edit_enable_title">Block is on</string>
     <string name="edit_enable_desc">Turn it off to pause everything for this app.</string>
-    <string name="edit_section_scope">What to block</string>
-    <string name="edit_scope_only">Only %1$s</string>
-    <string name="edit_scope_whole_only_hint">%1$s has no separate short-video screen, so the whole app is blocked.</string>
-    <string name="edit_section_rule">How to block</string>
     <string name="edit_rule_always">Block it</string>
     <string name="edit_rule_limit">Daily limit</string>
-    <string name="edit_rule_always_desc">Blocked during the hours below, as soon as you open it.</string>
-    <string name="edit_rule_limit_desc">Free to use up to the limit during the hours below. After that it is blocked.</string>
+    <string name="edit_rule_always_desc">Blocked during the scheduled hours, as soon as you open it.</string>
+    <string name="edit_rule_limit_desc">Free to use up to the limit during the scheduled hours. After that it is blocked.</string>
     <string name="minutes_suffix">min</string>
     <string name="minutes_less">Less</string>
     <string name="minutes_more">More</string>
     <string name="minutes_error">Enter from 1 to 1440 minutes.</string>
-    <string name="edit_section_when">When</string>
     <string name="edit_hours_title">Hours</string>
     <string name="preset_night">Night 22:00 to 06:00</string>
     <string name="preset_work">Work 09:00 to 18:00</string>
     <string name="hours_error_equal">Start and end must be different.</string>
     <string name="hours_crosses_midnight">Ends the next day</string>
     <string name="subject_shorts">%1$s %2$s</string>
-    <string name="subject_whole">%1$s (whole app)</string>
     <string name="hours_range">%1$s to %2$s</string>
     <string name="summary_title">Summary</string>
     <string name="summary_off">Blocking is off for %1$s.</string>
-    <string name="summary_always">%1$s is blocked: %2$s, %3$s.</string>
-    <string name="summary_limit">%1$s is limited to %2$d min a day: %3$s, %4$s.</string>
     <string name="edit_save_and_enable">Turn on and save</string>
     <string name="discard_title">Discard changes?</string>
     <string name="discard_msg">You changed settings that are not saved yet.</string>
@@ -231,4 +222,110 @@
     <string name="loosen_title">Loosen this block?</string>
     <string name="loosen_msg">These changes let you use the app more than before. Wait a few seconds and ask yourself whether you really want this.</string>
     <string name="loosen_confirm">Loosen it</string>
+    <string name="rule_whole_title">Whole app</string>
+    <string name="rule_whole_desc">Limits or blocks all use of the app.</string>
+    <string name="rule_shorts_title">%1$s</string>
+    <string name="rule_shorts_desc">Limits or blocks only the short videos.</string>
+    <string name="mode_off">No rule</string>
+    <string name="edit_rule_off_desc">This rule is not applied.</string>
+    <string name="limits_hint_shorts_above_whole">The Reels/Shorts limit is higher than the whole-app limit, so the whole-app limit will block first.</string>
+    <string name="schedule_link_title">Hours and days</string>
+    <string name="schedule_link_desc">The same for every app. Change it in Settings.</string>
+    <string name="schedule_link_btn">Open Settings</string>
+    <string name="schedule_change_btn">Change</string>
+    <string name="app_no_rule">No rule is on</string>
+    <string name="summary_none">No rule is on for %1$s.</string>
+    <string name="summary_whole_block">%1$s: whole app blocked.</string>
+    <string name="summary_whole_limit">%1$s: whole app limited to %2$d min a day.</string>
+    <string name="summary_shorts_block">%1$s: blocked.</string>
+    <string name="summary_shorts_limit">%1$s: limited to %2$d min a day.</string>
+    <string name="summary_schedule">Applies: %1$s, %2$s (same for every app).</string>
+    <string name="schedule_card_title">Hours and days</string>
+    <string name="schedule_card_desc">When your blocks and limits are enforced. This applies to every app.</string>
+    <string name="schedule_save_btn">Save hours and days</string>
+    <string name="notice_title">Important notice</string>
+    <string name="notice_reread_desc">What Blockfy is, and what it is not.</string>
+    <string name="notice_reread_btn">Read again</string>
+    <string name="notice_next">Continue</string>
+    <string name="notice_accept">I understand, let\'s start</string>
+    <string name="notice_1_title">Welcome to Blockfy</string>
+    <string name="notice_1_body">Blockfy was made to help people who want to cut down habits that became hard to control: endless short videos, pornography and too much phone use. It can also help people who deal with compulsions, screen dependence and trouble focusing, as in ADHD. It works by putting barriers and limits on your phone.</string>
+    <string name="notice_2_title">Nothing works without your effort</string>
+    <string name="notice_2_body">No app changes a habit by itself. Blockfy blocks, warns and limits, but you are the one who decides to keep going. There will be hard days, and you will be able to turn blocks off. The result depends on your will, on a routine and on the people around you.</string>
+    <string name="notice_3_title">If it does not get better, get help</string>
+    <string name="notice_3_body">Blockfy is not a treatment, does not diagnose anything and does not replace professional care. If a bad habit persists, gets in the way of your life or causes you suffering, it is worth seeing a psychologist or a psychiatrist. In Brazil, CVV answers on 188, free, 24 hours a day. Elsewhere, search for your country\'s emotional support line.</string>
+    <string name="concepts_habits_title">Urges and habits</string>
+    <string name="concepts_habits_summary">How a habit becomes a compulsion, and what to do when the urge hits.</string>
+    <string name="concepts_focus_title">Focus and ADHD</string>
+    <string name="concepts_focus_summary">Tips for trouble paying attention, with or without a diagnosis.</string>
+    <string name="concepts_plan_title">Your plan in practice</string>
+    <string name="concepts_plan_summary">Simple steps to set up Blockfy and keep going.</string>
+    <string name="concepts_help_title">When to get help</string>
+    <string name="concepts_help_summary">Signs that an app alone is not enough, and where to find support.</string>
+    <string-array name="concept_habits_titles">
+        <item>The urge passes</item>
+        <item>Trigger, routine, reward</item>
+        <item>Put friction on your side</item>
+        <item>"Just one more" is the trap</item>
+        <item>Replace, do not just forbid</item>
+        <item>Slipping is not failing</item>
+        <item>Tell someone</item>
+    </string-array>
+    <string-array name="concept_habits_bodies">
+        <item>An urge usually rises, peaks and fades within minutes, even if you do nothing. Waiting 10 to 20 minutes while doing something else takes much of its strength away. When the urge comes, tell yourself: "I will wait 15 minutes." Often it has already passed.</item>
+        <item>Every habit has a trigger (boredom, anxiety, tiredness, the phone in your hand), a routine (opening the app) and a reward (quick relief). To change it, find your trigger and swap the routine instead of only fighting the urge. Write it down for a few days: when and why do you open the app?</item>
+        <item>The more steps between you and the impulse, the less you give in. Keep the phone away from your bed, take the apps off your home screen and keep Blockfy on. That is what a block is for: turning a two-tap impulse into something hard to do.</item>
+        <item>The feed was built to have no end. Deciding the limit before you open the app, and letting the app enforce it, works better than deciding in the moment, when the urge is already strong. People who decide in the heat of the moment tend to lose.</item>
+        <item>Forbidding without offering something else leaves a gap. Have an alternative ready for your riskiest hours: a walk, calling someone, a book, a shower, a board game, exercise. Plan it before you need it.</item>
+        <item>Relapsing does not erase what you already gained. What hurts is giving up everything after a slip. Noticed you slipped? Get back to the plan the same day, without punishing yourself. Too much guilt tends to feed the cycle instead of breaking it.</item>
+        <item>Secrets feed compulsion. Having one trusted person who knows your goal usually helps you keep the commitment on bad days. It can be a friend, a relative or a professional.</item>
+    </string-array>
+    <string-array name="concept_focus_titles">
+        <item>Blockfy does not diagnose</item>
+        <item>Short videos train distraction</item>
+        <item>Fewer decisions, more ready-made rules</item>
+        <item>One step at a time</item>
+        <item>Sleep, food and movement</item>
+        <item>Treatment is for professionals</item>
+    </string-array>
+    <string-array name="concept_focus_bodies">
+        <item>Trouble paying attention can have many causes: ADHD, anxiety, depression, poor sleep, too much screen time, stress. Only a health professional can assess your case. Blockfy helps with your environment (less distraction), not with a diagnosis.</item>
+        <item>Switching stimulus every few seconds can get the brain used to quick rewards, and long tasks start to feel harder and duller. Cutting the endless feed is often one of the most effective steps to get your concentration back.</item>
+        <item>People who struggle with attention often benefit from ready-made rules: fixed hours, automatic limits, few choices in the moment. Setting Blockfy up once saves willpower later, because you do not have to decide every time.</item>
+        <item>Split the task into blocks of 10 to 25 minutes with a short break between them. Keep the phone in another room during the block. Start with the smallest possible piece: the hard part is usually starting, not continuing.</item>
+        <item>Sleeping badly worsens attention and impulse control. Physical activity, daylight and regular meals help. Before blaming a lack of discipline, look at the basics of your body.</item>
+        <item>If you have or suspect ADHD, treatment is decided with a psychiatrist, neurologist or psychologist, and may include therapy and, when indicated, medication. No app replaces that. Never start or stop a medication on your own.</item>
+    </string-array>
+    <string-array name="concept_plan_titles">
+        <item>Start small</item>
+        <item>A limit you can keep</item>
+        <item>App limit vs Reels limit</item>
+        <item>Hours that protect you</item>
+        <item>Use strict mode</item>
+        <item>Review every week</item>
+    </string-array>
+    <string-array name="concept_plan_bodies">
+        <item>Turn on just one or two apps at first. A limit you keep is worth more than ten you switch off. When it gets easy, add the next one.</item>
+        <item>If you use 3 hours a day today, start with 2 and lower it week by week. An impossible limit only leads to turning the block off and giving up.</item>
+        <item>You can have, for example, 1 hour of Instagram a day but only 15 minutes of Reels. It is the most realistic combination: you keep what is useful (messages, friends, work) and cut the endless feed. Set it in each app: one rule for the whole app and another for Reels/Shorts.</item>
+        <item>Nights are often the riskiest hours. In Settings, choose the days and hours when blocks apply, for example the Night preset. The hours are the same for every app.</item>
+        <item>Turn on strict mode in a moment of motivation. Until midnight you can only make blocks stricter, never looser. It is an agreement you make with yourself before the urge arrives.</item>
+        <item>Once a week, look at today\'s summary, your blocks and what worked. Adjust what is too hard or too easy. The goal is not a perfect app setup, it is to have time and attention left for what matters to you.</item>
+    </string-array>
+    <string-array name="concept_help_titles">
+        <item>An app is a tool, not a treatment</item>
+        <item>Warning signs</item>
+        <item>Psychologist or psychiatrist?</item>
+        <item>Where to find help</item>
+        <item>If you are thinking about hurting yourself</item>
+        <item>Asking for help is strength</item>
+    </string-array>
+    <string-array name="concept_help_bodies">
+        <item>Blockfy builds barriers. It does not treat the cause of the habit, which can be anxiety, loneliness, depression, trauma, ADHD or something else. If the cause is still there, the urge tends to come back another way.</item>
+        <item>It is worth seeing a professional if: you try to stop and cannot, several times; the habit gets in the way of work, studies, sleep or relationships; you feel intense guilt, shame or anxiety; you use the habit to escape bad emotions; you hide it or lie about it; or your mood is very low.</item>
+        <item>A psychologist does therapy (for example cognitive-behavioral), which helps you understand triggers and build strategies. A psychiatrist is a medical doctor: assesses and diagnoses conditions such as ADHD, depression and anxiety, and can prescribe medication when needed. Many people use both. If you are unsure where to start, start with either one.</item>
+        <item>Look for your local public health clinic or a mental health service. In Brazil, CVV (188, free, 24 hours) offers emotional support by phone, chat and email, and the public system (SUS) has UBS clinics and CAPS centers. Elsewhere, search for your country\'s emotional support line.</item>
+        <item>Get help now: call your local emergency number or crisis line, or go to the nearest emergency room. In Brazil, call CVV on 188 or SAMU on 192. You do not have to go through this alone, and this feeling can improve with support.</item>
+        <item>Asking for help is not weakness or exaggeration. The sooner you look for it, the simpler the path usually is. This app can stay by your side, but people and professionals are what make the difference.</item>
+    </string-array>
 </resources>
