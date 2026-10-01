@@ -18,7 +18,9 @@ object ServiceDiagnostics {
         val lastEventAtMillis: Long = 0L,
         val shortsVisible: Boolean = false,
         val lastDecision: String = "",
-        val seenViewIds: List<String> = emptyList()
+        val seenViewIds: List<String> = emptyList(),
+        /** Packages the service is currently subscribed to. */
+        val listening: List<String> = emptyList()
     )
 
     private val state = MutableStateFlow(Snapshot())
@@ -37,6 +39,8 @@ object ServiceDiagnostics {
             lastDecision = decision
         )
     }
+
+    fun onScope(packages: List<String>) = state.update { it.copy(listening = packages) }
 
     fun onViewIds(ids: List<String>) = state.update { it.copy(seenViewIds = ids) }
 }

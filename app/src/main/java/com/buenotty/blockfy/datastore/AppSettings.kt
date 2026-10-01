@@ -96,7 +96,9 @@ data class AppSettings(
     /** Bits 0-6 are Sunday-Saturday. 127 means every day. */
     val scheduleWeekdays: Int = 127,
     /** The first-launch notice about what the app is and is not has been accepted. */
-    val onboardingDone: Boolean = false
+    val onboardingDone: Boolean = false,
+    /** Accessibility was on at least once, so finding it off later means the user turned it off. */
+    val accessibilityWasGranted: Boolean = false
 ) {
     /** True while strict mode forbids loosening any block. A midnight lock expires by itself. */
     fun isStrictLocked(nowMillis: Long = System.currentTimeMillis()): Boolean {

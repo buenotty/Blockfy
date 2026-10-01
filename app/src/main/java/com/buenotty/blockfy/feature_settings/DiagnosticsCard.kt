@@ -76,6 +76,13 @@ fun DiagnosticsCard() {
                 ),
                 style = MaterialTheme.typography.bodyMedium
             )
+            Text(
+                stringResource(
+                    R.string.diag_listening,
+                    snapshot.listening.joinToString(", ").ifEmpty { stringResource(R.string.diag_listening_none) }
+                ),
+                style = MaterialTheme.typography.bodyMedium
+            )
             if (snapshot.lastEventAtMillis > 0) {
                 Text(
                     stringResource(R.string.diag_last_event, ((now - snapshot.lastEventAtMillis) / 1000).toInt().coerceAtLeast(0)),

@@ -127,6 +127,24 @@ object BlockPolicy {
         return false
     }
 
+    /** True when at least one app rule or the adult shield is on. */
+    fun hasAnyProtection(settings: AppSettings): Boolean {
+        val apps = listOf(settings.instagram, settings.youtube, settings.tiktok, settings.facebook, settings.x)
+        return settings.adultContentBlockerEnabled ||
+            apps.any { it.blocked && (wholeRuleOn(it) || shortsRuleOn(it)) }
+    }
+
+    /** True when [new] circumvents [old] in any way: a looser app rule, a narrower schedule or the shield off. */
+    fun isSettingsLoosening(old: AppSettings, new: AppSettings): Boolean {
+        val pairs = listOf(
+            old.instagram to new.instagram, old.youtube to new.youtube, old.tiktok to new.tiktok,
+            old.facebook to new.facebook, old.x to new.x
+        )
+        return pairs.any { (before, after) -> isLoosening(before, after) } ||
+            isScheduleLoosening(old, new) ||
+            (old.adultContentBlockerEnabled && !new.adultContentBlockerEnabled)
+    }
+
     /**
      * @param shortsVisible whether a Reels/Shorts screen is on display right now. It only
      * matters for the Reels/Shorts rule; the whole-app rule ignores it.

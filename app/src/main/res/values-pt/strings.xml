@@ -61,7 +61,7 @@
     <string name="disable_dialog_confirm">Eu aguento</string>
 
     <string name="provocation_mode_title">Mensagens de atenção</string>
-    <string name="provocation_mode_desc">Mostrar um aviso curto ao abrir Reels ou Shorts</string>
+    <string name="provocation_mode_desc">Mostra um lembrete curto quando você abre Reels ou Shorts em um app com bloqueio ligado</string>
     <string name="strict_mode_title">Modo estrito</string>
     <string name="strict_mode_desc">Até a meia-noite você só pode deixar os bloqueios mais rígidos, nunca mais frouxos</string>
     <string name="strict_mode_midnight_locked_msg">Modo estrito ligado. Até a meia-noite você não pode afrouxar nem desligar nenhum bloqueio.</string>
@@ -327,5 +327,58 @@
         <item>Pelo SUS, procure a UBS (posto de saúde) do seu bairro ou um CAPS, que atende sofrimento psíquico e, no caso do CAPS AD, uso problemático de álcool e outras drogas. O CVV (188, gratuito, 24 horas) oferece conversa de apoio emocional por telefone, chat e e-mail.</item>
         <item>Procure ajuda agora: ligue para o CVV no 188, para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Você não precisa passar por isso sozinho, e esse sentimento pode melhorar com apoio.</item>
         <item>Pedir ajuda não é fraqueza nem exagero. Quanto antes você procurar, mais simples costuma ser o caminho. Este aplicativo pode ficar ao seu lado, mas as pessoas e os profissionais é que fazem a diferença.</item>
+    </string-array>
+    <string name="streak_title">Dias limpos seguidos</string>
+    <string name="streak_day">dia</string>
+    <string name="streak_days">dias</string>
+    <string name="streak_best">Melhor: %1$d</string>
+    <string name="streak_rule">Um dia é limpo quando você não desliga nem afrouxa nada.</string>
+    <string name="streak_today_ok">Hoje está limpo até agora. Continue assim.</string>
+    <string name="streak_today_broken">A sequência de hoje foi quebrada. Recomece amanhã: tropeçar não apaga o que você já avançou.</string>
+    <string name="streak_today_empty">Ligue um bloqueio para começar a contar.</string>
+    <string name="motivation_title">Lembrete do dia</string>
+    <string name="battery_card_title">Bateria e estabilidade</string>
+    <string name="battery_desc">O Blockfy só escuta os apps que você bloqueia, e só nos horários ativos, por isso gasta muito pouca bateria. Para o celular não colocá-lo em suspensão, deixe-o rodar sem restrições.</string>
+    <string name="battery_status_ok">Sem restrição: o celular não vai suspender o Blockfy.</string>
+    <string name="battery_status_bad">Otimizado: o celular pode suspender o Blockfy e o bloqueio pode parar.</string>
+    <string name="battery_btn_list">Abrir lista de bateria</string>
+    <string name="battery_btn_app">Ajustes do app</string>
+    <string name="battery_steps">No Samsung: Configurações, Aplicativos, Blockfy, Bateria, Sem restrições, e tire o Blockfy de "Apps em suspensão". Em outros celulares: escolha "Não otimizar" ou "Sem restrições" para o Blockfy.</string>
+    <string name="battery_nudge_title">Mantenha o Blockfy ativo</string>
+    <string name="battery_nudge_desc">O celular pode suspender o Blockfy. Toque para ajustar.</string>
+    <string name="battery_nudge_btn">Ajustar</string>
+    <string name="diag_listening">Escutando: %1$s</string>
+    <string name="diag_listening_none">nenhum app (nada para bloquear agora)</string>
+    <string-array name="motivation_daily">
+        <item>Hoje você não precisa ser perfeito. Só precisa cumprir o combinado de hoje.</item>
+        <item>Cada vez que você fecha o feed, você escolhe o que fazer com a sua atenção.</item>
+        <item>A vontade é uma onda: sobe, chega ao pico e passa. Deixe passar.</item>
+        <item>O que você faz hoje é o que o você de amanhã vai agradecer.</item>
+        <item>Pequenas decisões repetidas mudam uma vida. Comece pela de agora.</item>
+        <item>Se hoje foi difícil, amanhã você recomeça. Recair não apaga o que você já avançou.</item>
+        <item>Você não está tentando ser forte o dia todo. Só nos próximos dez minutos.</item>
+        <item>Seu tempo é limitado. Gaste com o que você escolheria de olhos abertos.</item>
+        <item>Quem pede ajuda chega mais longe. Fale com alguém em quem você confia.</item>
+        <item>Troque o "só mais um" por "agora chega". É assim que a sequência cresce.</item>
+        <item>O tédio não é inimigo. É o espaço onde as ideias aparecem.</item>
+        <item>Beba água, levante, respire fundo. Depois decida de novo.</item>
+        <item>A melhor hora para proteger o seu foco é antes da vontade chegar.</item>
+        <item>Progresso não é uma linha reta. Continue voltando ao plano.</item>
+        <item>Você já resistiu antes. Pode resistir de novo.</item>
+        <item>O celular é uma ferramenta. Hoje você está no comando.</item>
+        <item>Foco é um músculo: cada bloqueio cumprido o fortalece.</item>
+        <item>Não negocie com a vontade na hora. Negocie agora, com a cabeça tranquila.</item>
+        <item>Sua atenção é o bem mais valioso que você tem. Proteja-a.</item>
+        <item>Um dia limpo de cada vez. É só isso que o plano pede.</item>
+        <item>Dormir bem ajuda o controle dos impulsos. Cuide da noite de hoje.</item>
+        <item>Você não precisa se punir. Precisa só voltar ao combinado.</item>
+        <item>Se você sentir que está difícil demais, procurar um profissional é um ato de coragem.</item>
+        <item>O que você faria com mais uma hora livre hoje? Comece a fazer.</item>
+        <item>Gratidão: lembre de uma coisa que você tem de bom hoje, longe da tela.</item>
+        <item>A distração mais perigosa é a que parece inofensiva. Fique atento.</item>
+        <item>Escolha uma coisa pequena e útil para fazer agora. Só uma.</item>
+        <item>Você está construindo um hábito novo. No começo pesa, depois fica leve.</item>
+        <item>Mantenha o bloqueio ligado. Seu eu mais calmo decidiu por você.</item>
+        <item>Vale mais um limite cumprido do que dez promessas.</item>
     </string-array>
 </resources>

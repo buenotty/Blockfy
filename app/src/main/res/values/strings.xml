@@ -61,7 +61,7 @@
     <string name="disable_dialog_confirm">I can handle it</string>
 
     <string name="provocation_mode_title">Mindfulness messages</string>
-    <string name="provocation_mode_desc">Show a short reality-check when you open Reels or Shorts</string>
+    <string name="provocation_mode_desc">Show a short reality-check when you open Reels or Shorts in an app where blocking is on</string>
     <string name="strict_mode_title">Strict mode</string>
     <string name="strict_mode_desc">Until midnight you can only make blocks stricter, never looser</string>
     <string name="strict_mode_midnight_locked_msg">Strict mode is on. Until midnight you cannot loosen or turn off any block.</string>
@@ -327,5 +327,58 @@
         <item>Look for your local public health clinic or a mental health service. In Brazil, CVV (188, free, 24 hours) offers emotional support by phone, chat and email, and the public system (SUS) has UBS clinics and CAPS centers. Elsewhere, search for your country\'s emotional support line.</item>
         <item>Get help now: call your local emergency number or crisis line, or go to the nearest emergency room. In Brazil, call CVV on 188 or SAMU on 192. You do not have to go through this alone, and this feeling can improve with support.</item>
         <item>Asking for help is not weakness or exaggeration. The sooner you look for it, the simpler the path usually is. This app can stay by your side, but people and professionals are what make the difference.</item>
+    </string-array>
+    <string name="streak_title">Clean days in a row</string>
+    <string name="streak_day">day</string>
+    <string name="streak_days">days</string>
+    <string name="streak_best">Best: %1$d</string>
+    <string name="streak_rule">A day is clean when you do not switch anything off or loosen it.</string>
+    <string name="streak_today_ok">Today is clean so far. Keep it up.</string>
+    <string name="streak_today_broken">Today\'s streak was broken. Start again tomorrow: slipping does not erase what you already gained.</string>
+    <string name="streak_today_empty">Turn on a block to start counting.</string>
+    <string name="motivation_title">Today\'s reminder</string>
+    <string name="battery_card_title">Battery and stability</string>
+    <string name="battery_desc">Blockfy only listens to the apps you block, and only during their hours, so it uses very little battery. To stop the phone from putting it to sleep, let it run without restrictions.</string>
+    <string name="battery_status_ok">Unrestricted: the phone will not put Blockfy to sleep.</string>
+    <string name="battery_status_bad">Optimized: the phone may put Blockfy to sleep and the blocking may stop.</string>
+    <string name="battery_btn_list">Open battery list</string>
+    <string name="battery_btn_app">App settings</string>
+    <string name="battery_steps">On Samsung: Settings, Apps, Blockfy, Battery, Unrestricted, and take Blockfy off "Sleeping apps". On other phones: choose "Don\'t optimize" or "No restrictions" for Blockfy.</string>
+    <string name="battery_nudge_title">Keep Blockfy awake</string>
+    <string name="battery_nudge_desc">The phone may put Blockfy to sleep. Tap to fix it.</string>
+    <string name="battery_nudge_btn">Fix</string>
+    <string name="diag_listening">Listening to: %1$s</string>
+    <string name="diag_listening_none">no app (nothing to block right now)</string>
+    <string-array name="motivation_daily">
+        <item>Today you do not need to be perfect. You only need to keep today\'s agreement.</item>
+        <item>Every time you close the feed, you choose what to do with your attention.</item>
+        <item>An urge is a wave: it rises, peaks and passes. Let it pass.</item>
+        <item>What you do today is what tomorrow\'s you will thank you for.</item>
+        <item>Small decisions repeated change a life. Start with this one.</item>
+        <item>If today was hard, you start again tomorrow. Slipping does not erase what you gained.</item>
+        <item>You are not trying to be strong all day. Just for the next ten minutes.</item>
+        <item>Your time is limited. Spend it on what you would choose with open eyes.</item>
+        <item>People who ask for help go further. Talk to someone you trust.</item>
+        <item>Swap "just one more" for "that is enough". That is how the streak grows.</item>
+        <item>Boredom is not the enemy. It is the space where ideas show up.</item>
+        <item>Drink water, stand up, breathe deeply. Then decide again.</item>
+        <item>The best time to protect your focus is before the urge arrives.</item>
+        <item>Progress is not a straight line. Keep coming back to the plan.</item>
+        <item>You have resisted before. You can resist again.</item>
+        <item>The phone is a tool. Today you are in charge.</item>
+        <item>Focus is a muscle: every block you keep makes it stronger.</item>
+        <item>Do not bargain with the urge in the moment. Bargain now, with a calm head.</item>
+        <item>Your attention is the most valuable thing you have. Protect it.</item>
+        <item>One clean day at a time. That is all the plan asks.</item>
+        <item>Sleeping well helps impulse control. Take care of tonight.</item>
+        <item>You do not need to punish yourself. You just need to return to the plan.</item>
+        <item>If it feels too hard, seeing a professional is an act of courage.</item>
+        <item>What would you do with one more free hour today? Start doing it.</item>
+        <item>Gratitude: remember one good thing you have today, away from the screen.</item>
+        <item>The most dangerous distraction is the one that looks harmless. Stay alert.</item>
+        <item>Pick one small useful thing to do right now. Just one.</item>
+        <item>You are building a new habit. At first it is heavy, then it gets light.</item>
+        <item>Keep the block on. Your calmer self decided for you.</item>
+        <item>One limit kept is worth more than ten promises.</item>
     </string-array>
 </resources>

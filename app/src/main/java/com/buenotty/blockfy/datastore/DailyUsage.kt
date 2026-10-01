@@ -15,7 +15,11 @@ data class DailyUsage(
     val facebookSeconds: Long = 0L,
     val facebookTotalSeconds: Long = 0L,
     val savedSeconds: Long = 0L,
-    val blockedAttemptsToday: Int = 0
+    val blockedAttemptsToday: Int = 0,
+    /** The user turned a block off or loosened it today, so today cannot count as a clean day. */
+    val loosened: Boolean = false,
+    /** Some block or the adult shield was on at some point today. */
+    val hadProtection: Boolean = false
 ) {
     /** Adds time spent anywhere in the app. */
     fun plusTotal(appName: String, seconds: Long): DailyUsage = when (appName) {

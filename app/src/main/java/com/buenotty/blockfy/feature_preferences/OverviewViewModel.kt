@@ -6,7 +6,12 @@ import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.datastore.DataStoreManager
 import com.buenotty.blockfy.feature_preferences.repository.models.App
+import com.buenotty.blockfy.feature_monitor.BlockPolicy
+import com.buenotty.blockfy.feature_monitor.DayState
+import com.buenotty.blockfy.feature_monitor.StreakCalculator
+import com.buenotty.blockfy.feature_monitor.StreakInfo
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -41,6 +46,15 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
                 started = SharingStarted.Eagerly,
                 initialValue = DailyUsage()
             )
+
+    val streak: StateFlow<StreakInfo> =
+        combine(dataStoreManager.historyFlow, dailyUsage, appSettings) { history, usage, settings ->
+            StreakCalculator.compute(history.days, usage, settings)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = StreakInfo(current = 0, best = 0, todayClean = false, lastDays = List(7) { DayState.EMPTY })
+        )
 
     init {
         viewModelScope.launch {
@@ -93,6 +107,17 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setSchedule(start: Int, end: Int, weekdays: Int) = update {
         it.copy(scheduleStart = start, scheduleEnd = end, scheduleWeekdays = weekdays)
+    }
+
+    /** Accessibility is on: remember it, so a later "off" can be recognised as the user's choice. */
+    fun noteAccessibilityGranted() = update { it.copy(accessibilityWasGranted = true) }
+
+    /** Accessibility is off. If it was on before and protection is configured, today is not clean. */
+    fun noteAccessibilityMissing() {
+        val settings = appSettings.value
+        if (settings.accessibilityWasGranted && BlockPolicy.hasAnyProtection(settings)) {
+            viewModelScope.launch { dataStoreManager.markLoosened() }
+        }
     }
 
     fun setOnboardingDone() = update { it.copy(onboardingDone = true) }

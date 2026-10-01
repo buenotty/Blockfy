@@ -24,7 +24,8 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.Blocks.route) {
             BlocksScreen(
                 onEditApp = { navController.navigate(Screen.EditApp.create(it)) },
-                onOpenSchedule = { navController.navigate(Screen.Settings.route) }
+                onOpenSchedule = { navController.navigate(Screen.Settings.route) },
+                onOpenSettings = { navController.navigate(Screen.Settings.route) }
             )
         }
         composable(Screen.Concepts.route) {

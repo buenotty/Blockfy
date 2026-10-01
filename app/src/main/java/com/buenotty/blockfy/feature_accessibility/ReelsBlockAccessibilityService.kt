@@ -4,6 +4,9 @@ import android.accessibilityservice.AccessibilityService
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.IntentFilter
+import android.content.Intent
+import android.content.BroadcastReceiver
 import android.os.Build
 import android.os.SystemClock
 import android.os.VibrationEffect
@@ -14,6 +17,10 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import com.buenotty.blockfy.feature_monitor.ListeningScope
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
@@ -55,6 +62,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var lastCreditElapsed = 0L
     private var lastDeepScanElapsed = 0L
     private var lastDeepShorts = false
+    private var lastEventElapsed = 0L
     private var lastViewIdScanElapsed = 0L
 
     private val pendingTotal = mutableMapOf<String, Long>()
@@ -65,28 +73,57 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        lockToSocialPackages()
         ServiceDiagnostics.setConnected(true)
         serviceScope.launch {
-            dataStore.appSettingsFlow.collect { settings = it }
+            dataStore.appSettingsFlow.collect {
+                settings = it
+                applyListeningScope()
+            }
         }
         serviceScope.launch {
             dataStore.dailyUsageFlow.collect { currentUsage = it }
         }
+        // Re-check the scope when the screen turns on, and every so often while it is on, so a
+        // schedule that just started begins listening without waiting for a settings change.
+        ContextCompat.registerReceiver(
+            this,
+            screenOnReceiver,
+            IntentFilter(Intent.ACTION_SCREEN_ON),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+        serviceScope.launch {
+            while (isActive) {
+                delay(SCOPE_REFRESH_MILLIS)
+                applyListeningScope()
+            }
+        }
     }
 
+    private val screenOnReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) = applyListeningScope()
+    }
+
+    @Volatile
+    private var appliedScope: Set<String> = emptySet()
+
     /**
-     * Banks query enabled services and treat a null packageNames filter as
-     * "this service can watch us". Only mutate the filter on the live info -
-     * never replace it with a blank AccessibilityServiceInfo().
+     * Android only delivers events from the packages listed in the service info, so listing just
+     * the apps with an active rule (and nothing outside their schedule) keeps every other app
+     * from waking the service. Only the live info is mutated, never replaced by a blank one.
      */
-    private fun lockToSocialPackages() {
-        try {
-            val info = serviceInfo ?: return
-            info.packageNames = SOCIAL_PACKAGES
-            serviceInfo = info
-        } catch (e: Exception) {
-            Log.e(TAG, "Error locking AccessibilityServiceInfo", e)
+    private fun applyListeningScope() {
+        val wanted = ListeningScope.packages(settings)
+        if (wanted == appliedScope) return
+        serviceScope.launch(Dispatchers.Main) {
+            try {
+                val info = serviceInfo ?: return@launch
+                info.packageNames = wanted.toTypedArray()
+                serviceInfo = info
+                appliedScope = wanted
+                ServiceDiagnostics.onScope(wanted.filter { it != ListeningScope.NOTHING })
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating the listening scope", e)
+            }
         }
     }
 
@@ -94,8 +131,29 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             if (event == null) return
             val pkg = event.packageName?.toString() ?: return
+
+            // Bursts of content changes carry no new information; window changes always do.
+            val nowElapsed = SystemClock.elapsedRealtime()
+            if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                nowElapsed - lastEventElapsed < MIN_EVENT_GAP_MILLIS
+            ) {
+                return
+            }
+            lastEventElapsed = nowElapsed
+
             maybeFlagAdultSite(event, pkg)
-            if (!TrackedPackages.isTracked(pkg)) {
+            val appName = TrackedPackages.displayName(pkg)
+            if (appName == null) {
+                flushUsage()
+                lastCreditPkg = null
+                lastCreditElapsed = 0L
+                return
+            }
+
+            val app = BlockPolicy.appConfig(settings, appName)
+            val ruleOn = BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app)
+            if (!app.blocked || !ruleOn || !BlockPolicy.isScheduleActive(settings)) {
+                // Nothing to enforce or count here right now.
                 flushUsage()
                 lastCreditPkg = null
                 lastCreditElapsed = 0L
@@ -107,14 +165,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 currentUsage = DailyUsage(date = today)
                 serviceScope.launch { dataStore.ensureTodayUsage() }
             }
-
-            val appName = TrackedPackages.displayName(pkg) ?: return
-            val root = rootFromEvent(event, pkg) ?: return
-            try {
-                handleTrackedApp(pkg, appName, root)
-            } finally {
-                root.recycle()
-            }
+            handleTrackedApp(pkg, appName, event)
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error in onAccessibilityEvent", t)
         }
@@ -122,36 +173,50 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onInterrupt() = Unit
 
-    override fun onUnbind(intent: android.content.Intent?): Boolean {
+    override fun onUnbind(intent: Intent?): Boolean {
         ServiceDiagnostics.setConnected(false)
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        runCatching { unregisterReceiver(screenOnReceiver) }
         flushUsage()
         ServiceDiagnostics.setConnected(false)
         serviceScope.cancel()
     }
 
-    private fun handleTrackedApp(pkg: String, appName: String, root: AccessibilityNodeInfo) {
+    private fun handleTrackedApp(pkg: String, appName: String, event: AccessibilityEvent) {
         val app = BlockPolicy.appConfig(settings, appName)
         val canHaveShorts = !BlockPolicy.isWholeAppOnly(appName)
+        // Reading the screen is the expensive part, so only do it when something needs it: the
+        // Reels/Shorts rule, the mindfulness reminder or the open Diagnostics card.
+        val needShorts = canHaveShorts && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
+        val root = if (needShorts || ServiceDiagnostics.collectingViewIds) rootFromEvent(event, pkg) else null
+        try {
+            process(pkg, appName, app, canHaveShorts && needShorts, root)
+        } finally {
+            root?.recycle()
+        }
+    }
+
+    private fun process(pkg: String, appName: String, app: App, needShorts: Boolean, root: AccessibilityNodeInfo?) {
         val nowElapsed = SystemClock.elapsedRealtime()
 
-        // Run the cheap id lookup on every event and the slower fallback scan at most twice a
-        // second. Enforcement only trusts what this very event saw, so leaving Reels never
-        // triggers one stray "back".
-        val deep = canHaveShorts && nowElapsed - lastDeepScanElapsed >= DEEP_SCAN_INTERVAL_MILLIS
+        // Run the cheap id lookup on every event and the slower fallback scan at most every
+        // DEEP_SCAN_INTERVAL_MILLIS. Enforcement only trusts what this very event saw, so
+        // leaving Reels never triggers one stray "back".
+        val canScan = needShorts && root != null
+        val deep = canScan && nowElapsed - lastDeepScanElapsed >= DEEP_SCAN_INTERVAL_MILLIS
         if (deep) lastDeepScanElapsed = nowElapsed
-        val shortsVisible = canHaveShorts && ShortsDetector.isVisible(appName, root, deepScan = deep)
+        val shortsVisible = canScan && ShortsDetector.isVisible(appName, root!!, deepScan = deep)
         if (deep) lastDeepShorts = shortsVisible
         // Time counting may lean on the last deep scan so a fallback-detected Reels session
         // is not under-counted between scans.
-        val shortsForCredit = shortsVisible || (canHaveShorts && !deep && lastDeepShorts)
+        val shortsForCredit = shortsVisible || (canScan && !deep && lastDeepShorts)
 
         creditUsage(pkg, appName, shortsForCredit)
-        collectViewIdsIfRequested(root, nowElapsed)
+        if (root != null) collectViewIdsIfRequested(root, nowElapsed)
 
         val usage = usageWithPending()
         val verdict = BlockPolicy.evaluate(
@@ -199,7 +264,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     /** Alert once per episode, but keep pushing the user out until the app actually leaves. */
-    private fun enforce(verdict: BlockVerdict, app: App, root: AccessibilityNodeInfo) {
+    private fun enforce(verdict: BlockVerdict, app: App, root: AccessibilityNodeInfo?) {
         val appName = verdict.appName
         val now = SystemClock.elapsedRealtime()
         val newEpisode = now - (lastBlockElapsed[appName] ?: 0L) > EPISODE_GAP_MILLIS
@@ -565,7 +630,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val MAX_CREDIT_SECONDS = 5L
         private const val FLUSH_INTERVAL_MILLIS = 10_000L
         private const val MAX_ADDRESS_BAR_SCAN_NODES = 40
-        private const val DEEP_SCAN_INTERVAL_MILLIS = 500L
+        private const val DEEP_SCAN_INTERVAL_MILLIS = 700L
+        private const val MIN_EVENT_GAP_MILLIS = 150L
+        private const val SCOPE_REFRESH_MILLIS = 30_000L
         private const val VIEW_ID_SCAN_INTERVAL_MILLIS = 1_000L
         private const val EPISODE_GAP_MILLIS = 8_000L
         private const val PROVOCATION_INTERVAL_MILLIS = 180_000L
@@ -583,9 +650,5 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             "com.opera.browser" to listOf("com.opera.browser:id/url_field"),
             "com.duckduckgo.mobile.android" to listOf("com.duckduckgo.mobile.android:id/omnibarTextInput")
         )
-
-        val SOCIAL_PACKAGES: Array<String> = (
-            TrackedPackages.ALL.keys + AdultContentDetector.BROWSER_PACKAGES
-            ).distinct().toTypedArray()
     }
 }

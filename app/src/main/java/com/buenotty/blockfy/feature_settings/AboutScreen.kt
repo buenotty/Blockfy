@@ -241,6 +241,8 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
+        BatteryCard()
+
         DiagnosticsCard()
 
         Spacer(modifier = Modifier.height(8.dp))

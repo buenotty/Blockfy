@@ -81,7 +81,7 @@ class ManifestAndDetectorTest {
             service.contains("rootInActiveWindow")
         )
         assertTrue(service.contains("event.source"))
-        assertTrue(service.contains("SOCIAL_PACKAGES"))
+        assertTrue("the service must only listen to the packages ListeningScope allows", service.contains("ListeningScope"))
     }
 
     @Test

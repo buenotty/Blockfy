@@ -1,6 +1,8 @@
 package com.buenotty.blockfy.feature_preferences.ui.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Schedule
@@ -27,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -35,6 +39,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
+import com.buenotty.blockfy.feature_monitor.DayState
+import com.buenotty.blockfy.feature_monitor.StreakInfo
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 
@@ -313,6 +319,131 @@ fun ScheduleSummaryCard(
                 )
             }
             TextButton(onClick = onOpen) { Text(stringResource(R.string.schedule_change_btn)) }
+        }
+    }
+}
+
+/** A short encouraging line that changes every day. */
+@Composable
+fun DailyMotivationCard(text: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                stringResource(R.string.motivation_title),
+                style = MaterialTheme.typography.labelLarge
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+/** Clean days in a row, the last seven days as dots, and what to do if today was broken. */
+@Composable
+fun StreakCard(info: StreakInfo, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                stringResource(R.string.streak_title),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = info.current.toString(),
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = stringResource(if (info.current == 1) R.string.streak_day else R.string.streak_days),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(bottom = 8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.streak_best, info.best),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                info.lastDays.forEach { state ->
+                    Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .clip(CircleShape)
+                            .background(
+                                when (state) {
+                                    DayState.CLEAN -> MaterialTheme.colorScheme.primary
+                                    DayState.BROKEN -> MaterialTheme.colorScheme.error
+                                    DayState.EMPTY -> MaterialTheme.colorScheme.outlineVariant
+                                }
+                            )
+                    )
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            val hint = when {
+                info.lastDays.lastOrNull() == DayState.BROKEN -> R.string.streak_today_broken
+                info.todayClean -> R.string.streak_today_ok
+                else -> R.string.streak_today_empty
+            }
+            Text(stringResource(hint), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.streak_rule),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+/** Shown only while the phone may put Blockfy to sleep. */
+@Composable
+fun BatteryNudgeCard(onFix: () -> Unit, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.battery_nudge_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Text(
+                    stringResource(R.string.battery_nudge_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Button(onClick = onFix) { Text(stringResource(R.string.battery_nudge_btn)) }
         }
     }
 }
