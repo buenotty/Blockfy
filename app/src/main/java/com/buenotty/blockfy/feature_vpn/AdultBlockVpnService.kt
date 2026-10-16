@@ -152,6 +152,17 @@ class AdultBlockVpnService : VpnService() {
             upstream.close()
         } catch (_: Exception) {
         }
+        // If the loop died on its own, the tunnel still routes DNS to us and the
+        // device would lose name resolution. Tear the shield down instead.
+        if (running.getAndSet(false)) {
+            tunInterface = null
+            try {
+                pfd.close()
+            } catch (_: Exception) {
+            }
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
     }
 
     private fun forward(socket: DatagramSocket, resolver: InetAddress, query: ByteArray): ByteArray? {
@@ -246,10 +257,15 @@ class AdultBlockVpnService : VpnService() {
 
         fun start(context: Context) {
             val intent = Intent(context, AdultBlockVpnService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e: Exception) {
+                // Background starts can be refused by the OS. Never crash the app over it.
+                Log.w(TAG, "Unable to start adult shield", e)
             }
         }
 

@@ -4,7 +4,7 @@
     <string name="title_about">Sobre</string>
     <string name="btn_back">Voltar</string>
 
-    <string name="accessibility_service_description">O Blockfy usa Acessibilidade só para detectar Reels e Shorts no Instagram, YouTube, TikTok, Facebook e X e devolver você ao feed. Ele não lê outros aplicativos.</string>
+    <string name="accessibility_service_description">O Blockfy usa Acessibilidade só para detectar Reels e Shorts no Instagram, YouTube, TikTok, Facebook e X Ao encontrar um, ele volta ou vai para o feed inicial. Não guarda nem envia o que vê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
     <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
     <string name="accessibility_inactive">Não concedido. Toque aqui para ativar.</string>
@@ -67,7 +67,7 @@
     <string name="original_author_role">fez o Blokky original</string>
     <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. Tem também um filtro DNS no celular para sites adultos, se você ligar.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é uma VPN DNS que roda no seu celular. O histórico de navegação fica aqui. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
+    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é um filtro de DNS que roda como VPN local no seu celular. Para verificar o nome de um site, ele envia esse nome como consulta DNS ao Cloudflare (1.1.1.1). O Blockfy não guarda essas consultas nem o seu histórico de navegação. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
     <string name="learn_more">Saiba mais</string>

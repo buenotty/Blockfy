@@ -50,7 +50,7 @@ class DataStoreManager(private val context: Context) {
                 "YouTube" -> base.copy(youtubeSeconds = base.youtubeSeconds + seconds)
                 "TikTok" -> base.copy(tiktokSeconds = base.tiktokSeconds + seconds)
                 "Facebook" -> base.copy(facebookSeconds = base.facebookSeconds + seconds)
-                "X" -> base.copy(xTotalSeconds = base.xTotalSeconds + seconds)
+                // X has a single counter, credited once by addTotalAppUsage.
                 else -> base
             }
         }

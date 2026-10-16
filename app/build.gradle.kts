@@ -23,12 +23,12 @@ fun signingValue(name: String): String? {
 
 android {
     namespace = "com.buenotty.blockfy"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.buenotty.blockfy"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 36
         versionName = "1.9.2"
 
