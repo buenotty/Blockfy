@@ -2,9 +2,9 @@ package com.buenotty.blockfy.feature_settings
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
@@ -32,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -52,24 +52,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
+import androidx.compose.ui.window.DialogProperties
+import com.buenotty.blockfy.feature_onboarding.NoticeScreen
 import androidx.core.net.toUri
 import com.buenotty.blockfy.AppLocale
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.SupportLinks
+import androidx.compose.material.icons.rounded.Psychology
+import androidx.compose.runtime.collectAsState
+import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.ui.composables.PreferenceGroup
 import com.buenotty.blockfy.feature_preferences.ui.composables.SelectableFilterChip
+import com.buenotty.blockfy.feature_preferences.ui.composables.SwitchPreference
 import com.buenotty.blockfy.feature_preferences.ui.composables.TintedGlyph
+import org.koin.androidx.compose.koinViewModel
 import com.buenotty.blockfy.updater.UpdateManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import qrcode.QRCode
-import java.io.ByteArrayOutputStream
 
 @Composable
-fun AboutScreen() {
+fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
     val context = LocalContext.current
+    val appSettings by overviewViewModel.appSettings.collectAsState()
     var showQrCodeDialog by remember { mutableStateOf(false) }
+    var showNotice by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -78,6 +84,20 @@ fun AboutScreen() {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = spacedBy(20.dp)
     ) {
+        val streak by overviewViewModel.streak.collectAsState()
+        ScheduleSettingsCard(saved = appSettings, streakDays = streak.current, onSave = overviewViewModel::setSchedule)
+
+        PreferenceGroup(title = stringResource(R.string.provocation_mode_title)) {
+            SwitchPreference(
+                value = appSettings.provocationModeEnabled,
+                title = stringResource(R.string.provocation_mode_title),
+                summary = stringResource(R.string.provocation_mode_desc),
+                grouped = true,
+                showDivider = false,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Psychology) }
+            ) { overviewViewModel.setProvocationMode(it) }
+        }
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -195,9 +215,44 @@ fun AboutScreen() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(16.dp)
             )
+            TextButton(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                onClick = {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, SupportLinks.PRIVACY_POLICY.toUri())
+                        )
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.privacy_policy_btn))
+            }
         }
 
+        PreferenceGroup(title = stringResource(R.string.notice_title)) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.notice_reread_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                TextButton(onClick = { showNotice = true }) {
+                    Text(stringResource(R.string.notice_reread_btn))
+                }
+            }
+        }
+
+
         Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    if (showNotice) {
+        Dialog(
+            onDismissRequest = { showNotice = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            NoticeScreen(onAccept = { showNotice = false })
+        }
     }
 
     if (showQrCodeDialog) {
@@ -293,16 +348,16 @@ fun HeroCard(
 @Composable
 fun QrCodeDialog(onDismissRequest: () -> Unit) {
     val context = LocalContext.current
-    val logoBitmap =
-        ResourcesCompat.getDrawable(context.resources, R.drawable.ic_policy, context.theme)?.toBitmap()
-    val stream = ByteArrayOutputStream()
-    logoBitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
-    val logoQRCode = QRCode.ofRoundedSquares()
-        .withBackgroundColor(android.graphics.Color.TRANSPARENT)
-        .withColor(if (isSystemInDarkTheme()) android.graphics.Color.WHITE else android.graphics.Color.BLACK)
-        .build("https://play.google.com/store/apps/details?id=${context.packageName}")
-    val logoQRCodePngData = logoQRCode.renderToBytes()
-
+    val qrPng = remember(context.packageName) {
+        QRCode.ofRoundedSquares()
+            .withBackgroundColor(android.graphics.Color.TRANSPARENT)
+            .withColor(android.graphics.Color.BLACK)
+            .build("https://play.google.com/store/apps/details?id=${context.packageName}")
+            .renderToBytes()
+    }
+    val qrBitmap = remember(qrPng) {
+        BitmapFactory.decodeByteArray(qrPng, 0, qrPng.size).asImageBitmap()
+    }
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
@@ -314,11 +369,8 @@ fun QrCodeDialog(onDismissRequest: () -> Unit) {
                 Text(text = stringResource(R.string.share_app_title), style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(8.dp))
                 Image(
-                    bitmap = BitmapFactory.decodeByteArray(
-                        logoQRCodePngData,
-                        0,
-                        logoQRCodePngData.size
-                    ).asImageBitmap(),
+                    modifier = Modifier.background(Color.White).padding(8.dp),
+                    bitmap = qrBitmap,
                     contentDescription = stringResource(R.string.share_app_title),
                     contentScale = ContentScale.Fit
                 )

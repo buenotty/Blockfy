@@ -4,6 +4,9 @@ import android.accessibilityservice.AccessibilityService
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.IntentFilter
+import android.content.Intent
+import android.content.BroadcastReceiver
 import android.os.Build
 import android.os.SystemClock
 import android.os.VibrationEffect
@@ -14,11 +17,17 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import com.buenotty.blockfy.feature_monitor.ListeningScope
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.datastore.DataStoreManager
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
+import com.buenotty.blockfy.feature_monitor.BlockReason
+import com.buenotty.blockfy.feature_monitor.BlockVerdict
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
@@ -43,36 +52,75 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var lastActionTime = 0L
     private val debounceMillis = 700L
 
-    private val lastReelsProvocation = mutableMapOf<String, Long>()
-    private var lastAlertTime = 0L
+    private val lastProvocation = mutableMapOf<String, Long>()
+    private var lastSoftAlertTime = 0L
+    private var lastFinalAlertTime = 0L
     private val lastWarnedMinutes = mutableMapOf<String, Int>()
+    private val lastBlockElapsed = mutableMapOf<String, Long>()
 
     private var lastCreditPkg: String? = null
     private var lastCreditElapsed = 0L
+    private var lastDeepScanElapsed = 0L
+    private var lastDeepShorts = false
+    private var lastEventElapsed = 0L
+
+    private val pendingTotal = mutableMapOf<String, Long>()
+    private val pendingShorts = mutableMapOf<String, Long>()
+    private var lastFlushElapsed = 0L
+
+    private var channelsCreated = false
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        lockToSocialPackages()
         serviceScope.launch {
-            dataStore.appSettingsFlow.collect { settings = it }
+            dataStore.appSettingsFlow.collect {
+                settings = it
+                applyListeningScope()
+            }
         }
         serviceScope.launch {
             dataStore.dailyUsageFlow.collect { currentUsage = it }
         }
+        // Re-check the scope when the screen turns on, and every so often while it is on, so a
+        // schedule that just started begins listening without waiting for a settings change.
+        ContextCompat.registerReceiver(
+            this,
+            screenOnReceiver,
+            IntentFilter(Intent.ACTION_SCREEN_ON),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+        serviceScope.launch {
+            while (isActive) {
+                delay(SCOPE_REFRESH_MILLIS)
+                applyListeningScope()
+            }
+        }
     }
 
+    private val screenOnReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) = applyListeningScope()
+    }
+
+    @Volatile
+    private var appliedScope: Set<String> = emptySet()
+
     /**
-     * Banks query enabled services and treat a null packageNames filter as
-     * "this service can watch us". Only mutate the filter on the live info —
-     * never replace it with a blank AccessibilityServiceInfo().
+     * Android only delivers events from the packages listed in the service info, so listing just
+     * the apps with an active rule (and nothing outside their schedule) keeps every other app
+     * from waking the service. Only the live info is mutated, never replaced by a blank one.
      */
-    private fun lockToSocialPackages() {
-        try {
-            val info = serviceInfo ?: return
-            info.packageNames = SOCIAL_PACKAGES
-            serviceInfo = info
-        } catch (e: Exception) {
-            Log.e(TAG, "Error locking AccessibilityServiceInfo", e)
+    private fun applyListeningScope() {
+        val wanted = ListeningScope.packages(settings)
+        if (wanted == appliedScope) return
+        serviceScope.launch(Dispatchers.Main) {
+            try {
+                val info = serviceInfo ?: return@launch
+                info.packageNames = wanted.toTypedArray()
+                serviceInfo = info
+                appliedScope = wanted
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating the listening scope", e)
+            }
         }
     }
 
@@ -80,7 +128,30 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             if (event == null) return
             val pkg = event.packageName?.toString() ?: return
-            if (!TrackedPackages.isTracked(pkg)) {
+
+            // Bursts of content changes carry no new information; window changes always do.
+            val nowElapsed = SystemClock.elapsedRealtime()
+            if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                nowElapsed - lastEventElapsed < MIN_EVENT_GAP_MILLIS
+            ) {
+                return
+            }
+            lastEventElapsed = nowElapsed
+
+            maybeFlagAdultSite(event, pkg)
+            val appName = TrackedPackages.displayName(pkg)
+            if (appName == null) {
+                flushUsage()
+                lastCreditPkg = null
+                lastCreditElapsed = 0L
+                return
+            }
+
+            val app = BlockPolicy.appConfig(settings, appName)
+            val ruleOn = BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app)
+            if (!app.blocked || !ruleOn || !BlockPolicy.isScheduleActive(settings)) {
+                // Nothing to enforce or count here right now.
+                flushUsage()
                 lastCreditPkg = null
                 lastCreditElapsed = 0L
                 return
@@ -91,14 +162,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 currentUsage = DailyUsage(date = today)
                 serviceScope.launch { dataStore.ensureTodayUsage() }
             }
-
-            val appName = TrackedPackages.displayName(pkg) ?: return
-            val root = rootFromEvent(event, pkg) ?: return
-            try {
-                handleTrackedApp(pkg, appName, root)
-            } finally {
-                root.recycle()
-            }
+            handleTrackedApp(pkg, appName, event)
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error in onAccessibilityEvent", t)
         }
@@ -108,85 +172,173 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onDestroy() {
         super.onDestroy()
+        runCatching { unregisterReceiver(screenOnReceiver) }
+        flushUsage()
         serviceScope.cancel()
     }
 
-    private fun handleTrackedApp(pkg: String, appName: String, root: AccessibilityNodeInfo) {
-        val appConfig = BlockPolicy.appConfig(settings, appName)
-        val isShortsVisible = when (appName) {
-            "Instagram" -> isNodeVisible(root, "com.instagram.android:id/clips_swipe_refresh_container")
-            "YouTube" -> isNodeVisible(root, "com.google.android.youtube:id/reel_watch_fragment_root")
-            "TikTok" -> true
-            "Facebook" -> isNodeVisible(root, "com.facebook.katana:id/fb_shorts_container") ||
-                isNodeVisible(root, "com.facebook.katana:id/reels_viewer") ||
-                isNodeWithTextVisible(root, "Reels")
-            "X" -> appConfig.blocked
-            else -> false
+    private fun handleTrackedApp(pkg: String, appName: String, event: AccessibilityEvent) {
+        val app = BlockPolicy.appConfig(settings, appName)
+        val canHaveShorts = !BlockPolicy.isWholeAppOnly(appName)
+        // Reading the screen is the expensive part, so only do it when something needs it: the
+        // Reels/Shorts rule, the mindfulness reminder or the open Diagnostics card.
+        val needShorts = canHaveShorts && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
+        val root = if (needShorts) rootFromEvent(event, pkg) else null
+        try {
+            process(pkg, appName, app, canHaveShorts && needShorts, root)
+        } finally {
+            root?.recycle()
         }
+    }
 
-        creditUsage(pkg, appName, isShortsVisible)
+    private fun process(pkg: String, appName: String, app: App, needShorts: Boolean, root: AccessibilityNodeInfo?) {
+        val nowElapsed = SystemClock.elapsedRealtime()
 
-        val minute = BlockPolicy.currentMinuteOfDay()
-        val totalVerdict = BlockPolicy.evaluate(pkg, settings, currentUsage, minute)
-        if (totalVerdict.shouldBlock) {
-            val limit = appConfig.appTotalDailyLimitMinutes
-            notifyAlert(
-                getString(R.string.alert_app_total_limit_title),
-                getString(R.string.toast_app_total_limit_reached, limit, appName),
-                isFinal = true
-            )
-            serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
-            exitTheDoom(null) { performGlobalAction(GLOBAL_ACTION_HOME) }
+        // Run the cheap id lookup on every event and the slower fallback scan at most every
+        // DEEP_SCAN_INTERVAL_MILLIS. Enforcement only trusts what this very event saw, so
+        // leaving Reels never triggers one stray "back".
+        val canScan = needShorts && root != null
+        val deep = canScan && nowElapsed - lastDeepScanElapsed >= DEEP_SCAN_INTERVAL_MILLIS
+        if (deep) lastDeepScanElapsed = nowElapsed
+        val shortsVisible = canScan && ShortsDetector.isVisible(appName, root!!, deepScan = deep)
+        if (deep) lastDeepShorts = shortsVisible
+        // Time counting may lean on the last deep scan so a fallback-detected Reels session
+        // is not under-counted between scans.
+        val shortsForCredit = shortsVisible || (canScan && !deep && lastDeepShorts)
+
+        creditUsage(pkg, appName, shortsForCredit)
+
+        val usage = usageWithPending()
+        val verdict = BlockPolicy.evaluate(
+            packageName = pkg,
+            settings = settings,
+            usage = usage,
+            shortsVisible = shortsVisible
+        )
+
+        if (verdict.shouldBlock) {
+            enforce(verdict, app, root)
             return
         }
 
-        if (!isShortsVisible) return
+        if (shortsVisible || appName == "TikTok") maybeProvoke(appName)
 
-        if (settings.provocationModeEnabled) {
-            val now = System.currentTimeMillis()
-            val lastReelsTime = lastReelsProvocation[appName] ?: 0L
-            if (now - lastReelsTime > 180_000L) {
-                lastReelsProvocation[appName] = now
-                notifyAlert(
-                    getString(R.string.app_name),
-                    MindfulnessProvocationEngine.getRandomReelsQuote(this),
-                    isFinal = false
-                )
-            }
-        }
-
-        val shortsVerdict = BlockPolicy.evaluateShorts(appName, settings, currentUsage, minute)
-        if (!shortsVerdict.shouldBlock) {
-            if (appConfig.blocked && appConfig.dailyLimitMinutes > 0) {
+        if (app.blocked && BlockPolicy.isScheduleActive(settings)) {
+            if (BlockPolicy.wholeRuleOn(app) && app.appTotalDailyLimitMinutes > 0) {
                 checkAndNotifyRemainingTime(
-                    appName,
-                    BlockPolicy.featureSeconds(currentUsage, appName),
-                    appConfig.dailyLimitMinutes
+                    key = "$appName:whole",
+                    label = appName,
+                    usedSeconds = BlockPolicy.totalSeconds(usage, appName),
+                    limitMinutes = app.appTotalDailyLimitMinutes
                 )
             }
-            return
+            if (BlockPolicy.shortsRuleOn(app) && shortsVisible && app.dailyLimitMinutes > 0) {
+                checkAndNotifyRemainingTime(
+                    key = "$appName:shorts",
+                    label = shortsLabel(appName),
+                    usedSeconds = BlockPolicy.featureSeconds(usage, appName),
+                    limitMinutes = app.dailyLimitMinutes
+                )
+            }
+        }
+    }
+
+    private fun shortsLabel(appName: String) = if (appName == "YouTube") "YouTube Shorts" else "$appName Reels"
+
+    /** Alert once per episode, but keep pushing the user out until the app actually leaves. */
+    private fun enforce(verdict: BlockVerdict, app: App, root: AccessibilityNodeInfo?) {
+        val appName = verdict.appName
+        val now = SystemClock.elapsedRealtime()
+        val newEpisode = now - (lastBlockElapsed[appName] ?: 0L) > EPISODE_GAP_MILLIS
+        lastBlockElapsed[appName] = now
+
+        if (newEpisode) {
+            val (title, message) = when (verdict.reason) {
+                BlockReason.SCHEDULE -> getString(R.string.alert_blocked_title) to if (verdict.wholeApp) {
+                    getString(R.string.toast_app_window_blocked, appName)
+                } else {
+                    getString(R.string.toast_shorts_window_blocked, appName)
+                }
+                BlockReason.DAILY_LIMIT -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_limit_reached, app.dailyLimitMinutes, shortsLabel(appName))
+                else -> getString(R.string.alert_app_total_limit_title) to
+                    getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
+            }
+            notifyAlert(title, withWhy(message), isFinal = true)
+            serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         }
 
-        val title = getString(R.string.alert_limit_title)
-        val msg = getString(R.string.toast_limit_reached, appConfig.dailyLimitMinutes, getString(R.string.short_videos_label))
-        notifyAlert(title, msg, isFinal = true)
-        serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
-        exitShorts(appName, root)
+        if (verdict.wholeApp) {
+            exitTheDoom(null) { performGlobalAction(GLOBAL_ACTION_HOME) }
+        } else {
+            exitShorts(appName, root)
+        }
+    }
+
+    /** Adds the user's own reason for changing under a block message, when they wrote one. */
+    private fun withWhy(message: String): String {
+        val why = settings.myWhy
+        return if (why.isBlank()) message else "$message\n\u201C$why\u201D"
+    }
+
+    private fun maybeProvoke(appName: String) {
+        if (!settings.provocationModeEnabled) return
+        val now = System.currentTimeMillis()
+        val last = lastProvocation[appName] ?: 0L
+        if (now - last <= PROVOCATION_INTERVAL_MILLIS) return
+        lastProvocation[appName] = now
+        notifyAlert(
+            getString(R.string.app_name),
+            MindfulnessProvocationEngine.getRandomReelsQuote(this),
+            isFinal = false
+        )
+    }
+
+    private fun usageWithPending(): DailyUsage {
+        var usage = currentUsage
+        pendingTotal.forEach { (app, seconds) -> usage = usage.plusTotal(app, seconds) }
+        pendingShorts.forEach { (app, seconds) -> usage = usage.plusShorts(app, seconds) }
+        return usage
     }
 
     private fun creditUsage(pkg: String, appName: String, shortsVisible: Boolean) {
         val now = SystemClock.elapsedRealtime()
         if (lastCreditPkg != pkg || lastCreditElapsed == 0L) {
+            flushUsage()
             lastCreditPkg = pkg
             lastCreditElapsed = now
+            lastFlushElapsed = now
             return
         }
-        val delta = ((now - lastCreditElapsed) / 1000L).coerceAtMost(3L)
-        if (delta <= 0L) return
-        lastCreditElapsed = now
+        val delta = ((now - lastCreditElapsed) / 1000L).coerceAtMost(MAX_CREDIT_SECONDS)
+        if (delta > 0L) {
+            lastCreditElapsed = now
+            pendingTotal.merge(appName, delta, Long::plus)
+            if (shortsVisible) pendingShorts.merge(appName, delta, Long::plus)
+        }
+        if (now - lastFlushElapsed >= FLUSH_INTERVAL_MILLIS) flushUsage()
+    }
+
+    /**
+     * One DataStore write per interval instead of one per accessibility event. Until the
+     * write lands, [usageWithPending] keeps limit checks accurate.
+     */
+    private fun flushUsage() {
+        lastFlushElapsed = SystemClock.elapsedRealtime()
+        if (pendingTotal.isEmpty() && pendingShorts.isEmpty()) return
+        val total = pendingTotal.toMap()
+        val shorts = pendingShorts.toMap()
+        // Fold into currentUsage right away so nothing is counted twice or lost while the
+        // write is in flight.
+        var merged = currentUsage
+        total.forEach { (app, seconds) -> merged = merged.plusTotal(app, seconds) }
+        shorts.forEach { (app, seconds) -> merged = merged.plusShorts(app, seconds) }
+        currentUsage = merged
+        pendingTotal.clear()
+        pendingShorts.clear()
         serviceScope.launch {
-            dataStore.addTotalAppUsage(appName, delta)
-            if (shortsVisible) dataStore.addUsage(appName, delta)
+            total.forEach { (app, seconds) -> dataStore.addTotalAppUsage(app, seconds) }
+            shorts.forEach { (app, seconds) -> dataStore.addUsage(app, seconds) }
         }
     }
 
@@ -227,24 +379,23 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 }
                 exitTheDoom(null)
             }
-            "TikTok", "X" -> exitTheDoom(null) { performGlobalAction(GLOBAL_ACTION_HOME) }
             else -> exitTheDoom(null)
         }
     }
 
-    private fun checkAndNotifyRemainingTime(appName: String, usedSeconds: Long, limitMinutes: Int) {
+    private fun checkAndNotifyRemainingTime(key: String, label: String, usedSeconds: Long, limitMinutes: Int) {
         val remainingSeconds = limitMinutes * 60L - usedSeconds
         if (remainingSeconds <= 0L) return
         val remainingMinutes = ((remainingSeconds + 59L) / 60L).toInt()
-        val lastWarned = lastWarnedMinutes[appName] ?: -1
+        val lastWarned = lastWarnedMinutes[key] ?: -1
         if (remainingMinutes == lastWarned) return
         val shouldWarn = remainingMinutes <= 5 || remainingMinutes % 5 == 0
         if (!shouldWarn) return
-        lastWarnedMinutes[appName] = remainingMinutes
+        lastWarnedMinutes[key] = remainingMinutes
         val minText = if (remainingMinutes == 1) {
-            getString(R.string.toast_remaining_one_minute, appName)
+            getString(R.string.toast_remaining_one_minute, label)
         } else {
-            getString(R.string.toast_remaining_minutes, remainingMinutes, appName)
+            getString(R.string.toast_remaining_minutes, remainingMinutes, label)
         }
         notifyAlert(getString(R.string.alert_warning_title), minText, isFinal = false)
     }
@@ -269,8 +420,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun notifyAlert(title: String, message: String, isFinal: Boolean = false) {
         val now = System.currentTimeMillis()
-        if (!isFinal && now - lastAlertTime < 4000L) return
-        lastAlertTime = now
+        if (isFinal) {
+            if (now - lastFinalAlertTime < MIN_FINAL_ALERT_GAP_MILLIS) return
+            lastFinalAlertTime = now
+        } else {
+            if (now - lastSoftAlertTime < MIN_SOFT_ALERT_GAP_MILLIS) return
+            lastSoftAlertTime = now
+        }
         triggerVibration(isFinal)
         showNotification(title, message, isFinal)
         showToast(message)
@@ -301,20 +457,29 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    private fun ensureChannels(manager: NotificationManager) {
+        if (channelsCreated) return
+        manager.createNotificationChannel(
+            NotificationChannel(ALERT_CHANNEL, getString(R.string.focus_alerts_channel_name), NotificationManager.IMPORTANCE_HIGH)
+        )
+        manager.createNotificationChannel(
+            NotificationChannel(REMINDER_CHANNEL, getString(R.string.focus_reminders_channel_name), NotificationManager.IMPORTANCE_LOW)
+        )
+        channelsCreated = true
+    }
+
     private fun showNotification(title: String, message: String, isFinal: Boolean) {
         try {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channelId = "blockfy_alerts_channel"
-            notificationManager.createNotificationChannel(
-                NotificationChannel(channelId, getString(R.string.focus_alerts_channel_name), NotificationManager.IMPORTANCE_HIGH)
-            )
-            val builder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.ic_policy)
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            ensureChannels(manager)
+            val builder = NotificationCompat.Builder(this, if (isFinal) ALERT_CHANNEL else REMINDER_CHANNEL)
+                .setSmallIcon(R.drawable.ic_stat_blockfy)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(if (isFinal) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_LOW)
+                .setTimeoutAfter(NOTIFICATION_TIMEOUT_MILLIS)
                 .setAutoCancel(true)
-            notificationManager.notify(if (isFinal) 1001 else 1002, builder.build())
+            manager.notify(if (isFinal) 1001 else 1002, builder.build())
         } catch (e: Exception) {
             Log.e(TAG, "Error showing notification", e)
         }
@@ -326,33 +491,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun isNodeVisible(root: AccessibilityNodeInfo, viewId: String): Boolean {
-        return try {
-            val nodes = root.findAccessibilityNodeInfosByViewId(viewId)
-            if (nodes.isNullOrEmpty()) return false
-            val visible = nodes.any { it.isVisibleToUser }
-            nodes.forEach { it.recycle() }
-            visible
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun isNodeWithTextVisible(root: AccessibilityNodeInfo, text: String): Boolean {
-        return try {
-            val nodes = root.findAccessibilityNodeInfosByText(text)
-            if (nodes.isNullOrEmpty()) return false
-            val visible = nodes.any { it.isVisibleToUser }
-            nodes.forEach { it.recycle() }
-            visible
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     /**
      * Walk up from the event source. Never inspect whichever window is in
-     * front — that would include Nubank after the user switches apps.
+     * front - that would include a banking app after the user switches apps.
      */
     private fun rootFromEvent(event: AccessibilityEvent, expectedPkg: String): AccessibilityNodeInfo? {
         var node = event.source ?: return null
@@ -375,14 +516,117 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    private var lastAdultScanElapsed = 0L
+
+    /**
+     * Adult-site blocking reads ONLY the browser's address bar, not any other
+     * text on screen and not what you type inside apps. It never inspects
+     * banking, messaging or social-app content.
+     */
+    private fun maybeFlagAdultSite(event: AccessibilityEvent, pkg: String) {
+        if (!settings.adultContentBlockerEnabled) return
+        if (pkg !in AdultContentDetector.BROWSER_PACKAGES) return
+        val type = event.eventType
+        if (type != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+            type != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+        ) {
+            return
+        }
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastAdultScanElapsed < 1500L) return
+        lastAdultScanElapsed = now
+
+        val root = rootFromEvent(event, pkg) ?: return
+        try {
+            val addressBarText = readAddressBar(root, pkg)
+            if (addressBarText != null && AdultContentDetector.isAdultContent(addressBarText)) {
+                leaveAdultScreen()
+            }
+        } finally {
+            root.recycle()
+        }
+    }
+
+    /**
+     * Known address-bar view ids first (exact and cheap), then the generic "first visible,
+     * non-password EditText" search for browsers whose ids we do not know.
+     */
+    private fun readAddressBar(root: AccessibilityNodeInfo, pkg: String): String? {
+        val ids = (ADDRESS_BAR_IDS[pkg] ?: emptyList()) + "$pkg:id/url_bar"
+        for (id in ids) {
+            val nodes = try {
+                root.findAccessibilityNodeInfosByViewId(id)
+            } catch (_: Exception) {
+                null
+            } ?: continue
+            var text: String? = null
+            for (node in nodes) {
+                if (text == null && node.isVisibleToUser && !node.isPassword) {
+                    text = node.text?.toString()?.takeIf { it.isNotBlank() }
+                }
+                node.recycle()
+            }
+            if (text != null) return text
+        }
+        return findAddressBarText(root, remaining = intArrayOf(MAX_ADDRESS_BAR_SCAN_NODES))
+    }
+
+    /**
+     * The address bar is the one editable field browsers keep visible at the
+     * top of the window. We do not know each browser's exact view id, so we
+     * look for a visible, non-password EditText instead.
+     */
+    private fun findAddressBarText(node: AccessibilityNodeInfo, remaining: IntArray): String? {
+        if (remaining[0] <= 0) return null
+        remaining[0]--
+        if (node.isVisibleToUser && !node.isPassword && node.className == "android.widget.EditText") {
+            val text = node.text?.toString()
+            if (!text.isNullOrBlank()) return text
+        }
+        for (i in 0 until node.childCount) {
+            if (remaining[0] <= 0) return null
+            val child = node.getChild(i) ?: continue
+            try {
+                val found = findAddressBarText(child, remaining)
+                if (found != null) return found
+            } finally {
+                child.recycle()
+            }
+        }
+        return null
+    }
+
+    private fun leaveAdultScreen() {
+        val message = AdultContentDetector.getRandomWarning(this)
+        notifyAlert(getString(R.string.adult_blocker_title), withWhy(message), isFinal = true)
+        performGlobalAction(GLOBAL_ACTION_HOME)
+    }
+
     companion object {
         private const val TAG = "BlockfyService"
-        val SOCIAL_PACKAGES = arrayOf(
-            TrackedPackages.INSTAGRAM,
-            TrackedPackages.YOUTUBE,
-            TrackedPackages.TIKTOK,
-            TrackedPackages.FACEBOOK,
-            TrackedPackages.X
+        private const val ALERT_CHANNEL = "blockfy_alerts_channel"
+        private const val REMINDER_CHANNEL = "blockfy_reminders_channel"
+        private const val MAX_CREDIT_SECONDS = 5L
+        private const val FLUSH_INTERVAL_MILLIS = 10_000L
+        private const val MAX_ADDRESS_BAR_SCAN_NODES = 40
+        private const val DEEP_SCAN_INTERVAL_MILLIS = 700L
+        private const val MIN_EVENT_GAP_MILLIS = 150L
+        private const val SCOPE_REFRESH_MILLIS = 30_000L
+        private const val EPISODE_GAP_MILLIS = 8_000L
+        private const val PROVOCATION_INTERVAL_MILLIS = 180_000L
+        private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L
+        private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
+        private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L
+
+        private val ADDRESS_BAR_IDS = mapOf(
+            "com.android.chrome" to listOf("com.android.chrome:id/url_bar"),
+            "com.sec.android.app.sbrowser" to listOf("com.sec.android.app.sbrowser:id/location_bar_edit_text"),
+            "org.mozilla.firefox" to listOf(
+                "org.mozilla.firefox:id/mozac_browser_toolbar_url_view",
+                "org.mozilla.firefox:id/url_bar_title"
+            ),
+            "com.opera.browser" to listOf("com.opera.browser:id/url_field"),
+            "com.duckduckgo.mobile.android" to listOf("com.duckduckgo.mobile.android:id/omnibarTextInput")
         )
     }
 }

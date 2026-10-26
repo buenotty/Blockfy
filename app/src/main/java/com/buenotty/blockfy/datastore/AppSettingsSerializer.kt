@@ -32,7 +32,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
 
     override suspend fun writeTo(t: AppSettings, output: OutputStream) {
         output.write(
-            Json.encodeToString(
+            json.encodeToString(
                 serializer = AppSettings.serializer(),
                 value = t
             ).encodeToByteArray()

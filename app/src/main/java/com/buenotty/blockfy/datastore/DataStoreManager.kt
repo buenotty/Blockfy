@@ -2,114 +2,95 @@ package com.buenotty.blockfy.datastore
 
 import android.content.Context
 import androidx.datastore.dataStore
+import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.appSettingsStore by dataStore("app_settings.json", AppSettingsSerializer)
-val Context.featureEnabledStore by dataStore("feature_enabled.json", FeatureEnabledSerializer)
 val Context.dailyUsageStore by dataStore("daily_usage.json", DailyUsageSerializer)
+val Context.historyStore by dataStore("history.json", HistorySerializer)
+
+private const val MAX_HISTORY_DAYS = 90
 
 class DataStoreManager(private val context: Context) {
 
     val appSettingsFlow = context.appSettingsStore.data
-    val featureEnabledFlow = context.featureEnabledStore.data
+    val historyFlow = context.historyStore.data
     val dailyUsageFlow = context.dailyUsageStore.data.map { current ->
         val today = getTodayDateString()
         if (current.date == today) current else DailyUsage(date = today)
     }
 
-    suspend fun updateAppSettings(settings: AppSettings) {
-        context.appSettingsStore.updateData { settings }
+    /**
+     * Read-modify-write inside DataStore, so two quick changes can never overwrite each other.
+     * Also feeds the clean-day streak: loosening anything marks today as not clean, and having any
+     * protection on marks today as protected.
+     */
+    suspend fun updateSettings(transform: (AppSettings) -> AppSettings) {
+        var before: AppSettings? = null
+        var after: AppSettings? = null
+        context.appSettingsStore.updateData { current ->
+            before = current
+            transform(current).also { after = it }
+        }
+        val old = before ?: return
+        val new = after ?: return
+        if (BlockPolicy.isSettingsLoosening(old, new)) markLoosened()
+        if (BlockPolicy.hasAnyProtection(new)) updateToday { it.copy(hadProtection = true) }
     }
 
-    suspend fun update(settings: AppSettings) {
-        updateAppSettings(settings)
-    }
+    /** Called when the user switches off a protection from outside the app, such as Accessibility. */
+    suspend fun markLoosened() = updateToday { it.copy(loosened = true) }
 
     private fun getTodayDateString(): String {
         return java.time.LocalDate.now().toString()
     }
 
     suspend fun ensureTodayUsage(): DailyUsage {
-        val today = getTodayDateString()
-        return context.dailyUsageStore.updateData { current ->
-            if (current.date == today) current else DailyUsage(date = today)
-        }
+        var result = DailyUsage()
+        updateToday { it.also { usage -> result = usage } }
+        return result
     }
 
-    suspend fun getTodayUsage(): DailyUsage {
-        return ensureTodayUsage()
-    }
-
-    suspend fun addUsage(appName: String, seconds: Long) {
+    /** Applies [transform] to today's usage, first archiving yesterday if the day just rolled over. */
+    private suspend fun updateToday(transform: (DailyUsage) -> DailyUsage) {
         val today = getTodayDateString()
+        var finished: DailyUsage? = null
         context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            when (appName) {
-                "Instagram" -> base.copy(instagramSeconds = base.instagramSeconds + seconds)
-                "YouTube" -> base.copy(youtubeSeconds = base.youtubeSeconds + seconds)
-                "TikTok" -> base.copy(tiktokSeconds = base.tiktokSeconds + seconds)
-                "Facebook" -> base.copy(facebookSeconds = base.facebookSeconds + seconds)
-                "X" -> base.copy(xTotalSeconds = base.xTotalSeconds + seconds)
-                else -> base
+            if (current.date == today) {
+                transform(current)
+            } else {
+                if (current.date.isNotBlank()) finished = current
+                transform(DailyUsage(date = today))
             }
         }
+        finished?.let { archive(it) }
     }
 
-    suspend fun addTotalAppUsage(appName: String, seconds: Long) {
-        val today = getTodayDateString()
-        context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            when (appName) {
-                "Instagram" -> base.copy(instagramTotalSeconds = base.instagramTotalSeconds + seconds)
-                "YouTube" -> base.copy(youtubeTotalSeconds = base.youtubeTotalSeconds + seconds)
-                "TikTok" -> base.copy(tiktokTotalSeconds = base.tiktokTotalSeconds + seconds)
-                "Facebook" -> base.copy(facebookTotalSeconds = base.facebookTotalSeconds + seconds)
-                "X" -> base.copy(xTotalSeconds = base.xTotalSeconds + seconds)
-                else -> base
-            }
+    private suspend fun archive(day: DailyUsage) {
+        val settings = context.appSettingsStore.data.first()
+        val protectedDay = day.hadProtection || BlockPolicy.hasAnyProtection(settings)
+        val record = DayRecord(
+            date = day.date,
+            blocks = day.blockedAttemptsToday,
+            savedSeconds = day.savedSeconds,
+            clean = protectedDay && !day.loosened
+        )
+        context.historyStore.updateData { history ->
+            History((history.days.filterNot { it.date == record.date } + record).sortedBy { it.date }.takeLast(MAX_HISTORY_DAYS))
         }
     }
 
-    suspend fun recordBlockedDistraction(estimatedSecondsSaved: Long = 300L) {
-        val today = getTodayDateString()
-        context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            base.copy(
-                blockedAttemptsToday = base.blockedAttemptsToday + 1,
-                savedSeconds = base.savedSeconds + estimatedSecondsSaved
-            )
-        }
+    suspend fun addUsage(appName: String, seconds: Long) = updateToday { it.plusShorts(appName, seconds) }
+
+    suspend fun addTotalAppUsage(appName: String, seconds: Long) = updateToday { it.plusTotal(appName, seconds) }
+
+    suspend fun recordBlockedDistraction(estimatedSecondsSaved: Long = 300L) = updateToday {
+        it.copy(
+            blockedAttemptsToday = it.blockedAttemptsToday + 1,
+            savedSeconds = it.savedSeconds + estimatedSecondsSaved
+        )
     }
 
-    suspend fun resetUsage(appName: String) {
-        val today = getTodayDateString()
-        context.dailyUsageStore.updateData { current ->
-            val base = if (current.date == today) current else DailyUsage(date = today)
-            when (appName) {
-                "Instagram" -> base.copy(instagramSeconds = 0L, instagramTotalSeconds = 0L)
-                "YouTube" -> base.copy(youtubeSeconds = 0L, youtubeTotalSeconds = 0L)
-                "TikTok" -> base.copy(tiktokSeconds = 0L, tiktokTotalSeconds = 0L)
-                "Facebook" -> base.copy(facebookSeconds = 0L, facebookTotalSeconds = 0L)
-                "X" -> base.copy(xTotalSeconds = 0L)
-                else -> base
-            }
-        }
-    }
-
-    suspend fun updateFeatureStatus(appName: String, featureName: String?, enabled: Boolean) {
-        context.featureEnabledStore.updateData { prefs ->
-            val updatedStatuses = prefs.statuses.filterNot {
-                it.appName == appName && it.featureName == featureName
-            } + FeatureEnabledStatus(appName, featureName, enabled)
-
-            prefs.copy(statuses = updatedStatuses)
-        }
-    }
-
-    suspend fun getFeatureEnabledStatus(appName: String, featureName: String?): Boolean {
-        return featureEnabledFlow.first().statuses
-            .firstOrNull { it.appName == appName && it.featureName == featureName }
-            ?.enabled ?: false
-    }
+    suspend fun resetUsage(appName: String) = updateToday { it.resetApp(appName) }
 }

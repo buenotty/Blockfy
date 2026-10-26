@@ -13,7 +13,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.buenotty.blockfy.R
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
@@ -23,7 +25,7 @@ fun TimePickerDialog(
     initialTime: Int,
     onConfirm: (Int) -> Unit,
     onDismiss: () -> Unit,
-    title: String = "Select Time"
+    title: String = ""
 ) {
     // Initialize TimePickerState with initialTime
     val timePickerState = rememberTimePickerState(
@@ -43,7 +45,7 @@ fun TimePickerDialog(
     }
 
     AdvancedTimePickerDialog(
-        title = title,
+        title = title.ifEmpty { stringResource(R.string.time_picker_title) },
         onDismiss = onDismiss,
         onConfirm = {
             onConfirm(timePickerState.hour * 60 + timePickerState.minute)
@@ -52,7 +54,7 @@ fun TimePickerDialog(
             IconButton(onClick = { showDial = !showDial }) {
                 Icon(
                     imageVector = toggleIcon,
-                    contentDescription = "Toggle Time Picker Mode"
+                    contentDescription = stringResource(R.string.time_picker_toggle)
                 )
             }
         }
@@ -71,7 +73,7 @@ fun TimePickerDialog(
 
 @Composable
 fun AdvancedTimePickerDialog(
-    title: String = "Select Time",
+    title: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     toggle: @Composable () -> Unit = {},
@@ -114,10 +116,10 @@ fun AdvancedTimePickerDialog(
                     toggle()
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(onClick = onDismiss) {
-                        Text(androidx.compose.ui.res.stringResource(com.buenotty.blockfy.R.string.cancel_btn))
+                        Text(stringResource(R.string.cancel_btn))
                     }
                     TextButton(onClick = onConfirm) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok_btn))
                     }
                 }
             }

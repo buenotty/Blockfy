@@ -1,38 +1,20 @@
 <resources>
     <string name="app_name">Blockfy</string>
     <string name="app_tagline">Menos Reels. Mais foco.</string>
-    <string name="title_about">Sobre</string>
     <string name="btn_back">Voltar</string>
 
-    <string name="accessibility_service_description">O Blockfy usa Acessibilidade só para detectar Reels e Shorts no Instagram, YouTube, TikTok, Facebook e X e devolver você ao feed. Ele não lê outros aplicativos.</string>
+    <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Ele não lê mensagens, conversas nem o que você digita em outros apps, e não guarda o que lê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
-    <string name="accessibility_active">Concedido. Toque para abrir as configurações do sistema.</string>
-    <string name="accessibility_inactive">Não concedido. Toque aqui para ativar.</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
-    <string name="accessibility_dialog_desc">O Blockfy usa Acessibilidade para perceber quando você abre Reels ou Shorts e para voltar ao feed. Ele não guarda a sua atividade e não controla outros apps além de sair das telas de vídeo curto.</string>
-    <string name="accessibility_dialog_learn_more">Saiba mais</string>
+    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê a barra de endereço do seu navegador para comparar o site que você está visitando com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
-    <string name="accessibility_dialog_howto">Depois que as configurações de Acessibilidade abrirem, toque em Blockfy em Apps baixados e ative o serviço.</string>
-    <string name="btn_open_accessibility">Abrir configurações de acessibilidade</string>
+    <string name="accessibility_dialog_howto">1. Abra as informações do app e permita configurações restritas, se o celular pedir.\n2. Abra as configurações de Acessibilidade.\n3. Em apps baixados, toque em Blockfy.\n4. Ative o serviço e confirme.</string>
     <string name="btn_open_app_info">Abrir informações do app</string>
     <string name="btn_close">Fechar</string>
     <string name="restricted_settings_hint">Em alguns celulares você precisa permitir configurações restritas na tela de informações do Blockfy.</string>
 
-    <string name="instagram_reels">Instagram Reels</string>
-    <string name="youtube_shorts">YouTube Shorts</string>
-    <string name="tiktok_app">TikTok</string>
-    <string name="block_tiktok_summary">Bloquear o TikTok (aplicativo inteiro)</string>
-    <string name="block_instagram_summary">Bloquear Instagram Reels</string>
-    <string name="block_youtube_summary">Bloquear YouTube Shorts</string>
-    <string name="facebook_app">Facebook</string>
-    <string name="facebook_reels">Facebook Reels</string>
-    <string name="block_facebook_summary">Bloquear Facebook Reels</string>
     <string name="x_app">X (Twitter)</string>
-    <string name="block_x_summary">Limitar a rolagem infinita no X</string>
-    <string name="daily_limit_format">Limite: %1$d min/dia (usado: %2$d min)</string>
-    <string name="daily_usage_short">%1$d min / %2$d min hoje</string>
-    <string name="short_videos_label">vídeos curtos</string>
 
     <string name="language_title">Idioma</string>
     <string name="language_desc">No Brasil o app abre em português. Fora isso, inglês. Você muda isso aqui se quiser.</string>
@@ -40,53 +22,30 @@
     <string name="language_english">English</string>
     <string name="language_portuguese">Português</string>
 
-    <string name="section_apps">Vídeos curtos</string>
+    <string name="section_apps">Apps</string>
     <string name="section_focus">Foco</string>
-
-    <string name="support_creator_title">Apoiar o projeto</string>
-    <string name="support_creator_subtitle">Pix ou PayPal mantêm o Blockfy gratuito.</string>
-    <string name="support_dialog_title">Apoiar o Blockfy</string>
-    <string name="support_dialog_desc">O Blockfy é gratuito e de código aberto. Se ele te ajuda a sair dos vídeos curtos, você pode apoiar o desenvolvimento via Pix ou PayPal.</string>
-    <string name="pix_key_label">Chave Pix</string>
-    <string name="copy_pix_btn">Copiar chave Pix</string>
-    <string name="pix_copied_toast">Chave Pix copiada</string>
-    <string name="paypal_label">PayPal</string>
-    <string name="copy_paypal_btn">Copiar e-mail do PayPal</string>
-    <string name="open_paypal_btn">Abrir PayPal</string>
-    <string name="paypal_copied_toast">E-mail do PayPal copiado</string>
-    <string name="star_github_btn">Estrela no GitHub</string>
 
     <string name="version_label">Versão: %1$s</string>
     <string name="check_updates_btn">Abrir Play Store</string>
     <string name="report_bug_btn">Reportar bug</string>
     <string name="licenses_btn">Licenças</string>
     <string name="source_code_btn">Código</string>
-    <string name="website_btn">Site</string>
     <string name="authorship_title">Créditos</string>
     <string name="fork_author_role">cuida do Blockfy</string>
     <string name="original_author_role">fez o Blokky original</string>
-    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. Tem também um filtro DNS no celular para sites adultos, se você ligar.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
+    <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade só olha Instagram, YouTube, TikTok, Facebook e X. É assim que o Blockfy vê Reels e Shorts. Ele não abre apps de banco.\n\nO escudo adulto é uma VPN DNS que roda no seu celular. O histórico de navegação fica aqui. Apps de banco continuam na conexão normal, fora dessa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.</string>
+    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê a barra de endereço do seu navegador para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
-    <string name="learn_more">Saiba mais</string>
 
-    <string name="settings_dialog_title">Configurações de %1$s</string>
-    <string name="daily_limit_picker_title">Limite diário de Reels / Shorts</string>
-    <string name="daily_limit_picker_desc">Quanto tempo de vídeo curto é permitido por dia. Depois disso, fica bloqueado até meia-noite.</string>
-    <string name="daily_limit_off">Desligado</string>
     <string name="today_usage_label">Hoje: %1$d de %2$d min</string>
     <string name="reset_usage_btn">Zerar o contador de hoje</string>
-    <string name="schedule_title">Horário ativo</string>
     <string name="start_time">Início</string>
     <string name="end_time">Fim</string>
     <string name="save_btn">Salvar</string>
     <string name="cancel_btn">Cancelar</string>
-    <string name="app_total_limit_label">Limite diário do app inteiro</string>
-    <string name="app_total_limit_none">Sem limite geral (somente vídeos curtos)</string>
-    <string name="app_total_limit_on">%1$d min para o app inteiro</string>
-    <string name="short_video_limit_label">Limite diário de Reels / Shorts</string>
+    <string name="toast_app_window_blocked">%1$s está bloqueado neste horário.</string>
 
     <string name="alert_limit_title">Blockfy • Limite atingido</string>
     <string name="alert_warning_title">Blockfy • Alerta de tempo</string>
@@ -102,20 +61,16 @@
     <string name="disable_dialog_confirm">Eu aguento</string>
 
     <string name="provocation_mode_title">Mensagens de atenção</string>
-    <string name="provocation_mode_desc">Mostrar um aviso curto ao abrir Reels ou Shorts</string>
+    <string name="provocation_mode_desc">Mostra um lembrete curto quando você abre Reels ou Shorts em um app com bloqueio ligado</string>
     <string name="strict_mode_title">Modo estrito</string>
-    <string name="strict_mode_desc">Travar os limites até meia-noite para não mudar no impulso</string>
-    <string name="strict_mode_midnight_locked_msg">O modo estrito está ligado. As configurações ficam travadas até meia-noite.</string>
-    <string name="strict_mode_midnight_extra">Você escolheu essa trava para proteger o você de amanhã de um impulso curto. Ela só abre depois das 00:00.</string>
+    <string name="strict_mode_desc">Até a meia-noite você só pode deixar os bloqueios mais rígidos, nunca mais frouxos</string>
+    <string name="strict_mode_midnight_locked_msg">Modo estrito ligado. Até a meia-noite você não pode afrouxar nem desligar nenhum bloqueio.</string>
+    <string name="strict_mode_midnight_extra">Você escolheu essa trava para proteger o você do futuro de um impulso. Ainda dá para deixar os bloqueios mais rígidos, e a trava acaba depois das 00:00.</string>
     <string name="strict_mode_keep_focus">Manter a trava</string>
-    <string name="strict_challenge_title">Digite para desbloquear</string>
-    <string name="strict_challenge_instruction">Digite este código na mão. Colar não deve ser o caminho fácil.</string>
-    <string name="strict_challenge_placeholder">Digite o código acima</string>
-    <string name="strict_challenge_confirm">Desbloquear configurações</string>
-    <string name="strict_locked_banner">Modo estrito ligado: os limites ficam travados até meia-noite.</string>
+    <string name="strict_locked_banner">Modo estrito ligado: até a meia-noite você pode deixar os bloqueios mais rígidos, mas não mais frouxos.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
-    <string name="adult_blocker_desc">Bloqueia sites adultos conhecidos no navegador com um filtro DNS local. Apps de banco seguem na conexão normal.</string>
+    <string name="adult_blocker_desc">Usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
     <string name="adult_blocker_reflection_text">Eu sei que a pornografia rouba tempo que eu não recupero e me afasta da pessoa que eu quero ser. Desligar este escudo é uma escolha deliberada de seguir esse impulso. Eu assumo a responsabilidade por essa escolha.</string>
@@ -123,16 +78,7 @@
     <string name="adult_blocker_paste_blocked_warning">Colar está bloqueado. Digite você mesmo.</string>
     <string name="adult_blocker_confirm_disable">Desligar o escudo</string>
     <string name="adult_blocker_keep_active">Manter ligado</string>
-    <string name="vpn_notification_title">Escudo adulto ligado</string>
-    <string name="vpn_notification_text">Filtro DNS local ativo. Bancos usam a conexão normal.</string>
-    <string name="vpn_channel_name">Escudo adulto</string>
-    <string name="vpn_alert_channel_name">Alertas do escudo adulto</string>
     <string name="focus_alerts_channel_name">Alertas do Blockfy</string>
-    <string name="interrupt_go_home">Ir para a tela inicial</string>
-    <string name="adult_block_alert_title">Site adulto bloqueado</string>
-    <string name="adult_block_alert_subtitle">Esta página foi bloqueada</string>
-    <string name="adult_block_alert_body">Você não precisa seguir esse impulso. Feche isto e volte ao que estava fazendo.</string>
-    <string name="adult_block_return_focus">Voltar ao foco (%1$d)</string>
 
     <string-array name="adult_block_warnings">
         <item>Você não precisa jogar a próxima hora fora.</item>
@@ -154,5 +100,389 @@
         <item>Ninguém construiu a vida que queria só rolando a tela.</item>
         <item>A sua atenção é a coisa mais cara nesta sala.</item>
         <item>Feche o reel. Levante. Faça a próxima coisa real.</item>
+    </string-array>
+
+    <string name="weekdays_title">Dias em que o bloqueio vale</string>
+    <string name="weekday_sun">Dom</string>
+    <string name="weekday_mon">Seg</string>
+    <string name="weekday_tue">Ter</string>
+    <string name="weekday_wed">Qua</string>
+    <string name="weekday_thu">Qui</string>
+    <string name="weekday_fri">Sex</string>
+    <string name="weekday_sat">Sáb</string>
+    <string name="concepts_intro">Bloquear dá fôlego. O que muda a sua vida é o que você passa a acreditar sobre si mesmo e o que faz a partir daí. Leia na ordem. Sem pressa e sem se enganar.</string>
+    <string name="concepts_shorts_title">O feed contra você</string>
+    <string name="concepts_shorts_summary">Você não é fraco. Você está contra um produto feito para te prender.</string>
+    <string name="concepts_porn_title">Pornografia</string>
+    <string name="concepts_porn_summary">O que ela tira do seu caráter, dos seus relacionamentos e da sua liberdade.</string>
+    <string name="concepts_page">%1$d / %2$d</string>
+    <string name="concepts_next">Próximo</string>
+    <string-array name="concept_shorts_titles">
+        <item>Você não é fraco. Você está contra um produto</item>
+        <item>Mais um, e mais um, e mais um</item>
+        <item>Você treina o que repete</item>
+        <item>O trabalho que fica raso</item>
+        <item>Sono e humor pagam a conta</item>
+        <item>A vitrine dos outros e o seu dia inteiro</item>
+        <item>Dá para sair, e é mais leve do que parece</item>
+    </string-array>
+    <string-array name="concept_shorts_bodies">
+        <item>Equipes inteiras de engenheiros e cientistas de dados trabalham para que você fique mais um minuto. Cada deslizar de dedo é medido, testado e ajustado. Se você sente que não consegue parar, isso não prova que você é fraco: prova que o produto funciona. Mas saber disso não te tira a responsabilidade. Agora que você sabe, a pergunta é: o que você vai fazer a respeito?</item>
+        <item>Não existe último episódio. O próximo vídeo já está carregado, escolhido porque é o que tem mais chance de te segurar. Nenhum vídeo termina de um jeito que te faça levantar. O produto não é o vídeo. O produto é a sua atenção, vendida em lotes. Enquanto você não decidir o limite, alguém decide por você.</item>
+        <item>A cada vídeo curto você treina esperar uma novidade a cada poucos segundos. Quanto mais treina, mais sem graça parecem ler, conversar, trabalhar ou ficar em silêncio. O mundo não ficou chato: o seu sistema de recompensa ficou mal acostumado. A boa notícia é que o que se aprende pode ser reaprendido, e muita gente sente a diferença em algumas semanas longe do feed.</item>
+        <item>Toda vez que você larga uma tarefa para espiar o feed, o seu foco leva tempo para voltar. Quem vive se interrompendo entrega o trabalho pela metade e termina o dia mais cansado. Aquilo que você diz que não tem tempo de fazer costuma estar debaixo de uma pilha de vídeos.</item>
+        <item>Rolar de madrugada rouba o sono que deixaria o dia seguinte mais fácil. Você acorda mais irritado, com menos paciência, e mais propenso a abrir o mesmo app de novo. É um ciclo: o cansaço pede o feed, e o feed aumenta o cansaço.</item>
+        <item>Você vê o melhor minuto da vida de milhares de pessoas, editado, filtrado e ensaiado, e compara com o seu dia inteiro, sem edição. Perde sempre. Essa sensação de estar ficando para trás não é informação sobre a sua vida. É efeito colateral de ficar olhando a vitrine dos outros.</item>
+        <item>A primeira semana é a pior: a mão vai sozinha ao celular e o corpo pede o estímulo. Depois a vontade costuma diminuir. Muita gente relata mais calma, mais sono e mais vontade de fazer coisas nas primeiras semanas. Você não está abrindo mão de algo valioso. Está trocando o que te consome por aquilo que te constrói.</item>
+    </string-array>
+    <string-array name="concept_porn_titles">
+        <item>Isso te treina a usar pessoas</item>
+        <item>A índole se desgasta no segredo</item>
+        <item>Você não sabe a quem está assistindo</item>
+        <item>O ciclo da vergonha</item>
+        <item>Os relacionamentos esfriam</item>
+        <item>A vida sexual encolhe</item>
+        <item>Dá para sair, e você vai se reconhecer</item>
+    </string-array>
+    <string-array name="concept_porn_bodies">
+        <item>Pornografia ensina a tratar outra pessoa como produto: disponível, calada e descartada quando a sensação passa. Esse hábito não fica na tela. Ele aparece no jeito de olhar para quem está de verdade no mesmo lugar que você. Cada clique é um treino, e você sempre treina alguma coisa.</item>
+        <item>Fazer isso escondido te parte em dois. Você fala uma coisa sobre quem é e mantém outra vida que não defenderia em voz alta. Índole é o que você repete quando ninguém está te avaliando. O segredo pesa mais do que o ato, e quanto mais tempo ele dura, mais caro fica.</item>
+        <item>Parte desse conteúdo envolve exploração, coerção ou pessoas que nunca consentiram em ser vistas. Você não tem como saber qual. Cada clique alimenta uma indústria em que o sofrimento de alguém pode ser o produto. É difícil sustentar um "não faço mal a ninguém" olhando isso de frente.</item>
+        <item>O ciclo costuma ser: tensão, uso, alívio curto, vergonha, tensão de novo. A vergonha não te afasta do hábito: ela cria o estresse que pede o próximo alívio. Por isso se punir não funciona. O que quebra o ciclo é a ação seguinte: sair do lugar, ligar para alguém, voltar ao plano.</item>
+        <item>Uma parceria não é uma sequência de novidade. Se a sua excitação passa a depender de desconhecidos, abas e de ir cada vez mais longe, a pessoa que te ama começa a parecer insuficiente. Isso não é falha dela. É o preço do hábito. E quem está ao seu lado costuma sentir mais do que você imagina.</item>
+        <item>O uso pesado pode deixar a intimidade real mais lenta, mais ansiosa ou mais difícil de aproveitar. Muita gente relata precisar de mais intensidade para o mesmo efeito, e um corpo comum ao lado deixa de bastar. Isso não é padrão alto: é apetite desregulado, e apetite também se reeduca.</item>
+        <item>Se você estiver decidido, vai achar um jeito de burlar qualquer bloqueio. O bloqueio existe para criar uma pausa: tempo bastante para lembrar que isso não te dá uma vida melhor, uma cabeça mais clara nem um relacionamento que você respeite. As primeiras semanas são as mais difíceis. Depois, muita gente descreve mais clareza e mais presença. Recaídas acontecem; o que conta é a direção.</item>
+    </string-array>
+    <string name="privacy_policy_btn">Política de privacidade</string>
+    <string name="nav_blocks">Bloqueios</string>
+    <string name="nav_concepts">Conceitos</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="status_active_title">Proteção ativa</string>
+    <string name="status_active_desc">O Blockfy está de olho nos apps que você escolheu.</string>
+    <string name="status_inactive_title">Proteção desligada</string>
+    <string name="status_inactive_desc">Libere a Acessibilidade, senão o Blockfy não bloqueia nada.</string>
+    <string name="status_enable_btn">Ativar</string>
+    <string name="status_manage_btn">Gerenciar</string>
+    <string name="today_title">Hoje</string>
+    <string name="today_blocks_label">Bloqueios</string>
+    <string name="today_saved_label">Tempo poupado</string>
+    <string name="today_minutes_format">%1$d min</string>
+    <string name="section_protection">Proteção extra</string>
+    <string name="app_state_off">Desligado</string>
+    <string name="app_scope_reels">Reels</string>
+    <string name="app_scope_shorts">Shorts</string>
+    <string name="app_scope_whole">App inteiro</string>
+    <string name="app_rule_blocked">Bloqueado</string>
+    <string name="app_rule_limit">%1$d min/dia</string>
+    <string name="schedule_all_day">O dia todo</string>
+    <string name="weekdays_everyday">Todos os dias</string>
+    <string name="weekdays_workdays">Seg a Sex</string>
+    <string name="weekdays_weekend">Fim de semana</string>
+    <string name="edit_enable_title">Bloqueio ligado</string>
+    <string name="edit_enable_desc">Desligue para pausar tudo neste app.</string>
+    <string name="edit_rule_always">Bloquear</string>
+    <string name="edit_rule_limit">Limite por dia</string>
+    <string name="edit_rule_always_desc">Bloqueado nos horários programados, assim que você abrir.</string>
+    <string name="edit_rule_limit_desc">Liberado até o limite nos horários programados. Depois disso fica bloqueado.</string>
+    <string name="minutes_suffix">min</string>
+    <string name="minutes_less">Menos</string>
+    <string name="minutes_more">Mais</string>
+    <string name="minutes_error">Digite de 1 a 1440 minutos.</string>
+    <string name="edit_hours_title">Horário</string>
+    <string name="preset_night">Noite 22:00 às 06:00</string>
+    <string name="preset_work">Trabalho 09:00 às 18:00</string>
+    <string name="hours_error_equal">Início e fim precisam ser diferentes.</string>
+    <string name="hours_crosses_midnight">Termina no dia seguinte</string>
+    <string name="subject_shorts">%2$s do %1$s</string>
+    <string name="hours_range">das %1$s às %2$s</string>
+    <string name="summary_title">Resumo</string>
+    <string name="summary_off">O bloqueio de %1$s está desligado.</string>
+    <string name="edit_save_and_enable">Ligar e salvar</string>
+    <string name="discard_title">Descartar alterações?</string>
+    <string name="discard_msg">Você mudou configurações que ainda não foram salvas.</string>
+    <string name="discard_keep">Continuar editando</string>
+    <string name="discard_confirm">Descartar</string>
+    <string name="saved_toast">Salvo</string>
+    <string name="concepts_hero_title">Mude a mente primeiro</string>
+    <string name="concepts_points">%1$d reflexões</string>
+    <string name="concepts_prev">Anterior</string>
+    <string name="concepts_done">Concluir</string>
+    <string name="diag_title">Diagnóstico</string>
+    <string name="diag_desc">Mostra o que o Blockfy está vendo agora. Se algum bloqueio falhar, mande um print disto.</string>
+    <string name="diag_service_on">Serviço conectado</string>
+    <string name="diag_service_off">Serviço não conectado</string>
+    <string name="diag_last_app">Último app visto: %1$s</string>
+    <string name="diag_never">nenhum ainda</string>
+    <string name="diag_last_event">Último evento há %1$d s</string>
+    <string name="diag_shorts_yes">Reels/Shorts detectado</string>
+    <string name="diag_shorts_no">Nenhum Reels/Shorts na tela</string>
+    <string name="diag_decision">Decisão: %1$s</string>
+    <string name="diag_ids_title">Elementos de tela vistos</string>
+    <string name="diag_ids_hint">Abra o Instagram, YouTube ou Facebook, vá até Reels ou Shorts e volte aqui.</string>
+    <string name="diag_show">Mostrar detalhes</string>
+    <string name="diag_hide">Esconder detalhes</string>
+    <string name="time_picker_title">Escolher horário</string>
+    <string name="time_picker_toggle">Alternar modo de entrada</string>
+    <string name="ok_btn">OK</string>
+    <string name="alert_blocked_title">Blockfy • Bloqueado</string>
+    <string name="toast_shorts_window_blocked">%1$s: Reels e Shorts estão bloqueados agora.</string>
+    <string name="focus_reminders_channel_name">Lembretes do Blockfy</string>
+    <string name="loosen_title">Afrouxar este bloqueio?</string>
+    <string name="loosen_msg">Essas mudanças deixam você usar o app mais do que antes. Espere alguns segundos e pense se é isso mesmo que você quer.</string>
+    <string name="loosen_confirm">Afrouxar</string>
+    <string name="rule_whole_title">App inteiro</string>
+    <string name="rule_whole_desc">Limita ou bloqueia todo o uso do app.</string>
+    <string name="rule_shorts_title">%1$s</string>
+    <string name="rule_shorts_desc">Limita ou bloqueia só os vídeos curtos.</string>
+    <string name="mode_off">Sem regra</string>
+    <string name="edit_rule_off_desc">Esta regra não é aplicada.</string>
+    <string name="limits_hint_shorts_above_whole">O limite de Reels/Shorts é maior que o do app inteiro, então o do app inteiro vai bloquear primeiro.</string>
+    <string name="schedule_link_title">Horários e dias</string>
+    <string name="schedule_link_desc">Iguais para todos os apps. Mude em Ajustes.</string>
+    <string name="schedule_link_btn">Abrir Ajustes</string>
+    <string name="schedule_change_btn">Alterar</string>
+    <string name="app_no_rule">Nenhuma regra ligada</string>
+    <string name="summary_none">Nenhuma regra ligada para %1$s.</string>
+    <string name="summary_whole_block">%1$s: app inteiro bloqueado.</string>
+    <string name="summary_whole_limit">%1$s: app inteiro limitado a %2$d min por dia.</string>
+    <string name="summary_shorts_block">%1$s: bloqueio total.</string>
+    <string name="summary_shorts_limit">%1$s: limitado a %2$d min por dia.</string>
+    <string name="summary_schedule">Vale: %1$s, %2$s (igual para todos os apps).</string>
+    <string name="schedule_card_title">Horários e dias</string>
+    <string name="schedule_card_desc">Quando seus bloqueios e limites valem. Isso vale para todos os apps.</string>
+    <string name="schedule_save_btn">Salvar horários e dias</string>
+    <string name="notice_title">Aviso importante</string>
+    <string name="notice_reread_desc">O que o Blockfy é, e o que ele não é.</string>
+    <string name="notice_reread_btn">Ler de novo</string>
+    <string name="notice_next">Continuar</string>
+    <string name="notice_accept">Entendi, vamos começar</string>
+    <string name="notice_1_title">Bem-vindo ao Blockfy</string>
+    <string name="notice_1_body">O Blockfy foi feito para ajudar quem quer reduzir hábitos que ficaram difíceis de controlar: vídeos curtos sem fim, pornografia e uso excessivo do celular. Também pode ajudar quem lida com compulsões, dependência de telas e dificuldade de foco, como no TDAH. Ele funciona colocando barreiras e limites no seu celular.</string>
+    <string name="notice_2_title">Nada funciona sem o seu esforço</string>
+    <string name="notice_2_body">Nenhum aplicativo muda um hábito sozinho. O Blockfy bloqueia, avisa e limita, mas quem decide continuar é você. Vai haver dias difíceis, e você vai poder desligar os bloqueios. O resultado depende da sua vontade, de uma rotina e das pessoas ao seu redor.</string>
+    <string name="notice_3_title">Se não melhorar, procure ajuda</string>
+    <string name="notice_3_body">O Blockfy não é tratamento, não faz diagnóstico e não substitui acompanhamento profissional. Se um hábito ruim persistir, atrapalhar sua vida ou causar sofrimento, vale consultar um psicólogo ou um psiquiatra. No Brasil, o CVV atende pelo 188, de graça, 24 horas por dia.</string>
+    <string name="concepts_habits_title">Impulsos e hábitos</string>
+    <string name="concepts_habits_summary">Como um hábito vira compulsão e o que fazer na hora da vontade.</string>
+    <string name="concepts_focus_title">Foco e TDAH</string>
+    <string name="concepts_focus_summary">Dicas para quem tem dificuldade de manter a atenção, com ou sem diagnóstico.</string>
+    <string name="concepts_plan_title">Seu plano</string>
+    <string name="concepts_plan_summary">Passos simples para configurar o Blockfy e continuar.</string>
+    <string name="concepts_help_title">Quando procurar ajuda</string>
+    <string name="concepts_help_summary">Sinais de que só o aplicativo não basta e onde achar apoio.</string>
+    <string-array name="concept_habits_titles">
+        <item>A vontade passa</item>
+        <item>Gatilho, rotina e recompensa</item>
+        <item>Coloque atrito a seu favor</item>
+        <item>O "só mais um" é a armadilha</item>
+        <item>Substitua, não apenas proíba</item>
+        <item>Tropeçar não é fracassar</item>
+        <item>Conte para alguém</item>
+    </string-array>
+    <string-array name="concept_habits_bodies">
+        <item>Um impulso costuma subir, chegar ao pico e cair em alguns minutos, mesmo que você não faça nada. Esperar de 10 a 20 minutos fazendo outra coisa tira boa parte da força dele. Quando a vontade vier, diga a si mesmo: "vou esperar 15 minutos". Muitas vezes ela já passou.</item>
+        <item>Todo hábito tem um gatilho (tédio, ansiedade, cansaço, o celular na mão), uma rotina (abrir o app) e uma recompensa (alívio rápido). Para mudar, descubra o seu gatilho e troque a rotina, em vez de só brigar com a vontade. Anote por uns dias: quando e por que você abre o app?</item>
+        <item>Quanto mais passos entre você e o impulso, menos você cede. Deixe o celular longe da cama, tire os apps da tela inicial e mantenha o Blockfy ligado. É para isso que serve o bloqueio: transformar o impulso de dois toques em algo difícil de fazer.</item>
+        <item>O feed foi feito para não ter fim. Decidir o limite antes de abrir, e deixar o app aplicar, funciona melhor do que decidir na hora, quando a vontade já está forte. Quem decide no calor do momento costuma perder.</item>
+        <item>Proibir sem oferecer outra coisa deixa um vazio. Tenha uma alternativa pronta para o seu horário de maior risco: caminhar, ligar para alguém, um livro, um banho, um jogo de tabuleiro, exercício. Planeje isso antes de precisar.</item>
+        <item>Recair não apaga o que você já avançou. O que pesa é abandonar tudo depois de um deslize. Percebeu que escorregou? Volte ao plano no mesmo dia, sem se punir. Culpa em excesso costuma alimentar o ciclo em vez de quebrá-lo.</item>
+        <item>Segredo alimenta compulsão. Ter uma pessoa de confiança sabendo do seu objetivo costuma ajudar a manter o compromisso nos dias ruins. Pode ser um amigo, um familiar ou um profissional.</item>
+    </string-array>
+    <string-array name="concept_focus_titles">
+        <item>O Blockfy não diagnostica</item>
+        <item>Vídeos curtos treinam a distração</item>
+        <item>Menos decisões, mais regras prontas</item>
+        <item>Um passo de cada vez</item>
+        <item>Sono, comida e movimento</item>
+        <item>Tratamento é com profissional</item>
+    </string-array>
+    <string-array name="concept_focus_bodies">
+        <item>Dificuldade de atenção pode ter muitas causas: TDAH, ansiedade, depressão, sono ruim, excesso de telas, estresse. Só um profissional de saúde consegue avaliar o seu caso. O Blockfy ajuda com o ambiente (menos distração), não com o diagnóstico.</item>
+        <item>Trocar de estímulo a cada poucos segundos pode acostumar o cérebro a recompensas rápidas, e tarefas longas passam a parecer mais difíceis e chatas. Cortar o feed infinito costuma ser um dos passos mais eficazes para recuperar a capacidade de se concentrar.</item>
+        <item>Quem tem dificuldade de atenção costuma se beneficiar de regras prontas: horários fixos, limites automáticos, poucas escolhas na hora. Configurar o Blockfy uma vez poupa força de vontade depois, porque você não precisa decidir toda vez.</item>
+        <item>Divida a tarefa em blocos de 10 a 25 minutos, com uma pausa curta entre eles. Deixe o celular em outro cômodo durante o bloco. Comece pelo menor pedaço possível: o difícil costuma ser começar, e não continuar.</item>
+        <item>Dormir mal piora a atenção e o controle dos impulsos. Atividade física, luz do dia e refeições regulares ajudam. Antes de se culpar por falta de disciplina, olhe o básico do corpo.</item>
+        <item>Se você tem ou suspeita de TDAH, o tratamento é decidido com psiquiatra, neurologista ou psicólogo, e pode incluir terapia e, quando indicado, medicação. Aplicativo nenhum substitui isso. Nunca comece nem pare um remédio por conta própria.</item>
+    </string-array>
+    <string-array name="concept_plan_titles">
+        <item>Escreva o seu porquê</item>
+        <item>Comece pequeno</item>
+        <item>Um limite que você consegue cumprir</item>
+        <item>Limite do app x limite de Reels</item>
+        <item>Horários que protegem</item>
+        <item>Use o modo estrito</item>
+        <item>Revise toda semana</item>
+    </string-array>
+    <string-array name="concept_plan_bodies">
+        <item>Antes de configurar qualquer coisa, escreva em uma frase por que você quer mudar. Na aba Conceitos, toque em "Meu porquê". Ele aparece na sua tela inicial e na hora em que você tentar desistir. Quando a vontade falar alto, é a sua própria voz, calma e sincera, que vai responder.</item>
+        <item>Ligue só um ou dois apps no começo. Um limite que você cumpre vale mais do que dez que você desliga. Quando ficar fácil, adicione o próximo.</item>
+        <item>Se hoje você usa 3 horas por dia, comece com 2 e vá baixando semana a semana. Um limite impossível só leva a desligar o bloqueio e desistir. Proteja a sua sequência de dias limpos: ela vale mais do que qualquer minuto extra.</item>
+        <item>Dá para ter, por exemplo, 1 hora de Instagram por dia e só 15 minutos de Reels. É a combinação mais realista: você mantém o que é útil (mensagens, amigos, trabalho) e corta o feed sem fim. Configure em cada app: uma regra para o app inteiro e outra para Reels/Shorts.</item>
+        <item>Noite e madrugada costumam ser os horários de maior risco. Em Ajustes, escolha os dias e horários em que os bloqueios valem, por exemplo o modelo Noite. Os horários são os mesmos para todos os apps.</item>
+        <item>Ligue o modo estrito num momento de motivação. Até a meia-noite você só poderá deixar os bloqueios mais rígidos, nunca mais frouxos. É um combinado que você faz com você mesmo antes de a vontade chegar.</item>
+        <item>Uma vez por semana, olhe a sua sequência, os bloqueios e o que funcionou. Ajuste o que estiver difícil demais ou fácil demais. O objetivo não é ter o app perfeito: é sobrar tempo e atenção para o que importa para você.</item>
+    </string-array>
+    <string-array name="concept_help_titles">
+        <item>App é ferramenta, não tratamento</item>
+        <item>Sinais de alerta</item>
+        <item>Psicólogo ou psiquiatra?</item>
+        <item>Onde encontrar ajuda no Brasil</item>
+        <item>Se você pensa em se machucar</item>
+        <item>Pedir ajuda é força</item>
+    </string-array>
+    <string-array name="concept_help_bodies">
+        <item>O Blockfy cria barreiras. Ele não trata a causa do hábito, que pode ser ansiedade, solidão, depressão, trauma, TDAH ou outra coisa. Se a causa continua lá, o impulso tende a voltar por outro caminho.</item>
+        <item>Vale procurar um profissional se: você tenta parar e não consegue, várias vezes; o hábito atrapalha trabalho, estudos, sono ou relacionamentos; você sente culpa, vergonha ou ansiedade intensas; usa o hábito para fugir de emoções ruins; esconde ou mente sobre ele; ou está com o humor muito baixo.</item>
+        <item>O psicólogo faz terapia (por exemplo, a cognitivo-comportamental), que ajuda a entender gatilhos e criar estratégias. O psiquiatra é médico: avalia e diagnostica condições como TDAH, depressão e ansiedade, e pode prescrever medicação quando necessário. Muitas pessoas usam os dois. Se estiver em dúvida por onde começar, comece por um deles.</item>
+        <item>Pelo SUS, procure a UBS (posto de saúde) do seu bairro ou um CAPS, que atende sofrimento psíquico e, no caso do CAPS AD, uso problemático de álcool e outras drogas. O CVV (188, gratuito, 24 horas) oferece conversa de apoio emocional por telefone, chat e e-mail.</item>
+        <item>Procure ajuda agora: ligue para o CVV no 188, para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Você não precisa passar por isso sozinho, e esse sentimento pode melhorar com apoio.</item>
+        <item>Pedir ajuda não é fraqueza nem exagero. Quanto antes você procurar, mais simples costuma ser o caminho. Este aplicativo pode ficar ao seu lado, mas as pessoas e os profissionais é que fazem a diferença.</item>
+    </string-array>
+    <string name="streak_title">Dias limpos seguidos</string>
+    <string name="streak_day">dia</string>
+    <string name="streak_days">dias</string>
+    <string name="streak_best">Melhor: %1$d</string>
+    <string name="streak_rule">Um dia é limpo quando você não desliga nem afrouxa nada.</string>
+    <string name="streak_today_ok">Hoje está limpo até agora. Continue assim.</string>
+    <string name="streak_today_broken">A sequência de hoje foi quebrada. Recomece amanhã: tropeçar não apaga o que você já avançou.</string>
+    <string name="streak_today_empty">Ligue um bloqueio para começar a contar.</string>
+    <string name="motivation_title">Lembrete do dia</string>
+    <string name="battery_card_title">Bateria e estabilidade</string>
+    <string name="battery_desc">O Blockfy só escuta os apps que você bloqueia, e só nos horários ativos, por isso gasta muito pouca bateria. Para o celular não colocá-lo em suspensão, deixe-o rodar sem restrições.</string>
+    <string name="battery_status_ok">Sem restrição: o celular não vai suspender o Blockfy.</string>
+    <string name="battery_status_bad">Otimizado: o celular pode suspender o Blockfy e o bloqueio pode parar.</string>
+    <string name="battery_btn_list">Abrir lista de bateria</string>
+    <string name="battery_btn_app">Ajustes do app</string>
+    <string name="battery_steps">No Samsung: Configurações, Aplicativos, Blockfy, Bateria, Sem restrições, e tire o Blockfy de "Apps em suspensão". Em outros celulares: escolha "Não otimizar" ou "Sem restrições" para o Blockfy.</string>
+    <string name="battery_nudge_title">Mantenha o Blockfy ativo</string>
+    <string name="battery_nudge_desc">O celular pode suspender o Blockfy. Toque para ajustar.</string>
+    <string name="battery_nudge_btn">Ajustar</string>
+    <string name="diag_listening">Escutando: %1$s</string>
+    <string name="diag_listening_none">nenhum app (nada para bloquear agora)</string>
+    <string-array name="motivation_daily">
+        <item>Hoje você não precisa ser perfeito. Só precisa cumprir o combinado de hoje.</item>
+        <item>Cada vez que você fecha o feed, você escolhe o que fazer com a sua atenção.</item>
+        <item>A vontade é uma onda: sobe, chega ao pico e passa. Deixe passar.</item>
+        <item>O que você faz hoje é o que o você de amanhã vai agradecer.</item>
+        <item>Pequenas decisões repetidas mudam uma vida. Comece pela de agora.</item>
+        <item>Se hoje foi difícil, amanhã você recomeça. Recair não apaga o que você já avançou.</item>
+        <item>Você não está tentando ser forte o dia todo. Só nos próximos dez minutos.</item>
+        <item>Seu tempo é limitado. Gaste com o que você escolheria de olhos abertos.</item>
+        <item>Quem pede ajuda chega mais longe. Fale com alguém em quem você confia.</item>
+        <item>Troque o "só mais um" por "agora chega". É assim que a sequência cresce.</item>
+        <item>O tédio não é inimigo. É o espaço onde as ideias aparecem.</item>
+        <item>Beba água, levante, respire fundo. Depois decida de novo.</item>
+        <item>A melhor hora para proteger o seu foco é antes da vontade chegar.</item>
+        <item>Progresso não é uma linha reta. Continue voltando ao plano.</item>
+        <item>Você já resistiu antes. Pode resistir de novo.</item>
+        <item>O celular é uma ferramenta. Hoje você está no comando.</item>
+        <item>Foco é um músculo: cada bloqueio cumprido o fortalece.</item>
+        <item>Não negocie com a vontade na hora. Negocie agora, com a cabeça tranquila.</item>
+        <item>Sua atenção é o bem mais valioso que você tem. Proteja-a.</item>
+        <item>Um dia limpo de cada vez. É só isso que o plano pede.</item>
+        <item>Dormir bem ajuda o controle dos impulsos. Cuide da noite de hoje.</item>
+        <item>Você não precisa se punir. Precisa só voltar ao combinado.</item>
+        <item>Se você sentir que está difícil demais, procurar um profissional é um ato de coragem.</item>
+        <item>O que você faria com mais uma hora livre hoje? Comece a fazer.</item>
+        <item>Gratidão: lembre de uma coisa que você tem de bom hoje, longe da tela.</item>
+        <item>A distração mais perigosa é a que parece inofensiva. Fique atento.</item>
+        <item>Escolha uma coisa pequena e útil para fazer agora. Só uma.</item>
+        <item>Você está construindo um hábito novo. No começo pesa, depois fica leve.</item>
+        <item>Mantenha o bloqueio ligado. Seu eu mais calmo decidiu por você.</item>
+        <item>Vale mais um limite cumprido do que dez promessas.</item>
+    </string-array>
+    <string name="setup_title">Vamos deixar tudo pronto</string>
+    <string name="setup_subtitle">O Blockfy precisa de duas permissões para funcionar. Sem elas, nada é bloqueado.</string>
+    <string name="setup_step1_title">Acessibilidade</string>
+    <string name="setup_step1_desc">Permite ao Blockfy perceber quando você abre Reels, Shorts ou um app bloqueado e tirar você de lá.</string>
+    <string name="setup_step2_title">Bateria</string>
+    <string name="setup_step2_desc">Impede o celular de colocar o Blockfy em suspensão. Sem isso, os bloqueios podem parar de funcionar depois de um tempo.</string>
+    <string name="setup_btn_accessibility">Ativar Acessibilidade</string>
+    <string name="setup_btn_battery">Desativar otimização da bateria</string>
+    <string name="setup_done">Pronto</string>
+    <string name="setup_continue">Continuar</string>
+    <string name="setup_skip_battery">Continuar sem isso (não recomendado)</string>
+    <string name="hero_label">Dias limpos</string>
+    <string name="hero_write_why">Escrever o meu porquê</string>
+    <string name="milestone_next">Faltam %1$d dias para chegar a %2$d</string>
+    <string name="milestone_max">Você passou do maior marco. Continue.</string>
+    <string name="tier_0">O primeiro dia começa agora. O primeiro passo é o mais difícil.</string>
+    <string name="tier_1">Os primeiros dias são os mais difíceis. Não jogue fora.</string>
+    <string name="tier_2">Você já passou do pior. Proteja o que construiu.</string>
+    <string name="tier_3">Uma semana inteira. Isso é prova de que você consegue.</string>
+    <string name="tier_4">Duas semanas. O hábito antigo está perdendo força.</string>
+    <string name="tier_5">Um mês ou mais. Na prática, você virou outra pessoa.</string>
+    <string name="tier_6">Três meses. Isso é um novo jeito de viver.</string>
+    <string name="streak_lost">Você jogou fora %1$d dias limpos hoje. Recomece: amanhã vale de novo.</string>
+    <string name="streak_broken">Hoje a sequência quebrou. Recomece amanhã.</string>
+    <string name="stake_title">Você está prestes a perder %1$d dias limpos</string>
+    <string name="stake_body">Isso zera a sua sequência. Vale a pena?</string>
+    <string name="stake_why">Você escreveu: “%1$s”</string>
+    <string name="concepts_path_title">A trilha</string>
+    <string name="concepts_progress">%1$d de %2$d lidos</string>
+    <string name="concepts_done_badge">Concluído</string>
+    <string name="concepts_continue">Continuar</string>
+    <string name="why_title">Meu porquê</string>
+    <string name="why_add">Escrever meu porquê</string>
+    <string name="why_edit">Editar</string>
+    <string name="why_hint">Por que você quer mudar? Uma frase sincera. Ela vai aparecer quando você pensar em desistir.</string>
+    <string name="why_placeholder">Quero estar presente para minha família, terminar minha faculdade, voltar a me respeitar...</string>
+    <string name="why_save">Salvar</string>
+    <string name="why_dialog_title">Por que você quer mudar?</string>
+    <string name="concepts_time_title">Quanto isso custa de verdade</string>
+    <string name="concepts_time_summary">Faça a conta das suas horas. Depois decida.</string>
+    <string name="concepts_mindset_title">Sua mente decide</string>
+    <string name="concepts_mindset_summary">O que você acredita sobre si mesmo molda o que você faz. A mudança começa aqui.</string>
+    <string name="concepts_relapse_title">Tropeçar sem desistir</string>
+    <string name="concepts_relapse_summary">Você vai tropeçar. O que importa é a próxima hora.</string>
+    <string-array name="concept_time_titles">
+        <item>Faça a conta</item>
+        <item>Dez anos</item>
+        <item>O que você faria com essas horas</item>
+        <item>O custo que não aparece</item>
+        <item>O arrependimento mais comum</item>
+        <item>Comece recuperando uma hora</item>
+    </string-array>
+    <string-array name="concept_time_bodies">
+        <item>Duas horas por dia no celular são 14 horas por semana e cerca de 730 horas por ano: mais de 30 dias inteiros, de 24 horas, todo ano. Três horas por dia passam de 45 dias por ano. Olhe a sua média de uso e multiplique por 365. Esse é o tempo da sua vida que você entrega todos os anos.</item>
+        <item>Mantendo a sua média atual por dez anos, são de 300 a 450 dias inteiros da sua vida olhando para uma tela, quase um ano ou mais sem dormir. Que livro, curso, corpo, negócio ou relacionamento caberia nesse tempo? Não é exagero de efeito. É só aritmética.</item>
+        <item>Se alguém te desse 700 horas livres por ano, o que você faria? Aprender bem um idioma leva, para muita gente, centenas de horas. Mudar o corpo, abrir um negócio, terminar um curso: tudo isso cabe em horas. Você já tem essas horas. Elas só estão indo para outro lugar.</item>
+        <item>O tempo no feed não aparece como gasto em lugar nenhum. Ninguém te cobra, você não sente que perdeu. É o gasto mais caro que existe justamente por ser invisível. Dinheiro você recupera. Os anos, não.</item>
+        <item>Dificilmente alguém no fim da vida diz que se arrepende de ter olhado menos para o celular. O arrependimento costuma ser sobre o que não foi feito: a pessoa que não foi visitada, o projeto que ficou na gaveta, o tempo que não foi vivido. Hoje ainda dá para escolher diferente.</item>
+        <item>Você não precisa recuperar tudo hoje. Recupere uma hora. Uma hora por dia são 365 horas por ano, mais de 15 dias. Escolha uma coisa que importa para você, coloque essa hora no calendário e proteja como um compromisso inegociável. É assim que a vida muda: uma hora de cada vez.</item>
+    </string-array>
+    <string-array name="concept_mindset_titles">
+        <item>O que você acredita já decide por você</item>
+        <item>Você não é o seu hábito</item>
+        <item>O cérebro não é destino</item>
+        <item>Cada bloqueio cumprido é um voto</item>
+        <item>O desconforto é o treino</item>
+        <item>Pare de negociar na hora da vontade</item>
+        <item>Responsabilidade sem culpa</item>
+    </string-array>
+    <string-array name="concept_mindset_bodies">
+        <item>Se você acredita que é viciado e vai ser assim para sempre, cada deslize vira prova e cada dia difícil vira sentença. Se acredita que está aprendendo a mudar, o mesmo deslize vira informação. A mesma situação, duas histórias, dois futuros. Você não escolhe os fatos do seu passado, mas escolhe a história que conta sobre eles. Comece trocando a frase "eu sou assim" por "eu estou aprendendo a ser diferente".</item>
+        <item>"Eu sou viciado" é uma identidade. "Eu tenho um hábito que estou mudando" é uma situação. Identidade gruda; situação muda. Para algumas pessoas, reconhecer o problema em grupos de apoio é parte importante do caminho, e isso é válido. O ponto aqui é outro: não transformar o problema em sentença. Você é muito maior do que a pior coisa que faz.</item>
+        <item>O cérebro continua se adaptando ao longo da vida. O que você repete se fortalece; o que você para de repetir enfraquece. Isso vale para o hábito ruim e vale para o novo. Não é mágica nem é rápido, mas é real: toda vez que você escolhe diferente, você reforça o caminho novo e enfraquece o antigo.</item>
+        <item>Cada vez que você cumpre o que combinou consigo, você vota em quem quer ser: alguém que cumpre a própria palavra. Você não precisa ganhar a eleição hoje. Basta somar mais votos do que o seu eu antigo. Em 30 dias você terá evidências concretas de que é essa pessoa. A confiança em si mesmo não se declara: se constrói, dia limpo por dia limpo.</item>
+        <item>A inquietação que aperta é o desconforto de um hábito sendo desfeito, não um sinal de que você está errado. Quem espera se sentir bem para mudar nunca muda. Você vai sentir falta, vai ter tédio, vai ficar sem saber o que fazer com as mãos. Atravessar isso é o treino, o mesmo desconforto de quem constrói músculo. Quando doer, lembre: é assim que funciona.</item>
+        <item>Você não vai ter vontade de mudar quando a vontade do hábito chegar. Por isso decida antes, sem depender de vontade. Regras simples, definidas com a cabeça tranquila, reduzem a batalha na hora. "Se eu sentir vontade de abrir o feed, então levanto e bebo um copo de água." Pesquisas sobre intenções de implementação indicam que esse tipo de se-então ajuda a cumprir o que se planeja.</item>
+        <item>Pegar pesado consigo não é se humilhar. É assumir: "isso é comigo, e eu posso mudar". Culpa olha para trás e paralisa. Responsabilidade olha para a frente e age. Você não é culpado pelo que o produto foi projetado para fazer. Mas é responsável pelo que faz a partir de agora. E essa é a melhor notícia: o que depende de você é exatamente o que dá para mudar.</item>
+    </string-array>
+    <string-array name="concept_relapse_titles">
+        <item>Vai haver um tropeço. Planeje-o</item>
+        <item>O efeito "já que estraguei"</item>
+        <item>A vergonha alimenta; a clareza resolve</item>
+        <item>Recomeçar não é voltar ao zero</item>
+        <item>Pensou em desligar o bloqueio? Isso é um sinal</item>
+        <item>Quando as recaídas viram padrão</item>
+    </string-array>
+    <string-array name="concept_relapse_bodies">
+        <item>Quase todo mundo que muda um hábito difícil tropeça no caminho. Não é exceção: é parte do processo. Decida agora o que você vai fazer no dia seguinte a um deslize. Quem tem um plano de retorno volta mais rápido, e quem não tem costuma ficar semanas fora.</item>
+        <item>"Já que quebrei a sequência, vou aproveitar." Esse pensamento transforma um deslize de dez minutos em uma semana perdida. O deslize acontece. O que decide o resultado é o segundo clique, a segunda hora. Pare no primeiro. Fechar a tela logo depois é uma vitória, mesmo no pior dia.</item>
+        <item>A vergonha pede alívio, e o alívio mais fácil é o mesmo hábito. Em vez de se castigar, pergunte: o que aconteceu antes? Cansaço, tédio, briga, solidão, madrugada? Anote o gatilho. Cada recaída bem analisada é um mapa do que você precisa proteger.</item>
+        <item>A sequência volta para zero. O que você aprendeu, não. Cada dia limpo ensinou algo sobre os seus gatilhos, os seus horários e as suas defesas. Recomeçar é recomeçar com mais informação do que da última vez. E o dia de hoje é o primeiro de uma nova sequência, que pode ser a maior de todas.</item>
+        <item>Se você pensou em desligar o Blockfy, algo está pressionando: ansiedade, tédio, cansaço, uma discussão. O problema não é o bloqueio, é o que está pedindo para ele sair do caminho. Espere 15 minutos. Beba água. Fale com alguém. Depois decida. Se mesmo assim desligar, volte a ligar no mesmo dia.</item>
+        <item>Se você tenta e não consegue, várias vezes, mesmo querendo muito, isso não é falta de caráter. Pode ser sinal de que existe algo por baixo, como ansiedade, depressão, TDAH ou trauma, e a ajuda de um psicólogo ou psiquiatra encurta muito o caminho. Procurar ajuda não é desistir: é a decisão mais eficiente que existe.</item>
     </string-array>
 </resources>

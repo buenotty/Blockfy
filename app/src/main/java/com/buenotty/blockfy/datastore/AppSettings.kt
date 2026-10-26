@@ -89,5 +89,26 @@ data class AppSettings(
     val strictModeEnabled: Boolean = false,
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
-    val adultContentBlockerEnabled: Boolean = false
-)
+    val adultContentBlockerEnabled: Boolean = false,
+    /** Hours and weekdays when the rules are enforced. Shared by every app. */
+    val scheduleStart: Int = 0,
+    val scheduleEnd: Int = 1439,
+    /** Bits 0-6 are Sunday-Saturday. 127 means every day. */
+    val scheduleWeekdays: Int = 127,
+    /** The first-launch notice about what the app is and is not has been accepted. */
+    val onboardingDone: Boolean = false,
+    /** Accessibility was on at least once, so finding it off later means the user turned it off. */
+    val accessibilityWasGranted: Boolean = false,
+    /** The mandatory first-use setup (Accessibility and battery) was completed. */
+    val setupDone: Boolean = false,
+    /** The user's own reason for changing, shown when they are tempted to give up. */
+    val myWhy: String = "",
+    /** Concept topic route to the number of cards read in it. */
+    val conceptsRead: Map<String, Int> = emptyMap()
+) {
+    /** True while strict mode forbids loosening any block. A midnight lock expires by itself. */
+    fun isStrictLocked(nowMillis: Long = System.currentTimeMillis()): Boolean {
+        if (!strictModeEnabled) return false
+        return if (strictModeType == "MIDNIGHT") nowMillis < strictModeLockedUntilEpoch else true
+    }
+}

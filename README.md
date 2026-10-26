@@ -10,23 +10,32 @@ This is a fork of [Blokky](https://github.com/Ronjar/Blokky) by Robin Gebert. [S
 
 ## What it is
 
-Blockfy gets you off short video (Reels, Shorts, TikTok). You can also block known adult sites on the phone. Accessibility only watches Instagram, YouTube, TikTok, Facebook, and X. It does not watch banking apps. The adult shield is a DNS filter that stays on the device.
+Blockfy gets you off short video (Reels, Shorts, TikTok) and can keep you off adult sites. It works through Android's Accessibility service, only for Instagram, YouTube, TikTok, Facebook, X and web browsers. It never watches banking apps, messages or what you type in other apps. See [PRIVACY.md](PRIVACY.md).
 
-If the phone is from Brazil, the app starts in Portuguese. Everywhere else it starts in English. You can change that under the gear on the About screen.
+If the phone is from Brazil, the app starts in Portuguese. Everywhere else it starts in English. You can change that in the Settings tab.
 
 ## What it does
 
-Reels and Shorts: accessibility is limited to Instagram, YouTube, TikTok, Facebook, and X. Other apps, including banks, are left alone.
+- **One rule per app.** Pick what to block (only Reels/Shorts, or the whole app), how (block it, or allow a daily limit in minutes), and when (hours and weekdays). A plain-language summary at the top of the editor says exactly what will happen.
+- **Daily limits** reset at midnight and are counted live, so a limit is enforced as soon as you reach it.
+- **Adult site shield**, if you turn it on: Accessibility reads only the browser's address bar and compares it with a list of adult sites on the phone. Nothing is stored or sent. No VPN. Hosts match as whole names, so `jerome` is not treated as `erome`.
+- **Strict mode** until midnight: you can still make blocks stricter, but not turn them off or loosen them. Outside strict mode, loosening a block makes you wait a few seconds and confirm.
+- **Concepts** tab: short readings on why these blocks exist, for the day you want to turn them off.
+- **Clean-day streak**: a day is clean when you do not switch anything off or loosen it. Losing the streak is meant to hurt, so the app shows what you would lose before you do it.
 
-Daily limits: per-app quotas, if you turn them on. They reset at midnight.
-
-Adult site shield: a local DNS VPN, if you turn it on. Bank apps stay on your normal connection. Hosts are matched as whole names, so `jerome` is not treated as `erome`.
-
-Updates are meant to come from Google Play. The app does not install APKs itself.
+Updates are meant to come from Google Play. The app does not install APKs itself. Publishing guide (Portuguese): [docs/PUBLICAR_NA_PLAY.md](docs/PUBLICAR_NA_PLAY.md).
 
 ## Requirements
 
 Android 9 or newer.
+
+## Support the project
+
+Blockfy is free, with no ads and no donation prompts inside the app. If it helps you, you can support it here on GitHub:
+
+- Pix (Brazil): `496f008e-c67d-4175-9fad-e6b3c9bbd248`
+- PayPal: [paypal.me/donate](https://www.paypal.com/donate/?business=samuellbuenno%40gmail.com&currency_code=BRL) (samuellbuenno@gmail.com)
+- Or just star the repo.
 
 ## Credits
 

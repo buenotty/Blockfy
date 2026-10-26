@@ -1,15 +1,14 @@
-name: Build Blockfy Debug APK
+name: CI
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build Debug APK
+    name: Test, lint and build
     runs-on: ubuntu-latest
 
     steps:
@@ -26,13 +25,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Play policy unit tests
+      - name: Unit tests
         run: ./gradlew :app:testDebugUnitTest --stacktrace
 
-      - name: Build with Gradle
+      - name: Lint
+        run: ./gradlew :app:lintDebug --stacktrace
+
+      - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload Debug APK
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: Blockfy-Debug-APK
