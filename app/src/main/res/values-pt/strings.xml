@@ -547,4 +547,20 @@
         <item>Esse caminho não resolve o que está pesando. Que tal algo que resolva um pouquinho?</item>
         <item>Você não é o que acabou de abrir. É quem decidiu fechar. Boa.</item>
     </string-array>
+    <string name="theme_title">Aparência</string>
+    <string name="theme_desc">Escolha o claro, o escuro, ou deixe seguir o tema do celular.</string>
+    <string name="theme_system">Seguir o celular</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="overlay_incognito_title">Abriu aba anônima?</string>
+    <string name="overlay_incognito_body">O navegador mantém uma notificação de abas anônimas. Feche todas: é o jeito de encerrar de verdade.</string>
+    <string name="overlay_btn_notifications">Ver notificações agora</string>
+    <string name="service_off_title">Blockfy desligado</string>
+    <string name="service_off_body">A Acessibilidade foi desligada e a proteção parou. Toque para religar.</string>
+    <string name="armored_title">Modo blindado</string>
+    <string name="armored_desc">Trava tudo de vez. Só desinstalando o app para sair.</string>
+    <string name="armored_confirm_msg">Com o modo blindado, nenhum bloqueio, horário ou escudo pode ser desligado ou afrouxado dentro do app, nem amanhã nem depois. A única saída é desinstalar o Blockfy. Pense com calma: é uma decisão sua, para a versão de você que quer sair desse ciclo.</string>
+    <string name="armored_confirm_btn">Quero blindar</string>
+    <string name="armored_locked_msg">Modo blindado ligado. Nada pode ser desligado ou afrouxado dentro do app.</string>
+    <string name="armored_locked_extra">Você escolheu isso para proteger o você de amanhã. A única saída é desinstalar o Blockfy.</string>
 </resources>

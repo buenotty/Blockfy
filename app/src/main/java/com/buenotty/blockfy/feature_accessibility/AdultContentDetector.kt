@@ -247,6 +247,22 @@ object AdultContentDetector {
         return false
     }
 
+    private val ADULT_SEARCH_TERMS = setOf(
+        "porn", "porno", "pornografia", "pornhub", "xxx", "nude", "nudes", "naked", "nua", "nuas",
+        "pelada", "peladas", "nudez", "hentai", "putaria", "sexo explicito", "video porno",
+        "sex tape", "onlyfans", "erotico", "erotica"
+    )
+
+    /**
+     * Search words in the text shown in the address bar. Whole words only, so "nuance" or
+     * "unaware" never match. Only used on the browser's address bar, nothing else on screen.
+     */
+    fun isAdultSearch(rawText: String?): Boolean {
+        if (rawText.isNullOrBlank()) return false
+        val normalized = normalize(rawText).replace('+', ' ').replace("%20", " ").replace('_', ' ')
+        return ADULT_SEARCH_TERMS.any { containsToken(normalized, normalize(it)) }
+    }
+
     fun getRandomWarning(context: Context): String {
         val warnings = context.resources.getStringArray(R.array.adult_block_warnings)
         return warnings.random()

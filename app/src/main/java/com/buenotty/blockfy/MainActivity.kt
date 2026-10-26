@@ -68,8 +68,15 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         setContent {
-            BlockfyTheme {
-                val viewModel: OverviewViewModel = koinViewModel()
+            val viewModel: OverviewViewModel = koinViewModel()
+            val themeSettings by viewModel.appSettings.collectAsState()
+            BlockfyTheme(
+                darkTheme = when (themeSettings.themeMode) {
+                    "DARK" -> true
+                    "LIGHT" -> false
+                    else -> androidx.compose.foundation.isSystemInDarkTheme()
+                }
+            ) {
                 val loaded by viewModel.isLoaded.collectAsState()
                 val settings by viewModel.appSettings.collectAsState()
                 val context = LocalContext.current

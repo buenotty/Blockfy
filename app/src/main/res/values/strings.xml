@@ -547,4 +547,20 @@
         <item>This path does not fix what is weighing on you. How about something that fixes a little?</item>
         <item>You are not what you just opened. You are the one who decided to close it. Nice.</item>
     </string-array>
+    <string name="theme_title">Appearance</string>
+    <string name="theme_desc">Pick light, dark, or let it follow your phone\'s theme.</string>
+    <string name="theme_system">Follow phone</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="overlay_incognito_title">Opened an incognito tab?</string>
+    <string name="overlay_incognito_body">Your browser keeps an incognito-tabs notification. Close them all: that is how you really end it.</string>
+    <string name="overlay_btn_notifications">See notifications now</string>
+    <string name="service_off_title">Blockfy is off</string>
+    <string name="service_off_body">Accessibility was turned off and protection stopped. Tap to turn it back on.</string>
+    <string name="armored_title">Armored mode</string>
+    <string name="armored_desc">Locks everything for good. Only uninstalling the app gets you out.</string>
+    <string name="armored_confirm_msg">With armored mode, no block, schedule or shield can be turned off or loosened inside the app, not tomorrow, not later. The only way out is uninstalling Blockfy. Think it over: this is your decision, for the version of you that wants out of this cycle.</string>
+    <string name="armored_confirm_btn">Armor it</string>
+    <string name="armored_locked_msg">Armored mode is on. Nothing can be turned off or loosened inside the app.</string>
+    <string name="armored_locked_extra">You chose this to protect tomorrow\'s you. The only way out is uninstalling Blockfy.</string>
 </resources>

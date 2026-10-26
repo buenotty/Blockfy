@@ -42,6 +42,10 @@ import org.koin.core.component.inject
 
 class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(com.buenotty.blockfy.AppLocale.wrap(newBase))
+    }
+
     private val dataStore: DataStoreManager by inject()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -76,10 +80,18 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var lastChallengeId: String? = null
     private var lastOverlayElapsed = 0L
 
-    private fun overlay(): ChallengeOverlay = overlay ?: ChallengeOverlay(this).also { overlay = it }
+    private fun overlay(): ChallengeOverlay = (overlay ?: ChallengeOverlay(this).also { overlay = it }).also {
+        it.dark = when (settings.themeMode) {
+            "DARK" -> true
+            "LIGHT" -> false
+            else -> (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+        }
+    }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        runCatching { (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(OFF_NOTICE_ID) }
         serviceScope.launch {
             dataStore.appSettingsFlow.collect {
                 settings = it
@@ -174,6 +186,34 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error in onAccessibilityEvent", t)
         }
+    }
+
+    /** Accessibility was switched off while protection is set up: say so, loudly, with a way back. */
+    override fun onUnbind(intent: Intent?): Boolean {
+        overlay?.dismiss()
+        if (settings.setupDone && BlockPolicy.hasAnyProtection(settings)) {
+            runCatching {
+                val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                ensureChannels(manager)
+                val open = android.app.PendingIntent.getActivity(
+                    this, 0,
+                    Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                manager.notify(
+                    OFF_NOTICE_ID,
+                    NotificationCompat.Builder(this, ALERT_CHANNEL)
+                        .setSmallIcon(R.drawable.ic_stat_blockfy)
+                        .setContentTitle(getString(R.string.service_off_title))
+                        .setContentText(getString(R.string.service_off_body))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setContentIntent(open)
+                        .setOngoing(true)
+                        .build()
+                )
+            }
+        }
+        return super.onUnbind(intent)
     }
 
     override fun onInterrupt() {
@@ -313,7 +353,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val titles = resources.getStringArray(R.array.checkin_titles)
         val bodies = resources.getStringArray(R.array.checkin_bodies)
         val i = kotlin.random.Random.nextInt(minOf(titles.size, bodies.size))
-        return overlay().showCheckIn(titles[i], bodies[i], randomSuggestion(), getString(R.string.checkin_help))
+        return overlay().showCheckIn(titles[i], bodies[i], randomSuggestion(), getString(R.string.checkin_help)) {
+            performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+        }
     }
 
     private fun randomSuggestion(): String = resources.getStringArray(R.array.challenge_suggestions).random()
@@ -576,13 +618,15 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             return
         }
         val now = SystemClock.elapsedRealtime()
-        if (now - lastAdultScanElapsed < 1500L) return
+        if (now - lastAdultScanElapsed < ADULT_SCAN_GAP_MILLIS) return
         lastAdultScanElapsed = now
 
         val root = rootFromEvent(event, pkg) ?: return
         try {
             val addressBarText = readAddressBar(root, pkg)
-            if (addressBarText != null && AdultContentDetector.isAdultContent(addressBarText)) {
+            if (addressBarText != null &&
+                (AdultContentDetector.isAdultContent(addressBarText) || AdultContentDetector.isAdultSearch(addressBarText))
+            ) {
                 leaveAdultScreen()
             }
         } finally {
@@ -659,7 +703,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val EPISODE_GAP_MILLIS = 8_000L
         private const val PROVOCATION_INTERVAL_MILLIS = 180_000L
         private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L
-        private const val MIN_OVERLAY_GAP_MILLIS = 15_000L
+        private const val MIN_OVERLAY_GAP_MILLIS = 6_000L
+        private const val ADULT_SCAN_GAP_MILLIS = 400L
+        private const val OFF_NOTICE_ID = 1003
         private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
         private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L
 

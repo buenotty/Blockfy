@@ -87,6 +87,7 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         val streak by overviewViewModel.streak.collectAsState()
         ScheduleSettingsCard(saved = appSettings, streakDays = streak.current, onSave = overviewViewModel::setSchedule)
 
+        ThemeSettingsCard(selected = appSettings.themeMode, onSelect = overviewViewModel::setThemeMode)
         PreferenceGroup(title = stringResource(R.string.fun_challenges_title)) {
             SwitchPreference(
                 value = appSettings.funChallengesEnabled,
@@ -268,6 +269,25 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
 
     if (showQrCodeDialog) {
         QrCodeDialog { showQrCodeDialog = false }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ThemeSettingsCard(selected: String, onSelect: (String) -> Unit) {
+    PreferenceGroup(title = stringResource(R.string.theme_title)) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = spacedBy(12.dp)) {
+            Text(
+                text = stringResource(R.string.theme_desc),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            FlowRow(horizontalArrangement = spacedBy(8.dp), verticalArrangement = spacedBy(8.dp)) {
+                SelectableFilterChip(selected = selected == "SYSTEM", label = stringResource(R.string.theme_system), onClick = { onSelect("SYSTEM") })
+                SelectableFilterChip(selected = selected == "LIGHT", label = stringResource(R.string.theme_light), onClick = { onSelect("LIGHT") })
+                SelectableFilterChip(selected = selected == "DARK", label = stringResource(R.string.theme_dark), onClick = { onSelect("DARK") })
+            }
+        }
     }
 }
 

@@ -83,6 +83,22 @@ object AppLocale {
         )
     }
 
+    /**
+     * Services do not get the per-app language that activities get, so wrap their base context
+     * with the language the user picked (the system per-app choice first, then Blockfy's own).
+     */
+    fun wrap(base: Context): Context {
+        val tag = runCatching {
+            if (android.os.Build.VERSION.SDK_INT >= 33) {
+                val lm = base.getSystemService(android.app.LocaleManager::class.java)
+                lm?.applicationLocales?.takeIf { !it.isEmpty }?.get(0)?.toLanguageTag()
+            } else null
+        }.getOrNull() ?: currentTag(base)
+        val config = android.content.res.Configuration(base.resources.configuration)
+        config.setLocale(Locale.forLanguageTag(tag))
+        return base.createConfigurationContext(config)
+    }
+
     fun applyStored(context: Context) {
         AppCompatDelegate.setApplicationLocales(
             LocaleListCompat.forLanguageTags(currentTag(context))

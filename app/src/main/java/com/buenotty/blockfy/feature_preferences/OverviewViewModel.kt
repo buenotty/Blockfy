@@ -94,6 +94,8 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setProvocationMode(enabled: Boolean) = update { it.copy(provocationModeEnabled = enabled) }
 
+    fun setThemeMode(mode: String) = update { it.copy(themeMode = mode) }
+
     fun setFunChallenges(enabled: Boolean) = update { it.copy(funChallengesEnabled = enabled) }
 
     fun setStrictMode(enabled: Boolean, type: String = "MIDNIGHT") = update { settings ->

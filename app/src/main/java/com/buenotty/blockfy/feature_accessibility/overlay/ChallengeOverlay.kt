@@ -36,6 +36,18 @@ class ChallengeOverlay(private val service: AccessibilityService) {
 
     val isShowing: Boolean get() = root != null
 
+    /** Set before each show so the window matches the app (light or dark). */
+    var dark: Boolean = false
+
+    private val scrim get() = Color.parseColor(if (dark) "#F20B0E1B" else "#E60B0E1B")
+    private val card get() = Color.parseColor(if (dark) "#1C1F33" else "#F7F7FC")
+    private val ink get() = Color.parseColor(if (dark) "#F1F2FA" else "#0B0E1B")
+    private val mutedColor get() = Color.parseColor(if (dark) "#A3A8C3" else "#5B6078")
+    private val violet get() = Color.parseColor(if (dark) "#8F9BFF" else "#4B5BFF")
+    private val suggestionBg get() = Color.parseColor(if (dark) "#2A2E4A" else "#E8EAFF")
+    private val choiceBg get() = Color.parseColor(if (dark) "#2A2E4A" else "#E8EAFF")
+    private val onViolet get() = Color.parseColor(if (dark) "#0B0E1B" else "#FFFFFF")
+
     /** Trick question for short-video blocks. Returns false when the window could not be added. */
     fun showChallenge(challenge: Challenge, contextLine: String?, suggestion: String): Boolean {
         dismiss()
@@ -68,13 +80,20 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     }
 
     /** Calmer, no-quiz variant for the adult shield: a short pause and somewhere useful to go. */
-    fun showCheckIn(titleText: String, bodyText: String, suggestion: String, helpLine: String?): Boolean {
+    fun showCheckIn(
+        titleText: String,
+        bodyText: String,
+        suggestion: String,
+        helpLine: String?,
+        onOpenNotifications: () -> Unit
+    ): Boolean {
         dismiss()
         val card = newCard()
         card.addView(tag(R.string.overlay_tag_checkin))
         card.addView(title(titleText, topDp = 8))
         card.addView(body(bodyText, topDp = 10))
         card.addView(suggestionBlock(suggestion))
+        card.addView(incognitoBlock(onOpenNotifications))
         card.addView(primaryButton(R.string.overlay_btn_ok) { dismiss() })
         helpLine?.takeIf { it.isNotBlank() }?.let { card.addView(body(it, muted = true, topDp = 14, sizeSp = 13f)) }
         return attach(card)
@@ -93,7 +112,7 @@ class ChallengeOverlay(private val service: AccessibilityService) {
 
     private fun attach(card: LinearLayout): Boolean {
         val frame = FrameLayout(service).apply {
-            setBackgroundColor(SCRIM)
+            setBackgroundColor(scrim)
             isClickable = true
         }
         frame.addView(
@@ -129,13 +148,13 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     private fun newCard() = LinearLayout(service).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(dp(22), dp(22), dp(22), dp(20))
-        background = rounded(CARD, 28)
+        background = rounded(card, 28)
     }
 
     private fun tag(textRes: Int) = TextView(service).apply {
         text = service.getString(textRes).uppercase()
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-        setTextColor(VIOLET)
+        setTextColor(violet)
         typeface = Typeface.DEFAULT_BOLD
         letterSpacing = 0.12f
     }
@@ -143,7 +162,7 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     private fun title(text: String, topDp: Int, accent: Boolean = false) = TextView(service).apply {
         this.text = text
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-        setTextColor(if (accent) VIOLET else INK)
+        setTextColor(if (accent) violet else ink)
         typeface = Typeface.DEFAULT_BOLD
         setLineSpacing(0f, 1.05f)
         layoutParams = matchWidth(topDp)
@@ -152,7 +171,7 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     private fun body(text: String, muted: Boolean = false, topDp: Int = 0, sizeSp: Float = 16f) = TextView(service).apply {
         this.text = text
         setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        setTextColor(if (muted) MUTED else INK)
+        setTextColor(if (muted) mutedColor else ink)
         setLineSpacing(0f, 1.15f)
         layoutParams = matchWidth(topDp)
     }
@@ -160,31 +179,62 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     private fun suggestionBlock(suggestion: String) = LinearLayout(service).apply {
         orientation = LinearLayout.VERTICAL
         setPadding(dp(16), dp(14), dp(16), dp(14))
-        background = rounded(SUGGESTION_BG, 18)
+        background = rounded(suggestionBg, 18)
         layoutParams = matchWidth(18)
         addView(TextView(service).apply {
             text = service.getString(R.string.overlay_suggestion_label)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-            setTextColor(VIOLET)
+            setTextColor(violet)
             typeface = Typeface.DEFAULT_BOLD
         })
         addView(TextView(service).apply {
             text = suggestion
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-            setTextColor(INK)
+            setTextColor(ink)
             typeface = Typeface.DEFAULT_BOLD
             setPadding(0, dp(4), 0, 0)
+        })
+    }
+
+    /** The browser keeps an "incognito tabs open" notification: point at it so the loop really ends. */
+    private fun incognitoBlock(onOpenNotifications: () -> Unit) = LinearLayout(service).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(16), dp(14), dp(16), dp(14))
+        background = rounded(choiceBg, 18)
+        layoutParams = matchWidth(12)
+        addView(TextView(service).apply {
+            text = service.getString(R.string.overlay_incognito_title)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setTextColor(ink)
+            typeface = Typeface.DEFAULT_BOLD
+        })
+        addView(TextView(service).apply {
+            text = service.getString(R.string.overlay_incognito_body)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            setTextColor(mutedColor)
+            setPadding(0, dp(4), 0, dp(10))
+        })
+        addView(TextView(service).apply {
+            text = service.getString(R.string.overlay_btn_notifications)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setTextColor(violet)
+            typeface = Typeface.DEFAULT_BOLD
+            isClickable = true
+            setOnClickListener {
+                dismiss()
+                onOpenNotifications()
+            }
         })
     }
 
     private fun primaryButton(textRes: Int, onClick: () -> Unit) = TextView(service).apply {
         text = service.getString(textRes)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-        setTextColor(Color.WHITE)
+        setTextColor(onViolet)
         typeface = Typeface.DEFAULT_BOLD
         gravity = Gravity.CENTER
         setPadding(dp(16), dp(15), dp(16), dp(15))
-        background = rounded(VIOLET, 18)
+        background = rounded(violet, 18)
         layoutParams = matchWidth(18)
         isClickable = true
         setOnClickListener { onClick() }
@@ -193,11 +243,11 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     private fun choiceButton(labelRes: Int, onClick: () -> Unit) = TextView(service).apply {
         text = service.getString(labelRes)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-        setTextColor(INK)
+        setTextColor(ink)
         typeface = Typeface.DEFAULT_BOLD
         gravity = Gravity.CENTER
         setPadding(dp(16), dp(16), dp(16), dp(16))
-        background = rounded(CHOICE_BG, 18)
+        background = rounded(choiceBg, 18)
         isClickable = true
         setOnClickListener { onClick() }
     }
@@ -219,7 +269,7 @@ class ChallengeOverlay(private val service: AccessibilityService) {
         addView(TextView(service).apply {
             text = service.getString(option.label)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-            setTextColor(INK)
+            setTextColor(ink)
             typeface = Typeface.DEFAULT_BOLD
             gravity = Gravity.CENTER
             setPadding(0, dp(8), 0, dp(2))
@@ -247,12 +297,5 @@ class ChallengeOverlay(private val service: AccessibilityService) {
     private companion object {
         const val TAG = "ChallengeOverlay"
         const val AUTO_CLOSE_MILLIS = 30_000L
-        val SCRIM = Color.parseColor("#E60B0E1B")
-        val CARD = Color.parseColor("#F7F7FC")
-        val INK = Color.parseColor("#0B0E1B")
-        val MUTED = Color.parseColor("#5B6078")
-        val VIOLET = Color.parseColor("#4B5BFF")
-        val SUGGESTION_BG = Color.parseColor("#E8EAFF")
-        val CHOICE_BG = Color.parseColor("#E8EAFF")
     }
 }
