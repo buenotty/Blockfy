@@ -45,20 +45,20 @@
     <string name="end_time">End</string>
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
-    <string name="toast_app_window_blocked">%1$s is blocked during these hours.</string>
+    <string name="toast_app_window_blocked">%1$s is on pause during these hours.</string>
 
     <string name="alert_limit_title">Blockfy • Limit reached</string>
     <string name="alert_warning_title">Blockfy • Time alert</string>
-    <string name="toast_limit_reached">Daily limit of %1$d min of %2$s reached.</string>
+    <string name="toast_limit_reached">Daily limit of %1$d min of %2$s reached. Time for something else.</string>
     <string name="toast_remaining_minutes">%1$d minutes left for %2$s today.</string>
     <string name="toast_remaining_one_minute">1 minute left for %1$s today.</string>
     <string name="alert_app_total_limit_title">Blockfy • App limit reached</string>
-    <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached.</string>
+    <string name="toast_app_total_limit_reached">Daily limit of %1$d min for %2$s reached. Mission accomplished: time for something else.</string>
 
     <string name="disable_dialog_title">Are you sure?</string>
-    <string name="disable_dialog_desc">Are you sure you want to allow yourself to doomscroll again?</string>
+    <string name="disable_dialog_desc">Want to unlock endless scrolling again? No judgment, just checking.</string>
     <string name="disable_dialog_cancel">Changed my mind</string>
-    <string name="disable_dialog_confirm">I can handle it</string>
+    <string name="disable_dialog_confirm">Unlock</string>
 
     <string name="provocation_mode_title">Mindfulness messages</string>
     <string name="provocation_mode_desc">Show a short reality-check when you open Reels or Shorts in an app where blocking is on</string>
@@ -73,7 +73,7 @@
     <string name="adult_blocker_desc">Uses Accessibility to check your browser\'s address bar against a list of adult sites. No VPN and no DNS filter.</string>
     <string name="adult_blocker_dialog_title">Turn the shield off?</string>
     <string name="adult_blocker_dialog_desc">Type the paragraph below yourself. Paste is disabled so this cannot be done on autopilot.</string>
-    <string name="adult_blocker_reflection_text">I know that pornography steals time I will not get back and pulls me away from the person I want to be. Turning this shield off is a deliberate choice to follow that impulse. I accept responsibility for that choice.</string>
+    <string name="adult_blocker_reflection_text">I am turning this shield off on purpose. I know the choice is mine and I can turn it back on whenever I want.</string>
     <string name="adult_blocker_type_placeholder">Type the exact text above</string>
     <string name="adult_blocker_paste_blocked_warning">Paste is blocked. Type it yourself.</string>
     <string name="adult_blocker_confirm_disable">Turn shield off</string>
@@ -81,25 +81,25 @@
     <string name="focus_alerts_channel_name">Blockfy alerts</string>
 
     <string-array name="adult_block_warnings">
-        <item>You do not have to throw the next hour away.</item>
-        <item>This impulse will pass. Leave the page.</item>
-        <item>Future-you does not want this tab open.</item>
-        <item>Stop now. Protect the rest of your day.</item>
-        <item>You are stronger than a cheap dopamine loop.</item>
-        <item>Close it. The rest of your life is still waiting.</item>
+        <item>Pause. Shall we try another plan for a few minutes?</item>
+        <item>It is okay to feel the urge. You chose another path and that counts.</item>
+        <item>Tab closed. Point for you.</item>
+        <item>Breathe. The urge rises and then it falls.</item>
+        <item>How about a glass of water instead?</item>
+        <item>You are bigger than an open tab.</item>
     </string-array>
 
     <string-array name="mindfulness_reels_quotes">
-        <item>Did you open this on purpose, or on autopilot?</item>
-        <item>Thirty minutes of strangers, or thirty minutes of your own life?</item>
-        <item>The feed is endless. Your time is not.</item>
-        <item>This is not rest. It is a trance. You can leave.</item>
-        <item>The algorithm is built to hold you. Prove it cannot.</item>
-        <item>Would you be proud of this hour a year from now?</item>
-        <item>Do what you came to do, then get out.</item>
-        <item>Nobody built a life they wanted by scrolling.</item>
-        <item>Your attention is the most expensive thing in this room.</item>
-        <item>Close the reel. Stand up. Do the next real thing.</item>
+        <item>Did you open this on purpose, or did your thumb go alone?</item>
+        <item>Plot twist: the next video is the same as the last one.</item>
+        <item>The feed is endless. Your patience is not.</item>
+        <item>Spoiler: video 12 will not change your life.</item>
+        <item>Your thumb deserves a vacation. Give it a break.</item>
+        <item>Quick test: what were you about to do before opening this?</item>
+        <item>The algorithm calls you "just one more". Tell it you are gone.</item>
+        <item>Future-you says thanks for standing up.</item>
+        <item>How about a real-world video? Look out the window.</item>
+        <item>Pause: have you had water today?</item>
     </string-array>
 
     <string name="weekdays_title">Days the block is on</string>
@@ -114,7 +114,7 @@
     <string name="concepts_shorts_title">The feed against you</string>
     <string name="concepts_shorts_summary">You are not weak. You are up against a product built to keep you.</string>
     <string name="concepts_porn_title">Pornography</string>
-    <string name="concepts_porn_summary">What it takes from your character, your relationships and your freedom.</string>
+    <string name="concepts_porn_summary">What it does for you, why it is hard to quit and how to switch paths.</string>
     <string name="concepts_page">%1$d / %2$d</string>
     <string name="concepts_next">Next</string>
     <string-array name="concept_shorts_titles">
@@ -136,22 +136,22 @@
         <item>The first week is the worst: your hand goes to the phone on its own and your body asks for the stimulus. After that the urge usually fades. Many people report more calm, more sleep and more drive in the first weeks. You are not giving up something valuable. You are trading what consumes you for what builds you.</item>
     </string-array>
     <string-array name="concept_porn_titles">
-        <item>It trains you to use people</item>
-        <item>Character wears down in secret</item>
-        <item>You do not know who you are watching</item>
-        <item>The shame cycle</item>
-        <item>Relationships cool off</item>
-        <item>Sex life shrinks</item>
-        <item>You can get out, and you will recognize yourself</item>
+        <item>What job is this doing for you?</item>
+        <item>Numbing: what are you trying not to feel?</item>
+        <item>The shame cycle (and why it does not help)</item>
+        <item>An urge rises, an urge falls</item>
+        <item>Switch the remedy, not the person</item>
+        <item>Slipped? No drama</item>
+        <item>If it feels heavy, ask for help</item>
     </string-array>
     <string-array name="concept_porn_bodies">
-        <item>Pornography teaches you to treat another person as a product: available, silent and discarded when the feeling passes. That habit does not stay on the screen. It shows in how you look at people who are really there with you. Every click is practice, and you are always practicing something.</item>
-        <item>Doing this in secret splits you in two. You say one thing about who you are and keep another life you would not defend out loud. Character is what you repeat when no one is judging you. The secret weighs more than the act, and the longer it lasts, the more it costs.</item>
-        <item>Part of this content involves exploitation, coercion or people who never agreed to be seen. You have no way of knowing which. Every click feeds an industry where someone\'s suffering can be the product. It is hard to keep saying "I do not hurt anyone" while looking at that squarely.</item>
-        <item>The cycle is usually: tension, use, short relief, shame, tension again. Shame does not pull you away from the habit: it creates the stress that asks for the next relief. That is why punishing yourself does not work. What breaks the cycle is the next action: leave the room, call someone, go back to the plan.</item>
-        <item>A partnership is not a stream of novelty. If your arousal starts to depend on strangers, tabs and going further and further, the person who loves you starts to look insufficient. That is not their failing. It is the price of the habit. And the person beside you often feels more than you imagine.</item>
-        <item>Heavy use can make real intimacy slower, more anxious or harder to enjoy. Many people report needing more intensity for the same effect, until an ordinary body beside them stops being enough. That is not a high standard: it is a dysregulated appetite, and appetite can be retrained.</item>
-        <item>If you are set on it, you will find a way around any block. The block exists to create a pause: enough time to remember this does not give you a better life, a clearer head or a relationship you respect. The first weeks are the hardest. After that, many people describe more clarity and more presence. Relapses happen; what counts is the direction.</item>
+        <item>Every habit does some job for you: relaxing, sleeping, forgetting a problem, feeling something when everything seems gray. Before fighting the habit, find out the job it does. Once you know what you are looking for, you can look for it another way.</item>
+        <item>Many people use pornography as a numbing agent: it is not only about sex, it is about not feeling tiredness, loneliness, boredom or anxiety for a few minutes. Research links this kind of use to trouble handling hard emotions, and suggests that learning to look at the emotion differently helps (the evidence is still early). Naming what you feel is already a first step.</item>
+        <item>The cycle is usually: tension, use, short relief, shame, more tension. Shame does not pull you away from the habit: it creates the discomfort that asks for the next relief. That is why punishing yourself does not work. What breaks the cycle is the next small action: leave the room, drink water, talk to someone.</item>
+        <item>An urge works like a wave: it rises, peaks and falls if you do not feed it. No one can promise how long it takes, and it varies from person to person. What you can do is win a few minutes with something that keeps your body and hands busy, and watch the wave change.</item>
+        <item>If the habit is a remedy for feeling less, look for another remedy that does not charge interest: walking, showering, working out, calling a friend, loud music, cooking. It does not have to be perfect. It has to be easier to start than the open tab.</item>
+        <item>Slipping is part of changing any habit. What weighs is the "since I messed up, I may as well go all the way". If you slipped, close the tab, drink water and go back to the plan. Blockfy keeps your record and charges you nothing.</item>
+        <item>If this gets in the way of your work, your relationships or your mood, talking to a psychologist or psychiatrist can help a lot. Asking for help is a practical decision, not a sign of weakness. In Brazil, CVV answers 24 hours a day on 188.</item>
     </string-array>
     <string name="privacy_policy_btn">Privacy policy</string>
     <string name="nav_blocks">Blocks</string>
@@ -225,7 +225,7 @@
     <string name="time_picker_toggle">Switch input mode</string>
     <string name="ok_btn">OK</string>
     <string name="alert_blocked_title">Blockfy • Blocked</string>
-    <string name="toast_shorts_window_blocked">%1$s: Reels and Shorts are blocked right now.</string>
+    <string name="toast_shorts_window_blocked">%1$s: Reels and Shorts are on pause right now.</string>
     <string name="focus_reminders_channel_name">Blockfy reminders</string>
     <string name="loosen_title">Loosen this block?</string>
     <string name="loosen_msg">These changes let you use the app more than before. Wait a few seconds and ask yourself whether you really want this.</string>
@@ -338,11 +338,11 @@
         <item>Get help now: call your local emergency number or crisis line, or go to the nearest emergency room. In Brazil, call CVV on 188 or SAMU on 192. You do not have to go through this alone, and this feeling can improve with support.</item>
         <item>Asking for help is not weakness or exaggeration. The sooner you look for it, the simpler the path usually is. This app can stay by your side, but people and professionals are what make the difference.</item>
     </string-array>
-    <string name="streak_title">Clean days in a row</string>
+    <string name="streak_title">Steady days in a row</string>
     <string name="streak_day">day</string>
     <string name="streak_days">days</string>
     <string name="streak_best">Best: %1$d</string>
-    <string name="streak_rule">A day is clean when you do not switch anything off or loosen it.</string>
+    <string name="streak_rule">A steady day is a day you do not switch anything off or loosen it.</string>
     <string name="streak_today_ok">Today is clean so far. Keep it up.</string>
     <string name="streak_today_broken">Today\'s streak was broken. Start again tomorrow: slipping does not erase what you already gained.</string>
     <string name="streak_today_empty">Turn on a block to start counting.</string>
@@ -402,7 +402,7 @@
     <string name="setup_done">Done</string>
     <string name="setup_continue">Continue</string>
     <string name="setup_skip_battery">Continue without this (not recommended)</string>
-    <string name="hero_label">Clean days</string>
+    <string name="hero_label">Steady days</string>
     <string name="hero_write_why">Write my reason for changing</string>
     <string name="milestone_next">%1$d days to reach %2$d</string>
     <string name="milestone_max">You are past the biggest milestone. Keep going.</string>
@@ -413,10 +413,10 @@
     <string name="tier_4">Two weeks. The old habit is losing strength.</string>
     <string name="tier_5">A month and more. In practice, you became someone else.</string>
     <string name="tier_6">Three months. This is a new way of living.</string>
-    <string name="streak_lost">You threw away %1$d clean days today. Start again: tomorrow counts.</string>
-    <string name="streak_broken">Today the streak broke. Start again tomorrow.</string>
-    <string name="stake_title">You are about to lose %1$d clean days</string>
-    <string name="stake_body">This resets your streak to zero. Is it worth it?</string>
+    <string name="streak_lost">The %1$d-day streak restarts today. Your best record stays. Tomorrow is a new day.</string>
+    <string name="streak_broken">The streak restarted today. Tomorrow you try again, no drama.</string>
+    <string name="stake_title">Loosen this block? You have %1$d steady days</string>
+    <string name="stake_body">Loosening restarts today\'s streak, but your best record stays saved. If it is a calm decision, that is fine.</string>
     <string name="stake_why">You wrote: “%1$s”</string>
     <string name="concepts_path_title">The path</string>
     <string name="concepts_progress">%1$d of %2$d read</string>
@@ -440,7 +440,7 @@
         <item>Ten years</item>
         <item>What you would do with those hours</item>
         <item>The cost that does not show</item>
-        <item>The most common regret</item>
+        <item>A lighter way to look at this</item>
         <item>Start by winning back one hour</item>
     </string-array>
     <string-array name="concept_time_bodies">
@@ -448,7 +448,7 @@
         <item>Keeping your current average for ten years, that is 300 to 450 whole days of your life looking at a screen, close to a year or more without sleeping. What book, course, body, business or relationship would fit in that time? This is not exaggeration for effect. It is just arithmetic.</item>
         <item>If someone gave you 700 free hours a year, what would you do? Learning a language well takes, for many people, hundreds of hours. Changing your body, starting a business, finishing a course: it all fits in hours. You already have those hours. They are just going somewhere else.</item>
         <item>Time in the feed does not show up as a cost anywhere. No one bills you, you do not feel you lost anything. It is the most expensive cost there is precisely because it is invisible. You can earn money back. You cannot earn years back.</item>
-        <item>Hardly anyone near the end of life says they regret looking at their phone less. Regret is usually about what was not done: the person not visited, the project left in a drawer, the time not lived. Today you can still choose differently.</item>
+        <item>No scare and no guilt: counting hours is not meant to frighten you, it is meant to give you a choice. If one hour a day came back to you, what would you do with it? Pick one small thing and try it tomorrow.</item>
         <item>You do not need to win everything back today. Win back one hour. One hour a day is 365 hours a year, over 15 days. Pick one thing that matters to you, put that hour on your calendar and protect it like a non-negotiable commitment. That is how a life changes: one hour at a time.</item>
     </string-array>
     <string-array name="concept_mindset_titles">
@@ -484,5 +484,67 @@
         <item>The streak goes back to zero. What you learned does not. Every clean day taught you something about your triggers, your hours and your defenses. Starting over is starting with more information than last time. And today is the first day of a new streak, which could be the biggest one yet.</item>
         <item>If you thought about turning Blockfy off, something is pressing on you: anxiety, boredom, tiredness, an argument. The problem is not the block, it is what is asking for it to get out of the way. Wait 15 minutes. Drink water. Talk to someone. Then decide. If you still turn it off, turn it back on the same day.</item>
         <item>If you try and cannot, many times, even though you really want to, that is not a character flaw. It may be a sign that something lies underneath, such as anxiety, depression, ADHD or trauma, and help from a psychologist or psychiatrist shortens the path a lot. Asking for help is not giving up: it is the most efficient decision there is.</item>
+    </string-array>
+    <string name="overlay_tag_challenge">Trick question</string>
+    <string name="overlay_tag_result">Result</string>
+    <string name="overlay_tag_checkin">Quick pause</string>
+    <string name="overlay_btn_ok">Got it, let\'s go</string>
+    <string name="overlay_suggestion_label">How about this</string>
+    <string name="challenge_bull_q">Quick trick: which one is the mechanical bull?</string>
+    <string name="challenge_bull_a">Bull A</string>
+    <string name="challenge_bull_b">Bull B</string>
+    <string name="challenge_bull_title">Wrong! They both are.</string>
+    <string name="challenge_bull_body">A is a rodeo mechanical bull. B is a bull who works as a mechanic, and he is far more productive. Your turn to make something happen?</string>
+    <string name="challenge_more_q">How many more videos until you feel satisfied?</string>
+    <string name="challenge_more_a">Just one more</string>
+    <string name="challenge_more_b">Just ten more</string>
+    <string name="challenge_more_title">Right answer: none.</string>
+    <string name="challenge_more_body">Video 11 promises what video 10 promised, and the algorithm picks the next one. You already won this round by stopping.</string>
+    <string name="challenge_worker_q">Who is working for free for the social network?</string>
+    <string name="challenge_worker_a">Me</string>
+    <string name="challenge_worker_b">Also me</string>
+    <string name="challenge_worker_title">Both are right!</string>
+    <string name="challenge_worker_body">You supply the attention and the platform collects. Today you ask for a raise: go do something that is yours.</string>
+    <string name="challenge_algo_q">Who picked your next video?</string>
+    <string name="challenge_algo_a">Me, of course</string>
+    <string name="challenge_algo_b">The algorithm</string>
+    <string name="challenge_algo_title">Technical tie.</string>
+    <string name="challenge_algo_body">It suggests, you swear you chose, and the clock keeps running. You win by leaving the game.</string>
+    <string name="challenge_leave_q">When is the right time to put the phone down?</string>
+    <string name="challenge_leave_a">Now</string>
+    <string name="challenge_leave_b">In a bit</string>
+    <string name="challenge_leave_title">Both wrong.</string>
+    <string name="challenge_leave_body">The right answer is "already gone". "In a bit" is just the name of the next video.</string>
+    <string name="challenge_minute_q">How long does "just a minute" last?</string>
+    <string name="challenge_minute_a">1 minute</string>
+    <string name="challenge_minute_b">47 minutes</string>
+    <string name="challenge_minute_title">Trick: it stretches.</string>
+    <string name="challenge_minute_body">"A minute" stretches on its own. Your time does not. How about spending it on something with a beginning, a middle and an end?</string>
+    <string name="checkin_help">If it feels too heavy, talking helps. In Brazil, CVV answers 24 hours a day on 188 (free call).</string>
+    <string name="fun_challenges_title">Funny challenges</string>
+    <string name="fun_challenges_desc">When a block fires, show a quick trick question and a suggestion of something to do, instead of a plain alert</string>
+    <string-array name="challenge_suggestions">
+        <item>Drink a glass of water. Seriously, go.</item>
+        <item>Do 10 squats. The couch will thank you.</item>
+        <item>Send a hi to someone you like.</item>
+        <item>Walk around the block: 5 minutes is enough.</item>
+        <item>Tidy one drawer. Any drawer.</item>
+        <item>Breathe: 4 seconds in, 6 out. Three times.</item>
+        <item>Write down one thing you want to do tomorrow.</item>
+        <item>Stretch your neck and shoulders. They asked.</item>
+        <item>Wash your face with cold water and come back a new person.</item>
+        <item>Put on a song and tidy whatever is in sight.</item>
+    </string-array>
+    <string-array name="checkin_titles">
+        <item>Hey, quick pause.</item>
+        <item>It is okay.</item>
+        <item>How about switching plans?</item>
+        <item>A minute for you.</item>
+    </string-array>
+    <string-array name="checkin_bodies">
+        <item>Sometimes we reach for this to avoid feeling something else: tiredness, boredom, anxiety. No judgment. Shall we try another path for 10 minutes?</item>
+        <item>An urge is like a wave: it rises and then it falls. You do not have to win the whole day, only the next few minutes.</item>
+        <item>This path does not fix what is weighing on you. How about something that fixes a little?</item>
+        <item>You are not what you just opened. You are the one who decided to close it. Nice.</item>
     </string-array>
 </resources>
