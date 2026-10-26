@@ -20,6 +20,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import com.buenotty.blockfy.feature_accessibility.overlay.ChallengeBank
+import com.buenotty.blockfy.feature_accessibility.overlay.ChallengeOverlay
 import com.buenotty.blockfy.feature_monitor.ListeningScope
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.datastore.AppSettings
@@ -69,6 +71,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var lastFlushElapsed = 0L
 
     private var channelsCreated = false
+
+    private var overlay: ChallengeOverlay? = null
+    private var lastChallengeId: String? = null
+    private var lastOverlayElapsed = 0L
+
+    private fun overlay(): ChallengeOverlay = overlay ?: ChallengeOverlay(this).also { overlay = it }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -168,11 +176,14 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    override fun onInterrupt() = Unit
+    override fun onInterrupt() {
+        overlay?.dismiss()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
         runCatching { unregisterReceiver(screenOnReceiver) }
+        overlay?.dismiss()
         flushUsage()
         serviceScope.cancel()
     }
@@ -264,7 +275,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 else -> getString(R.string.alert_app_total_limit_title) to
                     getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
             }
-            notifyAlert(title, withWhy(message), isFinal = true)
+            alertOrChallenge(title, message)
             serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         }
 
@@ -274,6 +285,38 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             exitShorts(appName, root)
         }
     }
+
+    /**
+     * A block fired for a new episode. With fun challenges on, the user gets a short, light trick
+     * question and a useful suggestion; otherwise (or if the window cannot be shown) the classic
+     * notification and toast.
+     */
+    private fun alertOrChallenge(title: String, message: String) {
+        if (settings.funChallengesEnabled && showChallenge(message)) return
+        notifyAlert(title, withWhy(message), isFinal = true)
+    }
+
+    /** True when the overlay is up (or was just up), so the caller skips the classic alert. */
+    private fun showChallenge(contextLine: String): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastOverlayElapsed < MIN_OVERLAY_GAP_MILLIS) return overlay?.isShowing == true
+        lastOverlayElapsed = now
+        val challenge = ChallengeBank.next(lastChallengeId)
+        lastChallengeId = challenge.id
+        return overlay().showChallenge(challenge, contextLine, randomSuggestion())
+    }
+
+    private fun showCheckIn(): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastOverlayElapsed < MIN_OVERLAY_GAP_MILLIS) return overlay?.isShowing == true
+        lastOverlayElapsed = now
+        val titles = resources.getStringArray(R.array.checkin_titles)
+        val bodies = resources.getStringArray(R.array.checkin_bodies)
+        val i = kotlin.random.Random.nextInt(minOf(titles.size, bodies.size))
+        return overlay().showCheckIn(titles[i], bodies[i], randomSuggestion(), getString(R.string.checkin_help))
+    }
+
+    private fun randomSuggestion(): String = resources.getStringArray(R.array.challenge_suggestions).random()
 
     /** Adds the user's own reason for changing under a block message, when they wrote one. */
     private fun withWhy(message: String): String {
@@ -597,9 +640,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private fun leaveAdultScreen() {
+        performGlobalAction(GLOBAL_ACTION_HOME)
+        if (settings.funChallengesEnabled && showCheckIn()) return
         val message = AdultContentDetector.getRandomWarning(this)
         notifyAlert(getString(R.string.adult_blocker_title), withWhy(message), isFinal = true)
-        performGlobalAction(GLOBAL_ACTION_HOME)
     }
 
     companion object {
@@ -615,6 +659,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val EPISODE_GAP_MILLIS = 8_000L
         private const val PROVOCATION_INTERVAL_MILLIS = 180_000L
         private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L
+        private const val MIN_OVERLAY_GAP_MILLIS = 15_000L
         private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
         private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L
 

@@ -86,6 +86,8 @@ data class AppSettings(
         features = emptyList()
     ),
     val provocationModeEnabled: Boolean = true,
+    /** Show a light trick question (and a useful suggestion) when a block fires, instead of a plain alert. */
+    val funChallengesEnabled: Boolean = true,
     val strictModeEnabled: Boolean = false,
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,

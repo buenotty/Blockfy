@@ -87,6 +87,17 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
         val streak by overviewViewModel.streak.collectAsState()
         ScheduleSettingsCard(saved = appSettings, streakDays = streak.current, onSave = overviewViewModel::setSchedule)
 
+        PreferenceGroup(title = stringResource(R.string.fun_challenges_title)) {
+            SwitchPreference(
+                value = appSettings.funChallengesEnabled,
+                title = stringResource(R.string.fun_challenges_title),
+                summary = stringResource(R.string.fun_challenges_desc),
+                grouped = true,
+                showDivider = false,
+                confirmDisable = false,
+                leadingIcon = { TintedGlyph(Icons.Rounded.Psychology) }
+            ) { overviewViewModel.setFunChallenges(it) }
+        }
         PreferenceGroup(title = stringResource(R.string.provocation_mode_title)) {
             SwitchPreference(
                 value = appSettings.provocationModeEnabled,

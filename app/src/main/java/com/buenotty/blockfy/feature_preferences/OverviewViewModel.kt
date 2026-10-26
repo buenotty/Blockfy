@@ -94,6 +94,8 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setProvocationMode(enabled: Boolean) = update { it.copy(provocationModeEnabled = enabled) }
 
+    fun setFunChallenges(enabled: Boolean) = update { it.copy(funChallengesEnabled = enabled) }
+
     fun setStrictMode(enabled: Boolean, type: String = "MIDNIGHT") = update { settings ->
         val lockedUntil = if (enabled && type == "MIDNIGHT") {
             LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000L
