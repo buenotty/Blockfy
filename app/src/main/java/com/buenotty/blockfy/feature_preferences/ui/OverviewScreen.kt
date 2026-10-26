@@ -51,6 +51,7 @@ fun BlocksScreen(
 
     var showStrictDialog by remember { mutableStateOf(false) }
     var showDisableAdultDialog by remember { mutableStateOf(false) }
+    var showArmoredDialog by remember { mutableStateOf(false) }
     var appPendingDisable by remember { mutableStateOf<String?>(null) }
 
     val strictLocked = settings.isStrictLocked()
@@ -125,11 +126,33 @@ fun BlocksScreen(
             }
         )
 
+        ToggleCard(
+            icon = Icons.Rounded.Lock,
+            title = stringResource(R.string.armored_title),
+            summary = stringResource(R.string.armored_desc),
+            checked = settings.strictModeEnabled && settings.strictModeType == "PERMANENT",
+            onCheckedChange = { wantsOn ->
+                if (wantsOn) showArmoredDialog = true else showStrictDialog = true
+            }
+        )
+
         Spacer(Modifier.height(8.dp))
     }
 
+    if (showArmoredDialog) {
+        com.buenotty.blockfy.feature_preferences.ui.composables.ArmoredModeDialog(
+            onConfirm = {
+                viewModel.setStrictMode(true, "PERMANENT")
+                showArmoredDialog = false
+            },
+            onDismiss = { showArmoredDialog = false }
+        )
+    }
     if (showStrictDialog) {
-        StrictModeDialog(onDismiss = { showStrictDialog = false })
+        StrictModeDialog(
+            onDismiss = { showStrictDialog = false },
+            permanent = settings.strictModeType == "PERMANENT"
+        )
     }
     appPendingDisable?.let { name ->
         DisableBlockerDialog(

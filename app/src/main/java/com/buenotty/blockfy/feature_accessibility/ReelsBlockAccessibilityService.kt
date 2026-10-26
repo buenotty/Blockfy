@@ -20,6 +20,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import com.buenotty.blockfy.feature_accessibility.overlay.ChallengeBank
+import com.buenotty.blockfy.feature_accessibility.overlay.ChallengeOverlay
 import com.buenotty.blockfy.feature_monitor.ListeningScope
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.datastore.AppSettings
@@ -39,6 +41,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(com.buenotty.blockfy.AppLocale.wrap(newBase))
+    }
 
     private val dataStore: DataStoreManager by inject()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -70,8 +76,22 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private var channelsCreated = false
 
+    private var overlay: ChallengeOverlay? = null
+    private var lastChallengeId: String? = null
+    private var lastOverlayElapsed = 0L
+
+    private fun overlay(): ChallengeOverlay = (overlay ?: ChallengeOverlay(this).also { overlay = it }).also {
+        it.dark = when (settings.themeMode) {
+            "DARK" -> true
+            "LIGHT" -> false
+            else -> (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+        }
+    }
+
     override fun onServiceConnected() {
         super.onServiceConnected()
+        runCatching { (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(OFF_NOTICE_ID) }
         serviceScope.launch {
             dataStore.appSettingsFlow.collect {
                 settings = it
@@ -168,11 +188,42 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    override fun onInterrupt() = Unit
+    /** Accessibility was switched off while protection is set up: say so, loudly, with a way back. */
+    override fun onUnbind(intent: Intent?): Boolean {
+        overlay?.dismiss()
+        if (settings.setupDone && BlockPolicy.hasAnyProtection(settings)) {
+            runCatching {
+                val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                ensureChannels(manager)
+                val open = android.app.PendingIntent.getActivity(
+                    this, 0,
+                    Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                manager.notify(
+                    OFF_NOTICE_ID,
+                    NotificationCompat.Builder(this, ALERT_CHANNEL)
+                        .setSmallIcon(R.drawable.ic_stat_blockfy)
+                        .setContentTitle(getString(R.string.service_off_title))
+                        .setContentText(getString(R.string.service_off_body))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setContentIntent(open)
+                        .setOngoing(true)
+                        .build()
+                )
+            }
+        }
+        return super.onUnbind(intent)
+    }
+
+    override fun onInterrupt() {
+        overlay?.dismiss()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
         runCatching { unregisterReceiver(screenOnReceiver) }
+        overlay?.dismiss()
         flushUsage()
         serviceScope.cancel()
     }
@@ -264,7 +315,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 else -> getString(R.string.alert_app_total_limit_title) to
                     getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
             }
-            notifyAlert(title, withWhy(message), isFinal = true)
+            alertOrChallenge(title, message)
             serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         }
 
@@ -274,6 +325,40 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             exitShorts(appName, root)
         }
     }
+
+    /**
+     * A block fired for a new episode. With fun challenges on, the user gets a short, light trick
+     * question and a useful suggestion; otherwise (or if the window cannot be shown) the classic
+     * notification and toast.
+     */
+    private fun alertOrChallenge(title: String, message: String) {
+        if (settings.funChallengesEnabled && showChallenge(message)) return
+        notifyAlert(title, withWhy(message), isFinal = true)
+    }
+
+    /** True when the overlay is up (or was just up), so the caller skips the classic alert. */
+    private fun showChallenge(contextLine: String): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastOverlayElapsed < MIN_OVERLAY_GAP_MILLIS) return overlay?.isShowing == true
+        lastOverlayElapsed = now
+        val challenge = ChallengeBank.next(lastChallengeId)
+        lastChallengeId = challenge.id
+        return overlay().showChallenge(challenge, contextLine, randomSuggestion())
+    }
+
+    private fun showCheckIn(): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastOverlayElapsed < MIN_OVERLAY_GAP_MILLIS) return overlay?.isShowing == true
+        lastOverlayElapsed = now
+        val titles = resources.getStringArray(R.array.checkin_titles)
+        val bodies = resources.getStringArray(R.array.checkin_bodies)
+        val i = kotlin.random.Random.nextInt(minOf(titles.size, bodies.size))
+        return overlay().showCheckIn(titles[i], bodies[i], randomSuggestion(), getString(R.string.checkin_help)) {
+            performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+        }
+    }
+
+    private fun randomSuggestion(): String = resources.getStringArray(R.array.challenge_suggestions).random()
 
     /** Adds the user's own reason for changing under a block message, when they wrote one. */
     private fun withWhy(message: String): String {
@@ -533,13 +618,15 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             return
         }
         val now = SystemClock.elapsedRealtime()
-        if (now - lastAdultScanElapsed < 1500L) return
+        if (now - lastAdultScanElapsed < ADULT_SCAN_GAP_MILLIS) return
         lastAdultScanElapsed = now
 
         val root = rootFromEvent(event, pkg) ?: return
         try {
             val addressBarText = readAddressBar(root, pkg)
-            if (addressBarText != null && AdultContentDetector.isAdultContent(addressBarText)) {
+            if (addressBarText != null &&
+                (AdultContentDetector.isAdultContent(addressBarText) || AdultContentDetector.isAdultSearch(addressBarText))
+            ) {
                 leaveAdultScreen()
             }
         } finally {
@@ -597,9 +684,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private fun leaveAdultScreen() {
+        performGlobalAction(GLOBAL_ACTION_HOME)
+        if (settings.funChallengesEnabled && showCheckIn()) return
         val message = AdultContentDetector.getRandomWarning(this)
         notifyAlert(getString(R.string.adult_blocker_title), withWhy(message), isFinal = true)
-        performGlobalAction(GLOBAL_ACTION_HOME)
     }
 
     companion object {
@@ -615,6 +703,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val EPISODE_GAP_MILLIS = 8_000L
         private const val PROVOCATION_INTERVAL_MILLIS = 180_000L
         private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L
+        private const val MIN_OVERLAY_GAP_MILLIS = 6_000L
+        private const val ADULT_SCAN_GAP_MILLIS = 400L
+        private const val OFF_NOTICE_ID = 1003
         private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
         private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L
 

@@ -15,16 +15,16 @@ import com.buenotty.blockfy.R
 
 /** Shown when the user tries to loosen a block while strict mode is holding it. */
 @Composable
-fun StrictModeDialog(onDismiss: () -> Unit) {
+fun StrictModeDialog(onDismiss: () -> Unit, permanent: Boolean = false) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.strict_mode_title)) },
         text = {
             Column {
-                Text(stringResource(R.string.strict_mode_midnight_locked_msg))
+                Text(stringResource(if (permanent) R.string.armored_locked_msg else R.string.strict_mode_midnight_locked_msg))
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    stringResource(R.string.strict_mode_midnight_extra),
+                    stringResource(if (permanent) R.string.armored_locked_extra else R.string.strict_mode_midnight_extra),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

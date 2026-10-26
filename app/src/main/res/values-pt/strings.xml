@@ -45,20 +45,20 @@
     <string name="end_time">Fim</string>
     <string name="save_btn">Salvar</string>
     <string name="cancel_btn">Cancelar</string>
-    <string name="toast_app_window_blocked">%1$s está bloqueado neste horário.</string>
+    <string name="toast_app_window_blocked">%1$s está em pausa neste horário.</string>
 
     <string name="alert_limit_title">Blockfy • Limite atingido</string>
     <string name="alert_warning_title">Blockfy • Alerta de tempo</string>
-    <string name="toast_limit_reached">Limite diário de %1$d min de %2$s atingido.</string>
+    <string name="toast_limit_reached">Limite diário de %1$d min de %2$s batido. Hora de outra coisa.</string>
     <string name="toast_remaining_minutes">Restam %1$d minutos de %2$s hoje.</string>
     <string name="toast_remaining_one_minute">Resta 1 minuto de %1$s hoje.</string>
     <string name="alert_app_total_limit_title">Blockfy • Limite do app atingido</string>
-    <string name="toast_app_total_limit_reached">Limite diário de %1$d min de %2$s atingido.</string>
+    <string name="toast_app_total_limit_reached">Limite diário de %1$d min de %2$s batido. Missão cumprida: hora de outra coisa.</string>
 
     <string name="disable_dialog_title">Tem certeza?</string>
-    <string name="disable_dialog_desc">Tem certeza de que quer se permitir a rolagem infinita de novo?</string>
+    <string name="disable_dialog_desc">Quer liberar o rolar infinito de novo? Sem julgamento, só confirmando.</string>
     <string name="disable_dialog_cancel">Mudei de ideia</string>
-    <string name="disable_dialog_confirm">Eu aguento</string>
+    <string name="disable_dialog_confirm">Liberar</string>
 
     <string name="provocation_mode_title">Mensagens de atenção</string>
     <string name="provocation_mode_desc">Mostra um lembrete curto quando você abre Reels ou Shorts em um app com bloqueio ligado</string>
@@ -73,7 +73,7 @@
     <string name="adult_blocker_desc">Usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
-    <string name="adult_blocker_reflection_text">Eu sei que a pornografia rouba tempo que eu não recupero e me afasta da pessoa que eu quero ser. Desligar este escudo é uma escolha deliberada de seguir esse impulso. Eu assumo a responsabilidade por essa escolha.</string>
+    <string name="adult_blocker_reflection_text">Estou desligando o escudo de propósito. Sei que a escolha é minha e que posso ligar de novo quando quiser.</string>
     <string name="adult_blocker_type_placeholder">Digite exatamente o texto acima</string>
     <string name="adult_blocker_paste_blocked_warning">Colar está bloqueado. Digite você mesmo.</string>
     <string name="adult_blocker_confirm_disable">Desligar o escudo</string>
@@ -81,25 +81,25 @@
     <string name="focus_alerts_channel_name">Alertas do Blockfy</string>
 
     <string-array name="adult_block_warnings">
-        <item>Você não precisa jogar a próxima hora fora.</item>
-        <item>Esse impulso passa. Saia da página.</item>
-        <item>O você do futuro não quer essa aba aberta.</item>
-        <item>Pare agora. Proteja o resto do seu dia.</item>
-        <item>Você é mais forte que um loop barato de dopamina.</item>
-        <item>Feche. O resto da sua vida ainda está esperando.</item>
+        <item>Pausa. Vamos de outro plano por uns minutos?</item>
+        <item>Tá tudo bem sentir vontade. Você escolheu outro caminho e isso conta.</item>
+        <item>Aba fechada. Ponto pra você.</item>
+        <item>Respira. A vontade sobe e depois desce.</item>
+        <item>Que tal um copo d\'água no lugar?</item>
+        <item>Você é maior que uma aba aberta.</item>
     </string-array>
 
     <string-array name="mindfulness_reels_quotes">
-        <item>Você abriu isso de propósito ou no piloto automático?</item>
-        <item>Trinta minutos da vida de estranhos, ou trinta minutos da sua?</item>
-        <item>O feed é infinito. O seu tempo não é.</item>
-        <item>Isso não é descanso. É um transe. Você pode sair.</item>
-        <item>O algoritmo foi feito para te prender. Mostre que não consegue.</item>
-        <item>Você se orgulharia desta hora daqui a um ano?</item>
-        <item>Faça o que veio fazer e saia.</item>
-        <item>Ninguém construiu a vida que queria só rolando a tela.</item>
-        <item>A sua atenção é a coisa mais cara nesta sala.</item>
-        <item>Feche o reel. Levante. Faça a próxima coisa real.</item>
+        <item>Você abriu isso de propósito ou o dedo foi sozinho?</item>
+        <item>Plot twist: o próximo vídeo é igual ao anterior.</item>
+        <item>O feed é infinito. A sua paciência, não.</item>
+        <item>Spoiler: o vídeo 12 não vai mudar a sua vida.</item>
+        <item>Seu polegar merece férias. Dá um recesso pra ele.</item>
+        <item>Teste rápido: o que você ia fazer antes de abrir isso?</item>
+        <item>O algoritmo te chama de "só mais um". Responde que já foi.</item>
+        <item>O seu eu do futuro mandou dizer: valeu por levantar.</item>
+        <item>Que tal um vídeo do mundo real? Olha pela janela.</item>
+        <item>Pausa: já tomou água hoje?</item>
     </string-array>
 
     <string name="weekdays_title">Dias em que o bloqueio vale</string>
@@ -114,7 +114,7 @@
     <string name="concepts_shorts_title">O feed contra você</string>
     <string name="concepts_shorts_summary">Você não é fraco. Você está contra um produto feito para te prender.</string>
     <string name="concepts_porn_title">Pornografia</string>
-    <string name="concepts_porn_summary">O que ela tira do seu caráter, dos seus relacionamentos e da sua liberdade.</string>
+    <string name="concepts_porn_summary">O que ela faz por você, por que é difícil largar e como trocar de caminho.</string>
     <string name="concepts_page">%1$d / %2$d</string>
     <string name="concepts_next">Próximo</string>
     <string-array name="concept_shorts_titles">
@@ -136,22 +136,22 @@
         <item>A primeira semana é a pior: a mão vai sozinha ao celular e o corpo pede o estímulo. Depois a vontade costuma diminuir. Muita gente relata mais calma, mais sono e mais vontade de fazer coisas nas primeiras semanas. Você não está abrindo mão de algo valioso. Está trocando o que te consome por aquilo que te constrói.</item>
     </string-array>
     <string-array name="concept_porn_titles">
-        <item>Isso te treina a usar pessoas</item>
-        <item>A índole se desgasta no segredo</item>
-        <item>Você não sabe a quem está assistindo</item>
-        <item>O ciclo da vergonha</item>
-        <item>Os relacionamentos esfriam</item>
-        <item>A vida sexual encolhe</item>
-        <item>Dá para sair, e você vai se reconhecer</item>
+        <item>Qual é o trabalho que isso faz por você?</item>
+        <item>Anestesia: o que você tenta não sentir?</item>
+        <item>O ciclo da vergonha (e por que ele não ajuda)</item>
+        <item>Vontade sobe, vontade desce</item>
+        <item>Trocar de remédio, não de pessoa</item>
+        <item>Escorregou? Sem drama</item>
+        <item>Se estiver pesado, peça ajuda</item>
     </string-array>
     <string-array name="concept_porn_bodies">
-        <item>Pornografia ensina a tratar outra pessoa como produto: disponível, calada e descartada quando a sensação passa. Esse hábito não fica na tela. Ele aparece no jeito de olhar para quem está de verdade no mesmo lugar que você. Cada clique é um treino, e você sempre treina alguma coisa.</item>
-        <item>Fazer isso escondido te parte em dois. Você fala uma coisa sobre quem é e mantém outra vida que não defenderia em voz alta. Índole é o que você repete quando ninguém está te avaliando. O segredo pesa mais do que o ato, e quanto mais tempo ele dura, mais caro fica.</item>
-        <item>Parte desse conteúdo envolve exploração, coerção ou pessoas que nunca consentiram em ser vistas. Você não tem como saber qual. Cada clique alimenta uma indústria em que o sofrimento de alguém pode ser o produto. É difícil sustentar um "não faço mal a ninguém" olhando isso de frente.</item>
-        <item>O ciclo costuma ser: tensão, uso, alívio curto, vergonha, tensão de novo. A vergonha não te afasta do hábito: ela cria o estresse que pede o próximo alívio. Por isso se punir não funciona. O que quebra o ciclo é a ação seguinte: sair do lugar, ligar para alguém, voltar ao plano.</item>
-        <item>Uma parceria não é uma sequência de novidade. Se a sua excitação passa a depender de desconhecidos, abas e de ir cada vez mais longe, a pessoa que te ama começa a parecer insuficiente. Isso não é falha dela. É o preço do hábito. E quem está ao seu lado costuma sentir mais do que você imagina.</item>
-        <item>O uso pesado pode deixar a intimidade real mais lenta, mais ansiosa ou mais difícil de aproveitar. Muita gente relata precisar de mais intensidade para o mesmo efeito, e um corpo comum ao lado deixa de bastar. Isso não é padrão alto: é apetite desregulado, e apetite também se reeduca.</item>
-        <item>Se você estiver decidido, vai achar um jeito de burlar qualquer bloqueio. O bloqueio existe para criar uma pausa: tempo bastante para lembrar que isso não te dá uma vida melhor, uma cabeça mais clara nem um relacionamento que você respeite. As primeiras semanas são as mais difíceis. Depois, muita gente descreve mais clareza e mais presença. Recaídas acontecem; o que conta é a direção.</item>
+        <item>Todo hábito faz algum trabalho por você: relaxar, dormir, esquecer um problema, sentir alguma coisa quando tudo parece cinza. Antes de brigar com o hábito, descubra o trabalho que ele faz. Quando você sabe o que está procurando, dá pra procurar de outro jeito.</item>
+        <item>Muita gente usa pornografia como anestesia: não é só sobre sexo, é sobre não sentir cansaço, solidão, tédio ou ansiedade por alguns minutos. Pesquisas ligam esse tipo de uso à dificuldade de lidar com emoções difíceis, e mostram que aprender a olhar a emoção de outro jeito ajuda (a evidência ainda é inicial). Nomear o que você sente já é um primeiro passo.</item>
+        <item>O ciclo costuma ser: tensão, uso, alívio curto, vergonha, mais tensão. A vergonha não afasta do hábito: ela cria o desconforto que pede o próximo alívio. Por isso se punir não funciona. O que quebra o ciclo é a próxima ação pequena: sair do quarto, beber água, falar com alguém.</item>
+        <item>A vontade funciona como uma onda: sobe, chega ao pico e desce se você não a alimenta. Não dá pra prometer quanto tempo leva, e varia de pessoa pra pessoa. O que dá pra fazer é ganhar alguns minutos com algo que ocupe o corpo e as mãos, e ver a onda mudar.</item>
+        <item>Se o hábito é um remédio pra sentir menos, procure outro remédio que não cobre juros: caminhar, tomar banho, treinar, ligar pra um amigo, música alta, cozinhar. Não precisa ser perfeito. Precisa ser mais fácil de começar do que a aba aberta.</item>
+        <item>Escorregar faz parte de mudar qualquer hábito. O que pesa é o "já que errei, vou até o fim". Se escorregou, feche a aba, beba água e volte pro plano. O Blockfy guarda o seu recorde e não te cobra nada.</item>
+        <item>Se isso atrapalha o seu trabalho, os seus relacionamentos ou o seu humor, conversar com um psicólogo ou psiquiatra pode ajudar muito. Procurar ajuda é uma decisão prática, não um sinal de fraqueza. No Brasil, o CVV atende 24h pelo 188.</item>
     </string-array>
     <string name="privacy_policy_btn">Política de privacidade</string>
     <string name="nav_blocks">Bloqueios</string>
@@ -225,7 +225,7 @@
     <string name="time_picker_toggle">Alternar modo de entrada</string>
     <string name="ok_btn">OK</string>
     <string name="alert_blocked_title">Blockfy • Bloqueado</string>
-    <string name="toast_shorts_window_blocked">%1$s: Reels e Shorts estão bloqueados agora.</string>
+    <string name="toast_shorts_window_blocked">%1$s: Reels e Shorts estão em pausa agora.</string>
     <string name="focus_reminders_channel_name">Lembretes do Blockfy</string>
     <string name="loosen_title">Afrouxar este bloqueio?</string>
     <string name="loosen_msg">Essas mudanças deixam você usar o app mais do que antes. Espere alguns segundos e pense se é isso mesmo que você quer.</string>
@@ -338,11 +338,11 @@
         <item>Procure ajuda agora: ligue para o CVV no 188, para o SAMU no 192 ou vá ao pronto-socorro mais próximo. Você não precisa passar por isso sozinho, e esse sentimento pode melhorar com apoio.</item>
         <item>Pedir ajuda não é fraqueza nem exagero. Quanto antes você procurar, mais simples costuma ser o caminho. Este aplicativo pode ficar ao seu lado, mas as pessoas e os profissionais é que fazem a diferença.</item>
     </string-array>
-    <string name="streak_title">Dias limpos seguidos</string>
+    <string name="streak_title">Dias firmes seguidos</string>
     <string name="streak_day">dia</string>
     <string name="streak_days">dias</string>
     <string name="streak_best">Melhor: %1$d</string>
-    <string name="streak_rule">Um dia é limpo quando você não desliga nem afrouxa nada.</string>
+    <string name="streak_rule">Um dia firme é o dia em que você não desliga nem afrouxa nada.</string>
     <string name="streak_today_ok">Hoje está limpo até agora. Continue assim.</string>
     <string name="streak_today_broken">A sequência de hoje foi quebrada. Recomece amanhã: tropeçar não apaga o que você já avançou.</string>
     <string name="streak_today_empty">Ligue um bloqueio para começar a contar.</string>
@@ -402,7 +402,7 @@
     <string name="setup_done">Pronto</string>
     <string name="setup_continue">Continuar</string>
     <string name="setup_skip_battery">Continuar sem isso (não recomendado)</string>
-    <string name="hero_label">Dias limpos</string>
+    <string name="hero_label">Dias firmes</string>
     <string name="hero_write_why">Escrever o meu porquê</string>
     <string name="milestone_next">Faltam %1$d dias para chegar a %2$d</string>
     <string name="milestone_max">Você passou do maior marco. Continue.</string>
@@ -413,10 +413,10 @@
     <string name="tier_4">Duas semanas. O hábito antigo está perdendo força.</string>
     <string name="tier_5">Um mês ou mais. Na prática, você virou outra pessoa.</string>
     <string name="tier_6">Três meses. Isso é um novo jeito de viver.</string>
-    <string name="streak_lost">Você jogou fora %1$d dias limpos hoje. Recomece: amanhã vale de novo.</string>
-    <string name="streak_broken">Hoje a sequência quebrou. Recomece amanhã.</string>
-    <string name="stake_title">Você está prestes a perder %1$d dias limpos</string>
-    <string name="stake_body">Isso zera a sua sequência. Vale a pena?</string>
+    <string name="streak_lost">A sequência de %1$d dias recomeça hoje. Seu recorde continua. Amanhã é um novo dia.</string>
+    <string name="streak_broken">Hoje a sequência recomeçou. Amanhã você tenta de novo, sem drama.</string>
+    <string name="stake_title">Afrouxar este bloqueio? Você tem %1$d dias firmes</string>
+    <string name="stake_body">Afrouxar reinicia a sequência de hoje, mas o seu recorde continua guardado. Se é uma decisão tranquila, tudo bem.</string>
     <string name="stake_why">Você escreveu: “%1$s”</string>
     <string name="concepts_path_title">A trilha</string>
     <string name="concepts_progress">%1$d de %2$d lidos</string>
@@ -440,7 +440,7 @@
         <item>Dez anos</item>
         <item>O que você faria com essas horas</item>
         <item>O custo que não aparece</item>
-        <item>O arrependimento mais comum</item>
+        <item>Um jeito leve de olhar pra isso</item>
         <item>Comece recuperando uma hora</item>
     </string-array>
     <string-array name="concept_time_bodies">
@@ -448,7 +448,7 @@
         <item>Mantendo a sua média atual por dez anos, são de 300 a 450 dias inteiros da sua vida olhando para uma tela, quase um ano ou mais sem dormir. Que livro, curso, corpo, negócio ou relacionamento caberia nesse tempo? Não é exagero de efeito. É só aritmética.</item>
         <item>Se alguém te desse 700 horas livres por ano, o que você faria? Aprender bem um idioma leva, para muita gente, centenas de horas. Mudar o corpo, abrir um negócio, terminar um curso: tudo isso cabe em horas. Você já tem essas horas. Elas só estão indo para outro lugar.</item>
         <item>O tempo no feed não aparece como gasto em lugar nenhum. Ninguém te cobra, você não sente que perdeu. É o gasto mais caro que existe justamente por ser invisível. Dinheiro você recupera. Os anos, não.</item>
-        <item>Dificilmente alguém no fim da vida diz que se arrepende de ter olhado menos para o celular. O arrependimento costuma ser sobre o que não foi feito: a pessoa que não foi visitada, o projeto que ficou na gaveta, o tempo que não foi vivido. Hoje ainda dá para escolher diferente.</item>
+        <item>Sem susto e sem culpa: a conta das horas não serve pra te assustar, serve pra te dar escolha. Se uma hora por dia voltasse pra você, o que você faria com ela? Escolha uma coisa pequena e experimente amanhã.</item>
         <item>Você não precisa recuperar tudo hoje. Recupere uma hora. Uma hora por dia são 365 horas por ano, mais de 15 dias. Escolha uma coisa que importa para você, coloque essa hora no calendário e proteja como um compromisso inegociável. É assim que a vida muda: uma hora de cada vez.</item>
     </string-array>
     <string-array name="concept_mindset_titles">
@@ -485,4 +485,82 @@
         <item>Se você pensou em desligar o Blockfy, algo está pressionando: ansiedade, tédio, cansaço, uma discussão. O problema não é o bloqueio, é o que está pedindo para ele sair do caminho. Espere 15 minutos. Beba água. Fale com alguém. Depois decida. Se mesmo assim desligar, volte a ligar no mesmo dia.</item>
         <item>Se você tenta e não consegue, várias vezes, mesmo querendo muito, isso não é falta de caráter. Pode ser sinal de que existe algo por baixo, como ansiedade, depressão, TDAH ou trauma, e a ajuda de um psicólogo ou psiquiatra encurta muito o caminho. Procurar ajuda não é desistir: é a decisão mais eficiente que existe.</item>
     </string-array>
+    <string name="overlay_tag_challenge">Pegadinha</string>
+    <string name="overlay_tag_result">Resultado</string>
+    <string name="overlay_tag_checkin">Pausa rápida</string>
+    <string name="overlay_btn_ok">Beleza, bora</string>
+    <string name="overlay_suggestion_label">Que tal agora</string>
+    <string name="challenge_bull_q">Pegadinha rápida: qual destes é o touro mecânico?</string>
+    <string name="challenge_bull_a">Touro A</string>
+    <string name="challenge_bull_b">Touro B</string>
+    <string name="challenge_bull_title">Errou! Os dois são.</string>
+    <string name="challenge_bull_body">O A é mecânico de rodeio. O B é mecânico de oficina e está bem mais produtivo. Sua vez de fazer alguma coisa acontecer?</string>
+    <string name="challenge_more_q">Quantos vídeos faltam pra você ficar satisfeito?</string>
+    <string name="challenge_more_a">Só mais um</string>
+    <string name="challenge_more_b">Só mais dez</string>
+    <string name="challenge_more_title">Resposta certa: nenhum.</string>
+    <string name="challenge_more_body">O vídeo 11 promete o que o 10 prometeu, e quem escolhe o próximo é o algoritmo. Você já ganhou esta rodada ao parar.</string>
+    <string name="challenge_worker_q">Quem trabalha de graça pra rede social?</string>
+    <string name="challenge_worker_a">Eu</string>
+    <string name="challenge_worker_b">Eu também</string>
+    <string name="challenge_worker_title">Os dois estão certos!</string>
+    <string name="challenge_worker_body">Você entrega atenção e a plataforma fatura. Hoje você pede aumento: vai fazer algo que seja seu.</string>
+    <string name="challenge_algo_q">Quem escolheu o seu próximo vídeo?</string>
+    <string name="challenge_algo_a">Eu, claro</string>
+    <string name="challenge_algo_b">O algoritmo</string>
+    <string name="challenge_algo_title">Empate técnico.</string>
+    <string name="challenge_algo_body">Ele sugere, você jura que escolheu e o relógio corre. Você ganha o jogo saindo dele.</string>
+    <string name="challenge_leave_q">Qual é a hora certa de largar o celular?</string>
+    <string name="challenge_leave_a">Agora</string>
+    <string name="challenge_leave_b">Daqui a pouco</string>
+    <string name="challenge_leave_title">Os dois estão errados.</string>
+    <string name="challenge_leave_body">A resposta certa é "já fui". "Daqui a pouco" é só o nome do próximo vídeo.</string>
+    <string name="challenge_minute_q">Quanto dura um "só um minutinho"?</string>
+    <string name="challenge_minute_a">1 minuto</string>
+    <string name="challenge_minute_b">47 minutos</string>
+    <string name="challenge_minute_title">Pegadinha: ele estica.</string>
+    <string name="challenge_minute_body">O "minutinho" estica sozinho. O seu tempo, não. Que tal gastar ele em algo com começo, meio e fim?</string>
+    <string name="checkin_help">Se estiver pesado demais, conversar ajuda. O CVV atende 24h pelo 188 (ligação gratuita).</string>
+    <string name="fun_challenges_title">Desafios com humor</string>
+    <string name="fun_challenges_desc">Quando um bloqueio dispara, mostra uma pegadinha rápida e uma sugestão do que fazer, em vez de só um aviso</string>
+    <string-array name="challenge_suggestions">
+        <item>Bebe um copo d\'água. Sério, vai lá.</item>
+        <item>Faz 10 agachamentos. O sofá agradece.</item>
+        <item>Manda um oi pra alguém de quem você gosta.</item>
+        <item>Dá uma volta no quarteirão: 5 minutos bastam.</item>
+        <item>Arruma uma gaveta. Qualquer uma.</item>
+        <item>Respira: 4 segundos entrando, 6 saindo. Três vezes.</item>
+        <item>Anota uma coisa que você quer fazer amanhã.</item>
+        <item>Alonga o pescoço e os ombros. Eles pediram.</item>
+        <item>Lava o rosto com água fria e volta outra pessoa.</item>
+        <item>Põe uma música e arruma o que estiver à vista.</item>
+    </string-array>
+    <string-array name="checkin_titles">
+        <item>Ei, pausa rápida.</item>
+        <item>Tá tudo bem.</item>
+        <item>Que tal trocar de plano?</item>
+        <item>Um minutinho pra você.</item>
+    </string-array>
+    <string-array name="checkin_bodies">
+        <item>Às vezes a gente busca isso pra não sentir outra coisa: cansaço, tédio, ansiedade. Sem julgamento. Vamos tentar outro caminho por 10 minutos?</item>
+        <item>A vontade é como uma onda: sobe e depois desce. Você não precisa vencer o dia inteiro, só os próximos minutos.</item>
+        <item>Esse caminho não resolve o que está pesando. Que tal algo que resolva um pouquinho?</item>
+        <item>Você não é o que acabou de abrir. É quem decidiu fechar. Boa.</item>
+    </string-array>
+    <string name="theme_title">Aparência</string>
+    <string name="theme_desc">Escolha o claro, o escuro, ou deixe seguir o tema do celular.</string>
+    <string name="theme_system">Seguir o celular</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="overlay_incognito_title">Abriu aba anônima?</string>
+    <string name="overlay_incognito_body">O navegador mantém uma notificação de abas anônimas. Feche todas: é o jeito de encerrar de verdade.</string>
+    <string name="overlay_btn_notifications">Ver notificações agora</string>
+    <string name="service_off_title">Blockfy desligado</string>
+    <string name="service_off_body">A Acessibilidade foi desligada e a proteção parou. Toque para religar.</string>
+    <string name="armored_title">Modo blindado</string>
+    <string name="armored_desc">Trava tudo de vez. Só desinstalando o app para sair.</string>
+    <string name="armored_confirm_msg">Com o modo blindado, nenhum bloqueio, horário ou escudo pode ser desligado ou afrouxado dentro do app, nem amanhã nem depois. A única saída é desinstalar o Blockfy. Pense com calma: é uma decisão sua, para a versão de você que quer sair desse ciclo.</string>
+    <string name="armored_confirm_btn">Quero blindar</string>
+    <string name="armored_locked_msg">Modo blindado ligado. Nada pode ser desligado ou afrouxado dentro do app.</string>
+    <string name="armored_locked_extra">Você escolheu isso para proteger o você de amanhã. A única saída é desinstalar o Blockfy.</string>
 </resources>

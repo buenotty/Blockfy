@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vertical video frame cut by a bar: a blocked short-video screen. Drawn on a 512 grid, centred in the 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <group android:scaleX="0.66" android:scaleY="0.66" android:pivotX="256" android:pivotY="256">
+    <path
+        android:pathData="M170,220V142A38,38 0 0 1 208,104H304A38,38 0 0 1 342,142V220"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="28" />
+    <path
+        android:pathData="M170,292V370A38,38 0 0 0 208,408H304A38,38 0 0 0 342,370V292"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="28" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M136,236H376A20,20 0 0 1 396,256A20,20 0 0 1 376,276H136A20,20 0 0 1 116,256A20,20 0 0 1 136,236Z" />
+    </group>
+</vector>
