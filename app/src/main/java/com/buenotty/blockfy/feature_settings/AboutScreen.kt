@@ -190,15 +190,6 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             ) {
                 context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
             }
-            HeroCard(
-                modifier = Modifier.weight(1f),
-                icon = Icons.Rounded.Code,
-                title = stringResource(R.string.source_code_btn)
-            ) {
-                context.startActivity(
-                    Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB.toUri())
-                )
-            }
         }
 
         PreferenceGroup(title = stringResource(R.string.authorship_title)) {

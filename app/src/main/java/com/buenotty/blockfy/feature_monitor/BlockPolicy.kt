@@ -135,6 +135,13 @@ object BlockPolicy {
     }
 
     /** True when [new] circumvents [old] in any way: a looser app rule, a narrower schedule or the shield off. */
+    /**
+     * Whether a settings change breaks the clean day. Setting up for the first time (nothing was
+     * protected yet) is never a slip, even if it narrows the default all-day schedule.
+     */
+    fun breaksCleanDay(old: AppSettings, new: AppSettings): Boolean =
+        hasAnyProtection(old) && isSettingsLoosening(old, new)
+
     fun isSettingsLoosening(old: AppSettings, new: AppSettings): Boolean {
         val pairs = listOf(
             old.instagram to new.instagram, old.youtube to new.youtube, old.tiktok to new.tiktok,
