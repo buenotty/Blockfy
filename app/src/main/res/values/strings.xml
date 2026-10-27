@@ -693,4 +693,5 @@
         <item>Write a note to yourself one month from now.</item>
         <item>Take a shower with no phone nearby.</item>
     </string-array>
+    <string name="support_dev_btn">Support the developer</string>
 </resources>

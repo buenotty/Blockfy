@@ -693,4 +693,5 @@
         <item>Escreve um bilhete pra você mesmo daqui a um mês.</item>
         <item>Toma um banho sem celular por perto.</item>
     </string-array>
+    <string name="support_dev_btn">Apoie o desenvolvedor</string>
 </resources>
