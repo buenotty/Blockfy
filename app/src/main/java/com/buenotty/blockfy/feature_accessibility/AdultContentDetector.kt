@@ -247,20 +247,46 @@ object AdultContentDetector {
         return false
     }
 
-    private val ADULT_SEARCH_TERMS = setOf(
-        "porn", "porno", "pornografia", "pornhub", "xxx", "nude", "nudes", "naked", "nua", "nuas",
-        "pelada", "peladas", "nudez", "hentai", "putaria", "sexo explicito", "video porno",
-        "sex tape", "onlyfans", "erotico", "erotica"
+    /** Words that mean adult content on their own, in Portuguese and English. */
+    private val STRONG_SEARCH_TERMS = setOf(
+        "porn", "porno", "pornos", "pornografia", "pornhub", "xvideos", "xnxx", "xhamster", "redtube",
+        "xxx", "nude", "nudes", "naked", "nua", "nuas", "pelada", "peladas", "nudez", "hentai",
+        "putaria", "putarias", "sexo explicito", "video porno", "videos porno", "sex tape", "onlyfans",
+        "erotico", "erotica", "punheta", "siririca", "safadeza", "safadezas", "porn groups",
+        "nsfw", "leaks nudes", "nudes vazados", "nudes vazadas", "pack nudes", "packs nudes",
+        "conteudo adulto", "conteudo +18", "conteudo 18+", "vazados nudes", "videos vazados"
+    )
+
+    /** Words that point at a group, channel or invite hunt. Alone they are harmless. */
+    private val GROUP_CONTEXT_TERMS = setOf(
+        "telegram", "tg", "whatsapp", "zap", "zapzap", "discord", "grupo", "grupos", "canal", "canais",
+        "link", "links", "convite", "invite", "group", "groups", "channel", "channels", "comunidade",
+        "comunidades", "server", "servidor"
+    )
+
+    /** Words that are fine in many places but mean adult content next to a group word. */
+    private val GROUP_ADULT_TERMS = setOf(
+        "18", "+18", "18+", "putaria", "vazados", "vazadas", "vazado", "vazada", "novinha", "novinhas",
+        "safada", "safadas", "safadinha", "safadinhas", "gostosa", "gostosas", "swing", "corno", "cornos",
+        "cuckold", "packs", "pack", "leaks", "leaked", "leak", "hentai", "onlyfans", "privacy",
+        "casadas", "casada", "ninfeta", "ninfetas", "sexo", "sexy", "adulto", "adultos", "adult",
+        "nsfw", "porn", "porno", "nudes", "nude", "erotico", "erotica"
     )
 
     /**
      * Search words in the text shown in the address bar. Whole words only, so "nuance" or
-     * "unaware" never match. Only used on the browser's address bar, nothing else on screen.
+     * "unaware" never match. A group word plus an adult word also matches, which catches searches
+     * for adult Telegram, WhatsApp or Discord groups. Only used on the browser's address bar.
      */
     fun isAdultSearch(rawText: String?): Boolean {
         if (rawText.isNullOrBlank()) return false
-        val normalized = normalize(rawText).replace('+', ' ').replace("%20", " ").replace('_', ' ')
-        return ADULT_SEARCH_TERMS.any { containsToken(normalized, normalize(it)) }
+        val normalized = normalize(rawText)
+            .replace("%2b", "+").replace("%20", " ").replace('_', ' ').replace('-', ' ')
+        // In a URL query a plus sign is a space, but a typed "+18" keeps its sign before the number.
+        val spaced = Regex("\\+(?!\\d)").replace(normalized, " ")
+        if (STRONG_SEARCH_TERMS.any { containsToken(spaced, normalize(it)) }) return true
+        val hasGroupWord = GROUP_CONTEXT_TERMS.any { containsToken(spaced, it) }
+        return hasGroupWord && GROUP_ADULT_TERMS.any { containsToken(spaced, normalize(it)) }
     }
 
     fun getRandomWarning(context: Context): String {
