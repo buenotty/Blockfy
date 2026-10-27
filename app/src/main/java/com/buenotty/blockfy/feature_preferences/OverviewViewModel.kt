@@ -75,6 +75,7 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
             settings.tiktok.name -> settings.copy(tiktok = app)
             settings.facebook.name -> settings.copy(facebook = app)
             settings.x.name -> settings.copy(x = app)
+            settings.telegram.name -> settings.copy(telegram = app)
             else -> settings
         }
     }
@@ -86,7 +87,8 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
             youtube = settings.youtube.toggled(),
             tiktok = settings.tiktok.toggled(),
             facebook = settings.facebook.toggled(),
-            x = settings.x.toggled()
+            x = settings.x.toggled(),
+            telegram = settings.telegram.toggled()
         )
     }
 

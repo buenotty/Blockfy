@@ -6,7 +6,7 @@
     <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Ele não lê mensagens, conversas nem o que você digita em outros apps, e não guarda o que lê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
-    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê a barra de endereço do seu navegador para comparar o site que você está visitando com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
+    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X, Telegram) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê a barra de endereço do seu navegador para comparar o site que você está visitando com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
     <string name="accessibility_dialog_howto">1. Abra as informações do app e permita configurações restritas, se o celular pedir.\n2. Abra as configurações de Acessibilidade.\n3. Em apps baixados, toque em Blockfy.\n4. Ative o serviço e confirme.</string>
@@ -35,7 +35,7 @@
     <string name="original_author_role">fez o Blokky original</string>
     <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook e X para ver vídeo curto. Com o bloqueio adulto ligado, ela também lê a barra de endereço do seu navegador para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
+    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook, X e Telegram para ver vídeo curto e bloquear os apps que você escolheu bloquear. Com o bloqueio adulto ligado, ela também lê a barra de endereço do seu navegador para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
 
@@ -694,4 +694,8 @@
         <item>Toma um banho sem celular por perto.</item>
     </string-array>
     <string name="support_dev_btn">Apoie o desenvolvedor</string>
+    <string name="telegram_offer_title">Bloquear o Telegram também?</string>
+    <string name="telegram_offer_desc">Grupos e canais adultos ficam dentro do Telegram, onde o escudo não enxerga. Quer bloquear o app inteiro também? Dá para desligar depois.</string>
+    <string name="telegram_offer_yes">Bloquear Telegram</string>
+    <string name="telegram_offer_no">Não, obrigado</string>
 </resources>

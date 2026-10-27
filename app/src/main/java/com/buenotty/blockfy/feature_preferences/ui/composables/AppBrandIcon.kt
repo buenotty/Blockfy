@@ -21,7 +21,8 @@ enum class TrackedAppIcon {
     YouTube,
     TikTok,
     Facebook,
-    X
+    X,
+    Telegram
 }
 
 fun trackedAppIcon(name: String): TrackedAppIcon {
@@ -30,6 +31,7 @@ fun trackedAppIcon(name: String): TrackedAppIcon {
         "TikTok" -> TrackedAppIcon.TikTok
         "Facebook" -> TrackedAppIcon.Facebook
         "X" -> TrackedAppIcon.X
+        "Telegram" -> TrackedAppIcon.Telegram
         else -> TrackedAppIcon.Instagram
     }
 }
@@ -47,6 +49,7 @@ fun AppBrandIcon(
         TrackedAppIcon.TikTok -> R.drawable.ic_tiktok_themed
         TrackedAppIcon.Facebook -> R.drawable.ic_facebook_themed
         TrackedAppIcon.X -> R.drawable.ic_x_themed
+        TrackedAppIcon.Telegram -> R.drawable.ic_telegram_themed
     }
     TintedGlyph(
         modifier = modifier,

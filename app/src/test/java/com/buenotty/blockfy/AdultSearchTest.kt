@@ -21,4 +21,23 @@ class AdultSearchTest {
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=denuded+hills"))
         assertFalse(AdultContentDetector.isAdultSearch(null))
     }
+
+    @Test
+    fun flagsSearchesForAdultGroups() {
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=grupo+telegram+18"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=grupos+de+putaria+telegram"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=link+grupo+vazados+whatsapp"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=discord+nsfw+servers"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=telegram+%2B18+novinhas"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=nudes+vazados"))
+    }
+
+    @Test
+    fun keepsOrdinaryGroupAndTelegramSearches() {
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=grupo+de+estudos+telegram"))
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=como+baixar+telegram"))
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=grupo+de+corrida+whatsapp"))
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=vazados+documentos+governo"))
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=filme+18+anos+cartaz"))
+    }
 }

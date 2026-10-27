@@ -233,3 +233,22 @@ class BlockPolicyTest {
         assertFalse(AppSettings().isStrictLocked())
     }
 }
+
+class TelegramBlockTest {
+    @Test
+    fun everyTelegramBuildCountsAsTelegramAndBlocksWholeApp() {
+        val s = AppSettings().let { it.copy(telegram = it.telegram.copy(blocked = true)) }
+        TrackedPackages.TELEGRAM.forEach { pkg ->
+            assertEquals("Telegram", TrackedPackages.displayName(pkg))
+            val verdict = BlockPolicy.evaluate(pkg, s, DailyUsage(), shortsVisible = false)
+            assertEquals(BlockReason.SCHEDULE, verdict.reason)
+        }
+    }
+
+    @Test
+    fun telegramOffCountsAsLooseningAndOnCountsAsProtection() {
+        val on = AppSettings().let { it.copy(telegram = it.telegram.copy(blocked = true)) }
+        assertTrue(BlockPolicy.hasAnyProtection(on))
+        assertTrue(BlockPolicy.isSettingsLoosening(on, AppSettings()))
+    }
+}

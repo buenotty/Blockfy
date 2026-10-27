@@ -95,9 +95,9 @@ object BlockPolicy {
         return false
     }
 
-    fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X"
+    fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X" || appName == "Telegram"
 
-    /** TikTok and X can only be limited as a whole, so for them this rule is always on. */
+    /** TikTok, X and Telegram can only be limited as a whole, so for them this rule is always on. */
     fun wholeRuleOn(app: App): Boolean = isWholeAppOnly(app.name) || app.wholeApp
 
     fun shortsRuleOn(app: App): Boolean = !isWholeAppOnly(app.name) && app.shortsRuleOn
@@ -129,9 +129,8 @@ object BlockPolicy {
 
     /** True when at least one app rule or the adult shield is on. */
     fun hasAnyProtection(settings: AppSettings): Boolean {
-        val apps = listOf(settings.instagram, settings.youtube, settings.tiktok, settings.facebook, settings.x)
         return settings.adultContentBlockerEnabled ||
-            apps.any { it.blocked && (wholeRuleOn(it) || shortsRuleOn(it)) }
+            settings.apps.any { it.blocked && (wholeRuleOn(it) || shortsRuleOn(it)) }
     }
 
     /** True when [new] circumvents [old] in any way: a looser app rule, a narrower schedule or the shield off. */
@@ -145,7 +144,7 @@ object BlockPolicy {
     fun isSettingsLoosening(old: AppSettings, new: AppSettings): Boolean {
         val pairs = listOf(
             old.instagram to new.instagram, old.youtube to new.youtube, old.tiktok to new.tiktok,
-            old.facebook to new.facebook, old.x to new.x
+            old.facebook to new.facebook, old.x to new.x, old.telegram to new.telegram
         )
         return pairs.any { (before, after) -> isLoosening(before, after) } ||
             isScheduleLoosening(old, new) ||
@@ -196,6 +195,7 @@ object BlockPolicy {
             "TikTok" -> settings.tiktok
             "Facebook" -> settings.facebook
             "X" -> settings.x
+            "Telegram" -> settings.telegram
             else -> App(name = appName, blocked = false, blockedStart = 0, blockedEnd = 1439, blockedTimer = 0, features = emptyList())
         }
     }
@@ -208,6 +208,7 @@ object BlockPolicy {
             "TikTok" -> usage.tiktokSeconds
             "Facebook" -> usage.facebookSeconds
             "X" -> usage.xTotalSeconds
+            "Telegram" -> usage.telegramTotalSeconds
             else -> 0L
         }
     }
@@ -220,6 +221,7 @@ object BlockPolicy {
             "TikTok" -> usage.tiktokTotalSeconds
             "Facebook" -> usage.facebookTotalSeconds
             "X" -> usage.xTotalSeconds
+            "Telegram" -> usage.telegramTotalSeconds
             else -> 0L
         }
     }
