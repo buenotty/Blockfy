@@ -77,7 +77,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var channelsCreated = false
 
     private var overlay: ChallengeOverlay? = null
-    private var lastChallengeId: String? = null
+    private var lastChallengeIndex: Int? = null
     private var lastOverlayElapsed = 0L
 
     private fun overlay(): ChallengeOverlay = (overlay ?: ChallengeOverlay(this).also { overlay = it }).also {
@@ -341,9 +341,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val now = SystemClock.elapsedRealtime()
         if (now - lastOverlayElapsed < MIN_OVERLAY_GAP_MILLIS) return overlay?.isShowing == true
         lastOverlayElapsed = now
-        val challenge = ChallengeBank.next(lastChallengeId)
-        lastChallengeId = challenge.id
-        return overlay().showChallenge(challenge, contextLine, randomSuggestion())
+        val bank = ChallengeBank.load(resources)
+        val index = ChallengeBank.pick(bank.size, lastChallengeIndex)
+        lastChallengeIndex = index
+        return overlay().showChallenge(bank[index], contextLine, randomSuggestion())
     }
 
     private fun showCheckIn(): Boolean {
