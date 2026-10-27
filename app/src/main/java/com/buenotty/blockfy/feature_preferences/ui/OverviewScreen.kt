@@ -11,6 +11,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,6 +55,7 @@ fun BlocksScreen(
     var showStrictDialog by remember { mutableStateOf(false) }
     var showDisableAdultDialog by remember { mutableStateOf(false) }
     var showArmoredDialog by remember { mutableStateOf(false) }
+    var showTelegramOffer by remember { mutableStateOf(false) }
     var appPendingDisable by remember { mutableStateOf<String?>(null) }
 
     val strictLocked = settings.isStrictLocked()
@@ -87,7 +91,7 @@ fun BlocksScreen(
         )
 
         SectionTitle(stringResource(R.string.section_apps))
-        listOf(settings.instagram, settings.youtube, settings.tiktok, settings.facebook, settings.x).forEach { app ->
+        settings.apps.forEach { app ->
             AppBlockCard(
                 app = app,
                 usage = usage,
@@ -104,7 +108,10 @@ fun BlocksScreen(
             checked = settings.adultContentBlockerEnabled,
             onCheckedChange = { wantsOn ->
                 when {
-                    wantsOn -> viewModel.setAdultContentBlocker(true)
+                    wantsOn -> {
+                        viewModel.setAdultContentBlocker(true)
+                        if (!settings.telegram.blocked) showTelegramOffer = true
+                    }
                     strictLocked -> showStrictDialog = true
                     else -> showDisableAdultDialog = true
                 }
@@ -139,6 +146,24 @@ fun BlocksScreen(
         Spacer(Modifier.height(8.dp))
     }
 
+    if (showTelegramOffer) {
+        AlertDialog(
+            onDismissRequest = { showTelegramOffer = false },
+            title = { Text(stringResource(R.string.telegram_offer_title)) },
+            text = { Text(stringResource(R.string.telegram_offer_desc)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.setAppBlocked("Telegram", true)
+                    showTelegramOffer = false
+                }) { Text(stringResource(R.string.telegram_offer_yes)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTelegramOffer = false }) {
+                    Text(stringResource(R.string.telegram_offer_no))
+                }
+            }
+        )
+    }
     if (showArmoredDialog) {
         com.buenotty.blockfy.feature_preferences.ui.composables.ArmoredModeDialog(
             onConfirm = {

@@ -60,7 +60,8 @@ class ManifestAndDetectorTest {
             "without this flag Android hides the Reels containers the service looks for",
             config.contains("flagIncludeNotImportantViews")
         )
-        assertFalse(config.contains("telegram") || config.contains("reddit"))
+        // Telegram is blocked as a whole app (package name only); chat apps are never read.
+        assertFalse(config.contains("reddit") || config.contains("discord") || config.contains("whatsapp"))
         assertTrue(config.contains("canPerformGestures=\"false\""))
         BankPackages.ALL.forEach { bank ->
             assertFalse("a11y config must not include $bank", config.contains(bank))

@@ -85,6 +85,14 @@ data class AppSettings(
         blockedTimer = 0,
         features = emptyList()
     ),
+    val telegram: App = App(
+        name = "Telegram",
+        blocked = false,
+        blockedStart = 0,
+        blockedEnd = 1439,
+        blockedTimer = 0,
+        features = emptyList()
+    ),
     val provocationModeEnabled: Boolean = true,
     /** Show a light trick question (and a useful suggestion) when a block fires, instead of a plain alert. */
     val funChallengesEnabled: Boolean = true,
@@ -110,6 +118,9 @@ data class AppSettings(
     /** Concept topic route to the number of cards read in it. */
     val conceptsRead: Map<String, Int> = emptyMap()
 ) {
+    /** Every app Blockfy can block, in the order the home screen lists them. */
+    val apps: List<App> get() = listOf(instagram, youtube, tiktok, facebook, x, telegram)
+
     /** True while strict mode forbids loosening any block. A midnight lock expires by itself. */
     fun isStrictLocked(nowMillis: Long = System.currentTimeMillis()): Boolean {
         if (!strictModeEnabled) return false

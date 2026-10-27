@@ -12,6 +12,7 @@ data class DailyUsage(
     val tiktokSeconds: Long = 0L,
     val tiktokTotalSeconds: Long = 0L,
     val xTotalSeconds: Long = 0L,
+    val telegramTotalSeconds: Long = 0L,
     val facebookSeconds: Long = 0L,
     val facebookTotalSeconds: Long = 0L,
     val savedSeconds: Long = 0L,
@@ -28,10 +29,11 @@ data class DailyUsage(
         "TikTok" -> copy(tiktokTotalSeconds = tiktokTotalSeconds + seconds)
         "Facebook" -> copy(facebookTotalSeconds = facebookTotalSeconds + seconds)
         "X" -> copy(xTotalSeconds = xTotalSeconds + seconds)
+        "Telegram" -> copy(telegramTotalSeconds = telegramTotalSeconds + seconds)
         else -> this
     }
 
-    /** Adds time spent on Reels/Shorts only. X has no such screen, so it is never counted twice. */
+    /** Adds time spent on Reels/Shorts only. X and Telegram have no such screen, so it is never counted twice. */
     fun plusShorts(appName: String, seconds: Long): DailyUsage = when (appName) {
         "Instagram" -> copy(instagramSeconds = instagramSeconds + seconds)
         "YouTube" -> copy(youtubeSeconds = youtubeSeconds + seconds)
@@ -46,6 +48,7 @@ data class DailyUsage(
         "TikTok" -> copy(tiktokSeconds = 0L, tiktokTotalSeconds = 0L)
         "Facebook" -> copy(facebookSeconds = 0L, facebookTotalSeconds = 0L)
         "X" -> copy(xTotalSeconds = 0L)
+        "Telegram" -> copy(telegramTotalSeconds = 0L)
         else -> this
     }
 }
