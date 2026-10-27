@@ -1,43 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand tile for the About card: the launcher mark on the brand gradient. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="96dp"
     android:height="96dp"
-    android:viewportWidth="96"
-    android:viewportHeight="96">
-
-    <!-- Rounded Squircle Dark Container -->
-    <path
-        android:pathData="M16,4 L80,4 C88.8,4 96,11.2 96,20 L96,76 C96,84.8 88.8,92 80,92 L16,92 C7.2,92 0,84.8 0,76 L0,20 C0,11.2 7.2,4 16,4 Z">
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path android:pathData="M112,0H400A112,112 0 0 1 512,112V400A112,112 0 0 1 400,512H112A112,112 0 0 1 0,400V112A112,112 0 0 1 112,0Z">
         <aapt:attr name="android:fillColor">
-            <gradient
-                android:startX="48"
-                android:startY="4"
-                android:endX="48"
-                android:endY="92"
-                android:type="linear">
-                <item android:offset="0.0" android:color="#1A1F2C"/>
-                <item android:offset="1.0" android:color="#0D1017"/>
+            <gradient android:startX="0" android:startY="0" android:endX="512" android:endY="512" android:type="linear">
+                <item android:offset="0.0" android:color="#4B5BFF"/>
+                <item android:offset="1.0" android:color="#6A3DF0"/>
             </gradient>
         </aapt:attr>
     </path>
-
-    <!-- Bold White Letter "B" Body -->
-    <path
-        android:pathData="M30,24 L52,24 C59,24 65,28 65,34.5 C65,38.5 62.5,41.5 58.5,43.5 C63.5,45.5 66.5,49.5 66.5,56.5 C66.5,63.5 61,68 52,68 L30,68 Z"
-        android:fillColor="#FFFFFF"/>
-
-    <!-- Top Cutout Hole of B -->
-    <path
-        android:pathData="M39,31 L50,31 C53.5,31 56,33 56,35.5 C56,38 53.5,40 50,40 L39,40 Z"
-        android:fillColor="#171B26"/>
-
-    <!-- Bottom Cutout Hole of B -->
-    <path
-        android:pathData="M39,50 L51,50 C55,50 57.5,52 57.5,55.5 C57.5,59 55,61 51,61 L39,61 Z"
-        android:fillColor="#10131B"/>
-
-    <!-- Diagonal Slash Bar (Blockfy Focus Slash in Periwinkle / Violet) -->
-    <path
-        android:pathData="M22,31 L72,64 L68,70 L18,37 Z"
-        android:fillColor="#6875F5"/>
+    <group android:scaleX="0.82" android:scaleY="0.82" android:pivotX="256" android:pivotY="256">
+        <path android:pathData="M170,220V142A38,38 0 0 1 208,104H304A38,38 0 0 1 342,142V220" android:strokeColor="#FFFFFFFF" android:strokeWidth="28"/>
+        <path android:pathData="M170,292V370A38,38 0 0 0 208,408H304A38,38 0 0 0 342,370V292" android:strokeColor="#FFFFFFFF" android:strokeWidth="28"/>
+        <path android:fillColor="#FFFFFFFF" android:pathData="M136,236H376A20,20 0 0 1 396,256A20,20 0 0 1 376,276H136A20,20 0 0 1 116,256A20,20 0 0 1 136,236Z"/>
+    </group>
 </vector>

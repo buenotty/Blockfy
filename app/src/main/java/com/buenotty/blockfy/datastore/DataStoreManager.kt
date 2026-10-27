@@ -35,7 +35,7 @@ class DataStoreManager(private val context: Context) {
         }
         val old = before ?: return
         val new = after ?: return
-        if (BlockPolicy.isSettingsLoosening(old, new)) markLoosened()
+        if (BlockPolicy.breaksCleanDay(old, new)) markLoosened()
         if (BlockPolicy.hasAnyProtection(new)) updateToday { it.copy(hadProtection = true) }
     }
 

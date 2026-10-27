@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Balance
 import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.Code
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.QrCode2
 import androidx.compose.material.icons.rounded.Shop
 import androidx.compose.material3.Card
@@ -192,12 +193,10 @@ fun AboutScreen(overviewViewModel: OverviewViewModel = koinViewModel()) {
             }
             HeroCard(
                 modifier = Modifier.weight(1f),
-                icon = Icons.Rounded.Code,
-                title = stringResource(R.string.source_code_btn)
+                icon = Icons.Rounded.Favorite,
+                title = stringResource(R.string.support_dev_btn)
             ) {
-                context.startActivity(
-                    Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB.toUri())
-                )
+                context.startActivity(Intent(Intent.ACTION_VIEW, SupportLinks.GITHUB.toUri()))
             }
         }
 

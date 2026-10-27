@@ -3,6 +3,7 @@ package com.buenotty.blockfy.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +15,15 @@ import com.buenotty.blockfy.feature_preferences.ui.ConceptsHomeScreen
 import com.buenotty.blockfy.feature_preferences.ui.EditAppScreen
 import com.buenotty.blockfy.feature_settings.AboutScreen
 
+/** Same navigation the bottom bar uses, so a tab opened from a button is a real tab switch. */
+private fun NavHostController.openTab(route: String) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
 @Composable
 fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
@@ -24,7 +34,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.Blocks.route) {
             BlocksScreen(
                 onEditApp = { navController.navigate(Screen.EditApp.create(it)) },
-                onOpenSchedule = { navController.navigate(Screen.Settings.route) },
+                onOpenSchedule = { navController.openTab(Screen.Settings.route) },
                 onOpenConcepts = { navController.navigate(Screen.Concepts.route) }
             )
         }
@@ -39,7 +49,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
             EditAppScreen(
                 appName = entry.arguments?.getString(Screen.EditApp.ARG).orEmpty(),
                 onClose = { navController.popBackStack() },
-                onOpenSchedule = { navController.navigate(Screen.Settings.route) }
+                onOpenSchedule = { navController.openTab(Screen.Settings.route) }
             )
         }
         composable(
