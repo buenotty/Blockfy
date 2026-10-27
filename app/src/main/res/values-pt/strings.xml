@@ -494,47 +494,10 @@
     <string name="challenge_bull_a">Touro A</string>
     <string name="challenge_bull_b">Touro B</string>
     <string name="challenge_bull_title">Errou! Os dois são.</string>
-    <string name="challenge_bull_body">O A é mecânico de rodeio. O B é mecânico de oficina e está bem mais produtivo. Sua vez de fazer alguma coisa acontecer?</string>
-    <string name="challenge_more_q">Quantos vídeos faltam pra você ficar satisfeito?</string>
-    <string name="challenge_more_a">Só mais um</string>
-    <string name="challenge_more_b">Só mais dez</string>
-    <string name="challenge_more_title">Resposta certa: nenhum.</string>
-    <string name="challenge_more_body">O vídeo 11 promete o que o 10 prometeu, e quem escolhe o próximo é o algoritmo. Você já ganhou esta rodada ao parar.</string>
-    <string name="challenge_worker_q">Quem trabalha de graça pra rede social?</string>
-    <string name="challenge_worker_a">Eu</string>
-    <string name="challenge_worker_b">Eu também</string>
-    <string name="challenge_worker_title">Os dois estão certos!</string>
-    <string name="challenge_worker_body">Você entrega atenção e a plataforma fatura. Hoje você pede aumento: vai fazer algo que seja seu.</string>
-    <string name="challenge_algo_q">Quem escolheu o seu próximo vídeo?</string>
-    <string name="challenge_algo_a">Eu, claro</string>
-    <string name="challenge_algo_b">O algoritmo</string>
-    <string name="challenge_algo_title">Empate técnico.</string>
-    <string name="challenge_algo_body">Ele sugere, você jura que escolheu e o relógio corre. Você ganha o jogo saindo dele.</string>
-    <string name="challenge_leave_q">Qual é a hora certa de largar o celular?</string>
-    <string name="challenge_leave_a">Agora</string>
-    <string name="challenge_leave_b">Daqui a pouco</string>
-    <string name="challenge_leave_title">Os dois estão errados.</string>
-    <string name="challenge_leave_body">A resposta certa é "já fui". "Daqui a pouco" é só o nome do próximo vídeo.</string>
-    <string name="challenge_minute_q">Quanto dura um "só um minutinho"?</string>
-    <string name="challenge_minute_a">1 minuto</string>
-    <string name="challenge_minute_b">47 minutos</string>
-    <string name="challenge_minute_title">Pegadinha: ele estica.</string>
-    <string name="challenge_minute_body">O "minutinho" estica sozinho. O seu tempo, não. Que tal gastar ele em algo com começo, meio e fim?</string>
+    <string name="challenge_bull_body">Os dois! O A é o touro mecânico de rodeio. O B é um touro de verdade fazendo o papel de mecânico, e está bem mais produtivo que você. Sua vez de fazer alguma coisa acontecer?</string>
     <string name="checkin_help">Se estiver pesado demais, conversar ajuda. O CVV atende 24h pelo 188 (ligação gratuita).</string>
     <string name="fun_challenges_title">Desafios com humor</string>
     <string name="fun_challenges_desc">Quando um bloqueio dispara, mostra uma pegadinha rápida e uma sugestão do que fazer, em vez de só um aviso</string>
-    <string-array name="challenge_suggestions">
-        <item>Bebe um copo d\'água. Sério, vai lá.</item>
-        <item>Faz 10 agachamentos. O sofá agradece.</item>
-        <item>Manda um oi pra alguém de quem você gosta.</item>
-        <item>Dá uma volta no quarteirão: 5 minutos bastam.</item>
-        <item>Arruma uma gaveta. Qualquer uma.</item>
-        <item>Respira: 4 segundos entrando, 6 saindo. Três vezes.</item>
-        <item>Anota uma coisa que você quer fazer amanhã.</item>
-        <item>Alonga o pescoço e os ombros. Eles pediram.</item>
-        <item>Lava o rosto com água fria e volta outra pessoa.</item>
-        <item>Põe uma música e arruma o que estiver à vista.</item>
-    </string-array>
     <string-array name="checkin_titles">
         <item>Ei, pausa rápida.</item>
         <item>Tá tudo bem.</item>
@@ -563,4 +526,171 @@
     <string name="armored_confirm_btn">Quero blindar</string>
     <string name="armored_locked_msg">Modo blindado ligado. Nada pode ser desligado ou afrouxado dentro do app.</string>
     <string name="armored_locked_extra">Você escolheu isso para proteger o você de amanhã. A única saída é desinstalar o Blockfy.</string>
+    <string-array name="challenge_q">
+        <item>Quantos vídeos faltam pra você ficar satisfeito?</item>
+        <item>Quem trabalha de graça pra rede social?</item>
+        <item>Quem escolheu o seu próximo vídeo?</item>
+        <item>Qual é a hora certa de largar o celular?</item>
+        <item>Quanto dura um só um minutinho?</item>
+        <item>Qual é a cor do vídeo número 87?</item>
+        <item>Quantas vezes você abriu o celular hoje?</item>
+        <item>O que o seu polegar quer?</item>
+        <item>Quem inventou o só mais um?</item>
+        <item>Qual destes é um vídeo útil?</item>
+        <item>Quanto falta pro depois?</item>
+        <item>Qual é a capital da procrastinação?</item>
+        <item>Você precisa de mais um vídeo pra ser feliz?</item>
+        <item>Quantos reels cabem numa vida?</item>
+        <item>De quem é a culpa de você ainda estar aí?</item>
+        <item>O vídeo promete mudar sua vida em 30 segundos. Acredita?</item>
+        <item>Qual tela tem mais amigos?</item>
+        <item>Que horas são?</item>
+        <item>Quanto você pagou pra ficar aqui?</item>
+        <item>Qual é o próximo vídeo?</item>
+        <item>Se atenção fosse dinheiro, você estaria...</item>
+        <item>Escolha a melhor desculpa</item>
+        <item>Quem manda no seu dedão?</item>
+        <item>Pra que serve uma pausa?</item>
+        <item>Pergunta de ouro: você comeu hoje?</item>
+    </string-array>
+    <string-array name="challenge_a">
+        <item>Só mais um</item>
+        <item>Eu</item>
+        <item>Eu, claro</item>
+        <item>Agora</item>
+        <item>1 minuto</item>
+        <item>Azul</item>
+        <item>Umas 10</item>
+        <item>Rolar</item>
+        <item>Eu</item>
+        <item>O de gato</item>
+        <item>5 minutos</item>
+        <item>Amanhã</item>
+        <item>Preciso</item>
+        <item>Poucos</item>
+        <item>Minha</item>
+        <item>Sim</item>
+        <item>A do celular</item>
+        <item>Sei lá</item>
+        <item>Nada</item>
+        <item>Surpresa</item>
+        <item>Rico</item>
+        <item>É rapidinho</item>
+        <item>Eu</item>
+        <item>Respirar</item>
+        <item>Sim</item>
+    </string-array>
+    <string-array name="challenge_b">
+        <item>Só mais dez</item>
+        <item>Eu também</item>
+        <item>O algoritmo</item>
+        <item>Daqui a pouco</item>
+        <item>47 minutos</item>
+        <item>Eu perdi a conta</item>
+        <item>Nem vou tentar</item>
+        <item>Férias</item>
+        <item>Um engenheiro esperto</item>
+        <item>O de gato de novo</item>
+        <item>Nunca chega</item>
+        <item>O feed</item>
+        <item>Preciso muito</item>
+        <item>Todos</item>
+        <item>Do algoritmo</item>
+        <item>Já vi esse filme</item>
+        <item>A da janela</item>
+        <item>Mais tarde do que eu pensava</item>
+        <item>Meu tempo</item>
+        <item>Igual ao último</item>
+        <item>Gastando em coisa que nem lembro</item>
+        <item>Tô só pesquisando</item>
+        <item>A setinha do vídeo</item>
+        <item>Preparar o próximo vídeo</item>
+        <item>Esqueci</item>
+    </string-array>
+    <string-array name="challenge_title">
+        <item>Resposta certa: nenhum.</item>
+        <item>Os dois estão certos!</item>
+        <item>Empate técnico.</item>
+        <item>Os dois estão errados.</item>
+        <item>Pegadinha: ele estica.</item>
+        <item>Chute certo: perdeu a conta.</item>
+        <item>Resposta oficial: mais que isso.</item>
+        <item>Polegar em greve.</item>
+        <item>Os dois, de certo modo.</item>
+        <item>Gato: nota 10. Utilidade: 0.</item>
+        <item>O depois mora no amanhã.</item>
+        <item>O feed, com certeza.</item>
+        <item>Resposta certa: um copo d\'água.</item>
+        <item>Cabem todos. A vida é que não cabe neles.</item>
+        <item>Nenhum culpado: é só um hábito.</item>
+        <item>Só o filme muda.</item>
+        <item>A da janela tem sol.</item>
+        <item>Sempre é mais tarde.</item>
+        <item>Pagou com o bem mais raro.</item>
+        <item>Igual ao último, com outra roupa.</item>
+        <item>Gastando em coisa que nem lembra.</item>
+        <item>Dois clássicos.</item>
+        <item>Eu, desde agora.</item>
+        <item>Respirar. A pausa é a protagonista.</item>
+        <item>Se esqueceu, o feed ganhou.</item>
+    </string-array>
+    <string-array name="challenge_body">
+        <item>O vídeo 11 promete o que o 10 prometeu, e quem escolhe o próximo é o algoritmo. Você já ganhou esta rodada ao parar.</item>
+        <item>Você entrega atenção e a plataforma fatura. Hoje você pede aumento: vai fazer algo que seja seu.</item>
+        <item>Ele sugere, você jura que escolheu e o relógio corre. Você ganha o jogo saindo dele.</item>
+        <item>A resposta certa é já fui. Daqui a pouco é só o nome do próximo vídeo.</item>
+        <item>O minutinho estica sozinho. O seu tempo, não. Que tal gastar ele em algo com começo, meio e fim?</item>
+        <item>Depois do vídeo 20, tudo vira uma massa colorida. Troca a massa por algo que você lembre amanhã.</item>
+        <item>A média passa de 100. A boa notícia é que a próxima abertura pode ser pra algo que valha.</item>
+        <item>Ele fez milhares de rolagens hoje, sem hora extra. Dá um descanso pra ele e usa a mão pra outra coisa.</item>
+        <item>Foi desenhado pra ninguém parar. Quem para está jogando contra o sistema e ganhando.</item>
+        <item>Mas gato de verdade, no sofá, é grátis e ainda ronrona. Se tiver um por perto, vai lá.</item>
+        <item>O melhor horário é agora, por 2 minutos. Escolhe uma coisa pequena e começa.</item>
+        <item>Mas você chegou aqui e deu uma pausa. Isso já conta como um ponto.</item>
+        <item>Palpite sem pressão: seu corpo agradece mais do que o vídeo 213.</item>
+        <item>Eles se renovam sem parar. A sua tarde de sol, não.</item>
+        <item>Hábito se troca por outro hábito. Hoje o novo começa pequeno e sem drama.</item>
+        <item>Mudança de vida acontece em 30 dias de coisa pequena. Começa com uma agora.</item>
+        <item>Olha um minuto lá fora. Sem filtro, sem legenda, em alta definição.</item>
+        <item>O tempo some no feed. Vamos recuperar 10 minutinhos agora.</item>
+        <item>Tempo não tem reembolso, mas dá pra gastar bem a partir de agora.</item>
+        <item>A surpresa é uma só: o tempo que passou. Bora pra outra coisa.</item>
+        <item>Reabastece: 5 minutos de silêncio rendem juros altos.</item>
+        <item>Tem também o eu mereço. Mas merecer é descansar de verdade, e rolar não é descanso.</item>
+        <item>Agora é você que decide pra onde ele vai.</item>
+        <item>Três respirações fundas e você já está outra pessoa, mais leve.</item>
+        <item>Vai comer alguma coisa de verdade. O vídeo de comida não alimenta.</item>
+    </string-array>
+    <string-array name="challenge_suggestions">
+        <item>Bebe um copo d\'água. Sério, vai lá.</item>
+        <item>Faz 10 agachamentos. O sofá agradece.</item>
+        <item>Manda um oi pra alguém de quem você gosta.</item>
+        <item>Dá uma volta no quarteirão: 5 minutos bastam.</item>
+        <item>Arruma uma gaveta. Qualquer uma.</item>
+        <item>Respira: 4 segundos entrando, 6 saindo. Três vezes.</item>
+        <item>Anota uma coisa que você quer fazer amanhã.</item>
+        <item>Alonga o pescoço e os ombros. Eles pediram.</item>
+        <item>Lava o rosto com água fria e volta outra pessoa.</item>
+        <item>Põe uma música e arruma o que estiver à vista.</item>
+        <item>Liga pra alguém que você não fala há tempos.</item>
+        <item>Faz um café ou um chá, devagar.</item>
+        <item>Rega uma planta. Se não tem, adota uma.</item>
+        <item>Escreve três coisas boas de hoje.</item>
+        <item>Faz uma flexão de braço. Uma só já vale.</item>
+        <item>Olha pela janela por um minuto inteiro.</item>
+        <item>Descasca uma fruta e come sem tela.</item>
+        <item>Lê duas páginas de um livro, só duas.</item>
+        <item>Arruma a cama. Ponto fácil.</item>
+        <item>Sai pra tomar um solzinho por 3 minutos.</item>
+        <item>Lava a louça de uma refeição.</item>
+        <item>Escolhe a roupa de amanhã.</item>
+        <item>Faz uma lista de 3 coisas que você vai resolver hoje.</item>
+        <item>Dança uma música inteira, sem ninguém olhando.</item>
+        <item>Fala em voz alta o que você quer fazer da vida este ano.</item>
+        <item>Abraça alguém ou faz carinho num bicho.</item>
+        <item>Faz um alongamento de 2 minutos no chão.</item>
+        <item>Organiza a mochila ou a bolsa.</item>
+        <item>Escreve um bilhete pra você mesmo daqui a um mês.</item>
+        <item>Toma um banho sem celular por perto.</item>
+    </string-array>
 </resources>

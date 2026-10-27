@@ -54,13 +54,13 @@ class ChallengeOverlay(private val service: AccessibilityService) {
         val card = newCard()
         card.addView(tag(R.string.overlay_tag_challenge))
         contextLine?.takeIf { it.isNotBlank() }?.let { card.addView(body(it, muted = true, topDp = 6)) }
-        card.addView(title(service.getString(challenge.question), topDp = 10))
+        card.addView(title(challenge.question, topDp = 10))
 
         val showResult = {
             card.removeAllViews()
             card.addView(tag(R.string.overlay_tag_result))
-            card.addView(title(service.getString(challenge.resultTitle), topDp = 8, accent = true))
-            card.addView(body(service.getString(challenge.resultBody), topDp = 10))
+            card.addView(title(challenge.resultTitle, topDp = 8, accent = true))
+            card.addView(body(challenge.resultBody, topDp = 10))
             card.addView(suggestionBlock(suggestion))
             card.addView(primaryButton(R.string.overlay_btn_ok) { dismiss() })
             scheduleAutoClose()
@@ -240,8 +240,8 @@ class ChallengeOverlay(private val service: AccessibilityService) {
         setOnClickListener { onClick() }
     }
 
-    private fun choiceButton(labelRes: Int, onClick: () -> Unit) = TextView(service).apply {
-        text = service.getString(labelRes)
+    private fun choiceButton(label: String, onClick: () -> Unit) = TextView(service).apply {
+        text = label
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
         setTextColor(ink)
         typeface = Typeface.DEFAULT_BOLD
@@ -256,7 +256,7 @@ class ChallengeOverlay(private val service: AccessibilityService) {
         orientation = LinearLayout.VERTICAL
         gravity = Gravity.CENTER_HORIZONTAL
         isClickable = true
-        contentDescription = service.getString(option.label)
+        contentDescription = option.label
         setOnClickListener { onClick() }
         addView(
             ImageView(service).apply {
@@ -267,7 +267,7 @@ class ChallengeOverlay(private val service: AccessibilityService) {
             LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(138))
         )
         addView(TextView(service).apply {
-            text = service.getString(option.label)
+            text = option.label
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             setTextColor(ink)
             typeface = Typeface.DEFAULT_BOLD

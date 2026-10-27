@@ -494,47 +494,10 @@
     <string name="challenge_bull_a">Bull A</string>
     <string name="challenge_bull_b">Bull B</string>
     <string name="challenge_bull_title">Wrong! They both are.</string>
-    <string name="challenge_bull_body">A is a rodeo mechanical bull. B is a bull who works as a mechanic, and he is far more productive. Your turn to make something happen?</string>
-    <string name="challenge_more_q">How many more videos until you feel satisfied?</string>
-    <string name="challenge_more_a">Just one more</string>
-    <string name="challenge_more_b">Just ten more</string>
-    <string name="challenge_more_title">Right answer: none.</string>
-    <string name="challenge_more_body">Video 11 promises what video 10 promised, and the algorithm picks the next one. You already won this round by stopping.</string>
-    <string name="challenge_worker_q">Who is working for free for the social network?</string>
-    <string name="challenge_worker_a">Me</string>
-    <string name="challenge_worker_b">Also me</string>
-    <string name="challenge_worker_title">Both are right!</string>
-    <string name="challenge_worker_body">You supply the attention and the platform collects. Today you ask for a raise: go do something that is yours.</string>
-    <string name="challenge_algo_q">Who picked your next video?</string>
-    <string name="challenge_algo_a">Me, of course</string>
-    <string name="challenge_algo_b">The algorithm</string>
-    <string name="challenge_algo_title">Technical tie.</string>
-    <string name="challenge_algo_body">It suggests, you swear you chose, and the clock keeps running. You win by leaving the game.</string>
-    <string name="challenge_leave_q">When is the right time to put the phone down?</string>
-    <string name="challenge_leave_a">Now</string>
-    <string name="challenge_leave_b">In a bit</string>
-    <string name="challenge_leave_title">Both wrong.</string>
-    <string name="challenge_leave_body">The right answer is "already gone". "In a bit" is just the name of the next video.</string>
-    <string name="challenge_minute_q">How long does "just a minute" last?</string>
-    <string name="challenge_minute_a">1 minute</string>
-    <string name="challenge_minute_b">47 minutes</string>
-    <string name="challenge_minute_title">Trick: it stretches.</string>
-    <string name="challenge_minute_body">"A minute" stretches on its own. Your time does not. How about spending it on something with a beginning, a middle and an end?</string>
+    <string name="challenge_bull_body">Both! A is the rodeo mechanical bull. B is a real bull working as a mechanic, and he is far more productive than you. Your turn to make something happen?</string>
     <string name="checkin_help">If it feels too heavy, talking helps. In Brazil, CVV answers 24 hours a day on 188 (free call).</string>
     <string name="fun_challenges_title">Funny challenges</string>
     <string name="fun_challenges_desc">When a block fires, show a quick trick question and a suggestion of something to do, instead of a plain alert</string>
-    <string-array name="challenge_suggestions">
-        <item>Drink a glass of water. Seriously, go.</item>
-        <item>Do 10 squats. The couch will thank you.</item>
-        <item>Send a hi to someone you like.</item>
-        <item>Walk around the block: 5 minutes is enough.</item>
-        <item>Tidy one drawer. Any drawer.</item>
-        <item>Breathe: 4 seconds in, 6 out. Three times.</item>
-        <item>Write down one thing you want to do tomorrow.</item>
-        <item>Stretch your neck and shoulders. They asked.</item>
-        <item>Wash your face with cold water and come back a new person.</item>
-        <item>Put on a song and tidy whatever is in sight.</item>
-    </string-array>
     <string-array name="checkin_titles">
         <item>Hey, quick pause.</item>
         <item>It is okay.</item>
@@ -563,4 +526,171 @@
     <string name="armored_confirm_btn">Armor it</string>
     <string name="armored_locked_msg">Armored mode is on. Nothing can be turned off or loosened inside the app.</string>
     <string name="armored_locked_extra">You chose this to protect tomorrow\'s you. The only way out is uninstalling Blockfy.</string>
+    <string-array name="challenge_q">
+        <item>How many more videos until you feel satisfied?</item>
+        <item>Who is working for free for the social network?</item>
+        <item>Who picked your next video?</item>
+        <item>When is the right time to put the phone down?</item>
+        <item>How long does just a minute last?</item>
+        <item>What color is video number 87?</item>
+        <item>How many times did you open your phone today?</item>
+        <item>What does your thumb want?</item>
+        <item>Who invented just one more?</item>
+        <item>Which of these is a useful video?</item>
+        <item>How long until later?</item>
+        <item>What is the capital of procrastination?</item>
+        <item>Do you need one more video to be happy?</item>
+        <item>How many reels fit in a lifetime?</item>
+        <item>Whose fault is it you are still here?</item>
+        <item>The video promises to change your life in 30 seconds. Believe it?</item>
+        <item>Which screen has more friends?</item>
+        <item>What time is it?</item>
+        <item>How much did you pay to be here?</item>
+        <item>What is the next video?</item>
+        <item>If attention were money, you would be...</item>
+        <item>Pick the best excuse</item>
+        <item>Who is in charge of your thumb?</item>
+        <item>What is a pause for?</item>
+        <item>Golden question: did you eat today?</item>
+    </string-array>
+    <string-array name="challenge_a">
+        <item>Just one more</item>
+        <item>Me</item>
+        <item>Me, of course</item>
+        <item>Now</item>
+        <item>1 minute</item>
+        <item>Blue</item>
+        <item>About 10</item>
+        <item>To scroll</item>
+        <item>Me</item>
+        <item>The cat one</item>
+        <item>5 minutes</item>
+        <item>Tomorrow</item>
+        <item>I do</item>
+        <item>Few</item>
+        <item>Mine</item>
+        <item>Yes</item>
+        <item>The phone</item>
+        <item>No idea</item>
+        <item>Nothing</item>
+        <item>A surprise</item>
+        <item>Rich</item>
+        <item>It is quick</item>
+        <item>Me</item>
+        <item>To breathe</item>
+        <item>Yes</item>
+    </string-array>
+    <string-array name="challenge_b">
+        <item>Just ten more</item>
+        <item>Also me</item>
+        <item>The algorithm</item>
+        <item>In a bit</item>
+        <item>47 minutes</item>
+        <item>I lost count</item>
+        <item>I will not even try</item>
+        <item>A vacation</item>
+        <item>A clever engineer</item>
+        <item>The cat one again</item>
+        <item>It never arrives</item>
+        <item>The feed</item>
+        <item>I really do</item>
+        <item>All of them</item>
+        <item>The algorithm\'s</item>
+        <item>Seen that movie</item>
+        <item>The window</item>
+        <item>Later than I thought</item>
+        <item>My time</item>
+        <item>Same as the last one</item>
+        <item>Spending on things I do not remember</item>
+        <item>Just researching</item>
+        <item>The little video arrow</item>
+        <item>To prepare the next video</item>
+        <item>I forgot</item>
+    </string-array>
+    <string-array name="challenge_title">
+        <item>Right answer: none.</item>
+        <item>Both are right!</item>
+        <item>Technical tie.</item>
+        <item>Both wrong.</item>
+        <item>Trick: it stretches.</item>
+        <item>Good guess: you lost count.</item>
+        <item>Official answer: more than that.</item>
+        <item>Thumb on strike.</item>
+        <item>Both, in a way.</item>
+        <item>Cat: 10 out of 10. Usefulness: 0.</item>
+        <item>Later lives in tomorrow.</item>
+        <item>The feed, for sure.</item>
+        <item>Right answer: a glass of water.</item>
+        <item>All of them. Your life does not fit in them.</item>
+        <item>No one\'s: it is just a habit.</item>
+        <item>Only the movie changes.</item>
+        <item>The window has sunshine.</item>
+        <item>It is always later.</item>
+        <item>You paid with the rarest thing.</item>
+        <item>Same as the last one, new outfit.</item>
+        <item>Spending on things you do not remember.</item>
+        <item>Two classics.</item>
+        <item>Me, from now on.</item>
+        <item>To breathe. The pause is the star.</item>
+        <item>If you forgot, the feed won.</item>
+    </string-array>
+    <string-array name="challenge_body">
+        <item>Video 11 promises what video 10 promised, and the algorithm picks the next one. You already won this round by stopping.</item>
+        <item>You supply the attention and the platform collects. Today you ask for a raise: go do something that is yours.</item>
+        <item>It suggests, you swear you chose, and the clock keeps running. You win by leaving the game.</item>
+        <item>The right answer is already gone. In a bit is just the name of the next video.</item>
+        <item>A minute stretches on its own. Your time does not. How about spending it on something with a beginning, a middle and an end?</item>
+        <item>After video 20 everything becomes a colorful blur. Swap the blur for something you will remember tomorrow.</item>
+        <item>The average is over 100. The good news: the next time can be for something that is worth it.</item>
+        <item>It did thousands of swipes today, no overtime. Give it a break and use that hand for something else.</item>
+        <item>It was designed so nobody stops. Stopping means you are playing against the system and winning.</item>
+        <item>But a real cat on the couch is free and purrs. If there is one nearby, go.</item>
+        <item>The best time is now, for 2 minutes. Pick one small thing and start.</item>
+        <item>But you got here and took a pause. That already counts as a point.</item>
+        <item>No-pressure guess: your body thanks you more than video 213 will.</item>
+        <item>They renew nonstop. Your sunny afternoon does not.</item>
+        <item>A habit is swapped for another habit. Today the new one starts small and drama-free.</item>
+        <item>Life changes in 30 days of small things. Start with one now.</item>
+        <item>Look outside for one minute. No filter, no caption, high definition.</item>
+        <item>Time disappears in the feed. Let us win back 10 minutes now.</item>
+        <item>Time has no refund, but you can spend it well from now on.</item>
+        <item>The only surprise is how much time passed. On to something else.</item>
+        <item>Top it up: 5 minutes of quiet earns a lot of interest.</item>
+        <item>There is also I deserve it. But deserving rest means real rest, and scrolling is not rest.</item>
+        <item>Now you decide where it goes.</item>
+        <item>Three deep breaths and you are already lighter.</item>
+        <item>Go eat something real. The food video does not feed you.</item>
+    </string-array>
+    <string-array name="challenge_suggestions">
+        <item>Drink a glass of water. Seriously, go.</item>
+        <item>Do 10 squats. The couch will thank you.</item>
+        <item>Send a hi to someone you like.</item>
+        <item>Walk around the block: 5 minutes is enough.</item>
+        <item>Tidy one drawer. Any drawer.</item>
+        <item>Breathe: 4 seconds in, 6 out. Three times.</item>
+        <item>Write down one thing you want to do tomorrow.</item>
+        <item>Stretch your neck and shoulders. They asked.</item>
+        <item>Wash your face with cold water and come back a new person.</item>
+        <item>Put on a song and tidy whatever is in sight.</item>
+        <item>Call someone you have not talked to in a while.</item>
+        <item>Make a coffee or tea, slowly.</item>
+        <item>Water a plant. If you have none, adopt one.</item>
+        <item>Write down three good things from today.</item>
+        <item>Do one push-up. Just one counts.</item>
+        <item>Look out the window for a full minute.</item>
+        <item>Peel a fruit and eat it with no screen.</item>
+        <item>Read two pages of a book, only two.</item>
+        <item>Make your bed. Easy point.</item>
+        <item>Step out into the sun for 3 minutes.</item>
+        <item>Wash the dishes from one meal.</item>
+        <item>Pick tomorrow\'s outfit.</item>
+        <item>List 3 things you will sort out today.</item>
+        <item>Dance to a whole song with nobody watching.</item>
+        <item>Say out loud what you want from this year.</item>
+        <item>Hug someone or pet an animal.</item>
+        <item>Do a 2-minute stretch on the floor.</item>
+        <item>Organize your bag.</item>
+        <item>Write a note to yourself one month from now.</item>
+        <item>Take a shower with no phone nearby.</item>
+    </string-array>
 </resources>
