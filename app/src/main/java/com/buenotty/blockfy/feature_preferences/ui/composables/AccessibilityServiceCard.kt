@@ -135,6 +135,7 @@ fun AccessibilityServiceDialog(
     }
 }
 
+/** True when the system lists Blockfy as enabled, even if it was killed since (see [ServiceHealth]). */
 fun android.content.Context.isAccessibilityGranted(): Boolean {
     val expectedId = "$packageName/.feature_accessibility.ReelsBlockAccessibilityService"
     val am = getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as AccessibilityManager

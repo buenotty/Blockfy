@@ -399,6 +399,9 @@
     <string name="setup_step2_desc">Stops the phone from putting Blockfy to sleep. Without it, the blocks can stop working after a while.</string>
     <string name="setup_btn_accessibility">Turn on Accessibility</string>
     <string name="setup_btn_battery">Disable battery optimization</string>
+    <string name="setup_step1_stalled_desc">Android stopped Blockfy in the background, so nothing is being blocked. Open Accessibility, turn Blockfy off and on again.</string>
+    <string name="setup_btn_restart">Open Accessibility to restart</string>
+    <string name="setup_btn_autostart">Keep Blockfy from being stopped (auto-start)</string>
     <string name="setup_done">Done</string>
     <string name="setup_continue">Continue</string>
     <string name="setup_skip_battery">Continue without this (not recommended)</string>

@@ -399,6 +399,9 @@
     <string name="setup_step2_desc">Impede o celular de colocar o Blockfy em suspensão. Sem isso, os bloqueios podem parar de funcionar depois de um tempo.</string>
     <string name="setup_btn_accessibility">Ativar Acessibilidade</string>
     <string name="setup_btn_battery">Desativar otimização da bateria</string>
+    <string name="setup_step1_stalled_desc">O Android parou o Blockfy em segundo plano e nada está sendo bloqueado. Abra Acessibilidade, desligue o Blockfy e ligue de novo.</string>
+    <string name="setup_btn_restart">Abrir Acessibilidade para reiniciar</string>
+    <string name="setup_btn_autostart">Impedir que o Blockfy seja parado (início automático)</string>
     <string name="setup_done">Pronto</string>
     <string name="setup_continue">Continuar</string>
     <string name="setup_skip_battery">Continuar sem isso (não recomendado)</string>
