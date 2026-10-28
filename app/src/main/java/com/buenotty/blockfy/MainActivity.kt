@@ -32,7 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import com.buenotty.blockfy.feature_accessibility.ServiceHealth
 import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGranted
+import kotlinx.coroutines.delay
 import com.buenotty.blockfy.feature_setup.SetupScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -49,6 +51,8 @@ import com.buenotty.blockfy.navigation.AppNavigation
 import com.buenotty.blockfy.navigation.Screen
 import com.buenotty.blockfy.ui.theme.BlockfyTheme
 import org.koin.androidx.compose.koinViewModel
+
+private const val BIND_GRACE_MILLIS = 1_500L
 
 private data class TopLevelTab(val screen: Screen, val label: Int, val icon: ImageVector)
 
@@ -80,10 +84,19 @@ class MainActivity : AppCompatActivity() {
                 val loaded by viewModel.isLoaded.collectAsState()
                 val settings by viewModel.appSettings.collectAsState()
                 val context = LocalContext.current
+                // The system's list says "on" even after it kills the service, so the live health
+                // also needs the service to have bound. A short grace lets it bind after a cold start.
                 var accessibilityOn by remember { mutableStateOf(context.isAccessibilityGranted()) }
+                val bound by ServiceHealth.serviceBound.collectAsState()
+                var graceOver by remember { mutableStateOf(false) }
                 LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
                     accessibilityOn = context.isAccessibilityGranted()
                 }
+                LaunchedEffect(Unit) {
+                    delay(BIND_GRACE_MILLIS)
+                    graceOver = true
+                }
+                val health = ServiceHealth.of(accessibilityOn, bound)
 
                 // Remember that Accessibility was on; finding it off later, with blocks set up, means the
                 // user switched it off, which throws today's streak away.
@@ -96,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 when {
                     // Wait for the stored settings so the notice never flashes for people who
                     // already accepted it.
-                    !loaded -> Box(
+                    !loaded || (health == ServiceHealth.STALLED && !graceOver) -> Box(
                         Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background)
@@ -104,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     !settings.onboardingDone -> NoticeScreen(onAccept = viewModel::setOnboardingDone)
                     // Accessibility and background running come first. The same screen comes back if
                     // Accessibility is ever found switched off.
-                    !settings.setupDone || !accessibilityOn -> SetupScreen(onFinish = viewModel::setSetupDone)
+                    !settings.setupDone || health != ServiceHealth.RUNNING -> SetupScreen(onFinish = viewModel::setSetupDone)
                     else -> {
                         LaunchedEffect(Unit) { askForNotificationsOnce() }
                         MainScaffold()

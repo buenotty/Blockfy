@@ -1,5 +1,7 @@
 package com.buenotty.blockfy.feature_setup
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.buenotty.blockfy.R
+import com.buenotty.blockfy.feature_accessibility.ServiceHealth
+import com.buenotty.blockfy.feature_accessibility.isAggressiveBatteryVendor
+import com.buenotty.blockfy.feature_accessibility.openBackgroundSettings
 import com.buenotty.blockfy.feature_preferences.ui.composables.AccessibilityServiceDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGranted
 
@@ -54,13 +60,16 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.isAccessibilityGr
 @Composable
 fun SetupScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    var accessibilityOn by remember { mutableStateOf(context.isAccessibilityGranted()) }
+    var listed by remember { mutableStateOf(context.isAccessibilityGranted()) }
+    val bound by ServiceHealth.serviceBound.collectAsState()
+    val health = ServiceHealth.of(listed, bound)
+    val accessibilityOn = health == ServiceHealth.RUNNING
     var batteryOn by remember { mutableStateOf(context.isIgnoringBatteryOptimizations()) }
     var batterySkipped by remember { mutableStateOf(false) }
     var showDisclosure by remember { mutableStateOf(false) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        accessibilityOn = context.isAccessibilityGranted()
+        listed = context.isAccessibilityGranted()
         batteryOn = context.isIgnoringBatteryOptimizations()
     }
 
@@ -96,10 +105,17 @@ fun SetupScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
                 number = 1,
                 icon = Icons.Rounded.Accessibility,
                 title = stringResource(R.string.setup_step1_title),
-                description = stringResource(R.string.setup_step1_desc),
+                description = stringResource(
+                    if (health == ServiceHealth.STALLED) R.string.setup_step1_stalled_desc else R.string.setup_step1_desc
+                ),
                 done = accessibilityOn,
-                buttonLabel = stringResource(R.string.setup_btn_accessibility),
-                onClick = { showDisclosure = true }
+                buttonLabel = stringResource(
+                    if (health == ServiceHealth.STALLED) R.string.setup_btn_restart else R.string.setup_btn_accessibility
+                ),
+                onClick = {
+                    if (health == ServiceHealth.STALLED) context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                    else showDisclosure = true
+                }
             )
             StepCard(
                 number = 2,
@@ -110,6 +126,15 @@ fun SetupScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
                 buttonLabel = stringResource(R.string.setup_btn_battery),
                 onClick = { context.requestIgnoreBatteryOptimizations() }
             )
+
+            if (health == ServiceHealth.STALLED && isAggressiveBatteryVendor()) {
+                TextButton(
+                    onClick = { context.openBackgroundSettings() },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(stringResource(R.string.setup_btn_autostart), textAlign = TextAlign.Center)
+                }
+            }
 
             Spacer(Modifier.height(8.dp))
             Button(

@@ -91,6 +91,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        ServiceHealth.markBound(true)
         runCatching { (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(OFF_NOTICE_ID) }
         serviceScope.launch {
             dataStore.appSettingsFlow.collect {
@@ -190,6 +191,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     /** Accessibility was switched off while protection is set up: say so, loudly, with a way back. */
     override fun onUnbind(intent: Intent?): Boolean {
+        ServiceHealth.markBound(false)
         overlay?.dismiss()
         if (settings.setupDone && BlockPolicy.hasAnyProtection(settings)) {
             runCatching {
@@ -222,6 +224,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     override fun onDestroy() {
         super.onDestroy()
+        ServiceHealth.markBound(false)
         runCatching { unregisterReceiver(screenOnReceiver) }
         overlay?.dismiss()
         flushUsage()
