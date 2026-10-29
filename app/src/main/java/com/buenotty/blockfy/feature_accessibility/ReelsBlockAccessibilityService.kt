@@ -32,6 +32,7 @@ import com.buenotty.blockfy.feature_monitor.BlockReason
 import com.buenotty.blockfy.feature_monitor.BlockVerdict
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
 import com.buenotty.blockfy.feature_monitor.UsageMeter
+import com.buenotty.blockfy.feature_monitor.UsageStatsReader
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +73,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private val meter = UsageMeter()
     private var lastFlushElapsed = 0L
+    private var lastSyncElapsed = 0L
     private var tickerJob: Job? = null
     private var anchor: AccessibilityNodeInfo? = null
     private var anchorPkg: String? = null
@@ -332,6 +334,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val shortsForCredit = shortsVisible || (canScan && !deep && lastDeepShorts)
 
         creditUsage(appName, shortsForCredit)
+        syncWithSystem(appName)
 
         val usage = usageWithPending()
         val verdict = BlockPolicy.evaluate(
@@ -483,6 +486,23 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         meter.pendingTotal.forEach { (app, seconds) -> usage = usage.plusTotal(app, seconds) }
         meter.pendingShorts.forEach { (app, seconds) -> usage = usage.plusShorts(app, seconds) }
         return usage
+    }
+
+    /**
+     * With "Usage access" granted, the phone's own time in the app is the floor for ours: it
+     * covers anything our counting missed and matches what Digital Wellbeing shows. One cheap
+     * query every [SYSTEM_SYNC_MILLIS] while the app is in front, and only the raise is applied.
+     */
+    private fun syncWithSystem(appName: String) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastSyncElapsed < SYSTEM_SYNC_MILLIS) return
+        lastSyncElapsed = now
+        var system = 0L
+        for ((pkg, name) in TrackedPackages.ALL) {
+            if (name == appName) system += UsageStatsReader.secondsToday(this, pkg) ?: return
+        }
+        val have = BlockPolicy.totalSeconds(usageWithPending(), appName)
+        if (system > have) meter.pendingTotal.merge(appName, system - have, Long::plus)
     }
 
     private fun creditUsage(appName: String, shortsVisible: Boolean) {
@@ -782,6 +802,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val ALERT_CHANNEL = "blockfy_alerts_channel"
         private const val REMINDER_CHANNEL = "blockfy_reminders_channel"
         private const val TICK_MILLIS = 1_000L
+        private const val SYSTEM_SYNC_MILLIS = 30_000L
         private const val MAX_BLIND_TICKS = 3
         private const val FLUSH_INTERVAL_MILLIS = 10_000L
         private const val MAX_ADDRESS_BAR_SCAN_NODES = 40

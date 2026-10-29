@@ -751,4 +751,8 @@
     <string name="focus_2h">2 horas</string>
     <string name="focus_tomorrow">Até amanhã</string>
     <string name="adult_keyword_preview">Vai bloquear buscas que contenham: %1$s</string>
+
+    <string name="usage_access_title">Igualar o tempo do celular</string>
+    <string name="usage_access_desc">Opcional. Deixa o Blockfy ler por quanto tempo cada app ficou aberto, o mesmo número que o celular mostra, para os limites nunca errarem. Fica só neste aparelho e nunca é enviado.</string>
+    <string name="usage_access_btn">Permitir acesso ao uso</string>
 </resources>

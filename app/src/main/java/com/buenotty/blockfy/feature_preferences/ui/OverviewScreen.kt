@@ -39,6 +39,7 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
 import com.buenotty.blockfy.feature_preferences.ui.composables.StreakHero
 import com.buenotty.blockfy.feature_preferences.ui.composables.StrictModeDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.TodaySummaryCard
+import com.buenotty.blockfy.feature_preferences.ui.composables.UsageAccessCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.ToggleCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.daysLabel
 import com.buenotty.blockfy.feature_preferences.ui.composables.hoursLabel
@@ -98,6 +99,8 @@ fun BlocksScreen(
         }
 
         FocusCard(focusUntil = settings.focusUntilEpoch, onStart = viewModel::startFocus)
+
+        UsageAccessCard()
 
         SectionTitle(stringResource(R.string.section_apps))
         settings.apps.forEach { app ->
