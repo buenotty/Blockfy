@@ -102,6 +102,8 @@ data class AppSettings(
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
     val adultContentBlockerEnabled: Boolean = false,
+    /** Experimental: also look for clear adult text inside the tracked apps. Needs the adult shield on. */
+    val inAppAdultScan: Boolean = false,
     /** Sites the user added to the adult list. Append-only: [DataStoreManager.updateSettings] never lets one go. */
     val customAdultSites: List<String> = emptyList(),
     /** Search words the user added to the adult list. Append-only, like [customAdultSites]. */

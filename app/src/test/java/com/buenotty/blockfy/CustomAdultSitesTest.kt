@@ -58,6 +58,18 @@ class CustomAdultSitesTest {
     }
 
     @Test
+    fun `in-app text check flags clear adult words and links but not everyday words`() {
+        assertTrue(AdultContentDetector.isAdultText("Canal PORN BR vip"))
+        assertTrue(AdultContentDetector.isAdultText("manda nudes"))
+        assertTrue(AdultContentDetector.isAdultText("olha esse link https://www.pornhub.com/view?x=1"))
+        assertTrue(AdultContentDetector.isAdultText("grupo termosecreto", listOf("termosecreto")))
+        assertFalse(AdultContentDetector.isAdultText("pelada de domingo no campo"))
+        assertFalse(AdultContentDetector.isAdultText("a lua nua no céu"))
+        assertFalse(AdultContentDetector.isAdultText("jerome e seus amigos"))
+        assertFalse(AdultContentDetector.isAdultText(null))
+    }
+
+    @Test
     fun `settings keep the custom list across a serialisation round trip with old data`() {
         // A settings file written before the field existed must still load.
         assertEquals(emptyList<String>(), AppSettings().customAdultSites)

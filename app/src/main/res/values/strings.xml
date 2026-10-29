@@ -755,4 +755,10 @@
     <string name="usage_access_title">Match the phone\'s time exactly</string>
     <string name="usage_access_desc">Optional. Lets Blockfy read how long each app was open, the same number your phone shows, so limits are never wrong. It stays on this phone and is never sent anywhere.</string>
     <string name="usage_access_btn">Allow usage access</string>
+
+    <string name="inapp_scan_title">Look inside apps (experimental)</string>
+    <string name="inapp_scan_desc">Also checks visible text in Telegram, X, Instagram and the other tracked apps for clear adult words or links.</string>
+    <string name="inapp_scan_dialog_title">Check text inside apps?</string>
+    <string name="inapp_scan_dialog_body">With this on, Blockfy reads the text visible on screen in the apps it tracks (Telegram, X, Instagram, YouTube, TikTok and Facebook) and looks for clear adult words or links. If it finds one, it sends you home. The text is checked on this phone only: it is never saved, logged or sent anywhere, and no screenshot is taken. It can be wrong, and it uses a little more battery while those apps are open.</string>
+    <string name="inapp_scan_dialog_yes">Turn on</string>
 </resources>

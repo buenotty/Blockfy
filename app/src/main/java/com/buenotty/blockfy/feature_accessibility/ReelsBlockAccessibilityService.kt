@@ -164,6 +164,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             lastEventElapsed = nowElapsed
 
             maybeFlagAdultSite(event, pkg)
+            maybeScanAppContent(event, pkg)
             val (appName, app) = enforcedApp(pkg) ?: run {
                 // Nothing to enforce or count here right now.
                 endSession()
@@ -708,6 +709,28 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private var lastAdultScanElapsed = 0L
+    private var lastAppScanElapsed = 0L
+
+    /**
+     * Opt-in and experimental: clear adult text visible inside a tracked app (a channel name, a
+     * message, a post) sends the user home. The text is checked in memory and never kept or sent.
+     */
+    private fun maybeScanAppContent(event: AccessibilityEvent, pkg: String) {
+        if (!settings.adultContentBlockerEnabled || !settings.inAppAdultScan) return
+        if (TrackedPackages.displayName(pkg) == null) return
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastAppScanElapsed < APP_SCAN_GAP_MILLIS) return
+        lastAppScanElapsed = now
+        val root = rootFromEvent(event, pkg) ?: return
+        try {
+            if (ScreenTextScanner.hasAdultText(root, settings.customAdultKeywords, settings.customAdultSites)) {
+                serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
+                leaveAdultScreen()
+            }
+        } finally {
+            root.recycle()
+        }
+    }
 
     /**
      * Adult-site blocking reads ONLY the browser's address bar, not any other
@@ -814,6 +837,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val MIN_SOFT_ALERT_GAP_MILLIS = 4_000L
         private const val MIN_OVERLAY_GAP_MILLIS = 6_000L
         private const val ADULT_SCAN_GAP_MILLIS = 400L
+        private const val APP_SCAN_GAP_MILLIS = 2_500L
         private const val OFF_NOTICE_ID = 1003
         private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
         private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L

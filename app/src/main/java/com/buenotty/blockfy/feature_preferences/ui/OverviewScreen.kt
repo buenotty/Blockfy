@@ -60,6 +60,7 @@ fun BlocksScreen(
     var showDisableAdultDialog by remember { mutableStateOf(false) }
     var showArmoredDialog by remember { mutableStateOf(false) }
     var showTelegramOffer by remember { mutableStateOf(false) }
+    var showScanDisclosure by remember { mutableStateOf(false) }
     var appPendingDisable by remember { mutableStateOf<String?>(null) }
 
     val strictLocked = settings.isStrictLocked()
@@ -130,6 +131,22 @@ fun BlocksScreen(
             }
         )
 
+        if (settings.adultContentBlockerEnabled) {
+            ToggleCard(
+                icon = Icons.Rounded.Shield,
+                title = stringResource(R.string.inapp_scan_title),
+                summary = stringResource(R.string.inapp_scan_desc),
+                checked = settings.inAppAdultScan,
+                onCheckedChange = { wantsOn ->
+                    when {
+                        wantsOn -> showScanDisclosure = true
+                        strictLocked -> showStrictDialog = true
+                        else -> viewModel.setInAppAdultScan(false)
+                    }
+                }
+            )
+        }
+
         AdultSitesCard(
             entries = settings.customAdultSites + settings.customAdultKeywords,
             onAdd = viewModel::addAdultEntry
@@ -163,6 +180,22 @@ fun BlocksScreen(
         Spacer(Modifier.height(8.dp))
     }
 
+    if (showScanDisclosure) {
+        AlertDialog(
+            onDismissRequest = { showScanDisclosure = false },
+            title = { Text(stringResource(R.string.inapp_scan_dialog_title)) },
+            text = { Text(stringResource(R.string.inapp_scan_dialog_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.setInAppAdultScan(true)
+                    showScanDisclosure = false
+                }) { Text(stringResource(R.string.inapp_scan_dialog_yes)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showScanDisclosure = false }) { Text(stringResource(R.string.checkin_later)) }
+            }
+        )
+    }
     if (showTelegramOffer) {
         AlertDialog(
             onDismissRequest = { showTelegramOffer = false },

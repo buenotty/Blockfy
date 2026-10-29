@@ -198,7 +198,8 @@ object BlockPolicy {
         )
         return pairs.any { (before, after) -> isLoosening(before, after) } ||
             isScheduleLoosening(old, new) ||
-            (old.adultContentBlockerEnabled && !new.adultContentBlockerEnabled)
+            (old.adultContentBlockerEnabled && !new.adultContentBlockerEnabled) ||
+            (old.inAppAdultScan && !new.inAppAdultScan)
     }
 
     /**

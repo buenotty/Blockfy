@@ -294,6 +294,23 @@ object AdultContentDetector {
         "conteudo adulto", "conteudo +18", "conteudo 18+", "vazados nudes", "videos vazados"
     )
 
+    /** Words that are fine in everyday chat ("pelada" is a football match), so the in-app check skips them. */
+    private val EVERYDAY_WORDS = setOf("nua", "nuas", "pelada", "peladas", "naked", "nude")
+
+    /**
+     * Text seen inside another app (a channel name, a message, a post): clear adult words, adult
+     * links, and the user's own keywords. Stricter than the address-bar check because chat text
+     * is far noisier than a URL.
+     */
+    fun isAdultText(rawText: String?, extraKeywords: Collection<String> = emptyList(), extraHosts: Collection<String> = emptyList()): Boolean {
+        if (rawText.isNullOrBlank()) return false
+        val text = normalize(rawText).replace('_', ' ').replace('-', ' ')
+        HOST_IN_TEXT.findAll(text).forEach { if (isBlockedHost(it.groupValues[1], extraHosts)) return true }
+        return (STRONG_SEARCH_TERMS - EVERYDAY_WORDS).any { containsToken(text, normalize(it)) } ||
+            ADULT_PHRASES.any { containsToken(text, normalize(it)) } ||
+            extraKeywords.any { containsToken(text, it) }
+    }
+
     /** Words that point at a group, channel or invite hunt. Alone they are harmless. */
     private val GROUP_CONTEXT_TERMS = setOf(
         "telegram", "tg", "whatsapp", "zap", "zapzap", "discord", "grupo", "grupos", "canal", "canais",

@@ -28,6 +28,7 @@ object ListeningScope {
             }
         }
         if (settings.adultContentBlockerEnabled) result += AdultContentDetector.BROWSER_PACKAGES
+        if (settings.adultContentBlockerEnabled && settings.inAppAdultScan) result += TrackedPackages.ALL.keys
         return if (result.isEmpty()) setOf(NOTHING) else result
     }
 }
