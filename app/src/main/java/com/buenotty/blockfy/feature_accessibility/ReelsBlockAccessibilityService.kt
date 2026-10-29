@@ -712,7 +712,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val addressBarText = readAddressBar(root, pkg)
             if (addressBarText != null &&
                 (AdultContentDetector.isAdultContent(addressBarText, settings.customAdultSites) ||
-                    AdultContentDetector.isAdultSearch(addressBarText))
+                    AdultContentDetector.isAdultSearch(addressBarText, settings.customAdultKeywords))
             ) {
                 leaveAdultScreen()
             }

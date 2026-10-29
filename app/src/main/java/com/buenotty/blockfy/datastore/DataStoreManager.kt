@@ -35,6 +35,7 @@ class DataStoreManager(private val context: Context) {
             transform(current).let {
                 it.copy(
                     customAdultSites = (current.customAdultSites + it.customAdultSites).distinct(),
+                    customAdultKeywords = (current.customAdultKeywords + it.customAdultKeywords).distinct(),
                     seenAdultIn = (current.seenAdultIn + it.seenAdultIn).distinct(),
                     checkInDone = current.checkInDone || it.checkInDone,
                     // A running focus session cannot be shortened, only extended.

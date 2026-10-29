@@ -127,7 +127,10 @@ fun BlocksScreen(
             }
         )
 
-        AdultSitesCard(sites = settings.customAdultSites, onAdd = viewModel::addAdultSite)
+        AdultSitesCard(
+            entries = settings.customAdultSites + settings.customAdultKeywords,
+            onAdd = viewModel::addAdultEntry
+        )
 
         SectionTitle(stringResource(R.string.section_focus))
         ToggleCard(

@@ -702,12 +702,12 @@
     <string name="telegram_offer_yes">Bloquear Telegram</string>
     <string name="telegram_offer_no">Não, obrigado</string>
 
-    <string name="adult_sites_title">Seus sites bloqueados</string>
-    <string name="adult_sites_summary_empty">Adicione um site que a lista não pegou. Depois de adicionado, nunca mais poderá ser removido.</string>
+    <string name="adult_sites_title">Seus sites e palavras bloqueados</string>
+    <string name="adult_sites_summary_empty">Adicione um site ou uma palavra de busca que a lista não pegou. Depois de adicionado, nunca mais poderá ser removido.</string>
     <string name="adult_sites_summary_count">%1$d adicionados (permanente): %2$s</string>
-    <string name="adult_sites_add">Adicionar site</string>
-    <string name="adult_sites_field">Endereço do site</string>
-    <string name="adult_sites_invalid">Isso não parece um endereço de site.</string>
+    <string name="adult_sites_add">Adicionar site ou palavra</string>
+    <string name="adult_sites_field">Endereço do site ou palavra</string>
+    <string name="adult_sites_invalid">Digite um site (exemplo.com) ou uma palavra com 4 ou mais letras.</string>
     <string name="adult_sites_already">Esse site já está bloqueado.</string>
     <string name="adult_sites_preview">Vai bloquear: %1$s e todas as páginas dele</string>
     <string name="adult_sites_next">Continuar</string>
@@ -750,4 +750,5 @@
     <string name="focus_1h">1 hora</string>
     <string name="focus_2h">2 horas</string>
     <string name="focus_tomorrow">Até amanhã</string>
+    <string name="adult_keyword_preview">Vai bloquear buscas que contenham: %1$s</string>
 </resources>

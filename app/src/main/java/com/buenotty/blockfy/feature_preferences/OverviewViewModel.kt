@@ -6,6 +6,7 @@ import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.datastore.DailyUsage
 import com.buenotty.blockfy.datastore.DataStoreManager
 import com.buenotty.blockfy.feature_preferences.repository.models.App
+import com.buenotty.blockfy.feature_accessibility.AdultEntry
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_monitor.DayState
 import com.buenotty.blockfy.feature_monitor.StreakCalculator
@@ -99,8 +100,11 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun answerCheckIn(apps: List<String>) = update { BlockPolicy.applyCheckIn(it, apps) }
 
-    /** Permanent: the data layer never drops a site once added. */
-    fun addAdultSite(host: String) = update { it.copy(customAdultSites = it.customAdultSites + host) }
+    /** Permanent: the data layer never drops a site or keyword once added. */
+    fun addAdultEntry(entry: AdultEntry) = update {
+        if (entry.isSite) it.copy(customAdultSites = it.customAdultSites + entry.value)
+        else it.copy(customAdultKeywords = it.customAdultKeywords + entry.value)
+    }
 
     fun setProvocationMode(enabled: Boolean) = update { it.copy(provocationModeEnabled = enabled) }
 

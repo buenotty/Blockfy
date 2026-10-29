@@ -5,6 +5,9 @@ import com.buenotty.blockfy.R
 import java.text.Normalizer
 import java.util.Locale
 
+/** A permanent entry the user added to the adult list: a site, or a search keyword. */
+data class AdultEntry(val value: String, val isSite: Boolean)
+
 object AdultContentDetector {
 
     val BROWSER_PACKAGES = setOf(
@@ -220,6 +223,19 @@ object AdultContentDetector {
         return text.takeIf { valid }
     }
 
+    private val KEYWORD = Regex("^[a-z0-9]+( [a-z0-9]+){0,2}$")
+
+    /** A search word or short phrase (up to three words) in its stored form, or null when it is not usable. */
+    fun normalizeKeyword(raw: String): String? {
+        val text = normalize(raw).trim().replace(Regex("\\s+"), " ")
+        return text.takeIf { it.length in 4..40 && KEYWORD.matches(it) }
+    }
+
+    /** What the user typed, read as a site when it looks like one and as a search keyword otherwise. */
+    fun parseEntry(raw: String): AdultEntry? =
+        normalizeSite(raw)?.let { AdultEntry(it, isSite = true) }
+            ?: normalizeKeyword(raw)?.let { AdultEntry(it, isSite = false) }
+
     /** [extraHosts] are sites the user added; they match the host itself and its subdomains only. */
     fun isBlockedHost(host: String?, extraHosts: Collection<String> = emptyList()): Boolean {
         if (host.isNullOrBlank()) return false
@@ -299,13 +315,14 @@ object AdultContentDetector {
      * "unaware" never match. A group word plus an adult word also matches, which catches searches
      * for adult Telegram, WhatsApp or Discord groups. Only used on the browser's address bar.
      */
-    fun isAdultSearch(rawText: String?): Boolean {
+    fun isAdultSearch(rawText: String?, extraKeywords: Collection<String> = emptyList()): Boolean {
         if (rawText.isNullOrBlank()) return false
         val normalized = normalize(rawText)
             .replace("%2b", "+").replace("%20", " ").replace('_', ' ').replace('-', ' ')
         // In a URL query a plus sign is a space, but a typed "+18" keeps its sign before the number.
         val spaced = Regex("\\+(?!\\d)").replace(normalized, " ")
         if (STRONG_SEARCH_TERMS.any { containsToken(spaced, normalize(it)) }) return true
+        if (extraKeywords.any { containsToken(spaced, it) }) return true
         val hasGroupWord = GROUP_CONTEXT_TERMS.any { containsToken(spaced, it) }
         return hasGroupWord && GROUP_ADULT_TERMS.any { containsToken(spaced, normalize(it)) }
     }
