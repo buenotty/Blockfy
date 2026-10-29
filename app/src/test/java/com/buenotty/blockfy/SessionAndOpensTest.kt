@@ -105,6 +105,22 @@ class SessionAndOpensTest {
     }
 
     @Test
+    fun `week recap sums the last seven days including today`() {
+        val today = java.time.LocalDate.of(2026, 10, 29)
+        val days = listOf(
+            com.buenotty.blockfy.datastore.DayRecord("2026-10-22", blocks = 9, savedSeconds = 9_000, clean = true), // outside the window
+            com.buenotty.blockfy.datastore.DayRecord("2026-10-23", blocks = 2, savedSeconds = 600, clean = true),
+            com.buenotty.blockfy.datastore.DayRecord("2026-10-27", blocks = 3, savedSeconds = 900, clean = false),
+            com.buenotty.blockfy.datastore.DayRecord("2026-10-28", blocks = 1, savedSeconds = 300, clean = true)
+        )
+        val usage = DailyUsage(date = "2026-10-29", blockedAttemptsToday = 4, savedSeconds = 1_200)
+        val recap = com.buenotty.blockfy.feature_monitor.WeekRecap.of(days, usage, todayClean = true, todayDate = today)
+        assertEquals(3, recap.cleanDays)
+        assertEquals(10, recap.blocks)
+        assertEquals(50, recap.savedMinutes)
+    }
+
+    @Test
     fun `resetting the session after a break starts from zero`() {
         val m = UsageMeter()
         m.credit("Instagram", false, 0L)

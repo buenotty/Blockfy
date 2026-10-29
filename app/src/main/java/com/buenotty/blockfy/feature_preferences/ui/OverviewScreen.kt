@@ -34,6 +34,7 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.DailyMotivationCa
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultContentDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.FocusCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableBlockerDialog
+import com.buenotty.blockfy.feature_preferences.ui.composables.RecapCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.ScheduleSummaryCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
 import com.buenotty.blockfy.feature_preferences.ui.composables.StreakHero
@@ -55,6 +56,7 @@ fun BlocksScreen(
     val settings by viewModel.appSettings.collectAsState()
     val usage by viewModel.dailyUsage.collectAsState()
     val streak by viewModel.streak.collectAsState()
+    val recap by viewModel.weekRecap.collectAsState()
 
     var showStrictDialog by remember { mutableStateOf(false) }
     var showDisableAdultDialog by remember { mutableStateOf(false) }
@@ -89,6 +91,8 @@ fun BlocksScreen(
         DailyMotivationCard(text = motivation)
 
         TodaySummaryCard(blocks = usage.blockedAttemptsToday, savedSeconds = usage.savedSeconds)
+
+        if (!recap.isEmpty) RecapCard(recap)
 
         ScheduleSummaryCard(
             summary = "${daysLabel(settings.scheduleWeekdays)} · ${hoursLabel(settings.scheduleStart, settings.scheduleEnd)}",

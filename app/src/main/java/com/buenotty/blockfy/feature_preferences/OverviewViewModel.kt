@@ -8,6 +8,7 @@ import com.buenotty.blockfy.datastore.DataStoreManager
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import com.buenotty.blockfy.feature_accessibility.AdultEntry
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
+import com.buenotty.blockfy.feature_monitor.WeekRecap
 import com.buenotty.blockfy.feature_monitor.DayState
 import com.buenotty.blockfy.feature_monitor.StreakCalculator
 import com.buenotty.blockfy.feature_monitor.StreakInfo
@@ -57,6 +58,15 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
             initialValue = StreakInfo(current = 0, best = 0, todayClean = false, lostDays = 0, lastDays = List(7) { DayState.EMPTY })
+        )
+
+    val weekRecap: StateFlow<WeekRecap> =
+        combine(dataStoreManager.historyFlow, dailyUsage, streak) { history, usage, streak ->
+            WeekRecap.of(history.days, usage, streak.todayClean)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = WeekRecap(0, 0, 0)
         )
 
     init {

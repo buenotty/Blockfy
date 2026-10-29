@@ -761,4 +761,7 @@
     <string name="inapp_scan_dialog_title">Check text inside apps?</string>
     <string name="inapp_scan_dialog_body">With this on, Blockfy reads the text visible on screen in the apps it tracks (Telegram, X, Instagram, YouTube, TikTok and Facebook) and looks for clear adult words or links. If it finds one, it sends you home. The text is checked on this phone only: it is never saved, logged or sent anywhere, and no screenshot is taken. It can be wrong, and it uses a little more battery while those apps are open.</string>
     <string name="inapp_scan_dialog_yes">Turn on</string>
+
+    <string name="recap_title">Your last 7 days</string>
+    <string name="recap_body">%1$d clean days, %2$d blocked temptations, about %3$d min saved.</string>
 </resources>

@@ -761,4 +761,7 @@
     <string name="inapp_scan_dialog_title">Verificar o texto dentro dos apps?</string>
     <string name="inapp_scan_dialog_body">Com isso ligado, o Blockfy lê o texto visível na tela dos apps que rastreia (Telegram, X, Instagram, YouTube, TikTok e Facebook) e procura palavras ou links adultos claros. Se achar, leva você para a tela inicial. O texto é verificado só neste aparelho: nunca é salvo, registrado nem enviado, e nenhuma captura de tela é feita. Pode errar e gasta um pouco mais de bateria enquanto esses apps estão abertos.</string>
     <string name="inapp_scan_dialog_yes">Ligar</string>
+
+    <string name="recap_title">Seus últimos 7 dias</string>
+    <string name="recap_body">%1$d dias limpos, %2$d tentações bloqueadas, cerca de %3$d min poupados.</string>
 </resources>
