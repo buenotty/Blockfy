@@ -23,7 +23,7 @@ object ListeningScope {
         if (BlockPolicy.isScheduleActive(settings, nowMillis, timeZone)) {
             for ((pkg, name) in TrackedPackages.ALL) {
                 val app = BlockPolicy.appConfig(settings, name)
-                if (app.blocked && (BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app))) result += pkg
+                if (app.blocked && BlockPolicy.anyRuleOn(app)) result += pkg
             }
         }
         if (settings.adultContentBlockerEnabled) result += AdultContentDetector.BROWSER_PACKAGES

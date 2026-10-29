@@ -92,6 +92,10 @@ private const val MAX_MINUTES = 1440
 private const val MINUTES_STEP = 5
 private val MINUTE_SHORTCUTS = listOf(15, 30, 45, 60, 90, 120)
 private const val DEFAULT_WHOLE_MINUTES = 60
+private const val DEFAULT_SESSION_MINUTES = 10
+private const val DEFAULT_BREAK_MINUTES = 15
+private const val DEFAULT_OPENS = 8
+private const val MAX_OPENS = 99
 private const val DEFAULT_SHORTS_MINUTES = 15
 
 /** What one rule does: nothing, block outright, or allow some minutes a day. */
@@ -166,6 +170,18 @@ private fun EditAppForm(
         mutableStateOf(saved.dailyLimitMinutes.takeIf { it > 0 } ?: DEFAULT_SHORTS_MINUTES)
     }
 
+    var sessionOn by rememberSaveable(saved.name) { mutableStateOf(saved.sessionLimitMinutes > 0) }
+    var sessionMinutes by rememberSaveable(saved.name) {
+        mutableStateOf(saved.sessionLimitMinutes.takeIf { it > 0 } ?: DEFAULT_SESSION_MINUTES)
+    }
+    var breakMinutes by rememberSaveable(saved.name) {
+        mutableStateOf(saved.sessionBreakMinutes.takeIf { it > 0 } ?: DEFAULT_BREAK_MINUTES)
+    }
+    var opensOn by rememberSaveable(saved.name) { mutableStateOf(saved.opensDailyLimit > 0) }
+    var opensCount by rememberSaveable(saved.name) {
+        mutableStateOf(saved.opensDailyLimit.takeIf { it > 0 } ?: DEFAULT_OPENS)
+    }
+
     var showLoosenConfirm by remember { mutableStateOf(false) }
     var showStrictDialog by remember { mutableStateOf(false) }
     var showDiscard by remember { mutableStateOf(false) }
@@ -175,11 +191,16 @@ private fun EditAppForm(
         wholeApp = wholeMode != RuleMode.OFF,
         appTotalDailyLimitMinutes = if (wholeMode == RuleMode.LIMIT) wholeMinutes else 0,
         shortsRuleOn = shortsMode != RuleMode.OFF,
-        dailyLimitMinutes = if (shortsMode == RuleMode.LIMIT) shortsMinutes else 0
+        dailyLimitMinutes = if (shortsMode == RuleMode.LIMIT) shortsMinutes else 0,
+        sessionLimitMinutes = if (sessionOn) sessionMinutes else 0,
+        sessionBreakMinutes = if (sessionOn) breakMinutes else 0,
+        opensDailyLimit = if (opensOn) opensCount else 0
     )
     val dirty = draft != saved
     val minutesValid = (wholeMode != RuleMode.LIMIT || wholeMinutes in 1..MAX_MINUTES) &&
-        (wholeOnly || shortsMode != RuleMode.LIMIT || shortsMinutes in 1..MAX_MINUTES)
+        (wholeOnly || shortsMode != RuleMode.LIMIT || shortsMinutes in 1..MAX_MINUTES) &&
+        (!sessionOn || (sessionMinutes in 1..MAX_MINUTES && breakMinutes in 1..MAX_MINUTES)) &&
+        (!opensOn || opensCount in 1..MAX_OPENS)
 
     // Strict mode still lets the user make a block stricter; it only refuses to loosen one.
     val loosening = BlockPolicy.isLoosening(saved, draft)
@@ -330,6 +351,20 @@ private fun EditAppForm(
                     }
                 }
 
+                ExtraLimitsCard(
+                    sessionOn = sessionOn,
+                    sessionMinutes = sessionMinutes,
+                    breakMinutes = breakMinutes,
+                    opensOn = opensOn,
+                    opensCount = opensCount,
+                    onSessionOn = { sessionOn = it },
+                    onSessionMinutes = { sessionMinutes = it },
+                    onBreakMinutes = { breakMinutes = it },
+                    onOpensOn = { opensOn = it },
+                    onOpensCount = { opensCount = it },
+                    onDone = { focusManager.clearFocus() }
+                )
+
                 ScheduleLinkCard(settings = settings, onOpen = onOpenSchedule)
 
                 Spacer(Modifier.height(8.dp))
@@ -476,6 +511,89 @@ private fun ScheduleLinkCard(settings: AppSettings, onOpen: () -> Unit) {
                 TextButton(onClick = onOpen) { Text(stringResource(R.string.schedule_link_btn)) }
             }
         }
+    }
+}
+
+/** Session limit with a break, and a daily cap on how many times the app may be opened. */
+@Composable
+private fun ExtraLimitsCard(
+    sessionOn: Boolean,
+    sessionMinutes: Int,
+    breakMinutes: Int,
+    opensOn: Boolean,
+    opensCount: Int,
+    onSessionOn: (Boolean) -> Unit,
+    onSessionMinutes: (Int) -> Unit,
+    onBreakMinutes: (Int) -> Unit,
+    onOpensOn: (Boolean) -> Unit,
+    onOpensCount: (Int) -> Unit,
+    onDone: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionTitle(stringResource(R.string.extras_title))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                ExtraSwitchRow(
+                    title = stringResource(R.string.extras_session_title),
+                    description = stringResource(R.string.extras_session_desc),
+                    checked = sessionOn,
+                    onChecked = onSessionOn
+                )
+                if (sessionOn) {
+                    Text(stringResource(R.string.extras_session_minutes), style = MaterialTheme.typography.labelLarge)
+                    MinutesPicker(minutes = sessionMinutes, onChange = onSessionMinutes, onDone = onDone)
+                    Text(stringResource(R.string.extras_break_minutes), style = MaterialTheme.typography.labelLarge)
+                    MinutesPicker(minutes = breakMinutes, onChange = onBreakMinutes, onDone = onDone)
+                }
+                ExtraSwitchRow(
+                    title = stringResource(R.string.extras_opens_title),
+                    description = stringResource(R.string.extras_opens_desc),
+                    checked = opensOn,
+                    onChecked = onOpensOn
+                )
+                if (opensOn) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                    ) {
+                        FilledIconButton(
+                            onClick = { onOpensCount((opensCount - 1).coerceAtLeast(1)) },
+                            enabled = opensCount > 1,
+                            modifier = Modifier.size(48.dp)
+                        ) { Icon(Icons.Rounded.Remove, contentDescription = stringResource(R.string.minutes_less)) }
+                        Text(
+                            stringResource(R.string.extras_opens_count, opensCount),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        FilledIconButton(
+                            onClick = { onOpensCount((opensCount + 1).coerceAtMost(MAX_OPENS)) },
+                            enabled = opensCount < MAX_OPENS,
+                            modifier = Modifier.size(48.dp)
+                        ) { Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.minutes_more)) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExtraSwitchRow(title: String, description: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Switch(checked = checked, onCheckedChange = onChecked)
     }
 }
 

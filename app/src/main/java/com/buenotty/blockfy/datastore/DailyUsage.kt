@@ -20,8 +20,18 @@ data class DailyUsage(
     /** The user turned a block off or loosened it today, so today cannot count as a clean day. */
     val loosened: Boolean = false,
     /** Some block or the adult shield was on at some point today. */
-    val hadProtection: Boolean = false
+    val hadProtection: Boolean = false,
+    /** Times each app was opened today (a new session after a real absence). */
+    val opens: Map<String, Int> = emptyMap(),
+    /** Epoch millis until which each app stays blocked by a session-limit break. */
+    val breakUntil: Map<String, Long> = emptyMap()
 ) {
+    fun plusOpens(appName: String, count: Int): DailyUsage =
+        copy(opens = opens + (appName to (opens[appName] ?: 0) + count))
+
+    fun withBreak(appName: String, untilMillis: Long): DailyUsage =
+        copy(breakUntil = breakUntil + (appName to untilMillis))
+
     /** Adds time spent anywhere in the app. */
     fun plusTotal(appName: String, seconds: Long): DailyUsage = when (appName) {
         "Instagram" -> copy(instagramTotalSeconds = instagramTotalSeconds + seconds)
@@ -42,7 +52,10 @@ data class DailyUsage(
         else -> this
     }
 
-    fun resetApp(appName: String): DailyUsage = when (appName) {
+    fun resetApp(appName: String): DailyUsage =
+        resetSeconds(appName).copy(opens = opens - appName, breakUntil = breakUntil - appName)
+
+    private fun resetSeconds(appName: String): DailyUsage = when (appName) {
         "Instagram" -> copy(instagramSeconds = 0L, instagramTotalSeconds = 0L)
         "YouTube" -> copy(youtubeSeconds = 0L, youtubeTotalSeconds = 0L)
         "TikTok" -> copy(tiktokSeconds = 0L, tiktokTotalSeconds = 0L)

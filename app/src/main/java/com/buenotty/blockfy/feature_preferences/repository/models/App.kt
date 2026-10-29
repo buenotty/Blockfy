@@ -31,5 +31,11 @@ data class App(
     /** The whole-app rule is on. TikTok and X always behave as if it were. */
     val wholeApp: Boolean = false,
     /** The Reels/Shorts rule is on. Ignored for TikTok and X. */
-    val shortsRuleOn: Boolean = true
+    val shortsRuleOn: Boolean = true,
+    /** Longest continuous stay in the app, in minutes. 0 means no session limit. */
+    val sessionLimitMinutes: Int = 0,
+    /** Minutes the app stays blocked once a session limit is reached. */
+    val sessionBreakMinutes: Int = 0,
+    /** Most times the app may be opened per day. 0 means no limit. */
+    val opensDailyLimit: Int = 0
 )

@@ -92,6 +92,10 @@ class DataStoreManager(private val context: Context) {
 
     suspend fun addTotalAppUsage(appName: String, seconds: Long) = updateToday { it.plusTotal(appName, seconds) }
 
+    suspend fun addOpens(appName: String, count: Int) = updateToday { it.plusOpens(appName, count) }
+
+    suspend fun startBreak(appName: String, untilMillis: Long) = updateToday { it.withBreak(appName, untilMillis) }
+
     suspend fun recordBlockedDistraction(estimatedSecondsSaved: Long = 300L) = updateToday {
         it.copy(
             blockedAttemptsToday = it.blockedAttemptsToday + 1,

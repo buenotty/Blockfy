@@ -10,7 +10,16 @@ enum class BlockReason {
     NONE,
     SCHEDULE,
     DAILY_LIMIT,
-    TOTAL_LIMIT
+    TOTAL_LIMIT,
+
+    /** A session limit was reached and its break is still running. */
+    BREAK,
+
+    /** The longest allowed stay in the app was reached. */
+    SESSION_LIMIT,
+
+    /** The app was opened more times today than allowed. */
+    OPENS_LIMIT
 }
 
 data class BlockVerdict(
@@ -102,10 +111,20 @@ object BlockPolicy {
 
     fun shortsRuleOn(app: App): Boolean = !isWholeAppOnly(app.name) && app.shortsRuleOn
 
+    /** Session and opens limits work for every app, alone or next to the whole-app and Reels/Shorts rules. */
+    fun extraRulesOn(app: App): Boolean = app.sessionLimitMinutes > 0 || app.opensDailyLimit > 0
+
+    /** True when any rule at all is on for [app], so the service must listen to it. */
+    fun anyRuleOn(app: App): Boolean = wholeRuleOn(app) || shortsRuleOn(app) || extraRulesOn(app)
+
     private fun limitLoosened(oldLimit: Int, newLimit: Int): Boolean = when {
         oldLimit <= 0 -> newLimit > 0
         else -> newLimit > oldLimit
     }
+
+    /** For the extra limits, 0 means "off", so switching one off is the loosest change. */
+    private fun extraLimitLoosened(oldLimit: Int, newLimit: Int): Boolean =
+        oldLimit > 0 && (newLimit <= 0 || newLimit > oldLimit)
 
     /**
      * True when [new] lets the user use the app in some situation where [old] would have blocked
@@ -124,6 +143,9 @@ object BlockPolicy {
             if (!shortsRuleOn(new)) return true
             if (limitLoosened(old.dailyLimitMinutes, new.dailyLimitMinutes)) return true
         }
+        if (extraLimitLoosened(old.sessionLimitMinutes, new.sessionLimitMinutes)) return true
+        if (old.sessionLimitMinutes > 0 && new.sessionBreakMinutes < old.sessionBreakMinutes) return true
+        if (extraLimitLoosened(old.opensDailyLimit, new.opensDailyLimit)) return true
         return false
     }
 
@@ -152,7 +174,7 @@ object BlockPolicy {
     /** True when at least one app rule or the adult shield is on. */
     fun hasAnyProtection(settings: AppSettings): Boolean {
         return settings.adultContentBlockerEnabled ||
-            settings.apps.any { it.blocked && (wholeRuleOn(it) || shortsRuleOn(it)) }
+            settings.apps.any { it.blocked && anyRuleOn(it) }
     }
 
     /** True when [new] circumvents [old] in any way: a looser app rule, a narrower schedule or the shield off. */
@@ -183,7 +205,9 @@ object BlockPolicy {
         usage: DailyUsage,
         nowMillis: Long = System.currentTimeMillis(),
         shortsVisible: Boolean = true,
-        timeZone: TimeZone = TimeZone.getDefault()
+        timeZone: TimeZone = TimeZone.getDefault(),
+        /** Seconds of the running stay in the app, for the session limit. */
+        sessionSeconds: Long = 0L
     ): BlockVerdict {
         val appName = TrackedPackages.displayName(packageName)
             ?: return BlockVerdict(BlockReason.NONE, "", packageName)
@@ -192,6 +216,17 @@ object BlockPolicy {
         val app = appConfig(settings, appName)
         if (!app.blocked) return none
         if (!isScheduleActive(settings, nowMillis, timeZone)) return none
+
+        fun wholeBlock(reason: BlockReason) = BlockVerdict(reason, appName, packageName, wholeApp = true)
+        if (app.sessionLimitMinutes > 0 && nowMillis < (usage.breakUntil[appName] ?: 0L)) {
+            return wholeBlock(BlockReason.BREAK)
+        }
+        if (app.opensDailyLimit > 0 && (usage.opens[appName] ?: 0) > app.opensDailyLimit) {
+            return wholeBlock(BlockReason.OPENS_LIMIT)
+        }
+        if (app.sessionLimitMinutes > 0 && sessionSeconds >= app.sessionLimitMinutes * 60L) {
+            return wholeBlock(BlockReason.SESSION_LIMIT)
+        }
 
         if (wholeRuleOn(app)) {
             val limit = app.appTotalDailyLimitMinutes

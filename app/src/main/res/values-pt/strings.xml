@@ -727,4 +727,16 @@
     <string name="checkin_suggest_title">Bloquear %1$s por completo?</string>
     <string name="checkin_suggest_body">Bloquear esses apps por completo é a forma mais forte de proteger sua sequência. Você pode desativar depois, mas vai precisar de uma pausa antes.</string>
     <string name="checkin_unblock_reminder">Você disse que já viu pornografia neste app. Tem certeza de que quer desbloqueá-lo agora?</string>
+
+    <string name="toast_session_limit">%1$s: %2$d min seguidos já bastam. Faça uma pausa de %3$d min.</string>
+    <string name="toast_break_active">%1$s está em pausa. Volta em %2$d min.</string>
+    <string name="toast_opens_limit">Você já abriu o %1$s %2$d vezes hoje.</string>
+    <string name="extras_title">Limites extras</string>
+    <string name="extras_session_title">Limite por sessão</string>
+    <string name="extras_session_desc">Bloqueia o app depois de muito tempo seguido e o mantém bloqueado durante uma pausa.</string>
+    <string name="extras_session_minutes">Tempo máximo seguido</string>
+    <string name="extras_break_minutes">Pausa depois</string>
+    <string name="extras_opens_title">Aberturas por dia</string>
+    <string name="extras_opens_desc">Limita quantas vezes você pode abrir o app em um dia.</string>
+    <string name="extras_opens_count">%1$d aberturas</string>
 </resources>

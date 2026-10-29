@@ -727,4 +727,16 @@
     <string name="checkin_suggest_title">Block %1$s completely?</string>
     <string name="checkin_suggest_body">Blocking these apps entirely is the strongest way to protect your streak. You can turn it off later, but it will take a short pause.</string>
     <string name="checkin_unblock_reminder">You said you had seen porn in this app before. Do you really want to unblock it now?</string>
+
+    <string name="toast_session_limit">%1$s: %2$d min in a row is enough. Take a %3$d min break.</string>
+    <string name="toast_break_active">%1$s is on a break. Back in %2$d min.</string>
+    <string name="toast_opens_limit">You already opened %1$s %2$d times today.</string>
+    <string name="extras_title">Extra limits</string>
+    <string name="extras_session_title">Session limit</string>
+    <string name="extras_session_desc">Blocks the app after a long stay and keeps it blocked for a break.</string>
+    <string name="extras_session_minutes">Longest stay</string>
+    <string name="extras_break_minutes">Break after it</string>
+    <string name="extras_opens_title">Opens per day</string>
+    <string name="extras_opens_desc">Caps how many times you can open the app in a day.</string>
+    <string name="extras_opens_count">%1$d opens</string>
 </resources>

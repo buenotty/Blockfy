@@ -187,7 +187,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private fun enforcedApp(pkg: String): Pair<String, App>? {
         val appName = TrackedPackages.displayName(pkg) ?: return null
         val app = BlockPolicy.appConfig(settings, appName)
-        val ruleOn = BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app)
+        val ruleOn = BlockPolicy.anyRuleOn(app)
         return if (app.blocked && ruleOn && BlockPolicy.isScheduleActive(settings)) appName to app else null
     }
 
@@ -261,7 +261,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun endSession() {
         flushUsage()
-        meter.stop()
+        meter.stop(SystemClock.elapsedRealtime())
         anchor?.recycle()
         anchor = null
     }
@@ -337,9 +337,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             packageName = pkg,
             settings = settings,
             usage = usage,
-            shortsVisible = shortsVisible
+            shortsVisible = shortsVisible,
+            sessionSeconds = meter.sessionSeconds(appName)
         )
 
+        if (verdict.reason == BlockReason.SESSION_LIMIT) startBreak(appName, app)
         if (verdict.shouldBlock) {
             enforce(verdict, app, root)
             return
@@ -367,6 +369,14 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    /** The session limit was reached: keep the app blocked for the break, and start the next session from zero. */
+    private fun startBreak(appName: String, app: App) {
+        val until = System.currentTimeMillis() + app.sessionBreakMinutes.coerceAtLeast(1) * 60_000L
+        currentUsage = currentUsage.withBreak(appName, until)
+        meter.resetSession()
+        serviceScope.launch { dataStore.startBreak(appName, until) }
+    }
+
     private fun shortsLabel(appName: String) = if (appName == "YouTube") "YouTube Shorts" else "$appName Reels"
 
     /** Alert once per episode, but keep pushing the user out until the app actually leaves. */
@@ -385,6 +395,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 }
                 BlockReason.DAILY_LIMIT -> getString(R.string.alert_limit_title) to
                     getString(R.string.toast_limit_reached, app.dailyLimitMinutes, shortsLabel(appName))
+                BlockReason.SESSION_LIMIT -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_session_limit, appName, app.sessionLimitMinutes, app.sessionBreakMinutes.coerceAtLeast(1))
+                BlockReason.BREAK -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_break_active, appName, breakMinutesLeft(appName))
+                BlockReason.OPENS_LIMIT -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_opens_limit, appName, app.opensDailyLimit)
                 else -> getString(R.string.alert_app_total_limit_title) to
                     getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
             }
@@ -453,8 +469,14 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         )
     }
 
+    private fun breakMinutesLeft(appName: String): Int {
+        val left = (currentUsage.breakUntil[appName] ?: 0L) - System.currentTimeMillis()
+        return ((left + 59_999L) / 60_000L).toInt().coerceAtLeast(1)
+    }
+
     private fun usageWithPending(): DailyUsage {
         var usage = currentUsage
+        meter.pendingOpens.forEach { (app, count) -> usage = usage.plusOpens(app, count) }
         meter.pendingTotal.forEach { (app, seconds) -> usage = usage.plusTotal(app, seconds) }
         meter.pendingShorts.forEach { (app, seconds) -> usage = usage.plusShorts(app, seconds) }
         return usage
@@ -472,15 +494,17 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
      */
     private fun flushUsage() {
         lastFlushElapsed = SystemClock.elapsedRealtime()
-        val (total, shorts) = meter.drain()
-        if (total.isEmpty() && shorts.isEmpty()) return
+        val (total, shorts, opens) = meter.drain()
+        if (total.isEmpty() && shorts.isEmpty() && opens.isEmpty()) return
         // Fold into currentUsage right away so nothing is counted twice or lost while the
         // write is in flight.
         var merged = currentUsage
         total.forEach { (app, seconds) -> merged = merged.plusTotal(app, seconds) }
         shorts.forEach { (app, seconds) -> merged = merged.plusShorts(app, seconds) }
+        opens.forEach { (app, count) -> merged = merged.plusOpens(app, count) }
         currentUsage = merged
         serviceScope.launch {
+            opens.forEach { (app, count) -> dataStore.addOpens(app, count) }
             total.forEach { (app, seconds) -> dataStore.addTotalAppUsage(app, seconds) }
             shorts.forEach { (app, seconds) -> dataStore.addUsage(app, seconds) }
         }
