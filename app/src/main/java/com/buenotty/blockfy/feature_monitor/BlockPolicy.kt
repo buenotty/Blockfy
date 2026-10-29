@@ -127,6 +127,28 @@ object BlockPolicy {
         return false
     }
 
+    /** Master switch on and the whole-app rule at zero minutes: the app cannot be opened at all. */
+    fun blockWholeApp(app: App): App = app.copy(blocked = true, wholeApp = true, appTotalDailyLimitMinutes = 0)
+
+    /**
+     * The honest check-in: the apps the user named are remembered as places they saw porn and
+     * are blocked as a whole. Names that are not tracked apps are ignored.
+     */
+    fun applyCheckIn(settings: AppSettings, apps: List<String>): AppSettings {
+        val picked = apps.filter { name -> settings.apps.any { it.name == name } }.distinct()
+        fun App.maybeBlocked() = if (name in picked) blockWholeApp(this) else this
+        return settings.copy(
+            instagram = settings.instagram.maybeBlocked(),
+            youtube = settings.youtube.maybeBlocked(),
+            tiktok = settings.tiktok.maybeBlocked(),
+            facebook = settings.facebook.maybeBlocked(),
+            x = settings.x.maybeBlocked(),
+            telegram = settings.telegram.maybeBlocked(),
+            checkInDone = true,
+            seenAdultIn = (settings.seenAdultIn + picked).distinct()
+        )
+    }
+
     /** True when at least one app rule or the adult shield is on. */
     fun hasAnyProtection(settings: AppSettings): Boolean {
         return settings.adultContentBlockerEnabled ||

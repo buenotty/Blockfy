@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.text.font.FontWeight
 import com.buenotty.blockfy.R
 
 @Composable
@@ -51,6 +52,8 @@ fun DisableBlockerDialog(
     confirmLabel: String = stringResource(R.string.disable_dialog_confirm),
     streakDays: Int = 0,
     why: String = "",
+    /** The user's own admission about this app (see the check-in); shown in red before the question. */
+    reminder: String = "",
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -77,6 +80,16 @@ fun DisableBlockerDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 if (streakDays > 0) {
                     StakesBanner(streakDays = streakDays, why = why)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+                if (reminder.isNotBlank()) {
+                    Text(
+                        text = reminder,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.error
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
                 Text(

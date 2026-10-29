@@ -31,9 +31,11 @@ import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_monitor.BlockReason
 import com.buenotty.blockfy.feature_monitor.BlockVerdict
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
+import com.buenotty.blockfy.feature_monitor.UsageMeter
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -64,15 +66,15 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private val lastWarnedMinutes = mutableMapOf<String, Int>()
     private val lastBlockElapsed = mutableMapOf<String, Long>()
 
-    private var lastCreditPkg: String? = null
-    private var lastCreditElapsed = 0L
     private var lastDeepScanElapsed = 0L
     private var lastDeepShorts = false
     private var lastEventElapsed = 0L
 
-    private val pendingTotal = mutableMapOf<String, Long>()
-    private val pendingShorts = mutableMapOf<String, Long>()
+    private val meter = UsageMeter()
     private var lastFlushElapsed = 0L
+    private var tickerJob: Job? = null
+    private var anchor: AccessibilityNodeInfo? = null
+    private var anchorPkg: String? = null
 
     private var channelsCreated = false
 
@@ -160,33 +162,108 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             lastEventElapsed = nowElapsed
 
             maybeFlagAdultSite(event, pkg)
-            val appName = TrackedPackages.displayName(pkg)
-            if (appName == null) {
-                flushUsage()
-                lastCreditPkg = null
-                lastCreditElapsed = 0L
-                return
-            }
-
-            val app = BlockPolicy.appConfig(settings, appName)
-            val ruleOn = BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app)
-            if (!app.blocked || !ruleOn || !BlockPolicy.isScheduleActive(settings)) {
+            val (appName, app) = enforcedApp(pkg) ?: run {
                 // Nothing to enforce or count here right now.
-                flushUsage()
-                lastCreditPkg = null
-                lastCreditElapsed = 0L
+                endSession()
                 return
             }
 
-            val today = java.time.LocalDate.now().toString()
-            if (currentUsage.date != today) {
-                currentUsage = DailyUsage(date = today)
-                serviceScope.launch { dataStore.ensureTodayUsage() }
+            rollDayIfNeeded()
+            holdAnchor(event, pkg)
+            ensureTicker()
+            val needShorts = needsScreenRead(appName, app)
+            val root = if (needShorts) rootFromEvent(event, pkg) else null
+            try {
+                process(pkg, appName, app, needShorts, root)
+            } finally {
+                root?.recycle()
             }
-            handleTrackedApp(pkg, appName, event)
         } catch (t: Throwable) {
             Log.e(TAG, "Unhandled error in onAccessibilityEvent", t)
         }
+    }
+
+    /** The tracked app behind [pkg] and its config, only when a rule is on for it right now. */
+    private fun enforcedApp(pkg: String): Pair<String, App>? {
+        val appName = TrackedPackages.displayName(pkg) ?: return null
+        val app = BlockPolicy.appConfig(settings, appName)
+        val ruleOn = BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app)
+        return if (app.blocked && ruleOn && BlockPolicy.isScheduleActive(settings)) appName to app else null
+    }
+
+    private fun rollDayIfNeeded() {
+        val today = java.time.LocalDate.now().toString()
+        if (currentUsage.date != today) {
+            currentUsage = DailyUsage(date = today)
+            serviceScope.launch { dataStore.ensureTodayUsage() }
+        }
+    }
+
+    /**
+     * Accessibility events only arrive when the screen changes, and a video that just plays
+     * changes nothing, so counting on events alone misses most of a Reels or Shorts session.
+     * While a tracked app is in front and the screen is on, this tick keeps the clock honest and
+     * lets the limit fire even when the user stops swiping.
+     */
+    private fun ensureTicker() {
+        if (tickerJob?.isActive == true) return
+        tickerJob = serviceScope.launch(Dispatchers.Main) {
+            try {
+                var blind = 0
+                while (isActive) {
+                    delay(TICK_MILLIS)
+                    val keep = try {
+                        tick()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error in usage tick", e)
+                        false
+                    }
+                    // The window can be briefly unreadable during a transition.
+                    blind = if (keep == null) blind + 1 else 0
+                    if (keep == false || blind >= MAX_BLIND_TICKS) break
+                }
+            } finally {
+                endSession()
+            }
+        }
+    }
+
+    /**
+     * True to keep ticking, false to stop, null when the tracked window could not be read. Only
+     * the window of the tracked app that sent the last event is ever touched (never whichever
+     * app is in front): once that window is no longer visible, the user has left.
+     */
+    private fun tick(): Boolean? {
+        val power = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        if (!power.isInteractive) return false
+        val node = anchor ?: return null
+        if (!node.refresh()) {
+            // The window was rebuilt; the next event brings a fresh one.
+            anchor = null
+            return null
+        }
+        if (!node.isVisibleToUser) return false
+        val pkg = anchorPkg ?: return false
+        val (appName, app) = enforcedApp(pkg) ?: return false
+        rollDayIfNeeded()
+        val needShorts = needsScreenRead(appName, app)
+        process(pkg, appName, app, needShorts, if (needShorts) node else null)
+        return true
+    }
+
+    /** Keeps the tracked app's window root so the tick can read it without waiting for an event. */
+    private fun holdAnchor(event: AccessibilityEvent, pkg: String) {
+        if (anchor != null && anchorPkg == pkg) return
+        anchor?.recycle()
+        anchor = rootFromEvent(event, pkg)
+        anchorPkg = pkg
+    }
+
+    private fun endSession() {
+        flushUsage()
+        meter.stop()
+        anchor?.recycle()
+        anchor = null
     }
 
     /** Accessibility was switched off while protection is set up: say so, loudly, with a way back. */
@@ -231,19 +308,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         serviceScope.cancel()
     }
 
-    private fun handleTrackedApp(pkg: String, appName: String, event: AccessibilityEvent) {
-        val app = BlockPolicy.appConfig(settings, appName)
-        val canHaveShorts = !BlockPolicy.isWholeAppOnly(appName)
-        // Reading the screen is the expensive part, so only do it when something needs it: the
-        // Reels/Shorts rule, the mindfulness reminder or the open Diagnostics card.
-        val needShorts = canHaveShorts && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
-        val root = if (needShorts) rootFromEvent(event, pkg) else null
-        try {
-            process(pkg, appName, app, canHaveShorts && needShorts, root)
-        } finally {
-            root?.recycle()
-        }
-    }
+    /**
+     * Reading the screen is the expensive part, so only do it when something needs it: the
+     * Reels/Shorts rule or the mindfulness reminder.
+     */
+    private fun needsScreenRead(appName: String, app: App): Boolean =
+        !BlockPolicy.isWholeAppOnly(appName) && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
 
     private fun process(pkg: String, appName: String, app: App, needShorts: Boolean, root: AccessibilityNodeInfo?) {
         val nowElapsed = SystemClock.elapsedRealtime()
@@ -260,7 +330,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         // is not under-counted between scans.
         val shortsForCredit = shortsVisible || (canScan && !deep && lastDeepShorts)
 
-        creditUsage(pkg, appName, shortsForCredit)
+        creditUsage(appName, shortsForCredit)
 
         val usage = usageWithPending()
         val verdict = BlockPolicy.evaluate(
@@ -385,26 +455,14 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun usageWithPending(): DailyUsage {
         var usage = currentUsage
-        pendingTotal.forEach { (app, seconds) -> usage = usage.plusTotal(app, seconds) }
-        pendingShorts.forEach { (app, seconds) -> usage = usage.plusShorts(app, seconds) }
+        meter.pendingTotal.forEach { (app, seconds) -> usage = usage.plusTotal(app, seconds) }
+        meter.pendingShorts.forEach { (app, seconds) -> usage = usage.plusShorts(app, seconds) }
         return usage
     }
 
-    private fun creditUsage(pkg: String, appName: String, shortsVisible: Boolean) {
+    private fun creditUsage(appName: String, shortsVisible: Boolean) {
         val now = SystemClock.elapsedRealtime()
-        if (lastCreditPkg != pkg || lastCreditElapsed == 0L) {
-            flushUsage()
-            lastCreditPkg = pkg
-            lastCreditElapsed = now
-            lastFlushElapsed = now
-            return
-        }
-        val delta = ((now - lastCreditElapsed) / 1000L).coerceAtMost(MAX_CREDIT_SECONDS)
-        if (delta > 0L) {
-            lastCreditElapsed = now
-            pendingTotal.merge(appName, delta, Long::plus)
-            if (shortsVisible) pendingShorts.merge(appName, delta, Long::plus)
-        }
+        meter.credit(appName, shortsVisible, now)
         if (now - lastFlushElapsed >= FLUSH_INTERVAL_MILLIS) flushUsage()
     }
 
@@ -414,17 +472,14 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
      */
     private fun flushUsage() {
         lastFlushElapsed = SystemClock.elapsedRealtime()
-        if (pendingTotal.isEmpty() && pendingShorts.isEmpty()) return
-        val total = pendingTotal.toMap()
-        val shorts = pendingShorts.toMap()
+        val (total, shorts) = meter.drain()
+        if (total.isEmpty() && shorts.isEmpty()) return
         // Fold into currentUsage right away so nothing is counted twice or lost while the
         // write is in flight.
         var merged = currentUsage
         total.forEach { (app, seconds) -> merged = merged.plusTotal(app, seconds) }
         shorts.forEach { (app, seconds) -> merged = merged.plusShorts(app, seconds) }
         currentUsage = merged
-        pendingTotal.clear()
-        pendingShorts.clear()
         serviceScope.launch {
             total.forEach { (app, seconds) -> dataStore.addTotalAppUsage(app, seconds) }
             shorts.forEach { (app, seconds) -> dataStore.addUsage(app, seconds) }
@@ -629,7 +684,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             val addressBarText = readAddressBar(root, pkg)
             if (addressBarText != null &&
-                (AdultContentDetector.isAdultContent(addressBarText) || AdultContentDetector.isAdultSearch(addressBarText))
+                (AdultContentDetector.isAdultContent(addressBarText, settings.customAdultSites) ||
+                    AdultContentDetector.isAdultSearch(addressBarText))
             ) {
                 leaveAdultScreen()
             }
@@ -698,10 +754,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val TAG = "BlockfyService"
         private const val ALERT_CHANNEL = "blockfy_alerts_channel"
         private const val REMINDER_CHANNEL = "blockfy_reminders_channel"
-        private const val MAX_CREDIT_SECONDS = 5L
+        private const val TICK_MILLIS = 1_000L
+        private const val MAX_BLIND_TICKS = 3
         private const val FLUSH_INTERVAL_MILLIS = 10_000L
         private const val MAX_ADDRESS_BAR_SCAN_NODES = 40
-        private const val DEEP_SCAN_INTERVAL_MILLIS = 700L
+        private const val DEEP_SCAN_INTERVAL_MILLIS = 2_000L
         private const val MIN_EVENT_GAP_MILLIS = 150L
         private const val SCOPE_REFRESH_MILLIS = 30_000L
         private const val EPISODE_GAP_MILLIS = 8_000L

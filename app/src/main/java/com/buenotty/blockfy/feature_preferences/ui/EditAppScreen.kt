@@ -344,6 +344,7 @@ private fun EditAppForm(
             confirmLabel = stringResource(R.string.loosen_confirm),
             streakDays = streakDays,
             why = settings.myWhy,
+            reminder = if (saved.name in settings.seenAdultIn) stringResource(R.string.checkin_unblock_reminder) else "",
             onDismissRequest = { showLoosenConfirm = false },
             onConfirmation = {
                 showLoosenConfirm = false
