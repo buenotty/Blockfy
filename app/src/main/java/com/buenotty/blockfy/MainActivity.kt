@@ -67,6 +67,12 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
+    override fun onStop() {
+        super.onStop()
+        // Leaving the app is when the streak or today's numbers may have changed.
+        com.buenotty.blockfy.feature_monitor.StreakWidgetProvider.refresh(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

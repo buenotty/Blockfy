@@ -764,4 +764,7 @@
 
     <string name="recap_title">Your last 7 days</string>
     <string name="recap_body">%1$d clean days, %2$d blocked temptations, about %3$d min saved.</string>
+
+    <string name="widget_streak_label">clean days</string>
+    <string name="widget_streak_description">Your clean-day streak.</string>
 </resources>

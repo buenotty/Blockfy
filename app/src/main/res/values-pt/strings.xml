@@ -764,4 +764,7 @@
 
     <string name="recap_title">Seus últimos 7 dias</string>
     <string name="recap_body">%1$d dias limpos, %2$d tentações bloqueadas, cerca de %3$d min poupados.</string>
+
+    <string name="widget_streak_label">dias limpos</string>
+    <string name="widget_streak_description">Sua sequência de dias limpos.</string>
 </resources>
