@@ -739,4 +739,15 @@
     <string name="extras_opens_title">Opens per day</string>
     <string name="extras_opens_desc">Caps how many times you can open the app in a day.</string>
     <string name="extras_opens_count">%1$d opens</string>
+
+    <string name="toast_focus_active">Focus mode is on. %1$s is blocked until it ends.</string>
+    <string name="tile_focus_label">Blockfy focus</string>
+    <string name="tile_focus_idle">Tap for 1 hour</string>
+    <string name="tile_focus_until">Until %1$s</string>
+
+    <string name="focus_card_title">Focus mode</string>
+    <string name="focus_card_desc">Blocks every tracked app for a set time. Once started, it cannot be ended early.</string>
+    <string name="focus_1h">1 hour</string>
+    <string name="focus_2h">2 hours</string>
+    <string name="focus_tomorrow">Until tomorrow</string>
 </resources>

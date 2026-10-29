@@ -36,7 +36,9 @@ class DataStoreManager(private val context: Context) {
                 it.copy(
                     customAdultSites = (current.customAdultSites + it.customAdultSites).distinct(),
                     seenAdultIn = (current.seenAdultIn + it.seenAdultIn).distinct(),
-                    checkInDone = current.checkInDone || it.checkInDone
+                    checkInDone = current.checkInDone || it.checkInDone,
+                    // A running focus session cannot be shortened, only extended.
+                    focusUntilEpoch = maxOf(current.focusUntilEpoch, it.focusUntilEpoch)
                 )
             }.also { after = it }
         }

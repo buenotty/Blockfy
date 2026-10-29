@@ -93,6 +93,18 @@ class SessionAndOpensTest {
     }
 
     @Test
+    fun `focus mode blocks every tracked app, even one with no rule, until it ends`() {
+        val s = AppSettings().copy(focusUntilEpoch = 2_000_000L)
+        val on = BlockPolicy.evaluate(TrackedPackages.TIKTOK, s, DailyUsage(), nowMillis = 1_000_000L)
+        assertEquals(BlockReason.FOCUS, on.reason)
+        assertTrue(on.wholeApp)
+        val off = BlockPolicy.evaluate(TrackedPackages.TIKTOK, s, DailyUsage(), nowMillis = 2_000_000L)
+        assertEquals(BlockReason.NONE, off.reason)
+        assertTrue(BlockPolicy.isFocusActive(s, 1_999_999L))
+        assertFalse(BlockPolicy.isFocusActive(s, 2_000_000L))
+    }
+
+    @Test
     fun `resetting the session after a break starts from zero`() {
         val m = UsageMeter()
         m.credit("Instagram", false, 0L)

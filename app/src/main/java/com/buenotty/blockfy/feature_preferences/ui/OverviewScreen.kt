@@ -32,6 +32,7 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.AppBlockCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.CheckInCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DailyMotivationCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultContentDialog
+import com.buenotty.blockfy.feature_preferences.ui.composables.FocusCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableBlockerDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.ScheduleSummaryCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
@@ -95,6 +96,8 @@ fun BlocksScreen(
         if (!settings.checkInDone) {
             CheckInCard(apps = settings.apps.map { it.name }, onAnswer = viewModel::answerCheckIn)
         }
+
+        FocusCard(focusUntil = settings.focusUntilEpoch, onStart = viewModel::startFocus)
 
         SectionTitle(stringResource(R.string.section_apps))
         settings.apps.forEach { app ->

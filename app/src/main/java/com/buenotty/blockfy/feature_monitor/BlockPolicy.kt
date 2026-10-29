@@ -15,6 +15,9 @@ enum class BlockReason {
     /** A session limit was reached and its break is still running. */
     BREAK,
 
+    /** Focus mode is running: every tracked app is blocked. */
+    FOCUS,
+
     /** The longest allowed stay in the app was reached. */
     SESSION_LIMIT,
 
@@ -103,6 +106,9 @@ object BlockPolicy {
         }
         return false
     }
+
+    fun isFocusActive(settings: AppSettings, nowMillis: Long = System.currentTimeMillis()): Boolean =
+        nowMillis < settings.focusUntilEpoch
 
     fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X" || appName == "Telegram"
 
@@ -213,11 +219,14 @@ object BlockPolicy {
             ?: return BlockVerdict(BlockReason.NONE, "", packageName)
         val none = BlockVerdict(BlockReason.NONE, appName, packageName)
 
+        fun wholeBlock(reason: BlockReason) = BlockVerdict(reason, appName, packageName, wholeApp = true)
+        // Focus mode overrides the app's own rules and the schedule.
+        if (isFocusActive(settings, nowMillis)) return wholeBlock(BlockReason.FOCUS)
+
         val app = appConfig(settings, appName)
         if (!app.blocked) return none
         if (!isScheduleActive(settings, nowMillis, timeZone)) return none
 
-        fun wholeBlock(reason: BlockReason) = BlockVerdict(reason, appName, packageName, wholeApp = true)
         if (app.sessionLimitMinutes > 0 && nowMillis < (usage.breakUntil[appName] ?: 0L)) {
             return wholeBlock(BlockReason.BREAK)
         }

@@ -94,6 +94,9 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setAdultContentBlocker(enabled: Boolean) = update { it.copy(adultContentBlockerEnabled = enabled) }
 
+    /** Starts focus mode; the data layer never lets it be shortened afterwards. */
+    fun startFocus(untilMillis: Long) = update { it.copy(focusUntilEpoch = untilMillis) }
+
     fun answerCheckIn(apps: List<String>) = update { BlockPolicy.applyCheckIn(it, apps) }
 
     /** Permanent: the data layer never drops a site once added. */

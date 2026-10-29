@@ -187,6 +187,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private fun enforcedApp(pkg: String): Pair<String, App>? {
         val appName = TrackedPackages.displayName(pkg) ?: return null
         val app = BlockPolicy.appConfig(settings, appName)
+        if (BlockPolicy.isFocusActive(settings)) return appName to app
         val ruleOn = BlockPolicy.anyRuleOn(app)
         return if (app.blocked && ruleOn && BlockPolicy.isScheduleActive(settings)) appName to app else null
     }
@@ -395,6 +396,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 }
                 BlockReason.DAILY_LIMIT -> getString(R.string.alert_limit_title) to
                     getString(R.string.toast_limit_reached, app.dailyLimitMinutes, shortsLabel(appName))
+                BlockReason.FOCUS -> getString(R.string.alert_blocked_title) to
+                    getString(R.string.toast_focus_active, appName)
                 BlockReason.SESSION_LIMIT -> getString(R.string.alert_limit_title) to
                     getString(R.string.toast_session_limit, appName, app.sessionLimitMinutes, app.sessionBreakMinutes.coerceAtLeast(1))
                 BlockReason.BREAK -> getString(R.string.alert_limit_title) to

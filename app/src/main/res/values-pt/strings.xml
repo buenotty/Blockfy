@@ -739,4 +739,15 @@
     <string name="extras_opens_title">Aberturas por dia</string>
     <string name="extras_opens_desc">Limita quantas vezes você pode abrir o app em um dia.</string>
     <string name="extras_opens_count">%1$d aberturas</string>
+
+    <string name="toast_focus_active">O modo foco está ligado. %1$s fica bloqueado até acabar.</string>
+    <string name="tile_focus_label">Foco Blockfy</string>
+    <string name="tile_focus_idle">Toque para 1 hora</string>
+    <string name="tile_focus_until">Até %1$s</string>
+
+    <string name="focus_card_title">Modo foco</string>
+    <string name="focus_card_desc">Bloqueia todos os apps rastreados por um tempo definido. Depois de iniciado, não dá para encerrar antes.</string>
+    <string name="focus_1h">1 hora</string>
+    <string name="focus_2h">2 horas</string>
+    <string name="focus_tomorrow">Até amanhã</string>
 </resources>

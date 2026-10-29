@@ -20,6 +20,7 @@ object ListeningScope {
         timeZone: TimeZone = TimeZone.getDefault()
     ): Set<String> {
         val result = linkedSetOf<String>()
+        if (BlockPolicy.isFocusActive(settings, nowMillis)) result += TrackedPackages.ALL.keys
         if (BlockPolicy.isScheduleActive(settings, nowMillis, timeZone)) {
             for ((pkg, name) in TrackedPackages.ALL) {
                 val app = BlockPolicy.appConfig(settings, name)
