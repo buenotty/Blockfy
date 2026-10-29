@@ -29,6 +29,7 @@ import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import com.buenotty.blockfy.feature_preferences.ui.composables.AdultSitesCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.AppBlockCard
+import com.buenotty.blockfy.feature_preferences.ui.composables.CheckInCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DailyMotivationCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultContentDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableBlockerDialog
@@ -90,6 +91,10 @@ fun BlocksScreen(
             summary = "${daysLabel(settings.scheduleWeekdays)} · ${hoursLabel(settings.scheduleStart, settings.scheduleEnd)}",
             onOpen = onOpenSchedule
         )
+
+        if (!settings.checkInDone) {
+            CheckInCard(apps = settings.apps.map { it.name }, onAnswer = viewModel::answerCheckIn)
+        }
 
         SectionTitle(stringResource(R.string.section_apps))
         settings.apps.forEach { app ->
@@ -186,6 +191,7 @@ fun BlocksScreen(
         DisableBlockerDialog(
             streakDays = streak.current,
             why = settings.myWhy,
+            reminder = if (name in settings.seenAdultIn) stringResource(R.string.checkin_unblock_reminder) else "",
             onDismissRequest = { appPendingDisable = null },
             onConfirmation = {
                 viewModel.setAppBlocked(name, false)

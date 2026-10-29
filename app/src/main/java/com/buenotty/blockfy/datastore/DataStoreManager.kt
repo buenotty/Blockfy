@@ -31,9 +31,14 @@ class DataStoreManager(private val context: Context) {
         var after: AppSettings? = null
         context.appSettingsStore.updateData { current ->
             before = current
-            // Sites added to the adult list stay for good, whatever the transform does.
-            transform(current).let { it.copy(customAdultSites = (current.customAdultSites + it.customAdultSites).distinct()) }
-                .also { after = it }
+            // Sites added to the adult list and the apps the user admitted stay for good, whatever the transform does.
+            transform(current).let {
+                it.copy(
+                    customAdultSites = (current.customAdultSites + it.customAdultSites).distinct(),
+                    seenAdultIn = (current.seenAdultIn + it.seenAdultIn).distinct(),
+                    checkInDone = current.checkInDone || it.checkInDone
+                )
+            }.also { after = it }
         }
         val old = before ?: return
         val new = after ?: return

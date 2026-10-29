@@ -94,6 +94,8 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setAdultContentBlocker(enabled: Boolean) = update { it.copy(adultContentBlockerEnabled = enabled) }
 
+    fun answerCheckIn(apps: List<String>) = update { BlockPolicy.applyCheckIn(it, apps) }
+
     /** Permanent: the data layer never drops a site once added. */
     fun addAdultSite(host: String) = update { it.copy(customAdultSites = it.customAdultSites + host) }
 

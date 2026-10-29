@@ -104,6 +104,10 @@ data class AppSettings(
     val adultContentBlockerEnabled: Boolean = false,
     /** Sites the user added to the adult list. Append-only: [DataStoreManager.updateSettings] never lets one go. */
     val customAdultSites: List<String> = emptyList(),
+    /** The honest check-in ("have you seen porn in these apps?") was answered. */
+    val checkInDone: Boolean = false,
+    /** Apps where the user said they saw porn. Append-only, like [customAdultSites]: it is the user's own commitment. */
+    val seenAdultIn: List<String> = emptyList(),
     /** Hours and weekdays when the rules are enforced. Shared by every app. */
     val scheduleStart: Int = 0,
     val scheduleEnd: Int = 1439,
