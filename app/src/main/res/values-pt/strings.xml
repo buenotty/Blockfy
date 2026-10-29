@@ -701,4 +701,19 @@
     <string name="telegram_offer_desc">Grupos e canais adultos ficam dentro do Telegram, onde o escudo não enxerga. Quer bloquear o app inteiro também? Dá para desligar depois.</string>
     <string name="telegram_offer_yes">Bloquear Telegram</string>
     <string name="telegram_offer_no">Não, obrigado</string>
+
+    <string name="adult_sites_title">Seus sites bloqueados</string>
+    <string name="adult_sites_summary_empty">Adicione um site que a lista não pegou. Depois de adicionado, nunca mais poderá ser removido.</string>
+    <string name="adult_sites_summary_count">%1$d adicionados (permanente): %2$s</string>
+    <string name="adult_sites_add">Adicionar site</string>
+    <string name="adult_sites_field">Endereço do site</string>
+    <string name="adult_sites_invalid">Isso não parece um endereço de site.</string>
+    <string name="adult_sites_already">Esse site já está bloqueado.</string>
+    <string name="adult_sites_preview">Vai bloquear: %1$s e todas as páginas dele</string>
+    <string name="adult_sites_next">Continuar</string>
+    <string name="adult_sites_back">Voltar</string>
+    <string name="adult_sites_confirm_title">Bloquear %1$s para sempre?</string>
+    <string name="adult_sites_confirm_body">Depois de adicionado, este site NUNCA mais poderá ser removido da lista. Confira o endereço: um endereço errado fica bloqueado para sempre.</string>
+    <string name="adult_sites_confirm_check">Conferi o endereço e sei que é permanente</string>
+    <string name="adult_sites_confirm_btn">Bloquear para sempre</string>
 </resources>

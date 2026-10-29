@@ -202,10 +202,31 @@ object AdultContentDetector {
         RegexOption.IGNORE_CASE
     )
 
-    fun isBlockedHost(host: String?): Boolean {
+    private val SCHEME = Regex("^[a-z][a-z0-9+.-]*://")
+    private val LABEL = Regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?$")
+
+    /**
+     * Reduces what a person types or pastes ("https://www.Site.com/page?x=1") to the bare host
+     * ("site.com"), or null when it cannot be a real site. Used before a site is added to the
+     * permanent list, so a typo that is not even a host never gets in.
+     */
+    fun normalizeSite(raw: String): String? {
+        var text = raw.trim().lowercase(Locale.ROOT).replace(SCHEME, "")
+        text = text.substringBefore('/').substringBefore('?').substringBefore('#')
+        text = text.substringAfterLast('@').substringBefore(':').removePrefix("www.")
+        val labels = text.split('.')
+        val valid = text.length <= 253 && labels.size >= 2 && labels.all { LABEL.matches(it) } &&
+            labels.last().length >= 2 && labels.last().all { it in 'a'..'z' }
+        return text.takeIf { valid }
+    }
+
+    /** [extraHosts] are sites the user added; they match the host itself and its subdomains only. */
+    fun isBlockedHost(host: String?, extraHosts: Collection<String> = emptyList()): Boolean {
         if (host.isNullOrBlank()) return false
         val hostname = normalize(host).trim().trim('.')
         if (hostname.isEmpty()) return false
+
+        if (extraHosts.any { hostname == it || hostname.endsWith(".$it") }) return true
 
         for (domain in ADULT_DOMAINS) {
             val needle = normalize(domain).trim('.')
@@ -227,12 +248,12 @@ object AdultContentDetector {
      * Matches adult hosts and phrases as whole tokens, never as a substring
      * inside another word. "jerome" must not match the site "erome".
      */
-    fun isAdultContent(rawText: String?): Boolean {
+    fun isAdultContent(rawText: String?, extraHosts: Collection<String> = emptyList()): Boolean {
         if (rawText.isNullOrBlank()) return false
         val normalized = normalize(rawText)
 
         HOST_IN_TEXT.findAll(normalized).forEach { match ->
-            if (isBlockedHost(match.groupValues[1])) return true
+            if (isBlockedHost(match.groupValues[1], extraHosts)) return true
         }
 
         for (domain in ADULT_DOMAINS) {

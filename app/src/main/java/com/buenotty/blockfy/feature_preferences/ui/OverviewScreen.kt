@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.repository.models.App
+import com.buenotty.blockfy.feature_preferences.ui.composables.AdultSitesCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.AppBlockCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DailyMotivationCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultContentDialog
@@ -117,6 +118,8 @@ fun BlocksScreen(
                 }
             }
         )
+
+        AdultSitesCard(sites = settings.customAdultSites, onAdd = viewModel::addAdultSite)
 
         SectionTitle(stringResource(R.string.section_focus))
         ToggleCard(

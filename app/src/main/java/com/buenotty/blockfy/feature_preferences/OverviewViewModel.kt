@@ -94,6 +94,9 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setAdultContentBlocker(enabled: Boolean) = update { it.copy(adultContentBlockerEnabled = enabled) }
 
+    /** Permanent: the data layer never drops a site once added. */
+    fun addAdultSite(host: String) = update { it.copy(customAdultSites = it.customAdultSites + host) }
+
     fun setProvocationMode(enabled: Boolean) = update { it.copy(provocationModeEnabled = enabled) }
 
     fun setThemeMode(mode: String) = update { it.copy(themeMode = mode) }

@@ -701,4 +701,19 @@
     <string name="telegram_offer_desc">Adult groups and channels live inside Telegram, where the shield cannot see them. Block the whole app too? You can turn it off later.</string>
     <string name="telegram_offer_yes">Block Telegram</string>
     <string name="telegram_offer_no">No, thanks</string>
+
+    <string name="adult_sites_title">Your blocked sites</string>
+    <string name="adult_sites_summary_empty">Add a site the built-in list misses. Once added, it can never be removed.</string>
+    <string name="adult_sites_summary_count">%1$d added (permanent): %2$s</string>
+    <string name="adult_sites_add">Add site</string>
+    <string name="adult_sites_field">Site address</string>
+    <string name="adult_sites_invalid">That does not look like a site address.</string>
+    <string name="adult_sites_already">This site is already blocked.</string>
+    <string name="adult_sites_preview">Will block: %1$s and all its pages</string>
+    <string name="adult_sites_next">Continue</string>
+    <string name="adult_sites_back">Back</string>
+    <string name="adult_sites_confirm_title">Block %1$s forever?</string>
+    <string name="adult_sites_confirm_body">Once added, this site can NEVER be removed from the list. Check the address: a wrong one stays blocked for good.</string>
+    <string name="adult_sites_confirm_check">I checked the address and I know this is permanent</string>
+    <string name="adult_sites_confirm_btn">Block forever</string>
 </resources>

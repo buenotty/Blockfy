@@ -102,6 +102,8 @@ data class AppSettings(
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
     val adultContentBlockerEnabled: Boolean = false,
+    /** Sites the user added to the adult list. Append-only: [DataStoreManager.updateSettings] never lets one go. */
+    val customAdultSites: List<String> = emptyList(),
     /** Hours and weekdays when the rules are enforced. Shared by every app. */
     val scheduleStart: Int = 0,
     val scheduleEnd: Int = 1439,
