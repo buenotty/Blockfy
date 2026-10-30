@@ -10,7 +10,19 @@ enum class BlockReason {
     NONE,
     SCHEDULE,
     DAILY_LIMIT,
-    TOTAL_LIMIT
+    TOTAL_LIMIT,
+
+    /** A session limit was reached and its break is still running. */
+    BREAK,
+
+    /** Focus mode is running: every tracked app is blocked. */
+    FOCUS,
+
+    /** The longest allowed stay in the app was reached. */
+    SESSION_LIMIT,
+
+    /** The app was opened more times today than allowed. */
+    OPENS_LIMIT
 }
 
 data class BlockVerdict(
@@ -37,6 +49,9 @@ data class BlockVerdict(
  * simply a whole-app limit of 60 plus a Reels limit of 15.
  */
 object BlockPolicy {
+
+    /** How many times a day the user can argue past a limit. */
+    const val EXCEPTIONS_PER_DAY = 2
 
     fun currentMinuteOfDay(nowMillis: Long = System.currentTimeMillis(), timeZone: TimeZone = TimeZone.getDefault()): Int {
         val calendar = Calendar.getInstance(timeZone)
@@ -71,6 +86,25 @@ object BlockPolicy {
         return weekdays and (1 shl windowDay) != 0
     }
 
+    /**
+     * When today's schedule window opened. The phone's own usage time only counts from here, so
+     * use before the window never counts against the user the moment it opens.
+     */
+    fun scheduleWindowStartMillis(
+        settings: AppSettings,
+        nowMillis: Long = System.currentTimeMillis(),
+        timeZone: TimeZone = TimeZone.getDefault()
+    ): Long {
+        val zone = timeZone.toZoneId()
+        val now = java.time.Instant.ofEpochMilli(nowMillis).atZone(zone)
+        val midnight = now.toLocalDate().atStartOfDay(zone)
+        if (settings.scheduleStart <= 0 && settings.scheduleEnd >= 1439) return midnight.toInstant().toEpochMilli()
+        val minuteNow = now.hour * 60 + now.minute
+        val startedYesterday = settings.scheduleStart > settings.scheduleEnd && minuteNow <= settings.scheduleEnd
+        val startDay = if (startedYesterday) now.toLocalDate().minusDays(1) else now.toLocalDate()
+        return startDay.atStartOfDay(zone).plusMinutes(settings.scheduleStart.toLong()).toInstant().toEpochMilli()
+    }
+
     fun isScheduleActive(
         settings: AppSettings,
         nowMillis: Long = System.currentTimeMillis(),
@@ -95,6 +129,9 @@ object BlockPolicy {
         return false
     }
 
+    fun isFocusActive(settings: AppSettings, nowMillis: Long = System.currentTimeMillis()): Boolean =
+        nowMillis < settings.focusUntilEpoch
+
     fun isWholeAppOnly(appName: String): Boolean = appName == "TikTok" || appName == "X" || appName == "Telegram"
 
     /** TikTok, X and Telegram can only be limited as a whole, so for them this rule is always on. */
@@ -102,10 +139,20 @@ object BlockPolicy {
 
     fun shortsRuleOn(app: App): Boolean = !isWholeAppOnly(app.name) && app.shortsRuleOn
 
+    /** Session and opens limits work for every app, alone or next to the whole-app and Reels/Shorts rules. */
+    fun extraRulesOn(app: App): Boolean = app.sessionLimitMinutes > 0 || app.opensDailyLimit > 0
+
+    /** True when any rule at all is on for [app], so the service must listen to it. */
+    fun anyRuleOn(app: App): Boolean = wholeRuleOn(app) || shortsRuleOn(app) || extraRulesOn(app)
+
     private fun limitLoosened(oldLimit: Int, newLimit: Int): Boolean = when {
         oldLimit <= 0 -> newLimit > 0
         else -> newLimit > oldLimit
     }
+
+    /** For the extra limits, 0 means "off", so switching one off is the loosest change. */
+    private fun extraLimitLoosened(oldLimit: Int, newLimit: Int): Boolean =
+        oldLimit > 0 && (newLimit <= 0 || newLimit > oldLimit)
 
     /**
      * True when [new] lets the user use the app in some situation where [old] would have blocked
@@ -124,6 +171,9 @@ object BlockPolicy {
             if (!shortsRuleOn(new)) return true
             if (limitLoosened(old.dailyLimitMinutes, new.dailyLimitMinutes)) return true
         }
+        if (extraLimitLoosened(old.sessionLimitMinutes, new.sessionLimitMinutes)) return true
+        if (old.sessionLimitMinutes > 0 && new.sessionBreakMinutes < old.sessionBreakMinutes) return true
+        if (extraLimitLoosened(old.opensDailyLimit, new.opensDailyLimit)) return true
         return false
     }
 
@@ -152,7 +202,7 @@ object BlockPolicy {
     /** True when at least one app rule or the adult shield is on. */
     fun hasAnyProtection(settings: AppSettings): Boolean {
         return settings.adultContentBlockerEnabled ||
-            settings.apps.any { it.blocked && (wholeRuleOn(it) || shortsRuleOn(it)) }
+            settings.apps.any { it.blocked && anyRuleOn(it) }
     }
 
     /** True when [new] circumvents [old] in any way: a looser app rule, a narrower schedule or the shield off. */
@@ -183,27 +233,49 @@ object BlockPolicy {
         usage: DailyUsage,
         nowMillis: Long = System.currentTimeMillis(),
         shortsVisible: Boolean = true,
-        timeZone: TimeZone = TimeZone.getDefault()
+        timeZone: TimeZone = TimeZone.getDefault(),
+        /** Seconds of the running stay in the app, for the session limit. */
+        sessionSeconds: Long = 0L,
+        /** The user is on the app's website in a browser; [packageName] is then the browser. */
+        viaBrowser: Boolean = false,
+        /** Which app the browser page belongs to. */
+        appNameOverride: String? = null
     ): BlockVerdict {
-        val appName = TrackedPackages.displayName(packageName)
+        val appName = appNameOverride ?: TrackedPackages.displayName(packageName)
             ?: return BlockVerdict(BlockReason.NONE, "", packageName)
         val none = BlockVerdict(BlockReason.NONE, appName, packageName)
+
+        fun wholeBlock(reason: BlockReason) = BlockVerdict(reason, appName, packageName, wholeApp = true)
+        // Focus mode overrides the app's own rules and the schedule.
+        if (isFocusActive(settings, nowMillis)) return wholeBlock(BlockReason.FOCUS)
 
         val app = appConfig(settings, appName)
         if (!app.blocked) return none
         if (!isScheduleActive(settings, nowMillis, timeZone)) return none
 
+        if (app.sessionLimitMinutes > 0 && nowMillis < (usage.breakUntil[appName] ?: 0L)) {
+            return wholeBlock(BlockReason.BREAK)
+        }
+        if (app.opensDailyLimit > 0 && (usage.opens[appName] ?: 0) > app.opensDailyLimit) {
+            return wholeBlock(BlockReason.OPENS_LIMIT)
+        }
+        if (app.sessionLimitMinutes > 0 && sessionSeconds >= app.sessionLimitMinutes * 60L) {
+            return wholeBlock(BlockReason.SESSION_LIMIT)
+        }
+
+        // Granted exceptions add seconds to the limit, so a limit of 0 with a grant is "that many seconds".
+        val bonus = usage.bonusSeconds(appName, viaBrowser)
         if (wholeRuleOn(app)) {
-            val limit = app.appTotalDailyLimitMinutes
-            if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName, wholeApp = true)
-            if (totalSeconds(usage, appName) >= limit * 60L) {
+            val allowed = app.appTotalDailyLimitMinutes * 60L + bonus
+            if (allowed <= 0L) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName, wholeApp = true)
+            if (totalSeconds(usage, appName) >= allowed) {
                 return BlockVerdict(BlockReason.TOTAL_LIMIT, appName, packageName, wholeApp = true)
             }
         }
         if (shortsRuleOn(app) && shortsVisible) {
-            val limit = app.dailyLimitMinutes
-            if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
-            if (featureSeconds(usage, appName) >= limit * 60L) {
+            val allowed = app.dailyLimitMinutes * 60L + bonus
+            if (allowed <= 0L) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
+            if (featureSeconds(usage, appName) >= allowed) {
                 return BlockVerdict(BlockReason.DAILY_LIMIT, appName, packageName)
             }
         }

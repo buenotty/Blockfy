@@ -44,10 +44,11 @@ class ManifestAndDetectorTest {
         )
         assertFalse(manifest.contains("SYSTEM_ALERT_WINDOW"))
         assertFalse(manifest.contains("QUERY_ALL_PACKAGES"))
-        assertFalse(
-            "Usage Access is not required for Reels and lets banking SDKs see every foreground app",
-            manifest.contains("PACKAGE_USAGE_STATS")
-        )
+        // Usage Access is allowed again, optionally, to match the phone's own time per app. The
+        // reader must keep looking only at the package it is asked about, never at other apps.
+        val reader = readAppFile("src/main/java/com/buenotty/blockfy/feature_monitor/UsageStatsReader.kt").readText()
+        assertTrue("usage reader must filter by the asked package", reader.contains("event.packageName == packageName"))
+        assertFalse("usage reader must not list every app", reader.contains("queryUsageStats"))
         assertFalse(manifest.contains("AppMonitorService"))
         assertFalse("full-screen intents are revoked for non call/alarm apps", manifest.contains("USE_FULL_SCREEN_INTENT"))
         assertFalse("Blockfy is not a declared accessibility tool", config.contains("isAccessibilityTool"))

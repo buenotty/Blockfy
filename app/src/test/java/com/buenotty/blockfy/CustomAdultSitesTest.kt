@@ -2,6 +2,7 @@ package com.buenotty.blockfy
 
 import com.buenotty.blockfy.datastore.AppSettings
 import com.buenotty.blockfy.feature_accessibility.AdultContentDetector
+import com.buenotty.blockfy.feature_accessibility.AdultEntry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -36,6 +37,24 @@ class CustomAdultSitesTest {
         assertTrue(AdultContentDetector.isAdultContent("m.meusitexyz.com", extra))
         assertFalse(AdultContentDetector.isAdultContent("notmeusitexyz.com", extra))
         assertFalse(AdultContentDetector.isAdultContent("meusitexyz.com.evil.org", extra))
+    }
+
+    @Test
+    fun `parseEntry tells a site from a keyword and rejects the rest`() {
+        assertEquals(AdultEntry("exemplo.com", true), AdultContentDetector.parseEntry("https://www.exemplo.com/a"))
+        assertEquals(AdultEntry("termo secreto", false), AdultContentDetector.parseEntry("  Térmo  Secreto "))
+        assertNull(AdultContentDetector.parseEntry("ab"))
+        assertNull(AdultContentDetector.parseEntry("meu site.com"))
+        assertNull(AdultContentDetector.parseEntry("um dois tres quatro"))
+    }
+
+    @Test
+    fun `a custom keyword flags searches that contain it as a whole word`() {
+        val extra = listOf("termosecreto")
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=termosecreto"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=termosecreto", extra))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=ver+termosecreto+hoje", extra))
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=umtermosecretomaior", extra))
     }
 
     @Test

@@ -30,14 +30,18 @@ import com.buenotty.blockfy.datastore.DataStoreManager
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_monitor.BlockReason
 import com.buenotty.blockfy.feature_monitor.BlockVerdict
+import com.buenotty.blockfy.feature_monitor.BrowserSites
 import com.buenotty.blockfy.feature_monitor.TrackedPackages
 import com.buenotty.blockfy.feature_monitor.UsageMeter
+import com.buenotty.blockfy.feature_monitor.UsageStatsReader
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -49,7 +53,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private val dataStore: DataStoreManager by inject()
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // A failed write must be logged, never allowed to kill the process.
+    private val serviceScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Default + CoroutineExceptionHandler { _, e -> Log.e(TAG, "Background work failed", e) }
+    )
 
     @Volatile
     private var settings = AppSettings()
@@ -72,6 +79,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private val meter = UsageMeter()
     private var lastFlushElapsed = 0L
+    private var lastSyncElapsed = 0L
     private var tickerJob: Job? = null
     private var anchor: AccessibilityNodeInfo? = null
     private var anchorPkg: String? = null
@@ -94,6 +102,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     override fun onServiceConnected() {
         super.onServiceConnected()
         ServiceHealth.markBound(true)
+        serviceScope.launch { dataStore.ensureTodayUsage() }
         runCatching { (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(OFF_NOTICE_ID) }
         serviceScope.launch {
             dataStore.appSettingsFlow.collect {
@@ -102,7 +111,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             }
         }
         serviceScope.launch {
-            dataStore.dailyUsageFlow.collect { currentUsage = it }
+            dataStore.dailyUsageFlow.collect { currentUsage = keepLocalGrants(it, currentUsage) }
         }
         // Re-check the scope when the screen turns on, and every so often while it is on, so a
         // schedule that just started begins listening without waiting for a settings change.
@@ -121,7 +130,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private val screenOnReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) = applyListeningScope()
+        override fun onReceive(context: Context?, intent: Intent?) {
+            applyListeningScope()
+            // Closes yesterday even when nothing else wrote today, so a quiet, clean day is not lost.
+            serviceScope.launch { dataStore.ensureTodayUsage() }
+        }
     }
 
     @Volatile
@@ -162,16 +175,18 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             lastEventElapsed = nowElapsed
 
             maybeFlagAdultSite(event, pkg)
+            if (pkg in AdultContentDetector.BROWSER_PACKAGES) updateWebApp(event, pkg)
             val (appName, app) = enforcedApp(pkg) ?: run {
-                // Nothing to enforce or count here right now.
-                endSession()
+                // Nothing to enforce or count here right now. Only the app being counted ending its
+                // own session matters; an unrelated event must not cut a quiet Reels session short.
+                if (anchorPkg == null || pkg == anchorPkg) endSession()
                 return
             }
 
             rollDayIfNeeded()
             holdAnchor(event, pkg)
             ensureTicker()
-            val needShorts = needsScreenRead(appName, app)
+            val needShorts = needsScreenRead(pkg, appName, app)
             val root = if (needShorts) rootFromEvent(event, pkg) else null
             try {
                 process(pkg, appName, app, needShorts, root)
@@ -185,9 +200,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     /** The tracked app behind [pkg] and its config, only when a rule is on for it right now. */
     private fun enforcedApp(pkg: String): Pair<String, App>? {
-        val appName = TrackedPackages.displayName(pkg) ?: return null
+        val appName = TrackedPackages.displayName(pkg)
+            ?: webApp.takeIf { pkg in AdultContentDetector.BROWSER_PACKAGES }
+            ?: return null
         val app = BlockPolicy.appConfig(settings, appName)
-        val ruleOn = BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app)
+        if (BlockPolicy.isFocusActive(settings)) return appName to app
+        val ruleOn = BlockPolicy.anyRuleOn(app)
         return if (app.blocked && ruleOn && BlockPolicy.isScheduleActive(settings)) appName to app else null
     }
 
@@ -246,7 +264,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val pkg = anchorPkg ?: return false
         val (appName, app) = enforcedApp(pkg) ?: return false
         rollDayIfNeeded()
-        val needShorts = needsScreenRead(appName, app)
+        val needShorts = needsScreenRead(pkg, appName, app)
         process(pkg, appName, app, needShorts, if (needShorts) node else null)
         return true
     }
@@ -260,8 +278,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     private fun endSession() {
+        webApp = null
         flushUsage()
-        meter.stop()
+        meter.stop(SystemClock.elapsedRealtime())
         anchor?.recycle()
         anchor = null
     }
@@ -304,7 +323,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         ServiceHealth.markBound(false)
         runCatching { unregisterReceiver(screenOnReceiver) }
         overlay?.dismiss()
-        flushUsage()
+        flushUsage(final = true)
         serviceScope.cancel()
     }
 
@@ -312,8 +331,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
      * Reading the screen is the expensive part, so only do it when something needs it: the
      * Reels/Shorts rule or the mindfulness reminder.
      */
-    private fun needsScreenRead(appName: String, app: App): Boolean =
-        !BlockPolicy.isWholeAppOnly(appName) && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
+    private fun needsScreenRead(pkg: String, appName: String, app: App): Boolean =
+        pkg !in AdultContentDetector.BROWSER_PACKAGES &&
+            !BlockPolicy.isWholeAppOnly(appName) && (BlockPolicy.shortsRuleOn(app) || settings.provocationModeEnabled)
 
     private fun process(pkg: String, appName: String, app: App, needShorts: Boolean, root: AccessibilityNodeInfo?) {
         val nowElapsed = SystemClock.elapsedRealtime()
@@ -331,15 +351,20 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         val shortsForCredit = shortsVisible || (canScan && !deep && lastDeepShorts)
 
         creditUsage(appName, shortsForCredit)
+        syncWithSystem(appName)
 
         val usage = usageWithPending()
         val verdict = BlockPolicy.evaluate(
             packageName = pkg,
+            appNameOverride = appName,
+            viaBrowser = pkg in AdultContentDetector.BROWSER_PACKAGES,
             settings = settings,
             usage = usage,
-            shortsVisible = shortsVisible
+            shortsVisible = shortsVisible,
+            sessionSeconds = meter.sessionSeconds(appName)
         )
 
+        if (verdict.reason == BlockReason.SESSION_LIMIT) startBreak(appName, app)
         if (verdict.shouldBlock) {
             enforce(verdict, app, root)
             return
@@ -367,6 +392,53 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    /** The session limit was reached: keep the app blocked for the break, and start the next session from zero. */
+    private fun startBreak(appName: String, app: App) {
+        val until = System.currentTimeMillis() + app.sessionBreakMinutes.coerceAtLeast(1) * 60_000L
+        currentUsage = currentUsage.withBreak(appName, until)
+        meter.resetSession()
+        serviceScope.launch { dataStore.startBreak(appName, until) }
+    }
+
+
+    @Volatile
+    private var webApp: String? = null
+    private var lastWebReadElapsed = 0L
+
+    /**
+     * A limited app is also reachable as a website. While a browser shows one of those sites,
+     * its time counts like time in the app, so the website cannot be used to go around the limit.
+     * Only the address bar text is read, the same as the adult shield does.
+     */
+    private fun updateWebApp(event: AccessibilityEvent, pkg: String) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastWebReadElapsed < WEB_READ_GAP_MILLIS) return
+        lastWebReadElapsed = now
+        val root = rootFromEvent(event, pkg)
+        // Chrome hides its address bar while scrolling; an unreadable bar keeps the last known site.
+        val text = try {
+            root?.let { readAddressBar(it, pkg) }
+        } finally {
+            root?.recycle()
+        }
+        if (text != null) webApp = BrowserSites.appFor(text)
+    }
+
+    /** The conversation after a limit: leave, or argue for a few more minutes, with tomorrow offered every time. */
+    private fun negotiate(title: String, message: String, appName: String) {
+        val left = BlockPolicy.EXCEPTIONS_PER_DAY - currentUsage.exceptions
+        val shown = settings.funChallengesEnabled && overlay().showNegotiation(message, left) { browser ->
+            grantException(appName, browser)
+        }
+        if (!shown) notifyAlert(title, withWhy(message), isFinal = true)
+    }
+
+    private fun grantException(appName: String, browser: Boolean) {
+        val seconds = if (browser) BROWSER_EXCEPTION_SECONDS else APP_EXCEPTION_SECONDS
+        currentUsage = currentUsage.withException(appName, seconds, browser)
+        serviceScope.launch { dataStore.grantException(appName, seconds, browser) }
+    }
+
     private fun shortsLabel(appName: String) = if (appName == "YouTube") "YouTube Shorts" else "$appName Reels"
 
     /** Alert once per episode, but keep pushing the user out until the app actually leaves. */
@@ -385,10 +457,22 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                 }
                 BlockReason.DAILY_LIMIT -> getString(R.string.alert_limit_title) to
                     getString(R.string.toast_limit_reached, app.dailyLimitMinutes, shortsLabel(appName))
+                BlockReason.FOCUS -> getString(R.string.alert_blocked_title) to
+                    getString(R.string.toast_focus_active, appName)
+                BlockReason.SESSION_LIMIT -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_session_limit, appName, app.sessionLimitMinutes, app.sessionBreakMinutes.coerceAtLeast(1))
+                BlockReason.BREAK -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_break_active, appName, breakMinutesLeft(appName))
+                BlockReason.OPENS_LIMIT -> getString(R.string.alert_limit_title) to
+                    getString(R.string.toast_opens_limit, appName, app.opensDailyLimit)
                 else -> getString(R.string.alert_app_total_limit_title) to
                     getString(R.string.toast_app_total_limit_reached, app.appTotalDailyLimitMinutes, appName)
             }
-            alertOrChallenge(title, message)
+            if (verdict.reason == BlockReason.TOTAL_LIMIT || verdict.reason == BlockReason.DAILY_LIMIT) {
+                negotiate(title, message, appName)
+            } else {
+                alertOrChallenge(title, message)
+            }
             serviceScope.launch { dataStore.recordBlockedDistraction(300L) }
         }
 
@@ -453,11 +537,37 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         )
     }
 
+    private fun breakMinutesLeft(appName: String): Int {
+        val left = (currentUsage.breakUntil[appName] ?: 0L) - System.currentTimeMillis()
+        return ((left + 59_999L) / 60_000L).toInt().coerceAtLeast(1)
+    }
+
     private fun usageWithPending(): DailyUsage {
         var usage = currentUsage
+        meter.pendingOpens.forEach { (app, count) -> usage = usage.plusOpens(app, count) }
         meter.pendingTotal.forEach { (app, seconds) -> usage = usage.plusTotal(app, seconds) }
         meter.pendingShorts.forEach { (app, seconds) -> usage = usage.plusShorts(app, seconds) }
         return usage
+    }
+
+    /**
+     * With "Usage access" granted, the phone's own time in the app is the floor for ours: it
+     * covers anything our counting missed and matches what Digital Wellbeing shows. One cheap
+     * query every [SYSTEM_SYNC_MILLIS] while the app is in front, and only the raise is applied.
+     */
+    private fun syncWithSystem(appName: String) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastSyncElapsed < SYSTEM_SYNC_MILLIS) return
+        lastSyncElapsed = now
+        // Only time since the schedule window opened counts, so use outside the window never
+        // turns into an instant block (or a broken day) when the window starts.
+        val since = BlockPolicy.scheduleWindowStartMillis(settings)
+        var system = 0L
+        for ((pkg, name) in TrackedPackages.ALL) {
+            if (name == appName) system += UsageStatsReader.secondsToday(this, pkg, sinceMillis = since) ?: return
+        }
+        val have = BlockPolicy.totalSeconds(usageWithPending(), appName)
+        if (system > have) meter.pendingTotal.merge(appName, system - have, Long::plus)
     }
 
     private fun creditUsage(appName: String, shortsVisible: Boolean) {
@@ -470,20 +580,24 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
      * One DataStore write per interval instead of one per accessibility event. Until the
      * write lands, [usageWithPending] keeps limit checks accurate.
      */
-    private fun flushUsage() {
+    private fun flushUsage(final: Boolean = false) {
         lastFlushElapsed = SystemClock.elapsedRealtime()
-        val (total, shorts) = meter.drain()
-        if (total.isEmpty() && shorts.isEmpty()) return
+        val (total, shorts, opens) = meter.drain()
+        if (total.isEmpty() && shorts.isEmpty() && opens.isEmpty()) return
         // Fold into currentUsage right away so nothing is counted twice or lost while the
         // write is in flight.
         var merged = currentUsage
         total.forEach { (app, seconds) -> merged = merged.plusTotal(app, seconds) }
         shorts.forEach { (app, seconds) -> merged = merged.plusShorts(app, seconds) }
+        opens.forEach { (app, count) -> merged = merged.plusOpens(app, count) }
         currentUsage = merged
-        serviceScope.launch {
+        val write: suspend () -> Unit = {
+            opens.forEach { (app, count) -> dataStore.addOpens(app, count) }
             total.forEach { (app, seconds) -> dataStore.addTotalAppUsage(app, seconds) }
             shorts.forEach { (app, seconds) -> dataStore.addUsage(app, seconds) }
         }
+        // When the service is going away its scope is cancelled next, so the last seconds are written first.
+        if (final) runCatching { runBlocking { write() } } else serviceScope.launch { write() }
     }
 
     private fun exitShorts(appName: String, root: AccessibilityNodeInfo?) {
@@ -685,7 +799,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             val addressBarText = readAddressBar(root, pkg)
             if (addressBarText != null &&
                 (AdultContentDetector.isAdultContent(addressBarText, settings.customAdultSites) ||
-                    AdultContentDetector.isAdultSearch(addressBarText))
+                    AdultContentDetector.isAdultSearch(addressBarText, settings.customAdultKeywords))
             ) {
                 leaveAdultScreen()
             }
@@ -723,10 +837,32 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
      * top of the window. We do not know each browser's exact view id, so we
      * look for a visible, non-password EditText instead.
      */
+    /** The address bar sits at the top of the window; a text field further down is page content and is never read. */
+    private fun isInTopOfScreen(node: AccessibilityNodeInfo): Boolean {
+        val bounds = android.graphics.Rect()
+        node.getBoundsInScreen(bounds)
+        return bounds.top < resources.displayMetrics.heightPixels * ADDRESS_BAR_TOP_SHARE
+    }
+
+    /** Keeps what was granted or started locally when a stored value that is a moment behind arrives. */
+    private fun keepLocalGrants(emitted: DailyUsage, local: DailyUsage): DailyUsage {
+        if (emitted.date != local.date) return emitted
+        fun <V : Comparable<V>> merge(a: Map<String, V>, b: Map<String, V>) = (a.keys + b.keys).associateWith { k ->
+            val x = a[k]; val y = b[k]
+            if (x == null) y!! else if (y == null) x else maxOf(x, y)
+        }
+        return emitted.copy(
+            breakUntil = merge(emitted.breakUntil, local.breakUntil),
+            bonusApp = merge(emitted.bonusApp, local.bonusApp),
+            bonusBrowser = merge(emitted.bonusBrowser, local.bonusBrowser),
+            exceptions = maxOf(emitted.exceptions, local.exceptions)
+        )
+    }
+
     private fun findAddressBarText(node: AccessibilityNodeInfo, remaining: IntArray): String? {
         if (remaining[0] <= 0) return null
         remaining[0]--
-        if (node.isVisibleToUser && !node.isPassword && node.className == "android.widget.EditText") {
+        if (node.isVisibleToUser && !node.isPassword && node.className == "android.widget.EditText" && isInTopOfScreen(node)) {
             val text = node.text?.toString()
             if (!text.isNullOrBlank()) return text
         }
@@ -755,6 +891,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val ALERT_CHANNEL = "blockfy_alerts_channel"
         private const val REMINDER_CHANNEL = "blockfy_reminders_channel"
         private const val TICK_MILLIS = 1_000L
+        private const val ADDRESS_BAR_TOP_SHARE = 0.25f
+        private const val WEB_READ_GAP_MILLIS = 1_000L
+        private const val BROWSER_EXCEPTION_SECONDS = 600L
+        private const val APP_EXCEPTION_SECONDS = 300L
+        private const val SYSTEM_SYNC_MILLIS = 30_000L
         private const val MAX_BLIND_TICKS = 3
         private const val FLUSH_INTERVAL_MILLIS = 10_000L
         private const val MAX_ADDRESS_BAR_SCAN_NODES = 40

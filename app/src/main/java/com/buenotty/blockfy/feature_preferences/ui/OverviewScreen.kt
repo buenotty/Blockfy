@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -32,12 +33,15 @@ import com.buenotty.blockfy.feature_preferences.ui.composables.AppBlockCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.CheckInCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DailyMotivationCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableAdultContentDialog
+import com.buenotty.blockfy.feature_preferences.ui.composables.FocusCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DisableBlockerDialog
+import com.buenotty.blockfy.feature_preferences.ui.composables.RecapCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.ScheduleSummaryCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.SectionTitle
 import com.buenotty.blockfy.feature_preferences.ui.composables.StreakHero
 import com.buenotty.blockfy.feature_preferences.ui.composables.StrictModeDialog
 import com.buenotty.blockfy.feature_preferences.ui.composables.TodaySummaryCard
+import com.buenotty.blockfy.feature_preferences.ui.composables.UsageAccessCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.ToggleCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.daysLabel
 import com.buenotty.blockfy.feature_preferences.ui.composables.hoursLabel
@@ -48,11 +52,13 @@ fun BlocksScreen(
     onEditApp: (String) -> Unit,
     onOpenSchedule: () -> Unit,
     onOpenConcepts: () -> Unit,
+    onOpenPlay: () -> Unit,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
     val settings by viewModel.appSettings.collectAsState()
     val usage by viewModel.dailyUsage.collectAsState()
     val streak by viewModel.streak.collectAsState()
+    val recap by viewModel.weekRecap.collectAsState()
 
     var showStrictDialog by remember { mutableStateOf(false) }
     var showDisableAdultDialog by remember { mutableStateOf(false) }
@@ -83,9 +89,23 @@ fun BlocksScreen(
     ) {
         StreakHero(info = streak, why = settings.myWhy, onWriteWhy = onOpenConcepts)
 
+        androidx.compose.material3.Card(
+            onClick = onOpenPlay,
+            modifier = Modifier.fillMaxWidth(),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+            colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer)
+        ) {
+            androidx.compose.foundation.layout.Column(Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.urge_card_title), style = androidx.compose.material3.MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+                Text(stringResource(R.string.urge_card_sub), style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+            }
+        }
+
         DailyMotivationCard(text = motivation)
 
         TodaySummaryCard(blocks = usage.blockedAttemptsToday, savedSeconds = usage.savedSeconds)
+
+        if (!recap.isEmpty) RecapCard(recap)
 
         ScheduleSummaryCard(
             summary = "${daysLabel(settings.scheduleWeekdays)} · ${hoursLabel(settings.scheduleStart, settings.scheduleEnd)}",
@@ -95,6 +115,10 @@ fun BlocksScreen(
         if (!settings.checkInDone) {
             CheckInCard(apps = settings.apps.map { it.name }, onAnswer = viewModel::answerCheckIn)
         }
+
+        FocusCard(focusUntil = settings.focusUntilEpoch, onStart = viewModel::startFocus)
+
+        UsageAccessCard()
 
         SectionTitle(stringResource(R.string.section_apps))
         settings.apps.forEach { app ->
@@ -124,7 +148,10 @@ fun BlocksScreen(
             }
         )
 
-        AdultSitesCard(sites = settings.customAdultSites, onAdd = viewModel::addAdultSite)
+        AdultSitesCard(
+            entries = settings.customAdultSites + settings.customAdultKeywords,
+            onAdd = viewModel::addAdultEntry
+        )
 
         SectionTitle(stringResource(R.string.section_focus))
         ToggleCard(

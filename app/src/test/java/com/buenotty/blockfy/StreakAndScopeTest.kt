@@ -127,7 +127,10 @@ class StreakAndScopeTest {
                 tiktok = it.tiktok.copy(blocked = true)
             )
         }
-        assertEquals(setOf(TrackedPackages.INSTAGRAM, TrackedPackages.TIKTOK), ListeningScope.packages(s, at(12), utc))
+        val scope = ListeningScope.packages(s, at(12), utc)
+        // Apps with a rule are listened to, and so are the browsers, because their websites count too.
+        assertEquals(setOf(TrackedPackages.INSTAGRAM, TrackedPackages.TIKTOK) + AdultContentDetector.BROWSER_PACKAGES, scope)
+        assertFalse(TrackedPackages.YOUTUBE in scope)
     }
 
     @Test

@@ -20,13 +20,16 @@ object ListeningScope {
         timeZone: TimeZone = TimeZone.getDefault()
     ): Set<String> {
         val result = linkedSetOf<String>()
+        if (BlockPolicy.isFocusActive(settings, nowMillis)) result += TrackedPackages.ALL.keys
         if (BlockPolicy.isScheduleActive(settings, nowMillis, timeZone)) {
             for ((pkg, name) in TrackedPackages.ALL) {
                 val app = BlockPolicy.appConfig(settings, name)
-                if (app.blocked && (BlockPolicy.wholeRuleOn(app) || BlockPolicy.shortsRuleOn(app))) result += pkg
+                if (app.blocked && BlockPolicy.anyRuleOn(app)) result += pkg
             }
         }
         if (settings.adultContentBlockerEnabled) result += AdultContentDetector.BROWSER_PACKAGES
+        // A limited app is also a website, so its browsers are listened to as well.
+        if (result.any(TrackedPackages::isTracked)) result += AdultContentDetector.BROWSER_PACKAGES
         return if (result.isEmpty()) setOf(NOTHING) else result
     }
 }

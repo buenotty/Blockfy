@@ -47,6 +47,8 @@ A chave é o "carimbo" que prova que uma atualização veio de você. O jeito ma
 
 **Full description (en):** same content, translated; keep the last paragraph about Accessibility.
 
+> **Versão 1.14 em diante:** os textos atualizados de Acessibilidade, Data safety, permissão de uso e ficha estão em [`PLAY_DECLARATIONS.md`](PLAY_DECLARATIONS.md). Use aqueles.
+
 ## 4. Declaração de Acessibilidade (a parte mais difícil de aprovar)
 
 O Blockfy **não** é uma ferramenta de acessibilidade para pessoas com deficiência. Por isso:

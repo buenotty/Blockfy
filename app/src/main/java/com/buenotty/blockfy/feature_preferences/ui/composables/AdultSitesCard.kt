@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_accessibility.AdultContentDetector
+import com.buenotty.blockfy.feature_accessibility.AdultEntry
 
 /**
  * Lists the sites the user added to the adult list and lets them add more. Adding is permanent,
@@ -41,8 +42,8 @@ import com.buenotty.blockfy.feature_accessibility.AdultContentDetector
  */
 @Composable
 fun AdultSitesCard(
-    sites: List<String>,
-    onAdd: (String) -> Unit,
+    entries: List<String>,
+    onAdd: (AdultEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var adding by remember { mutableStateOf(false) }
@@ -62,8 +63,8 @@ fun AdultSitesCard(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    if (sites.isEmpty()) stringResource(R.string.adult_sites_summary_empty)
-                    else stringResource(R.string.adult_sites_summary_count, sites.size, sites.joinToString(", ")),
+                    if (entries.isEmpty()) stringResource(R.string.adult_sites_summary_empty)
+                    else stringResource(R.string.adult_sites_summary_count, entries.size, entries.joinToString(", ")),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -71,16 +72,18 @@ fun AdultSitesCard(
             TextButton(onClick = { adding = true }) { Text(stringResource(R.string.adult_sites_add)) }
         }
     }
-    if (adding) AddAdultSiteDialog(known = sites, onDismiss = { adding = false }, onConfirm = { onAdd(it); adding = false })
+    if (adding) AddAdultSiteDialog(known = entries, onDismiss = { adding = false }, onConfirm = { onAdd(it); adding = false })
 }
 
 @Composable
-private fun AddAdultSiteDialog(known: List<String>, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+private fun AddAdultSiteDialog(known: List<String>, onDismiss: () -> Unit, onConfirm: (AdultEntry) -> Unit) {
     var text by remember { mutableStateOf("") }
     var confirming by remember { mutableStateOf(false) }
     var checked by remember { mutableStateOf(false) }
-    val host = AdultContentDetector.normalizeSite(text)
-    val alreadyBlocked = host != null && (host in known || AdultContentDetector.isBlockedHost(host))
+    val entry = AdultContentDetector.parseEntry(text)
+    val host = entry?.value
+    val alreadyBlocked = entry != null &&
+        (entry.value in known || (entry.isSite && AdultContentDetector.isBlockedHost(entry.value)))
 
     if (!confirming) {
         AlertDialog(
@@ -101,7 +104,7 @@ private fun AddAdultSiteDialog(known: List<String>, onDismiss: () -> Unit, onCon
                         text.isBlank() -> null
                         host == null -> stringResource(R.string.adult_sites_invalid) to true
                         alreadyBlocked -> stringResource(R.string.adult_sites_already) to true
-                        else -> stringResource(R.string.adult_sites_preview, host) to false
+                        else -> stringResource(if (entry!!.isSite) R.string.adult_sites_preview else R.string.adult_keyword_preview, host!!) to false
                     }
                     if (note != null) {
                         Text(
@@ -119,7 +122,7 @@ private fun AddAdultSiteDialog(known: List<String>, onDismiss: () -> Unit, onCon
             },
             dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } }
         )
-    } else if (host != null) {
+    } else if (entry != null && host != null) {
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(stringResource(R.string.adult_sites_confirm_title, host)) },
@@ -137,7 +140,7 @@ private fun AddAdultSiteDialog(known: List<String>, onDismiss: () -> Unit, onCon
                 }
             },
             confirmButton = {
-                TextButton(onClick = { onConfirm(host) }, enabled = checked) {
+                TextButton(onClick = { onConfirm(entry!!) }, enabled = checked) {
                     Text(stringResource(R.string.adult_sites_confirm_btn))
                 }
             },
