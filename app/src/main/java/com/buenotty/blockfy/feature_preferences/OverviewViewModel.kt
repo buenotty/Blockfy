@@ -9,6 +9,10 @@ import com.buenotty.blockfy.feature_preferences.repository.models.App
 import com.buenotty.blockfy.feature_accessibility.AdultEntry
 import com.buenotty.blockfy.feature_monitor.BlockPolicy
 import com.buenotty.blockfy.feature_monitor.WeekRecap
+import com.buenotty.blockfy.feature_progress.DayOutcome
+import com.buenotty.blockfy.feature_progress.JourneyEngine
+import com.buenotty.blockfy.feature_progress.JourneyUi
+import com.buenotty.blockfy.feature_progress.Medals
 import com.buenotty.blockfy.feature_monitor.DayState
 import com.buenotty.blockfy.feature_monitor.StreakCalculator
 import com.buenotty.blockfy.feature_monitor.StreakInfo
@@ -51,9 +55,24 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
                 initialValue = DailyUsage()
             )
 
+    val journeyUi: StateFlow<JourneyUi> =
+        combine(dataStoreManager.journeyFlow, dailyUsage, appSettings) { journey, usage, settings ->
+            JourneyUi.of(journey, usage, settings)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = JourneyUi()
+        )
+
     val streak: StateFlow<StreakInfo> =
-        combine(dataStoreManager.historyFlow, dailyUsage, appSettings) { history, usage, settings ->
-            StreakCalculator.compute(history.days, usage, settings)
+        combine(dataStoreManager.historyFlow, dailyUsage, appSettings, journeyUi) { history, usage, settings, ui ->
+            val info = StreakCalculator.compute(
+                history.days, usage, settings,
+                todayBroken = ui.todayOutcome == DayOutcome.BREAK
+            )
+            // The journey keeps the run for good; the 90-day history would cap a long one.
+            if (ui.journey.lastCredited.isEmpty()) info
+            else info.copy(current = ui.liveRun, best = maxOf(info.best, ui.journey.bestRun, ui.liveRun))
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
@@ -72,6 +91,25 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
     init {
         viewModelScope.launch {
             dataStoreManager.ensureTodayUsage()
+            dataStoreManager.bootstrapJourney()
+        }
+        // Turning on the first protection is the first step: it makes a recruit at once. New
+        // medals are booked as soon as they are earned, not at the end of the day.
+        viewModelScope.launch {
+            journeyUi.collect { ui ->
+                val settings = appSettings.value
+                val today = LocalDate.now()
+                val needsEnlist = !ui.journey.enlisted && BlockPolicy.hasAnyProtection(settings)
+                val withMedals = Medals.unlock(ui.journey, ui.liveRun, today)
+                if (needsEnlist || withMedals.medals.size != ui.journey.medals.size) {
+                    dataStoreManager.updateJourney { j ->
+                        val enlisted = if (!j.enlisted && BlockPolicy.hasAnyProtection(settings)) {
+                            j.copy(enlisted = true, xp = j.xp + JourneyEngine.ENLIST_XP)
+                        } else j
+                        Medals.unlock(enlisted, ui.liveRun, today)
+                    }
+                }
+            }
         }
     }
 
@@ -107,6 +145,11 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     /** Starts focus mode; the data layer never lets it be shortened afterwards. */
     fun startFocus(untilMillis: Long) = update { it.copy(focusUntilEpoch = untilMillis) }
+
+    /** The user saw the promotion and the medals celebrated, so they are not shown again. */
+    fun markJourneySeen(level: Int, medals: List<String>) = viewModelScope.launch {
+        dataStoreManager.updateJourney { it.copy(seenLevel = maxOf(it.seenLevel, level), seenMedals = (it.seenMedals + medals).distinct()) }
+    }
 
     fun answerCheckIn(apps: List<String>) = update { BlockPolicy.applyCheckIn(it, apps) }
 

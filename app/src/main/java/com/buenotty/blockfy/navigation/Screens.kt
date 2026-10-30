@@ -4,6 +4,7 @@ import android.net.Uri
 
 sealed class Screen(val route: String) {
     data object Blocks : Screen("blocks")
+    data object Journey : Screen("journey")
     data object Concepts : Screen("concepts")
     data object Settings : Screen("settings")
 

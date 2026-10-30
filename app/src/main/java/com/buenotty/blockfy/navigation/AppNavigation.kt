@@ -13,6 +13,7 @@ import com.buenotty.blockfy.feature_preferences.ui.ConceptDetailScreen
 import com.buenotty.blockfy.feature_preferences.ui.ConceptTopic
 import com.buenotty.blockfy.feature_preferences.ui.ConceptsHomeScreen
 import com.buenotty.blockfy.feature_preferences.ui.EditAppScreen
+import com.buenotty.blockfy.feature_progress.ui.JourneyScreen
 import com.buenotty.blockfy.feature_settings.AboutScreen
 
 /** Same navigation the bottom bar uses, so a tab opened from a button is a real tab switch. */
@@ -35,9 +36,11 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
             BlocksScreen(
                 onEditApp = { navController.navigate(Screen.EditApp.create(it)) },
                 onOpenSchedule = { navController.openTab(Screen.Settings.route) },
-                onOpenConcepts = { navController.navigate(Screen.Concepts.route) }
+                onOpenConcepts = { navController.navigate(Screen.Concepts.route) },
+                onOpenJourney = { navController.openTab(Screen.Journey.route) }
             )
         }
+        composable(Screen.Journey.route) { JourneyScreen() }
         composable(Screen.Concepts.route) {
             ConceptsHomeScreen(onOpenTopic = { navController.navigate(Screen.ConceptTopic.create(it.route)) })
         }

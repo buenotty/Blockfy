@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.automirrored.rounded.MenuBook
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
@@ -58,6 +59,7 @@ private data class TopLevelTab(val screen: Screen, val label: Int, val icon: Ima
 
 private val TABS = listOf(
     TopLevelTab(Screen.Blocks, R.string.nav_blocks, Icons.Rounded.Shield),
+    TopLevelTab(Screen.Journey, R.string.nav_journey, Icons.Rounded.EmojiEvents),
     TopLevelTab(Screen.Concepts, R.string.nav_concepts, Icons.AutoMirrored.Rounded.MenuBook),
     TopLevelTab(Screen.Settings, R.string.nav_settings, Icons.Rounded.Settings)
 )

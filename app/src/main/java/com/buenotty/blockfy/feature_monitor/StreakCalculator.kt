@@ -29,10 +29,12 @@ object StreakCalculator {
         today: DailyUsage,
         settings: AppSettings,
         todayDate: LocalDate = LocalDate.now(),
-        window: Int = 7
+        window: Int = 7,
+        /** Today already went over a limit by a lot or a rule was loosened. Defaults to the loosened flag alone. */
+        todayBroken: Boolean = today.loosened
     ): StreakInfo {
         val byDate = history.associateBy { it.date }
-        val todayClean = !today.loosened && (today.hadProtection || BlockPolicy.hasAnyProtection(settings))
+        val todayClean = !todayBroken && (today.hadProtection || BlockPolicy.hasAnyProtection(settings))
 
         var run = 0
         var cursor = todayDate.minusDays(1)
@@ -41,8 +43,8 @@ object StreakCalculator {
             cursor = cursor.minusDays(1)
         }
         // Breaking today throws the whole streak away, not just today.
-        val current = if (today.loosened) 0 else run + if (todayClean) 1 else 0
-        val lostDays = if (today.loosened) run else 0
+        val current = if (todayBroken) 0 else run + if (todayClean) 1 else 0
+        val lostDays = if (todayBroken) run else 0
 
         var best = 0
         var streak = 0
@@ -63,7 +65,7 @@ object StreakCalculator {
             val date = todayDate.minusDays(back.toLong())
             if (back == 0) {
                 when {
-                    today.loosened -> DayState.BROKEN
+                    todayBroken -> DayState.BROKEN
                     todayClean -> DayState.CLEAN
                     else -> DayState.EMPTY
                 }

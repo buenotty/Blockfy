@@ -761,4 +761,79 @@
 
     <string name="widget_streak_label">clean days</string>
     <string name="widget_streak_description">Your clean-day streak.</string>
+    <string name="medal_run_1_title">First day</string>
+    <string name="medal_run_1_desc">A whole day clean. Every empire starts here.</string>
+    <string name="medal_run_3_title">Three standing</string>
+    <string name="medal_run_3_desc">Three days in a row. The worst is behind you.</string>
+    <string name="medal_run_7_title">Iron week</string>
+    <string name="medal_run_7_desc">7 clean days. Your brain already notices.</string>
+    <string name="medal_run_14_title">Solid fortnight</string>
+    <string name="medal_run_14_desc">14 days. That is a habit, not luck.</string>
+    <string name="medal_run_30_title">Free month</string>
+    <string name="medal_run_30_desc">30 clean days. You changed your life quietly.</string>
+    <string name="medal_run_90_title">Steel quarter</string>
+    <string name="medal_run_90_desc">90 days. Most people quit before week one.</string>
+    <string name="medal_run_180_title">Half a year of legend</string>
+    <string name="medal_run_180_desc">180 days. You became the example.</string>
+    <string name="medal_run_365_title">One year. Seriously.</string>
+    <string name="medal_run_365_desc">365 clean days. Wow.</string>
+    <string name="medal_comeback_title">Back stronger</string>
+    <string name="medal_comeback_desc">You slipped and got up. That is what counts.</string>
+    <string name="medal_comeback_3_title">Phoenix</string>
+    <string name="medal_comeback_3_desc">You got up three times. Nobody holds you down.</string>
+    <string name="medal_resisted_10_title">Said no</string>
+    <string name="medal_resisted_10_desc">10 temptations stopped.</string>
+    <string name="medal_resisted_100_title">Stone wall</string>
+    <string name="medal_resisted_100_desc">100 temptations stopped.</string>
+    <string name="medal_resisted_500_title">Unshakable</string>
+    <string name="medal_resisted_500_desc">500 temptations stopped.</string>
+    <string name="medal_saved_10h_title">10 hours back</string>
+    <string name="medal_saved_10h_desc">Time you took back. Enough to read a book.</string>
+    <string name="medal_saved_100h_title">100 hours back</string>
+    <string name="medal_saved_100h_desc">More than four whole days given back to your life.</string>
+    <string name="medal_shield_title">Shield on</string>
+    <string name="medal_shield_desc">One slip forgiven. Use it wisely.</string>
+    <string name="medal_prestige_title">Prestige</string>
+    <string name="medal_prestige_desc">You finished the whole ladder and started over, stronger.</string>
+    <string-array name="rank_names">
+        <item>Recruit</item>
+        <item>Private</item>
+        <item>Corporal</item>
+        <item>Sergeant</item>
+        <item>Warrant Officer</item>
+        <item>Lieutenant</item>
+        <item>Captain</item>
+        <item>Major</item>
+        <item>Colonel</item>
+        <item>General</item>
+    </string-array>
+    <string name="rank_common">Common person</string>
+    <string name="rank_prestige">Prestige %1$d</string>
+    <string name="goal_1d">1 day</string>
+    <string name="goal_3d">3 days</string>
+    <string name="goal_1w">1 week</string>
+    <string name="goal_2w">2 weeks</string>
+    <string name="goal_1m">1 month</string>
+    <string name="goal_2m">2 months</string>
+    <string name="goal_3m">3 months</string>
+    <string name="goal_6m">6 months</string>
+    <string name="goal_1y">1 year</string>
+    <string name="goal_years">%1$d years</string>
+    <string name="nav_journey">Journey</string>
+    <string name="journey_title">Your journey</string>
+    <string name="journey_next_level">Next rank: %1$s</string>
+    <string name="journey_goal_pct">%1$d%% of %2$s</string>
+    <string name="journey_goal_label">Clean-time goal</string>
+    <string name="journey_run">Run</string>
+    <string name="journey_best">Best</string>
+    <string name="journey_shields">Shields this month</string>
+    <string name="journey_xp">%1$d XP</string>
+    <string name="journey_medals">Medals</string>
+    <string name="journey_medals_count">%1$d of %2$d</string>
+    <string name="journey_locked">Locked</string>
+    <string name="journey_days_unit">days</string>
+    <string name="rankup_title">Promoted!</string>
+    <string name="rankup_body">%1$s → %2$s</string>
+    <string name="rankup_cta">Continue</string>
+    <string name="medal_new_title">New medal</string>
 </resources>
