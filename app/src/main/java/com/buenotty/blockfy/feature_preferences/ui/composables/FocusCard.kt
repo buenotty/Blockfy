@@ -56,8 +56,8 @@ fun FocusCard(
             )
             if (!running) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = { onStart(now + HOUR) }) { Text(stringResource(R.string.focus_1h)) }
-                    OutlinedButton(onClick = { onStart(now + 2 * HOUR) }) { Text(stringResource(R.string.focus_2h)) }
+                    OutlinedButton(onClick = { onStart(System.currentTimeMillis() + HOUR) }) { Text(stringResource(R.string.focus_1h)) }
+                    OutlinedButton(onClick = { onStart(System.currentTimeMillis() + 2 * HOUR) }) { Text(stringResource(R.string.focus_2h)) }
                     OutlinedButton(onClick = { onStart(tomorrowStart()) }) { Text(stringResource(R.string.focus_tomorrow)) }
                 }
             }

@@ -55,10 +55,12 @@ object UsageStatsReader {
     }
 
     /** Seconds [packageName] was in front since local midnight, or null without access. */
-    fun secondsToday(context: Context, packageName: String, now: Long = System.currentTimeMillis()): Long? {
+    fun secondsToday(context: Context, packageName: String, now: Long = System.currentTimeMillis(), sinceMillis: Long? = null): Long? {
         if (!hasAccess(context)) return null
         val manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val start = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val midnight = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val start = maxOf(midnight, sinceMillis ?: midnight)
+        if (start >= now) return 0L
         val raw = manager.queryEvents(start, now)
         val events = mutableListOf<ForegroundEvent>()
         val event = UsageEvents.Event()

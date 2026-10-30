@@ -86,6 +86,25 @@ object BlockPolicy {
         return weekdays and (1 shl windowDay) != 0
     }
 
+    /**
+     * When today's schedule window opened. The phone's own usage time only counts from here, so
+     * use before the window never counts against the user the moment it opens.
+     */
+    fun scheduleWindowStartMillis(
+        settings: AppSettings,
+        nowMillis: Long = System.currentTimeMillis(),
+        timeZone: TimeZone = TimeZone.getDefault()
+    ): Long {
+        val zone = timeZone.toZoneId()
+        val now = java.time.Instant.ofEpochMilli(nowMillis).atZone(zone)
+        val midnight = now.toLocalDate().atStartOfDay(zone)
+        if (settings.scheduleStart <= 0 && settings.scheduleEnd >= 1439) return midnight.toInstant().toEpochMilli()
+        val minuteNow = now.hour * 60 + now.minute
+        val startedYesterday = settings.scheduleStart > settings.scheduleEnd && minuteNow <= settings.scheduleEnd
+        val startDay = if (startedYesterday) now.toLocalDate().minusDays(1) else now.toLocalDate()
+        return startDay.atStartOfDay(zone).plusMinutes(settings.scheduleStart.toLong()).toInstant().toEpochMilli()
+    }
+
     fun isScheduleActive(
         settings: AppSettings,
         nowMillis: Long = System.currentTimeMillis(),

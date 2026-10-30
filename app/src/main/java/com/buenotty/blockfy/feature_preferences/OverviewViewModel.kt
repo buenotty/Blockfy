@@ -151,6 +151,11 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         dataStoreManager.updateJourney { it.copy(seenLevel = maxOf(it.seenLevel, level), seenMedals = (it.seenMedals + medals).distinct()) }
     }
 
+    /** A short game was finished: pay its XP (the engine caps it per day) and count it for the medal. */
+    fun gameFinished() = viewModelScope.launch {
+        dataStoreManager.updateJourney { JourneyEngine.awardGame(it, LocalDate.now()) }
+    }
+
     fun answerCheckIn(apps: List<String>) = update { BlockPolicy.applyCheckIn(it, apps) }
 
     /** Permanent: the data layer never drops a site or keyword once added. */

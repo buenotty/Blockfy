@@ -870,4 +870,115 @@
         <item>What is so urgent it cannot wait until tomorrow?</item>
         <item>Go rest. You can sort the rest out tomorrow.</item>
     </string-array>
+    <string name="medal_games_10_title">Good distraction</string>
+    <string name="medal_games_10_desc">10 short games finished. You replaced a scroll with something better.</string>
+    <string name="games_title">Hit by an urge?</string>
+    <string name="games_intro">An urge passes in about 15 minutes. Pick something to do while it leaves.</string>
+    <string name="games_xp_yes">Each finished game earns a little XP (up to 3 a day).</string>
+    <string name="games_xp_no">Games already gave today\'s maximum XP. Play for the fun of it.</string>
+    <string name="games_done_title">Mission accomplished</string>
+    <string name="games_xp_earned">+15 XP</string>
+    <string name="games_close">Back to what matters</string>
+    <string name="games_another">Play another</string>
+    <string name="game_breathe_title">Breathe</string>
+    <string name="game_breathe_sub">2 minutes of guided breathing</string>
+    <string name="game_hold_title">Hold on</string>
+    <string name="game_hold_sub">Hold the button for 15 seconds</string>
+    <string name="game_memory_title">Habit memory</string>
+    <string name="game_memory_sub">Find the pairs of temptations</string>
+    <string name="game_quiz_title">Trick quiz</string>
+    <string name="game_quiz_sub">5 questions, zero guilt</string>
+    <string name="breathe_title">Breathe with me</string>
+    <string name="breathe_in">Breathe in</string>
+    <string name="breathe_hold">Hold</string>
+    <string name="breathe_out">Breathe out</string>
+    <string name="hold_title">Hold on</string>
+    <string name="hold_press">Press and hold</string>
+    <string name="hold_keep">Do not let go!</string>
+    <string name="hold_letgo">You let go. It is fine, start again. You can do it.</string>
+    <string name="memory_title">Habit memory</string>
+    <string name="memory_hint">Moves: %1$d</string>
+    <string name="quiz_progress">Question %1$d of %2$d</string>
+    <string name="quiz_next">Next</string>
+    <string name="quiz_finish">Finish</string>
+    <string-array name="games_done_lines">
+        <item>The urge is leaving. Or at least it shrank to the size of a bread roll.</item>
+        <item>You spent two minutes well and scrolled zero times. That is a goal.</item>
+        <item>Your feed is still there, but now you look like you have better things to do.</item>
+        <item>Urge: 0. You: 1.</item>
+    </string-array>
+    <string-array name="breathe_lines">
+        <item>Your feed can wait. Your lungs cannot.</item>
+        <item>Nothing on that screen is more urgent than this air.</item>
+        <item>An urge is a wave: it rises, peaks and passes.</item>
+        <item>Shoulders down. There, like that.</item>
+    </string-array>
+    <string-array name="hold_lines">
+        <item>Yes, just hold. Looks easy, right?</item>
+        <item>Your finger is begging to let go. Do not.</item>
+        <item>Halfway! Your feed is crying somewhere.</item>
+        <item>Almost there. That is real willpower.</item>
+    </string-array>
+    <string-array name="quiz_questions">
+        <item>How long does a strong urge take to pass, on average?</item>
+        <item>The infinite feed was designed to…</item>
+        <item>What is the best time to watch just one more video?</item>
+        <item>Your phone buzzed. You…</item>
+        <item>What happens to people who put the phone down before bed?</item>
+        <item>Pulling the screen to refresh looks like…</item>
+        <item>How much is one more hour of sleep worth?</item>
+        <item>If you stop scrolling now, what do you lose?</item>
+    </string-array>
+    <string-array name="quiz_opt0">
+        <item>About 15 minutes</item>
+        <item>Help you sleep</item>
+        <item>Now</item>
+        <item>Look right away</item>
+        <item>Become a rested person</item>
+        <item>A slot machine</item>
+        <item>Nothing</item>
+        <item>Nothing that matters</item>
+    </string-array>
+    <string-array name="quiz_opt1">
+        <item>An eternity</item>
+        <item>Never give you a full stop</item>
+        <item>There is no just one more</item>
+        <item>Breathe and look later</item>
+        <item>Miss the day\'s news</item>
+        <item>A massage</item>
+        <item>A lot: mood, focus and patience</item>
+        <item>Your whole life</item>
+    </string-array>
+    <string-array name="quiz_opt2">
+        <item>3 seconds</item>
+        <item>Save the planet</item>
+        <item>3 a.m.</item>
+        <item>Throw it out the window</item>
+        <item>Become a monk</item>
+        <item>A hug</item>
+        <item>A coffee</item>
+        <item>The end of the internet</item>
+    </string-array>
+    <string-array name="quiz_correct">
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="quiz_feedback">
+        <item>An urge is a wave: it rises, peaks and is gone in about 15 minutes.</item>
+        <item>No full stop, no time to quit. That is why you need to make one.</item>
+        <item>Just one more has the same energy as just one more slice.</item>
+        <item>Almost everything that buzzes can wait. Almost.</item>
+        <item>Better sleep, better mornings, better thinking. That simple.</item>
+        <item>You pull and maybe you win something. It is the casino trick.</item>
+        <item>Mood, focus and patience come from sleep. It is not a luxury.</item>
+        <item>The videos are there tomorrow. You do not have to be.</item>
+    </string-array>
+    <string name="urge_card_title">Hit by an urge?</string>
+    <string name="urge_card_sub">Breathe, play or hold on for two minutes.</string>
 </resources>

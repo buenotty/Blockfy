@@ -23,7 +23,8 @@ class MedalDef(
 object Medals {
 
     private fun run(id: String, days: Int, tier: MedalTier, glyph: MedalGlyph, @StringRes title: Int, @StringRes desc: Int) =
-        MedalDef(id, tier, glyph, title, desc) { j, live -> maxOf(j.bestRun, j.runDays, live) >= days }
+        // Only finished days count, so a break later today cannot leave a medal that was never earned.
+        MedalDef(id, tier, glyph, title, desc) { j, _ -> maxOf(j.bestRun, j.runDays) >= days }
 
     val all: List<MedalDef> = listOf(
         run("run_1", 1, MedalTier.BRONZE, MedalGlyph.SUN, R.string.medal_run_1_title, R.string.medal_run_1_desc),
@@ -42,6 +43,7 @@ object Medals {
         MedalDef("saved_10h", MedalTier.SILVER, MedalGlyph.CLOCK, R.string.medal_saved_10h_title, R.string.medal_saved_10h_desc) { j, _ -> j.savedSeconds >= 10 * 3600L },
         MedalDef("saved_100h", MedalTier.GOLD, MedalGlyph.CLOCK, R.string.medal_saved_100h_title, R.string.medal_saved_100h_desc) { j, _ -> j.savedSeconds >= 100 * 3600L },
         MedalDef("shield_used", MedalTier.BRONZE, MedalGlyph.SHIELD, R.string.medal_shield_title, R.string.medal_shield_desc) { j, _ -> j.slipDays >= 1 },
+        MedalDef("games_10", MedalTier.SILVER, MedalGlyph.STAR, R.string.medal_games_10_title, R.string.medal_games_10_desc) { j, _ -> j.gamesPlayed >= 10 },
         MedalDef("prestige_1", MedalTier.PLATINUM, MedalGlyph.BOLT, R.string.medal_prestige_title, R.string.medal_prestige_desc) { j, _ ->
             Ranks.of(j.xp).level > Ranks.LEVELS_PER_CYCLE
         }

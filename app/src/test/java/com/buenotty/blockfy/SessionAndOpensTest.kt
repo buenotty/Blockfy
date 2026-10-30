@@ -182,6 +182,55 @@ class SessionAndOpensTest {
         assertEquals(null, m(""))
     }
 
+    // ---- fixes from the bug sweep ----
+
+    private val utc = java.util.TimeZone.getTimeZone("UTC")
+    private fun at(day: Int, hour: Int, minute: Int = 0) =
+        java.time.LocalDateTime.of(2026, 10, day, hour, minute).toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
+
+    @Test
+    fun `the schedule window start is midnight for all day and the opening time otherwise`() {
+        val allDay = AppSettings()
+        assertEquals(at(30, 0), BlockPolicy.scheduleWindowStartMillis(allDay, at(30, 14), utc))
+        val nine = AppSettings(scheduleStart = 9 * 60, scheduleEnd = 17 * 60)
+        assertEquals(at(30, 9), BlockPolicy.scheduleWindowStartMillis(nine, at(30, 14), utc))
+        val night = AppSettings(scheduleStart = 22 * 60, scheduleEnd = 6 * 60)
+        assertEquals(at(29, 22), BlockPolicy.scheduleWindowStartMillis(night, at(30, 2), utc))
+        assertEquals(at(30, 22), BlockPolicy.scheduleWindowStartMillis(night, at(30, 23), utc))
+    }
+
+    @Test
+    fun `a run that was not credited yesterday does not show as a run today`() {
+        val journey = com.buenotty.blockfy.feature_progress.Journey(runDays = 6, bestRun = 6, lastCredited = "2026-10-24", enlisted = true)
+        val usage = DailyUsage(date = "2026-10-30", hadProtection = true)
+        val now = java.time.LocalDateTime.of(2026, 10, 30, 12, 0)
+        assertEquals(1, com.buenotty.blockfy.feature_progress.JourneyUi.of(journey, usage, AppSettings(adultContentBlockerEnabled = true), now).liveRun)
+        val fresh = journey.copy(lastCredited = "2026-10-29")
+        assertEquals(7, com.buenotty.blockfy.feature_progress.JourneyUi.of(fresh, usage, AppSettings(adultContentBlockerEnabled = true), now).liveRun)
+    }
+
+    @Test
+    fun `run medals come only from finished days`() {
+        val today = java.time.LocalDate.of(2026, 10, 30)
+        val medals = com.buenotty.blockfy.feature_progress.Medals.unlock(com.buenotty.blockfy.feature_progress.Journey(runDays = 6), liveRun = 7, today = today).medals
+        assertTrue("run_3" in medals)
+        assertFalse("run_7" in medals)
+    }
+
+    @Test
+    fun `hopping between two apps keeps each session going`() {
+        val m = UsageMeter()
+        m.credit("Instagram", false, 0L)
+        m.credit("Instagram", false, 4_000L)
+        m.credit("YouTube", false, 5_000L)
+        m.credit("YouTube", false, 8_000L)
+        // Back to Instagram 3 s after leaving: the same session, no new open.
+        m.credit("Instagram", false, 8_000L)
+        m.credit("Instagram", false, 10_000L)
+        assertEquals(6L, m.sessionSeconds("Instagram"))
+        assertEquals(1, m.drain().opens["Instagram"])
+    }
+
     @Test
     fun `resetting the session after a break starts from zero`() {
         val m = UsageMeter()

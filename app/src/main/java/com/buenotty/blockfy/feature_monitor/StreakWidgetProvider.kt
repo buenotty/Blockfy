@@ -30,8 +30,9 @@ class StreakWidgetProvider : AppWidgetProvider(), KoinComponent {
         val pending = goAsync()
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                val streak = StreakCalculator.compute(
-                    dataStore.historyFlow.first().days,
+                // The same number the app shows, taken from the journey.
+                val streak = com.buenotty.blockfy.feature_progress.JourneyUi.of(
+                    dataStore.journeyFlow.first(),
                     dataStore.dailyUsageFlow.first(),
                     dataStore.appSettingsFlow.first()
                 )
@@ -41,7 +42,7 @@ class StreakWidgetProvider : AppWidgetProvider(), KoinComponent {
                 )
                 for (id in appWidgetIds) {
                     val views = RemoteViews(context.packageName, R.layout.widget_streak)
-                    views.setTextViewText(R.id.widget_streak_number, streak.current.toString())
+                    views.setTextViewText(R.id.widget_streak_number, streak.liveRun.toString())
                     views.setOnClickPendingIntent(R.id.widget_streak_root, open)
                     manager.updateAppWidget(id, views)
                 }

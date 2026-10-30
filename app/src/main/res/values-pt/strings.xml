@@ -870,4 +870,115 @@
         <item>O que é tão urgente que não espera até amanhã?</item>
         <item>Vai descansar. O resto você resolve amanhã.</item>
     </string-array>
+    <string name="medal_games_10_title">Distração do bem</string>
+    <string name="medal_games_10_desc">10 jogos curtos concluídos. Você trocou um scroll por algo melhor.</string>
+    <string name="games_title">Bateu a vontade?</string>
+    <string name="games_intro">A vontade passa em uns 15 minutos. Escolhe uma coisa pra fazer enquanto ela vai embora.</string>
+    <string name="games_xp_yes">Cada jogo concluído vale um pouco de XP (até 3 por dia).</string>
+    <string name="games_xp_no">Hoje os jogos já deram o XP máximo. Jogue só pelo prazer.</string>
+    <string name="games_done_title">Missão cumprida</string>
+    <string name="games_xp_earned">+15 XP</string>
+    <string name="games_close">Voltar ao que importa</string>
+    <string name="games_another">Jogar outro</string>
+    <string name="game_breathe_title">Respirar</string>
+    <string name="game_breathe_sub">2 minutos de respiração guiada</string>
+    <string name="game_hold_title">Aguenta firme</string>
+    <string name="game_hold_sub">Segure o botão por 15 segundos</string>
+    <string name="game_memory_title">Memória dos hábitos</string>
+    <string name="game_memory_sub">Ache os pares das tentações</string>
+    <string name="game_quiz_title">Quiz das pegadinhas</string>
+    <string name="game_quiz_sub">5 perguntas, zero culpa</string>
+    <string name="breathe_title">Respire comigo</string>
+    <string name="breathe_in">Inspira</string>
+    <string name="breathe_hold">Segura</string>
+    <string name="breathe_out">Solta</string>
+    <string name="hold_title">Aguenta firme</string>
+    <string name="hold_press">Segure</string>
+    <string name="hold_keep">Não solta!</string>
+    <string name="hold_letgo">Soltou. Tudo bem, recomeça. Você consegue.</string>
+    <string name="memory_title">Memória dos hábitos</string>
+    <string name="memory_hint">Jogadas: %1$d</string>
+    <string name="quiz_progress">Pergunta %1$d de %2$d</string>
+    <string name="quiz_next">Próxima</string>
+    <string name="quiz_finish">Terminar</string>
+    <string-array name="games_done_lines">
+        <item>A vontade já está indo embora. Ou pelo menos ficou do tamanho de um pãozinho.</item>
+        <item>Você gastou 2 minutos bem e não deu nenhum scroll. Isso é um golaço.</item>
+        <item>Seu feed continua lá, mas agora você parece ter mais o que fazer.</item>
+        <item>Impulso: 0. Você: 1.</item>
+    </string-array>
+    <string-array name="breathe_lines">
+        <item>Seu feed pode esperar. Seus pulmões, não.</item>
+        <item>Nada na tela é mais urgente que esse ar.</item>
+        <item>A vontade é uma onda: sobe, bate no pico e passa.</item>
+        <item>Ombros para baixo. Isso, assim.</item>
+    </string-array>
+    <string-array name="hold_lines">
+        <item>Isso, só segurar. Parece fácil, né?</item>
+        <item>Seu dedo está pedindo para soltar. Não solta.</item>
+        <item>Metade! O feed está chorando em algum lugar.</item>
+        <item>Quase lá. Isso é força de vontade de verdade.</item>
+    </string-array>
+    <string-array name="quiz_questions">
+        <item>Quanto tempo uma vontade forte leva para passar, em média?</item>
+        <item>O feed infinito foi desenhado para…</item>
+        <item>Qual a melhor hora para ver só mais um vídeo?</item>
+        <item>Seu celular vibrou. Você…</item>
+        <item>O que acontece com quem larga o celular antes de dormir?</item>
+        <item>Puxar a tela para atualizar se parece com…</item>
+        <item>Quanto vale uma hora a mais de sono?</item>
+        <item>Se você parar de rolar agora, o que perde?</item>
+    </string-array>
+    <string-array name="quiz_opt0">
+        <item>Uns 15 minutos</item>
+        <item>Te ajudar a dormir</item>
+        <item>Agora</item>
+        <item>Olha na hora</item>
+        <item>Vira uma pessoa descansada</item>
+        <item>Uma máquina de caça-níqueis</item>
+        <item>Nada</item>
+        <item>Nada que importe</item>
+    </string-array>
+    <string-array name="quiz_opt1">
+        <item>Uma eternidade</item>
+        <item>Nunca te dar um ponto final</item>
+        <item>Não existe só mais um</item>
+        <item>Respira e deixa para depois</item>
+        <item>Perde as notícias do dia</item>
+        <item>Uma massagem</item>
+        <item>Muito: humor, foco e paciência</item>
+        <item>Sua vida inteira</item>
+    </string-array>
+    <string-array name="quiz_opt2">
+        <item>3 segundos</item>
+        <item>Salvar a natureza</item>
+        <item>3h da manhã</item>
+        <item>Joga pela janela</item>
+        <item>Vira monge</item>
+        <item>Um abraço</item>
+        <item>Um café</item>
+        <item>O fim da internet</item>
+    </string-array>
+    <string-array name="quiz_correct">
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="quiz_feedback">
+        <item>A vontade é uma onda: sobe, bate no pico e vai embora em uns 15 minutos.</item>
+        <item>Sem ponto final, sem hora de parar. Por isso você precisa criar um.</item>
+        <item>Só mais um tem a mesma energia de só mais uma fatia.</item>
+        <item>Quase tudo que vibra pode esperar. Quase.</item>
+        <item>Dorme melhor, acorda melhor, pensa melhor. Simples assim.</item>
+        <item>Você puxa e talvez ganhe algo. É o mesmo truque do cassino.</item>
+        <item>Humor, foco e paciência vêm do sono. Ele não é luxo.</item>
+        <item>Os vídeos continuam lá amanhã. Você é que não precisa continuar.</item>
+    </string-array>
+    <string name="urge_card_title">Bateu a vontade?</string>
+    <string name="urge_card_sub">Respire, jogue ou aguente firme por 2 minutos.</string>
 </resources>

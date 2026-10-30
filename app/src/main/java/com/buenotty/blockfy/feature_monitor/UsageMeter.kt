@@ -25,31 +25,33 @@ class UsageMeter {
     private var app: String? = null
     private var markElapsed = 0L
 
-    private var sessionApp: String? = null
-    private var sessionSecs = 0L
-    private var leftAt = 0L
+    // One session per app, so hopping between two apps cannot dodge a session limit.
+    private val sessionSecs = mutableMapOf<String, Long>()
+    private val leftAt = mutableMapOf<String, Long>()
 
     /** Seconds of the running session of [appName], or 0 when that app has none. */
-    fun sessionSeconds(appName: String): Long = if (sessionApp == appName) sessionSecs else 0L
+    fun sessionSeconds(appName: String): Long = sessionSecs[appName] ?: 0L
 
-    /** Starts the session over, for example once the break after a session limit begins. */
+    /** Starts the running app's session over, for example once the break after a session limit begins. */
     fun resetSession() {
-        sessionSecs = 0L
+        app?.let { sessionSecs[it] = 0L }
     }
 
     /** Forget the running clock (the user left, the screen went off). Pending seconds stay. */
     fun stop(now: Long) {
-        if (app != null) leftAt = now
+        app?.let { leftAt[it] = now }
         app = null
         markElapsed = 0L
     }
 
     fun credit(appName: String, shorts: Boolean, now: Long) {
         if (app != appName) {
-            val sameSession = sessionApp == appName && now - leftAt <= SESSION_GAP_MILLIS
+            // Leaving one app for another is leaving the first.
+            app?.let { leftAt[it] = now }
+            val seen = leftAt[appName]
+            val sameSession = seen != null && now - seen <= SESSION_GAP_MILLIS
             if (!sameSession) {
-                sessionApp = appName
-                sessionSecs = 0L
+                sessionSecs[appName] = 0L
                 pendingOpens.merge(appName, 1, Int::plus)
             }
             app = appName
@@ -64,7 +66,7 @@ class UsageMeter {
         val credited = seconds.coerceAtMost(MAX_CREDIT_SECONDS)
         pendingTotal.merge(appName, credited, Long::plus)
         if (shorts) pendingShorts.merge(appName, credited, Long::plus)
-        sessionSecs += credited
+        sessionSecs[appName] = (sessionSecs[appName] ?: 0L) + credited
     }
 
     /** Hands over everything credited so far and clears it. */

@@ -37,7 +37,13 @@ data class Journey(
     /** "2026-10" to the number of shields spent that month. */
     val slipMonths: Map<String, Int> = emptyMap(),
     /** The first protection was turned on, which gave the first level straight away. */
-    val enlisted: Boolean = false
+    val enlisted: Boolean = false,
+    /** Short games finished, ever. */
+    val gamesPlayed: Int = 0,
+    /** The day [gamesToday] counts for, so the daily cap resets by itself. */
+    val gameDay: String = "",
+    /** Games finished on [gameDay] that gave XP. */
+    val gamesToday: Int = 0
 )
 
 object JourneyEngine {
@@ -45,6 +51,22 @@ object JourneyEngine {
 
     /** Turning on the first protection is the first step, so it already makes a recruit. */
     const val ENLIST_XP = 100L
+
+    /** A finished game is worth a little, and only the first few each day, so it never becomes the new scroll. */
+    const val GAME_XP = 15L
+    const val GAMES_PER_DAY = 3
+
+    fun awardGame(j: Journey, date: LocalDate): Journey {
+        val today = date.toString()
+        val used = if (j.gameDay == today) j.gamesToday else 0
+        val pays = used < GAMES_PER_DAY
+        return j.copy(
+            xp = j.xp + if (pays) GAME_XP else 0L,
+            gamesPlayed = j.gamesPlayed + 1,
+            gameDay = today,
+            gamesToday = if (pays) used + 1 else used
+        )
+    }
 
     private const val CLEAN_XP = 100
     private const val WELL_UNDER_BONUS = 50
