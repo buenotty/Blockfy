@@ -105,8 +105,6 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setAdultContentBlocker(enabled: Boolean) = update { it.copy(adultContentBlockerEnabled = enabled) }
 
-    fun setInAppAdultScan(enabled: Boolean) = update { it.copy(inAppAdultScan = enabled) }
-
     /** Starts focus mode; the data layer never lets it be shortened afterwards. */
     fun startFocus(untilMillis: Long) = update { it.copy(focusUntilEpoch = untilMillis) }
 
