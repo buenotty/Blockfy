@@ -8,7 +8,7 @@ Blockfy ("the app") is a free, open-source focus tool for Android by Samuel Buen
 
 **What the app reads.** With your explicit consent (the Accessibility disclosure shown before you can turn the service on), the Accessibility Service:
 
-- detects short-video screens (Reels, Shorts, TikTok, Facebook Reels, X) in Instagram, YouTube, TikTok, Facebook, X and Telegram by reading the screen element IDs of those apps, to enforce the limits and schedules you configure;
+- detects short-video screens (Reels, Shorts, TikTok, Facebook Reels, X) in Instagram, YouTube, TikTok, Facebook and X by reading the screen element IDs of those apps (Telegram is only blocked as a whole app, without reading its screen), to enforce the limits and schedules you configure;
 - only if you turn on adult-content blocking, reads your web browser's address bar and compares it against a list of adult sites, to send you to the home screen when you open one. It never reads messages, posts, chats, or anything typed inside other apps.
 
 **Optional: usage access.** If you grant the "Usage access" permission in Android Settings (it is off by default), Blockfy reads only how long each tracked app (Instagram, YouTube, TikTok, Facebook, X and Telegram) was in the foreground today, so its time limits match the time your phone shows. It does not read which other apps you use. This data never leaves your phone.
