@@ -3,8 +3,7 @@ package com.buenotty.blockfy.feature_progress.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,9 +62,11 @@ fun JourneyBanner(viewModel: OverviewViewModel, onOpen: () -> Unit, modifier: Mo
     AnimatedVisibility(
         visible = key != null,
         enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut(),
+        // No exit animation: the event is already gone by then, so there would be nothing to draw.
+        exit = ExitTransition.None,
         modifier = modifier
     ) {
+        if (!promoted && medal == null) return@AnimatedVisibility
         Card(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
             shape = RoundedCornerShape(20.dp),
@@ -85,7 +86,7 @@ fun JourneyBanner(viewModel: OverviewViewModel, onOpen: () -> Unit, modifier: Mo
                             val from = Ranks.of(Ranks.xpForLevel(journey.seenLevel))
                             stringResource(R.string.rankup_body, rankTitle(from), rankTitle(ui.rank))
                         } else {
-                            stringResource(medal!!.title)
+                            stringResource(medal?.title ?: R.string.medal_new_title)
                         },
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,

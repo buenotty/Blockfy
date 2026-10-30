@@ -139,6 +139,9 @@ class DataStoreManager(private val context: Context) {
 
     suspend fun addTotalAppUsage(appName: String, seconds: Long) = updateToday { it.plusTotal(appName, seconds) }
 
+    suspend fun grantException(appName: String, seconds: Long, browser: Boolean) =
+        updateToday { it.withException(appName, seconds, browser) }
+
     suspend fun addOpens(appName: String, count: Int) = updateToday { it.plusOpens(appName, count) }
 
     suspend fun startBreak(appName: String, untilMillis: Long) = updateToday { it.withBreak(appName, untilMillis) }
@@ -150,5 +153,9 @@ class DataStoreManager(private val context: Context) {
         )
     }
 
-    suspend fun resetUsage(appName: String) = updateToday { it.resetApp(appName) }
+    /** Wiping counters that had time in them is cheating the day; wiping an empty one is harmless. */
+    suspend fun resetUsage(appName: String) = updateToday {
+        val hadUse = BlockPolicy.totalSeconds(it, appName) > 0L || BlockPolicy.featureSeconds(it, appName) > 0L
+        it.resetApp(appName).let { reset -> if (hadUse) reset.copy(loosened = true) else reset }
+    }
 }

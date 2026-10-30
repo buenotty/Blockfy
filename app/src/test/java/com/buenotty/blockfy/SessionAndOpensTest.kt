@@ -120,6 +120,68 @@ class SessionAndOpensTest {
         assertEquals(50, recap.savedMinutes)
     }
 
+    // ---- exceptions ("I need it anyway") ----
+
+    private fun limited(minutes: Int): AppSettings {
+        val base = AppSettings()
+        return base.copy(instagram = base.instagram.copy(blocked = true, wholeApp = true, appTotalDailyLimitMinutes = minutes, shortsRuleOn = false))
+    }
+
+    private fun verdictFor(s: AppSettings, usage: DailyUsage, viaBrowser: Boolean = false) =
+        BlockPolicy.evaluate(
+            TrackedPackages.INSTAGRAM, s, usage, nowMillis = 1_000_000L, shortsVisible = false, viaBrowser = viaBrowser
+        )
+
+    @Test
+    fun `an app exception adds minutes to the limit`() {
+        val usage = DailyUsage(instagramTotalSeconds = 60 * 60L)
+        assertEquals(BlockReason.TOTAL_LIMIT, verdictFor(limited(60), usage).reason)
+        val granted = usage.withException("Instagram", 300L, browser = false)
+        assertEquals(BlockReason.NONE, verdictFor(limited(60), granted).reason)
+        assertEquals(BlockReason.TOTAL_LIMIT, verdictFor(limited(60), granted.copy(instagramTotalSeconds = 65 * 60L)).reason)
+        assertEquals(1, granted.exceptions)
+    }
+
+    @Test
+    fun `a browser exception frees the site but keeps the app blocked`() {
+        val usage = DailyUsage(instagramTotalSeconds = 60 * 60L).withException("Instagram", 600L, browser = true)
+        assertEquals(BlockReason.NONE, verdictFor(limited(60), usage, viaBrowser = true).reason)
+        assertEquals(BlockReason.TOTAL_LIMIT, verdictFor(limited(60), usage, viaBrowser = false).reason)
+    }
+
+    @Test
+    fun `an exception also lets a fully blocked app run for the granted minutes only`() {
+        val blocked = limited(0)
+        assertEquals(BlockReason.SCHEDULE, verdictFor(blocked, DailyUsage()).reason)
+        val granted = DailyUsage().withException("Instagram", 300L, browser = false)
+        assertEquals(BlockReason.NONE, verdictFor(blocked, granted).reason)
+        assertEquals(BlockReason.TOTAL_LIMIT, verdictFor(blocked, granted.copy(instagramTotalSeconds = 301L)).reason)
+    }
+
+    @Test
+    fun `granted minutes are not cheating and an exception day earns no under-limit bonus`() {
+        val s = limited(60)
+        val used = DailyUsage(instagramTotalSeconds = 64 * 60L).withException("Instagram", 300L, browser = false)
+        assertEquals(com.buenotty.blockfy.feature_progress.DayOutcome.CLEAN,
+            com.buenotty.blockfy.feature_progress.DayJudge.judge(used, s, protectedDay = true))
+        assertTrue(com.buenotty.blockfy.feature_progress.DayJudge.usageShare(used, s) >= 1.0)
+    }
+
+    @Test
+    fun `browser sites map to their app by host and subdomain`() {
+        val m = com.buenotty.blockfy.feature_monitor.BrowserSites::appFor
+        assertEquals("Instagram", m("https://www.instagram.com/reels/abc"))
+        assertEquals("Instagram", m("instagram.com"))
+        assertEquals("YouTube", m("m.youtube.com/shorts/xyz"))
+        assertEquals("YouTube", m("youtu.be/abc"))
+        assertEquals("X", m("x.com/home"))
+        assertEquals("Telegram", m("web.telegram.org/k/"))
+        assertEquals(null, m("google.com/search?q=instagram.com"))
+        assertEquals(null, m("notinstagram.com"))
+        assertEquals(null, m("instagram.com.evil.org"))
+        assertEquals(null, m(""))
+    }
+
     @Test
     fun `resetting the session after a break starts from zero`() {
         val m = UsageMeter()

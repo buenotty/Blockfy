@@ -40,7 +40,7 @@
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
 
     <string name="today_usage_label">Hoje: %1$d de %2$d min</string>
-    <string name="reset_usage_btn">Zerar o contador de hoje</string>
+    <string name="reset_usage_btn">Zerar o uso de hoje (conta como trapaça)</string>
     <string name="start_time">Início</string>
     <string name="end_time">Fim</string>
     <string name="save_btn">Salvar</string>
@@ -837,4 +837,37 @@
     <string name="rankup_cta">Continuar</string>
     <string name="medal_new_title">Nova medalha</string>
     <string name="banner_see">Ver</string>
+    <string name="overlay_tag_negotiate">Limite batido</string>
+    <string name="negotiate_btn_ok">Beleza</string>
+    <string name="negotiate_s0_title">Hora de outra coisa.</string>
+    <string name="negotiate_s0_ok">Beleza, vou fazer outra coisa</string>
+    <string name="negotiate_s0_need">Preciso usar mesmo assim</string>
+    <string name="negotiate_ask_title">Ei, você acha que eu não sei o que você vai fazer?</string>
+    <string name="negotiate_ask_sorry">Desculpa</string>
+    <string name="negotiate_ask_quick">É rapidinho</string>
+    <string name="negotiate_emergency_title">É uma emergência?</string>
+    <string name="negotiate_emergency_body">Não vai mentir pra mim.</string>
+    <string name="negotiate_emergency_no">Não é</string>
+    <string name="negotiate_emergency_yes">É sim</string>
+    <string name="negotiate_ok_title">Ok, te libero.</string>
+    <string name="negotiate_ok_body">Escolhe. O relógio já está contando.</string>
+    <string name="negotiate_opt_browser">+10 min no navegador</string>
+    <string name="negotiate_opt_app">+5 min no app</string>
+    <string name="negotiate_opt_tomorrow">Deixo para amanhã</string>
+    <string name="negotiate_granted_browser">Liberado: +10 min no navegador.</string>
+    <string name="negotiate_granted_app">Liberado: +5 min no app.</string>
+    <string name="negotiate_granted_body">Faz o que precisa e para. Depois disso, vai descansar.</string>
+    <string name="negotiate_none_left">Hoje você já usou suas exceções.</string>
+    <string name="negotiate_tomorrow_body">Seu eu de amanhã, com o limite novo, agradece.</string>
+    <string name="negotiate_late">Já é tarde. Vai descansar.</string>
+    <string-array name="negotiate_tomorrow_titles">
+        <item>Poxa, talvez dê pra fazer isso amanhã, no limite novo. Por que hoje?</item>
+        <item>Isso aguenta até amanhã, não aguenta?</item>
+        <item>Amanhã você tem tempo novo. Hoje, descansa.</item>
+    </string-array>
+    <string-array name="negotiate_nudges">
+        <item>Talvez dê pra fazer isso amanhã, no limite novo. Por que hoje?</item>
+        <item>O que é tão urgente que não espera até amanhã?</item>
+        <item>Vai descansar. O resto você resolve amanhã.</item>
+    </string-array>
 </resources>

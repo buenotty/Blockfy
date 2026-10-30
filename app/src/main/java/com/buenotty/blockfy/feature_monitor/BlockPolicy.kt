@@ -50,6 +50,9 @@ data class BlockVerdict(
  */
 object BlockPolicy {
 
+    /** How many times a day the user can argue past a limit. */
+    const val EXCEPTIONS_PER_DAY = 2
+
     fun currentMinuteOfDay(nowMillis: Long = System.currentTimeMillis(), timeZone: TimeZone = TimeZone.getDefault()): Int {
         val calendar = Calendar.getInstance(timeZone)
         calendar.timeInMillis = nowMillis
@@ -213,9 +216,13 @@ object BlockPolicy {
         shortsVisible: Boolean = true,
         timeZone: TimeZone = TimeZone.getDefault(),
         /** Seconds of the running stay in the app, for the session limit. */
-        sessionSeconds: Long = 0L
+        sessionSeconds: Long = 0L,
+        /** The user is on the app's website in a browser; [packageName] is then the browser. */
+        viaBrowser: Boolean = false,
+        /** Which app the browser page belongs to. */
+        appNameOverride: String? = null
     ): BlockVerdict {
-        val appName = TrackedPackages.displayName(packageName)
+        val appName = appNameOverride ?: TrackedPackages.displayName(packageName)
             ?: return BlockVerdict(BlockReason.NONE, "", packageName)
         val none = BlockVerdict(BlockReason.NONE, appName, packageName)
 
@@ -237,17 +244,19 @@ object BlockPolicy {
             return wholeBlock(BlockReason.SESSION_LIMIT)
         }
 
+        // Granted exceptions add seconds to the limit, so a limit of 0 with a grant is "that many seconds".
+        val bonus = usage.bonusSeconds(appName, viaBrowser)
         if (wholeRuleOn(app)) {
-            val limit = app.appTotalDailyLimitMinutes
-            if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName, wholeApp = true)
-            if (totalSeconds(usage, appName) >= limit * 60L) {
+            val allowed = app.appTotalDailyLimitMinutes * 60L + bonus
+            if (allowed <= 0L) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName, wholeApp = true)
+            if (totalSeconds(usage, appName) >= allowed) {
                 return BlockVerdict(BlockReason.TOTAL_LIMIT, appName, packageName, wholeApp = true)
             }
         }
         if (shortsRuleOn(app) && shortsVisible) {
-            val limit = app.dailyLimitMinutes
-            if (limit <= 0) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
-            if (featureSeconds(usage, appName) >= limit * 60L) {
+            val allowed = app.dailyLimitMinutes * 60L + bonus
+            if (allowed <= 0L) return BlockVerdict(BlockReason.SCHEDULE, appName, packageName)
+            if (featureSeconds(usage, appName) >= allowed) {
                 return BlockVerdict(BlockReason.DAILY_LIMIT, appName, packageName)
             }
         }

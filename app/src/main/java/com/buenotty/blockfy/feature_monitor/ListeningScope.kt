@@ -28,6 +28,8 @@ object ListeningScope {
             }
         }
         if (settings.adultContentBlockerEnabled) result += AdultContentDetector.BROWSER_PACKAGES
+        // A limited app is also a website, so its browsers are listened to as well.
+        if (result.any(TrackedPackages::isTracked)) result += AdultContentDetector.BROWSER_PACKAGES
         return if (result.isEmpty()) setOf(NOTHING) else result
     }
 }

@@ -40,7 +40,7 @@
     <string name="share_app_thanks">Thanks for sharing.</string>
 
     <string name="today_usage_label">Today: %1$d of %2$d min</string>
-    <string name="reset_usage_btn">Reset today\'s counter</string>
+    <string name="reset_usage_btn">Reset today\'s usage (counts as cheating)</string>
     <string name="start_time">Start</string>
     <string name="end_time">End</string>
     <string name="save_btn">Save</string>
@@ -837,4 +837,37 @@
     <string name="rankup_cta">Continue</string>
     <string name="medal_new_title">New medal</string>
     <string name="banner_see">View</string>
+    <string name="overlay_tag_negotiate">Limit reached</string>
+    <string name="negotiate_btn_ok">Okay</string>
+    <string name="negotiate_s0_title">Time for something else.</string>
+    <string name="negotiate_s0_ok">Okay, I will do something else</string>
+    <string name="negotiate_s0_need">I need it anyway</string>
+    <string name="negotiate_ask_title">Hey, do you think I do not know what you are about to do?</string>
+    <string name="negotiate_ask_sorry">Sorry</string>
+    <string name="negotiate_ask_quick">It is quick</string>
+    <string name="negotiate_emergency_title">Is it an emergency?</string>
+    <string name="negotiate_emergency_body">Do not lie to me.</string>
+    <string name="negotiate_emergency_no">It is not</string>
+    <string name="negotiate_emergency_yes">Yes it is</string>
+    <string name="negotiate_ok_title">Okay, I will let you.</string>
+    <string name="negotiate_ok_body">Choose. The clock is already running.</string>
+    <string name="negotiate_opt_browser">+10 min in the browser</string>
+    <string name="negotiate_opt_app">+5 min in the app</string>
+    <string name="negotiate_opt_tomorrow">I will leave it for tomorrow</string>
+    <string name="negotiate_granted_browser">Granted: +10 min in the browser.</string>
+    <string name="negotiate_granted_app">Granted: +5 min in the app.</string>
+    <string name="negotiate_granted_body">Do what you need and stop. After that, go rest.</string>
+    <string name="negotiate_none_left">You already used today\'s exceptions.</string>
+    <string name="negotiate_tomorrow_body">Tomorrow\'s you, with the new limit, will thank you.</string>
+    <string name="negotiate_late">It is late. Go rest.</string>
+    <string-array name="negotiate_tomorrow_titles">
+        <item>Well, maybe you can do this tomorrow, with the new limit. Why today?</item>
+        <item>This can wait until tomorrow, can it not?</item>
+        <item>Tomorrow you get fresh time. Today, rest.</item>
+    </string-array>
+    <string-array name="negotiate_nudges">
+        <item>Maybe you can do this tomorrow, with the new limit. Why today?</item>
+        <item>What is so urgent it cannot wait until tomorrow?</item>
+        <item>Go rest. You can sort the rest out tomorrow.</item>
+    </string-array>
 </resources>

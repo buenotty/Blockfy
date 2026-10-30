@@ -30,13 +30,16 @@ object DayJudge {
     private const val TOLERANCE_SHARE = 0.2
     private const val BLOCKED_TOLERANCE_SECONDS = 180L
 
-    private data class Rule(val usedSeconds: Long, val limitMinutes: Int)
+    private data class Rule(val usedSeconds: Long, val limitMinutes: Int, val grantedSeconds: Long)
+
+    /** Minutes the user negotiated today are allowed, not cheated. */
+    private fun granted(usage: DailyUsage, appName: String) = usage.bonusSeconds(appName, viaBrowser = true)
 
     private fun rules(usage: DailyUsage, settings: AppSettings): List<Rule> = buildList {
         for (app in settings.apps) {
             if (!app.blocked) continue
-            if (BlockPolicy.wholeRuleOn(app)) add(Rule(BlockPolicy.totalSeconds(usage, app.name), app.appTotalDailyLimitMinutes))
-            if (BlockPolicy.shortsRuleOn(app)) add(Rule(BlockPolicy.featureSeconds(usage, app.name), app.dailyLimitMinutes))
+            if (BlockPolicy.wholeRuleOn(app)) add(Rule(BlockPolicy.totalSeconds(usage, app.name), app.appTotalDailyLimitMinutes, granted(usage, app.name)))
+            if (BlockPolicy.shortsRuleOn(app)) add(Rule(BlockPolicy.featureSeconds(usage, app.name), app.dailyLimitMinutes, granted(usage, app.name)))
         }
     }
 
@@ -45,7 +48,7 @@ object DayJudge {
         if (usage.loosened) return DayOutcome.BREAK
         var worst = DayOutcome.CLEAN
         for (rule in rules(usage, settings)) {
-            val allowed = rule.limitMinutes * 60L
+            val allowed = rule.limitMinutes * 60L + rule.grantedSeconds
             val excess = rule.usedSeconds - allowed
             val tolerance = if (rule.limitMinutes <= 0) {
                 BLOCKED_TOLERANCE_SECONDS
@@ -62,12 +65,15 @@ object DayJudge {
     }
 
     /** The most of any limit used today, from 0 (nothing) to 1 or more (at or over). Rewards finishing well under. */
-    fun usageShare(usage: DailyUsage, settings: AppSettings): Double =
-        rules(usage, settings).maxOfOrNull { rule ->
+    fun usageShare(usage: DailyUsage, settings: AppSettings): Double {
+        // Asking for an exception means the day was not comfortably under the limit.
+        if (usage.exceptions > 0) return 1.0
+        return rules(usage, settings).maxOfOrNull { rule ->
             when {
                 rule.limitMinutes > 0 -> rule.usedSeconds / (rule.limitMinutes * 60.0)
                 rule.usedSeconds > 0L -> 1.0
                 else -> 0.0
             }
         } ?: 0.0
+    }
 }
