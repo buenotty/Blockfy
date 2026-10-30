@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -51,6 +52,7 @@ fun BlocksScreen(
     onEditApp: (String) -> Unit,
     onOpenSchedule: () -> Unit,
     onOpenConcepts: () -> Unit,
+    onOpenPlay: () -> Unit,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
     val settings by viewModel.appSettings.collectAsState()
@@ -86,6 +88,18 @@ fun BlocksScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         StreakHero(info = streak, why = settings.myWhy, onWriteWhy = onOpenConcepts)
+
+        androidx.compose.material3.Card(
+            onClick = onOpenPlay,
+            modifier = Modifier.fillMaxWidth(),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+            colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.tertiaryContainer)
+        ) {
+            androidx.compose.foundation.layout.Column(Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.urge_card_title), style = androidx.compose.material3.MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+                Text(stringResource(R.string.urge_card_sub), style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+            }
+        }
 
         DailyMotivationCard(text = motivation)
 

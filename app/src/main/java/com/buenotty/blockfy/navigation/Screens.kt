@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     data object Journey : Screen("journey")
     data object Concepts : Screen("concepts")
     data object Settings : Screen("settings")
+    data object Play : Screen("play")
 
     data object EditApp : Screen("edit/{app}") {
         const val ARG = "app"

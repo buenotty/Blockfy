@@ -1,6 +1,8 @@
 package com.buenotty.blockfy.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -8,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.buenotty.blockfy.feature_games.GamesScreen
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.ui.BlocksScreen
 import com.buenotty.blockfy.feature_preferences.ui.ConceptDetailScreen
@@ -38,10 +41,17 @@ fun AppNavigation(navController: NavHostController, viewModel: OverviewViewModel
                 viewModel = viewModel,
                 onEditApp = { navController.navigate(Screen.EditApp.create(it)) },
                 onOpenSchedule = { navController.openTab(Screen.Settings.route) },
-                onOpenConcepts = { navController.navigate(Screen.Concepts.route) }
+                onOpenConcepts = { navController.navigate(Screen.Concepts.route) },
+                onOpenPlay = { navController.navigate(Screen.Play.route) }
             )
         }
         composable(Screen.Journey.route) { JourneyScreen(viewModel) }
+        composable(Screen.Play.route) {
+            val journeyUi by viewModel.journeyUi.collectAsState()
+            val j = journeyUi.journey
+            val paysToday = !(j.gameDay == java.time.LocalDate.now().toString() && j.gamesToday >= com.buenotty.blockfy.feature_progress.JourneyEngine.GAMES_PER_DAY)
+            GamesScreen(xpHint = paysToday, onFinished = viewModel::gameFinished, onBack = { navController.popBackStack() })
+        }
         composable(Screen.Concepts.route) {
             ConceptsHomeScreen(onOpenTopic = { navController.navigate(Screen.ConceptTopic.create(it.route)) })
         }
