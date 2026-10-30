@@ -836,4 +836,5 @@
     <string name="rankup_body">%1$s → %2$s</string>
     <string name="rankup_cta">Continuar</string>
     <string name="medal_new_title">Nova medalha</string>
+    <string name="banner_see">Ver</string>
 </resources>

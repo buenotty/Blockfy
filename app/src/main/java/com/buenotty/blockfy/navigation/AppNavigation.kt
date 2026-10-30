@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.ui.BlocksScreen
 import com.buenotty.blockfy.feature_preferences.ui.ConceptDetailScreen
 import com.buenotty.blockfy.feature_preferences.ui.ConceptTopic
@@ -26,7 +27,7 @@ private fun NavHostController.openTab(route: String) {
 }
 
 @Composable
-fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
+fun AppNavigation(navController: NavHostController, viewModel: OverviewViewModel, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = Screen.Blocks.route,
@@ -34,13 +35,13 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
     ) {
         composable(Screen.Blocks.route) {
             BlocksScreen(
+                viewModel = viewModel,
                 onEditApp = { navController.navigate(Screen.EditApp.create(it)) },
                 onOpenSchedule = { navController.openTab(Screen.Settings.route) },
-                onOpenConcepts = { navController.navigate(Screen.Concepts.route) },
-                onOpenJourney = { navController.openTab(Screen.Journey.route) }
+                onOpenConcepts = { navController.navigate(Screen.Concepts.route) }
             )
         }
-        composable(Screen.Journey.route) { JourneyScreen() }
+        composable(Screen.Journey.route) { JourneyScreen(viewModel) }
         composable(Screen.Concepts.route) {
             ConceptsHomeScreen(onOpenTopic = { navController.navigate(Screen.ConceptTopic.create(it.route)) })
         }

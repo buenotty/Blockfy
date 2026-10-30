@@ -28,8 +28,6 @@ import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.feature_preferences.repository.models.App
 import com.buenotty.blockfy.feature_preferences.ui.composables.AdultSitesCard
-import com.buenotty.blockfy.feature_progress.ui.JourneyCard
-import com.buenotty.blockfy.feature_progress.ui.JourneyCelebrationHost
 import com.buenotty.blockfy.feature_preferences.ui.composables.AppBlockCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.CheckInCard
 import com.buenotty.blockfy.feature_preferences.ui.composables.DailyMotivationCard
@@ -53,14 +51,12 @@ fun BlocksScreen(
     onEditApp: (String) -> Unit,
     onOpenSchedule: () -> Unit,
     onOpenConcepts: () -> Unit,
-    onOpenJourney: () -> Unit,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
     val settings by viewModel.appSettings.collectAsState()
     val usage by viewModel.dailyUsage.collectAsState()
     val streak by viewModel.streak.collectAsState()
     val recap by viewModel.weekRecap.collectAsState()
-    val journeyUi by viewModel.journeyUi.collectAsState()
 
     var showStrictDialog by remember { mutableStateOf(false) }
     var showDisableAdultDialog by remember { mutableStateOf(false) }
@@ -89,8 +85,6 @@ fun BlocksScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        JourneyCard(ui = journeyUi, onOpen = onOpenJourney)
-
         StreakHero(info = streak, why = settings.myWhy, onWriteWhy = onOpenConcepts)
 
         DailyMotivationCard(text = motivation)
@@ -173,7 +167,6 @@ fun BlocksScreen(
         Spacer(Modifier.height(8.dp))
     }
 
-    JourneyCelebrationHost(viewModel)
     if (showTelegramOffer) {
         AlertDialog(
             onDismissRequest = { showTelegramOffer = false },

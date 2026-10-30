@@ -16,7 +16,8 @@ import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.automirrored.rounded.MenuBook
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +50,8 @@ import androidx.navigation.compose.rememberNavController
 import com.buenotty.blockfy.feature_onboarding.NoticeScreen
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
 import com.buenotty.blockfy.navigation.AppNavigation
+import com.buenotty.blockfy.feature_progress.ui.AppHeader
+import com.buenotty.blockfy.feature_progress.ui.JourneyBanner
 import com.buenotty.blockfy.navigation.Screen
 import com.buenotty.blockfy.ui.theme.BlockfyTheme
 import org.koin.androidx.compose.koinViewModel
@@ -128,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                     !settings.setupDone || health != ServiceHealth.RUNNING -> SetupScreen(onFinish = viewModel::setSetupDone)
                     else -> {
                         LaunchedEffect(Unit) { askForNotificationsOnce() }
-                        MainScaffold()
+                        MainScaffold(viewModel)
                     }
                 }
             }
@@ -146,8 +149,10 @@ class MainActivity : AppCompatActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScaffold() {
+private fun MainScaffold(viewModel: OverviewViewModel) {
     val navController = rememberNavController()
+    val journeyUi by viewModel.journeyUi.collectAsState()
+    val streak by viewModel.streak.collectAsState()
     val currentRoute = navController.currentRoute()
     val currentTab = TABS.firstOrNull { it.screen.route == currentRoute }
 
@@ -157,15 +162,15 @@ private fun MainScaffold() {
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             if (currentTab != null) {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            stringResource(
-                                if (currentTab.screen == Screen.Blocks) R.string.app_name else currentTab.label
-                            )
-                        )
+                Column {
+                    // The home screen shows who you are (crest, rank, streak) instead of the app's name.
+                    if (currentTab.screen == Screen.Blocks) {
+                        AppHeader(ui = journeyUi, streak = streak.current, onOpen = { navController.openTab(Screen.Journey) })
+                    } else {
+                        TopAppBar(title = { Text(stringResource(currentTab.label)) })
                     }
-                )
+                    JourneyBanner(viewModel = viewModel, onOpen = { navController.openTab(Screen.Journey) })
+                }
             }
         },
         bottomBar = {
@@ -185,6 +190,7 @@ private fun MainScaffold() {
     ) { padding ->
         AppNavigation(
             navController = navController,
+            viewModel = viewModel,
             modifier = Modifier.padding(padding)
         )
     }
