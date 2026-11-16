@@ -151,6 +151,9 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
         dataStoreManager.updateJourney { it.copy(seenLevel = maxOf(it.seenLevel, level), seenMedals = (it.seenMedals + medals).distinct()) }
     }
 
+    /** The user admits a relapse: today counts as broken and the run starts over, without touching XP or medals. */
+    fun admitRelapse() = viewModelScope.launch { dataStoreManager.markLoosened() }
+
     /** A short game was finished: pay its XP (the engine caps it per day) and count it for the medal. */
     fun gameFinished() = viewModelScope.launch {
         dataStoreManager.updateJourney { JourneyEngine.awardGame(it, LocalDate.now()) }

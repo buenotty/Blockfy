@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.buenotty.blockfy.R
 import com.buenotty.blockfy.feature_preferences.OverviewViewModel
+import com.buenotty.blockfy.feature_progress.DayOutcome
 import com.buenotty.blockfy.feature_progress.JourneyEngine
 import com.buenotty.blockfy.feature_progress.JourneyUi
 import com.buenotty.blockfy.feature_progress.MedalDef
@@ -90,6 +91,7 @@ fun JourneyScreen(viewModel: OverviewViewModel = koinViewModel()) {
         GoalCard(ui)
         StatsRow(ui)
         MedalsSection(ui)
+        if (ui.todayOutcome != DayOutcome.BREAK) RelapseButton(onAdmit = viewModel::admitRelapse)
         Spacer(Modifier.height(8.dp))
     }
 }
@@ -248,6 +250,25 @@ private fun MedalsSection(ui: JourneyUi) {
     }
     opened?.let { def ->
         MedalDialog(def, unlocked = def.id in earned, onDismiss = { opened = null })
+    }
+}
+
+@Composable
+private fun RelapseButton(onAdmit: () -> Unit) {
+    var asking by remember { mutableStateOf(false) }
+    TextButton(onClick = { asking = true }, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.relapse_button))
+    }
+    if (asking) {
+        AlertDialog(
+            onDismissRequest = { asking = false },
+            title = { Text(stringResource(R.string.relapse_title)) },
+            text = { Text(stringResource(R.string.relapse_msg)) },
+            confirmButton = {
+                TextButton(onClick = { asking = false; onAdmit() }) { Text(stringResource(R.string.relapse_confirm)) }
+            },
+            dismissButton = { TextButton(onClick = { asking = false }) { Text(stringResource(R.string.relapse_cancel)) } }
+        )
     }
 }
 

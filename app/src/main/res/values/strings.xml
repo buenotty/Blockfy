@@ -981,4 +981,11 @@
     </string-array>
     <string name="urge_card_title">Hit by an urge?</string>
     <string name="urge_card_sub">Breathe, play or hold on for two minutes.</string>
+    <string name="countdown_title">%1$s: almost out of time</string>
+    <string name="countdown_text">Every second counts now.</string>
+    <string name="relapse_button">I relapsed today</string>
+    <string name="relapse_title">Admit a relapse?</string>
+    <string name="relapse_msg">Being honest is the first step back. Today will count as broken and your current run starts over. Your XP, rank and medals stay.</string>
+    <string name="relapse_confirm">Yes, I relapsed</string>
+    <string name="relapse_cancel">Not now</string>
 </resources>

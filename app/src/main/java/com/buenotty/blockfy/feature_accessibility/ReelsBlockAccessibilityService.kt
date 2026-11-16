@@ -85,6 +85,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
     private var anchorPkg: String? = null
 
     private var channelsCreated = false
+    private val countdownLeft = mutableMapOf<String, Pair<String, Long>>()
+    private var lastCountdownTime = 0L
 
     private var overlay: ChallengeOverlay? = null
     private var lastChallengeIndex: Int? = null
@@ -643,7 +645,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun checkAndNotifyRemainingTime(key: String, label: String, usedSeconds: Long, limitMinutes: Int) {
         val remainingSeconds = limitMinutes * 60L - usedSeconds
-        if (remainingSeconds <= 0L) return
+        if (remainingSeconds <= 0L) {
+            countdownLeft.remove(key)
+            if (countdownLeft.isEmpty()) cancelCountdown()
+            return
+        }
+        updateCountdown(key, label, remainingSeconds)
         val remainingMinutes = ((remainingSeconds + 59L) / 60L).toInt()
         val lastWarned = lastWarnedMinutes[key] ?: -1
         if (remainingMinutes == lastWarned) return
@@ -656,6 +663,46 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             getString(R.string.toast_remaining_minutes, remainingMinutes, label)
         }
         notifyAlert(getString(R.string.alert_warning_title), minText, isFinal = false)
+    }
+
+    /** In the last [COUNTDOWN_WINDOW_SECONDS] a live bar and clock sit in the shade, for whichever limit is closest. */
+    private fun updateCountdown(key: String, label: String, remainingSeconds: Long) {
+        if (remainingSeconds > COUNTDOWN_WINDOW_SECONDS) {
+            countdownLeft.remove(key)
+            if (countdownLeft.isEmpty()) cancelCountdown()
+            return
+        }
+        countdownLeft[key] = label to remainingSeconds
+        val now = System.currentTimeMillis()
+        if (now - lastCountdownTime < COUNTDOWN_GAP_MILLIS) return
+        lastCountdownTime = now
+        val (closeLabel, left) = countdownLeft.values.minByOrNull { it.second } ?: return
+        try {
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            ensureChannels(manager)
+            manager.notify(
+                COUNTDOWN_ID,
+                NotificationCompat.Builder(this, REMINDER_CHANNEL)
+                    .setSmallIcon(R.drawable.ic_stat_blockfy)
+                    .setContentTitle(getString(R.string.countdown_title, closeLabel))
+                    .setContentText(getString(R.string.countdown_text))
+                    .setProgress(COUNTDOWN_WINDOW_SECONDS.toInt(), left.toInt(), false)
+                    .setUsesChronometer(true)
+                    .setChronometerCountDown(true)
+                    .setWhen(now + left * 1000L)
+                    .setOnlyAlertOnce(true)
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setTimeoutAfter(COUNTDOWN_TIMEOUT_MILLIS)
+                    .build()
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error showing countdown", e)
+        }
+    }
+
+    private fun cancelCountdown() {
+        runCatching { (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(COUNTDOWN_ID) }
     }
 
     private fun exitTheDoom(node: AccessibilityNodeInfo?, extra: (() -> Unit)? = null) {
@@ -908,6 +955,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val MIN_OVERLAY_GAP_MILLIS = 6_000L
         private const val ADULT_SCAN_GAP_MILLIS = 400L
         private const val OFF_NOTICE_ID = 1003
+        private const val COUNTDOWN_ID = 1004
+        private const val COUNTDOWN_WINDOW_SECONDS = 600L
+        private const val COUNTDOWN_GAP_MILLIS = 5_000L
+        private const val COUNTDOWN_TIMEOUT_MILLIS = 30_000L
         private const val MIN_FINAL_ALERT_GAP_MILLIS = 2_000L
         private const val NOTIFICATION_TIMEOUT_MILLIS = 15_000L
 
