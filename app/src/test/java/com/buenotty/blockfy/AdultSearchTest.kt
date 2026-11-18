@@ -33,6 +33,27 @@ class AdultSearchTest {
     }
 
     @Test
+    fun flagsSafeSearchBeingTurnedOff() {
+        assertTrue(AdultContentDetector.isSafeSearchBypass("google.com/search?q=gatos&safe=off"))
+        assertTrue(AdultContentDetector.isSafeSearchBypass("google.com/search?q=gatos&tbm=isch&safe=images"))
+        assertTrue(AdultContentDetector.isSafeSearchBypass("www.google.com.br/safesearch"))
+        assertTrue(AdultContentDetector.isSafeSearchBypass("bing.com/search?q=gatos&adlt=off"))
+        assertFalse(AdultContentDetector.isSafeSearchBypass("google.com/search?q=gatos&safe=active"))
+        assertFalse(AdultContentDetector.isSafeSearchBypass("google.com/search?q=receita+bolo"))
+        assertFalse(AdultContentDetector.isSafeSearchBypass(null))
+    }
+
+    @Test
+    fun flagsIncognitoMarkersButNotMenuItems() {
+        assertTrue(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_badge", null))
+        assertTrue(AdultContentDetector.isIncognitoMarker(null, "Anônima"))
+        assertTrue(AdultContentDetector.isIncognitoMarker(null, "InPrivate"))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/new_incognito_tab_menu_id", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker(null, "Nova guia anônima"))
+        assertFalse(AdultContentDetector.isIncognitoMarker(null, null))
+    }
+
+    @Test
     fun keepsOrdinaryGroupAndTelegramSearches() {
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=grupo+de+estudos+telegram"))
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=como+baixar+telegram"))

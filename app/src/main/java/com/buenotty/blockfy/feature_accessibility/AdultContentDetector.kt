@@ -289,6 +289,35 @@ object AdultContentDetector {
         return hasGroupWord && GROUP_ADULT_TERMS.any { containsToken(spaced, normalize(it)) }
     }
 
+    private val SAFE_SEARCH_OFF = Regex(
+        """[?&](safe=(off|images)|adlt=off|kp=-2|safesearch=off)(&|$)|(google|bing)\.[a-z.]+/(safesearch|preferences|account/general)"""
+    )
+
+    /** Address-bar text that turns SafeSearch off or opens its settings page. */
+    fun isSafeSearchBypass(rawText: String?): Boolean {
+        if (rawText.isNullOrBlank()) return false
+        return SAFE_SEARCH_OFF.containsMatchIn(normalize(rawText))
+    }
+
+    private val INCOGNITO_LABELS = setOf(
+        "incognito", "anonimo", "anonima", "aba anonima", "guia anonima", "navegacao anonima",
+        "modo anonimo", "private browsing", "navegacao privada", "inprivate", "secret mode", "modo secreto"
+    )
+
+    /**
+     * A private-window marker among the browser's own controls: a view id that names it, or a
+     * description that is exactly the label. Menu items such as "New incognito tab" never match.
+     */
+    fun isIncognitoMarker(viewId: String?, description: CharSequence?): Boolean {
+        val id = viewId?.substringAfter(":id/")?.lowercase(Locale.ROOT)
+        if (id != null && !id.startsWith("new") && !id.contains("menu") &&
+            ("incognito" in id || "inprivate" in id || "private_mode" in id)
+        ) {
+            return true
+        }
+        return description != null && normalize(description.toString()).trim() in INCOGNITO_LABELS
+    }
+
     fun getRandomWarning(context: Context): String {
         val warnings = context.resources.getStringArray(R.array.adult_block_warnings)
         return warnings.random()

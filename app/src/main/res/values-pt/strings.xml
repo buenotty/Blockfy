@@ -70,6 +70,7 @@
     <string name="strict_locked_banner">Modo estrito ligado: até a meia-noite você pode deixar os bloqueios mais rígidos, mas não mais frouxos.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
+    <string name="incognito_blocked">Abas anônimas ficam bloqueadas enquanto o escudo de sites adultos está ativo.</string>
     <string name="adult_blocker_desc">Usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>
