@@ -12,7 +12,9 @@ data class DayRecord(
     val date: String,
     val blocks: Int = 0,
     val savedSeconds: Long = 0L,
-    val clean: Boolean = false
+    val clean: Boolean = false,
+    /** The day went over a limit a little and a shield forgave it (it still counts as clean). */
+    val slip: Boolean = false
 )
 
 @Serializable

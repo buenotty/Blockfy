@@ -79,6 +79,77 @@ class ChallengeOverlay(private val service: AccessibilityService) {
         return attach(card)
     }
 
+    /**
+     * The "I need it anyway" conversation after a limit is reached: no lecture, just questions
+     * that make the person decide twice. Leaving is always the first and easiest button, and
+     * tomorrow's fresh limit is offered at every step. [onGrant] is told whether the user picked
+     * the browser minutes (true) or the app minutes (false).
+     */
+    fun showNegotiation(contextLine: String, exceptionsLeft: Int, onGrant: (browser: Boolean) -> Unit): Boolean {
+        dismiss()
+        val card = newCard()
+        val res = service.resources
+        val late = java.time.LocalTime.now().hour.let { it >= 22 || it < 5 }
+
+        fun start() {
+            card.removeAllViews()
+            card.addView(tag(R.string.overlay_tag_negotiate))
+            scheduleAutoClose()
+        }
+        fun note() {
+            card.addView(body(if (late) service.getString(R.string.negotiate_late) else res.getStringArray(R.array.negotiate_nudges).random(), muted = true, topDp = 12, sizeSp = 14f))
+        }
+        fun tomorrow() {
+            start()
+            card.addView(title(res.getStringArray(R.array.negotiate_tomorrow_titles).random(), topDp = 10))
+            card.addView(body(service.getString(R.string.negotiate_tomorrow_body), topDp = 10))
+            card.addView(primaryButton(R.string.negotiate_btn_ok) { dismiss() })
+        }
+        fun granted(browser: Boolean) {
+            onGrant(browser)
+            start()
+            card.addView(title(service.getString(if (browser) R.string.negotiate_granted_browser else R.string.negotiate_granted_app), topDp = 10, accent = true))
+            card.addView(body(service.getString(R.string.negotiate_granted_body), topDp = 10))
+            card.addView(primaryButton(R.string.negotiate_btn_ok) { dismiss() })
+        }
+        fun options() {
+            start()
+            if (exceptionsLeft <= 0) {
+                card.addView(title(service.getString(R.string.negotiate_none_left), topDp = 10))
+                card.addView(body(service.getString(R.string.negotiate_tomorrow_body), topDp = 10))
+                card.addView(primaryButton(R.string.negotiate_btn_ok) { dismiss() })
+                return
+            }
+            card.addView(title(service.getString(R.string.negotiate_ok_title), topDp = 10))
+            card.addView(body(service.getString(R.string.negotiate_ok_body), topDp = 8))
+            card.addView(choiceButton(service.getString(R.string.negotiate_opt_browser)) { granted(true) }, matchWidth(topDp = 16))
+            card.addView(choiceButton(service.getString(R.string.negotiate_opt_app)) { granted(false) }, matchWidth(topDp = 10))
+            card.addView(choiceButton(service.getString(R.string.negotiate_opt_tomorrow)) { tomorrow() }, matchWidth(topDp = 10))
+            note()
+        }
+        fun emergency() {
+            start()
+            card.addView(title(service.getString(R.string.negotiate_emergency_title), topDp = 10))
+            card.addView(body(service.getString(R.string.negotiate_emergency_body), topDp = 8))
+            card.addView(choiceButton(service.getString(R.string.negotiate_emergency_no)) { tomorrow() }, matchWidth(topDp = 16))
+            card.addView(choiceButton(service.getString(R.string.negotiate_emergency_yes)) { options() }, matchWidth(topDp = 10))
+        }
+        fun ask() {
+            start()
+            card.addView(title(service.getString(R.string.negotiate_ask_title), topDp = 10))
+            card.addView(choiceButton(service.getString(R.string.negotiate_ask_sorry)) { dismiss() }, matchWidth(topDp = 16))
+            card.addView(choiceButton(service.getString(R.string.negotiate_ask_quick)) { emergency() }, matchWidth(topDp = 10))
+            note()
+        }
+
+        start()
+        card.addView(title(service.getString(R.string.negotiate_s0_title), topDp = 10))
+        if (contextLine.isNotBlank()) card.addView(body(contextLine, muted = true, topDp = 6))
+        card.addView(choiceButton(service.getString(R.string.negotiate_s0_ok)) { dismiss() }, matchWidth(topDp = 16))
+        card.addView(choiceButton(service.getString(R.string.negotiate_s0_need)) { ask() }, matchWidth(topDp = 10))
+        return attach(card)
+    }
+
     /** Calmer, no-quiz variant for the adult shield: a short pause and somewhere useful to go. */
     fun showCheckIn(
         titleText: String,

@@ -3,10 +3,10 @@
     <string name="app_tagline">Less Reels. More focus.</string>
     <string name="btn_back">Back</string>
 
-    <string name="accessibility_service_description">Blockfy uses Accessibility to leave short-video screens and, with adult blocking on, to check the address bar of your browser against a list of adult sites. It does not read messages, chats, or anything you type in other apps, and does not save what it reads.</string>
+    <string name="accessibility_service_description">Blockfy uses Accessibility to leave short-video screens and to count time in the apps you limit. It also reads the address bar of your browser: to recognise the website of an app you limited (so the website does not get around the limit) and, with adult blocking on, to check it against a list of adult sites. It does not read messages, chats, or anything you type in other apps, and does not save what it reads.</string>
     <string name="accessibility_service">Accessibility Service</string>
     <string name="accessibility_dialog_title">Accessibility Service</string>
-    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses this permission to detect and leave short-video screens (Instagram, YouTube, TikTok, Facebook, X, Telegram) and to count time in those apps. If you turn on adult blocking, it also reads your browser\'s address bar to check the site you are visiting against a list of adult sites. It never reads messages, chats, passwords, or anything typed inside other apps, and does not save or send what it reads. Blockfy does not open banking apps. By tapping Accept you agree to this use.</string>
+    <string name="accessibility_dialog_desc">Blockfy only works with Accessibility turned on. It uses this permission to detect and leave short-video screens (Instagram, YouTube, TikTok, Facebook, X, Telegram) and to count time in those apps. It also reads your browser\'s address bar only to recognise the website of an app you limited (for example instagram.com), so the website cannot be used to get around the limit, and, if you turn on adult blocking, to check the site against a list of adult sites. It never reads messages, chats, passwords, or anything typed inside other apps, and does not save or send what it reads. Blockfy does not open banking apps. By tapping Accept you agree to this use.</string>
     <string name="accessibility_dialog_decline">Decline</string>
     <string name="accessibility_dialog_accept">Accept</string>
     <string name="accessibility_dialog_howto">1. Open app info and allow restricted settings, if the phone asks.\n2. Open Accessibility settings.\n3. Under downloaded apps, tap Blockfy.\n4. Turn the service on and confirm.</string>
@@ -35,12 +35,12 @@
     <string name="original_author_role">made the original Blokky</string>
     <string name="about_story">Blockfy pulls you out of Reels, Shorts, and feeds like that. You can set a daily limit. Adult blocking, if you turn it on, uses Accessibility to check your browser\'s address bar against a list of adult sites. It does not use a VPN.\n\nRobin Gebert made the original, Blokky. Samuel Bueno keeps this fork going. It is still a small short-video blocker.</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_desc">Accessibility watches Instagram, YouTube, TikTok, Facebook, X and Telegram to detect short videos and to block apps you chose to block. With adult blocking on, it also reads your browser\'s address bar to check it against a list of adult sites; it never reads messages, chats or anything typed in other apps, and does not save what it reads. It does not open banking apps and does not use a VPN.\n\nUpdates should come from Google Play. Blockfy does not install APKs by itself.\n\nIf you find this app useful, you can support it on GitHub: https://github.com/buenotty/Blockfy</string>
+    <string name="privacy_desc">Accessibility watches Instagram, YouTube, TikTok, Facebook, X and Telegram to detect short videos and to block apps you chose to block. It also reads your browser\'s address bar to recognise the website of an app you limited and, with adult blocking on, to check it against a list of adult sites; it never reads messages, chats or anything typed in other apps, and does not save what it reads. It does not open banking apps and does not use a VPN.\n\nUpdates should come from Google Play. Blockfy does not install APKs by itself.\n\nIf you find this app useful, you can support it on GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Share Blockfy</string>
     <string name="share_app_thanks">Thanks for sharing.</string>
 
     <string name="today_usage_label">Today: %1$d of %2$d min</string>
-    <string name="reset_usage_btn">Reset today\'s counter</string>
+    <string name="reset_usage_btn">Reset today\'s usage (counts as cheating)</string>
     <string name="start_time">Start</string>
     <string name="end_time">End</string>
     <string name="save_btn">Save</string>
@@ -702,4 +702,291 @@
     <string name="telegram_offer_desc">Adult groups and channels live inside Telegram, where the shield cannot see them. Block the whole app too? You can turn it off later.</string>
     <string name="telegram_offer_yes">Block Telegram</string>
     <string name="telegram_offer_no">No, thanks</string>
+
+    <string name="adult_sites_title">Your blocked sites and words</string>
+    <string name="adult_sites_summary_empty">Add a site or a search word the built-in list misses. Once added, it can never be removed.</string>
+    <string name="adult_sites_summary_count">%1$d added (permanent): %2$s</string>
+    <string name="adult_sites_add">Add site or word</string>
+    <string name="adult_sites_field">Site address or word</string>
+    <string name="adult_sites_invalid">Type a site (example.com) or a word of 4 or more letters.</string>
+    <string name="adult_sites_already">This site is already blocked.</string>
+    <string name="adult_sites_preview">Will block: %1$s and all its pages</string>
+    <string name="adult_sites_next">Continue</string>
+    <string name="adult_sites_back">Back</string>
+    <string name="adult_sites_confirm_title">Block %1$s forever?</string>
+    <string name="adult_sites_confirm_body">Once added, this site can NEVER be removed from the list. Check the address: a wrong one stays blocked for good.</string>
+    <string name="adult_sites_confirm_check">I checked the address and I know this is permanent</string>
+    <string name="adult_sites_confirm_btn">Block forever</string>
+
+    <string name="checkin_card_title">A quick, honest check-in</string>
+    <string name="checkin_card_summary">Answer one question, privately. It helps us suggest the right protection for you.</string>
+    <string name="checkin_dialog_title">Have you ever seen porn inside any of these apps?</string>
+    <string name="checkin_dialog_hint">Pick every app where it happened. Your answer stays on this phone.</string>
+    <string name="checkin_none">No, none of them</string>
+    <string name="checkin_confirm">Block them</string>
+    <string name="checkin_later">Not now</string>
+    <string name="checkin_suggest_title">Block %1$s completely?</string>
+    <string name="checkin_suggest_body">Blocking these apps entirely is the strongest way to protect your streak. You can turn it off later, but it will take a short pause.</string>
+    <string name="checkin_unblock_reminder">You said you had seen porn in this app before. Do you really want to unblock it now?</string>
+
+    <string name="toast_session_limit">%1$s: %2$d min in a row is enough. Take a %3$d min break.</string>
+    <string name="toast_break_active">%1$s is on a break. Back in %2$d min.</string>
+    <string name="toast_opens_limit">You already opened %1$s %2$d times today.</string>
+    <string name="extras_title">Extra limits</string>
+    <string name="extras_session_title">Session limit</string>
+    <string name="extras_session_desc">Blocks the app after a long stay and keeps it blocked for a break.</string>
+    <string name="extras_session_minutes">Longest stay</string>
+    <string name="extras_break_minutes">Break after it</string>
+    <string name="extras_opens_title">Opens per day</string>
+    <string name="extras_opens_desc">Caps how many times you can open the app in a day.</string>
+    <string name="extras_opens_count">%1$d opens</string>
+
+    <string name="toast_focus_active">Focus mode is on. %1$s is blocked until it ends.</string>
+    <string name="tile_focus_label">Blockfy focus</string>
+    <string name="tile_focus_idle">Tap for 1 hour</string>
+    <string name="tile_focus_until">Until %1$s</string>
+
+    <string name="focus_card_title">Focus mode</string>
+    <string name="focus_card_desc">Blocks every tracked app for a set time. Once started, it cannot be ended early.</string>
+    <string name="focus_1h">1 hour</string>
+    <string name="focus_2h">2 hours</string>
+    <string name="focus_tomorrow">Until tomorrow</string>
+    <string name="adult_keyword_preview">Will block searches that contain: %1$s</string>
+
+    <string name="usage_access_title">Match the phone\'s time exactly</string>
+    <string name="usage_access_desc">Optional. Lets Blockfy read how long each app was open, the same number your phone shows, so limits are never wrong. It stays on this phone and is never sent anywhere.</string>
+    <string name="usage_access_btn">Allow usage access</string>
+
+    <string name="recap_title">Your last 7 days</string>
+    <string name="recap_body">%1$d clean days, %2$d blocked temptations, about %3$d min saved.</string>
+
+    <string name="widget_streak_label">clean days</string>
+    <string name="widget_streak_description">Your clean-day streak.</string>
+    <string name="medal_run_1_title">First day</string>
+    <string name="medal_run_1_desc">A whole day clean. Every empire starts here.</string>
+    <string name="medal_run_3_title">Three standing</string>
+    <string name="medal_run_3_desc">Three days in a row. The worst is behind you.</string>
+    <string name="medal_run_7_title">Iron week</string>
+    <string name="medal_run_7_desc">7 clean days. Your brain already notices.</string>
+    <string name="medal_run_14_title">Solid fortnight</string>
+    <string name="medal_run_14_desc">14 days. That is a habit, not luck.</string>
+    <string name="medal_run_30_title">Free month</string>
+    <string name="medal_run_30_desc">30 clean days. You changed your life quietly.</string>
+    <string name="medal_run_90_title">Steel quarter</string>
+    <string name="medal_run_90_desc">90 days. Most people quit before week one.</string>
+    <string name="medal_run_180_title">Half a year of legend</string>
+    <string name="medal_run_180_desc">180 days. You became the example.</string>
+    <string name="medal_run_365_title">One year. Seriously.</string>
+    <string name="medal_run_365_desc">365 clean days. Wow.</string>
+    <string name="medal_comeback_title">Back stronger</string>
+    <string name="medal_comeback_desc">You slipped and got up. That is what counts.</string>
+    <string name="medal_comeback_3_title">Phoenix</string>
+    <string name="medal_comeback_3_desc">You got up three times. Nobody holds you down.</string>
+    <string name="medal_resisted_10_title">Said no</string>
+    <string name="medal_resisted_10_desc">10 temptations stopped.</string>
+    <string name="medal_resisted_100_title">Stone wall</string>
+    <string name="medal_resisted_100_desc">100 temptations stopped.</string>
+    <string name="medal_resisted_500_title">Unshakable</string>
+    <string name="medal_resisted_500_desc">500 temptations stopped.</string>
+    <string name="medal_saved_10h_title">10 hours back</string>
+    <string name="medal_saved_10h_desc">Time you took back. Enough to read a book.</string>
+    <string name="medal_saved_100h_title">100 hours back</string>
+    <string name="medal_saved_100h_desc">More than four whole days given back to your life.</string>
+    <string name="medal_shield_title">Shield on</string>
+    <string name="medal_shield_desc">One slip forgiven. Use it wisely.</string>
+    <string name="medal_prestige_title">Prestige</string>
+    <string name="medal_prestige_desc">You finished the whole ladder and started over, stronger.</string>
+    <string-array name="rank_names">
+        <item>Recruit</item>
+        <item>Private</item>
+        <item>Corporal</item>
+        <item>Sergeant</item>
+        <item>Warrant Officer</item>
+        <item>Lieutenant</item>
+        <item>Captain</item>
+        <item>Major</item>
+        <item>Colonel</item>
+        <item>General</item>
+    </string-array>
+    <string name="rank_common">Common person</string>
+    <string name="rank_prestige">Prestige %1$d</string>
+    <string name="goal_1d">1 day</string>
+    <string name="goal_3d">3 days</string>
+    <string name="goal_1w">1 week</string>
+    <string name="goal_2w">2 weeks</string>
+    <string name="goal_1m">1 month</string>
+    <string name="goal_2m">2 months</string>
+    <string name="goal_3m">3 months</string>
+    <string name="goal_6m">6 months</string>
+    <string name="goal_1y">1 year</string>
+    <string name="goal_years">%1$d years</string>
+    <string name="nav_journey">Journey</string>
+    <string name="journey_title">Your journey</string>
+    <string name="journey_next_level">Next rank: %1$s</string>
+    <string name="journey_goal_pct">%1$d%% of %2$s</string>
+    <string name="journey_goal_label">Clean-time goal</string>
+    <string name="journey_run">Run</string>
+    <string name="journey_best">Best</string>
+    <string name="journey_shields">Shields this month</string>
+    <string name="journey_xp">%1$d XP</string>
+    <string name="journey_medals">Medals</string>
+    <string name="journey_medals_count">%1$d of %2$d</string>
+    <string name="journey_locked">Locked</string>
+    <string name="journey_days_unit">days</string>
+    <string name="rankup_title">Promoted!</string>
+    <string name="rankup_body">%1$s → %2$s</string>
+    <string name="rankup_cta">Continue</string>
+    <string name="medal_new_title">New medal</string>
+    <string name="banner_see">View</string>
+    <string name="overlay_tag_negotiate">Limit reached</string>
+    <string name="negotiate_btn_ok">Okay</string>
+    <string name="negotiate_s0_title">Time for something else.</string>
+    <string name="negotiate_s0_ok">Okay, I will do something else</string>
+    <string name="negotiate_s0_need">I need it anyway</string>
+    <string name="negotiate_ask_title">Hey, do you think I do not know what you are about to do?</string>
+    <string name="negotiate_ask_sorry">Sorry</string>
+    <string name="negotiate_ask_quick">It is quick</string>
+    <string name="negotiate_emergency_title">Is it an emergency?</string>
+    <string name="negotiate_emergency_body">Do not lie to me.</string>
+    <string name="negotiate_emergency_no">It is not</string>
+    <string name="negotiate_emergency_yes">Yes it is</string>
+    <string name="negotiate_ok_title">Okay, I will let you.</string>
+    <string name="negotiate_ok_body">Choose. The clock is already running.</string>
+    <string name="negotiate_opt_browser">+10 min in the browser</string>
+    <string name="negotiate_opt_app">+5 min in the app</string>
+    <string name="negotiate_opt_tomorrow">I will leave it for tomorrow</string>
+    <string name="negotiate_granted_browser">Granted: +10 min in the browser.</string>
+    <string name="negotiate_granted_app">Granted: +5 min in the app.</string>
+    <string name="negotiate_granted_body">Do what you need and stop. After that, go rest.</string>
+    <string name="negotiate_none_left">You already used today\'s exceptions.</string>
+    <string name="negotiate_tomorrow_body">Tomorrow\'s you, with the new limit, will thank you.</string>
+    <string name="negotiate_late">It is late. Go rest.</string>
+    <string-array name="negotiate_tomorrow_titles">
+        <item>Well, maybe you can do this tomorrow, with the new limit. Why today?</item>
+        <item>This can wait until tomorrow, can it not?</item>
+        <item>Tomorrow you get fresh time. Today, rest.</item>
+    </string-array>
+    <string-array name="negotiate_nudges">
+        <item>Maybe you can do this tomorrow, with the new limit. Why today?</item>
+        <item>What is so urgent it cannot wait until tomorrow?</item>
+        <item>Go rest. You can sort the rest out tomorrow.</item>
+    </string-array>
+    <string name="medal_games_10_title">Good distraction</string>
+    <string name="medal_games_10_desc">10 short games finished. You replaced a scroll with something better.</string>
+    <string name="games_title">Hit by an urge?</string>
+    <string name="games_intro">An urge passes in about 15 minutes. Pick something to do while it leaves.</string>
+    <string name="games_xp_yes">Each finished game earns a little XP (up to 3 a day).</string>
+    <string name="games_xp_no">Games already gave today\'s maximum XP. Play for the fun of it.</string>
+    <string name="games_done_title">Mission accomplished</string>
+    <string name="games_xp_earned">+15 XP</string>
+    <string name="games_close">Back to what matters</string>
+    <string name="games_another">Play another</string>
+    <string name="game_breathe_title">Breathe</string>
+    <string name="game_breathe_sub">2 minutes of guided breathing</string>
+    <string name="game_hold_title">Hold on</string>
+    <string name="game_hold_sub">Hold the button for 15 seconds</string>
+    <string name="game_memory_title">Habit memory</string>
+    <string name="game_memory_sub">Find the pairs of temptations</string>
+    <string name="game_quiz_title">Trick quiz</string>
+    <string name="game_quiz_sub">5 questions, zero guilt</string>
+    <string name="breathe_title">Breathe with me</string>
+    <string name="breathe_in">Breathe in</string>
+    <string name="breathe_hold">Hold</string>
+    <string name="breathe_out">Breathe out</string>
+    <string name="hold_title">Hold on</string>
+    <string name="hold_press">Press and hold</string>
+    <string name="hold_keep">Do not let go!</string>
+    <string name="hold_letgo">You let go. It is fine, start again. You can do it.</string>
+    <string name="memory_title">Habit memory</string>
+    <string name="memory_hint">Moves: %1$d</string>
+    <string name="quiz_progress">Question %1$d of %2$d</string>
+    <string name="quiz_next">Next</string>
+    <string name="quiz_finish">Finish</string>
+    <string-array name="games_done_lines">
+        <item>The urge is leaving. Or at least it shrank to the size of a bread roll.</item>
+        <item>You spent two minutes well and scrolled zero times. That is a goal.</item>
+        <item>Your feed is still there, but now you look like you have better things to do.</item>
+        <item>Urge: 0. You: 1.</item>
+    </string-array>
+    <string-array name="breathe_lines">
+        <item>Your feed can wait. Your lungs cannot.</item>
+        <item>Nothing on that screen is more urgent than this air.</item>
+        <item>An urge is a wave: it rises, peaks and passes.</item>
+        <item>Shoulders down. There, like that.</item>
+    </string-array>
+    <string-array name="hold_lines">
+        <item>Yes, just hold. Looks easy, right?</item>
+        <item>Your finger is begging to let go. Do not.</item>
+        <item>Halfway! Your feed is crying somewhere.</item>
+        <item>Almost there. That is real willpower.</item>
+    </string-array>
+    <string-array name="quiz_questions">
+        <item>How long does a strong urge take to pass, on average?</item>
+        <item>The infinite feed was designed to…</item>
+        <item>What is the best time to watch just one more video?</item>
+        <item>Your phone buzzed. You…</item>
+        <item>What happens to people who put the phone down before bed?</item>
+        <item>Pulling the screen to refresh looks like…</item>
+        <item>How much is one more hour of sleep worth?</item>
+        <item>If you stop scrolling now, what do you lose?</item>
+    </string-array>
+    <string-array name="quiz_opt0">
+        <item>About 15 minutes</item>
+        <item>Help you sleep</item>
+        <item>Now</item>
+        <item>Look right away</item>
+        <item>Become a rested person</item>
+        <item>A slot machine</item>
+        <item>Nothing</item>
+        <item>Nothing that matters</item>
+    </string-array>
+    <string-array name="quiz_opt1">
+        <item>An eternity</item>
+        <item>Never give you a full stop</item>
+        <item>There is no just one more</item>
+        <item>Breathe and look later</item>
+        <item>Miss the day\'s news</item>
+        <item>A massage</item>
+        <item>A lot: mood, focus and patience</item>
+        <item>Your whole life</item>
+    </string-array>
+    <string-array name="quiz_opt2">
+        <item>3 seconds</item>
+        <item>Save the planet</item>
+        <item>3 a.m.</item>
+        <item>Throw it out the window</item>
+        <item>Become a monk</item>
+        <item>A hug</item>
+        <item>A coffee</item>
+        <item>The end of the internet</item>
+    </string-array>
+    <string-array name="quiz_correct">
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="quiz_feedback">
+        <item>An urge is a wave: it rises, peaks and is gone in about 15 minutes.</item>
+        <item>No full stop, no time to quit. That is why you need to make one.</item>
+        <item>Just one more has the same energy as just one more slice.</item>
+        <item>Almost everything that buzzes can wait. Almost.</item>
+        <item>Better sleep, better mornings, better thinking. That simple.</item>
+        <item>You pull and maybe you win something. It is the casino trick.</item>
+        <item>Mood, focus and patience come from sleep. It is not a luxury.</item>
+        <item>The videos are there tomorrow. You do not have to be.</item>
+    </string-array>
+    <string name="urge_card_title">Hit by an urge?</string>
+    <string name="urge_card_sub">Breathe, play or hold on for two minutes.</string>
+    <string name="countdown_title">%1$s: almost out of time</string>
+    <string name="countdown_text">Every second counts now.</string>
+    <string name="relapse_button">I relapsed today</string>
+    <string name="relapse_title">Admit a relapse?</string>
+    <string name="relapse_msg">Being honest is the first step back. Today will count as broken and your current run starts over. Your XP, rank and medals stay.</string>
+    <string name="relapse_confirm">Yes, I relapsed</string>
+    <string name="relapse_cancel">Not now</string>
 </resources>

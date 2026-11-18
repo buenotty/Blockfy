@@ -5,6 +5,9 @@ import com.buenotty.blockfy.R
 import java.text.Normalizer
 import java.util.Locale
 
+/** A permanent entry the user added to the adult list: a site, or a search keyword. */
+data class AdultEntry(val value: String, val isSite: Boolean)
+
 object AdultContentDetector {
 
     val BROWSER_PACKAGES = setOf(
@@ -202,10 +205,44 @@ object AdultContentDetector {
         RegexOption.IGNORE_CASE
     )
 
-    fun isBlockedHost(host: String?): Boolean {
+    private val SCHEME = Regex("^[a-z][a-z0-9+.-]*://")
+    private val LABEL = Regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?$")
+
+    /**
+     * Reduces what a person types or pastes ("https://www.Site.com/page?x=1") to the bare host
+     * ("site.com"), or null when it cannot be a real site. Used before a site is added to the
+     * permanent list, so a typo that is not even a host never gets in.
+     */
+    fun normalizeSite(raw: String): String? {
+        var text = raw.trim().lowercase(Locale.ROOT).replace(SCHEME, "")
+        text = text.substringBefore('/').substringBefore('?').substringBefore('#')
+        text = text.substringAfterLast('@').substringBefore(':').removePrefix("www.")
+        val labels = text.split('.')
+        val valid = text.length <= 253 && labels.size >= 2 && labels.all { LABEL.matches(it) } &&
+            labels.last().length >= 2 && labels.last().all { it in 'a'..'z' }
+        return text.takeIf { valid }
+    }
+
+    private val KEYWORD = Regex("^[a-z0-9]+( [a-z0-9]+){0,2}$")
+
+    /** A search word or short phrase (up to three words) in its stored form, or null when it is not usable. */
+    fun normalizeKeyword(raw: String): String? {
+        val text = normalize(raw).trim().replace(Regex("\\s+"), " ")
+        return text.takeIf { it.length in 4..40 && KEYWORD.matches(it) }
+    }
+
+    /** What the user typed, read as a site when it looks like one and as a search keyword otherwise. */
+    fun parseEntry(raw: String): AdultEntry? =
+        normalizeSite(raw)?.let { AdultEntry(it, isSite = true) }
+            ?: normalizeKeyword(raw)?.let { AdultEntry(it, isSite = false) }
+
+    /** [extraHosts] are sites the user added; they match the host itself and its subdomains only. */
+    fun isBlockedHost(host: String?, extraHosts: Collection<String> = emptyList()): Boolean {
         if (host.isNullOrBlank()) return false
         val hostname = normalize(host).trim().trim('.')
         if (hostname.isEmpty()) return false
+
+        if (extraHosts.any { hostname == it || hostname.endsWith(".$it") }) return true
 
         for (domain in ADULT_DOMAINS) {
             val needle = normalize(domain).trim('.')
@@ -227,12 +264,12 @@ object AdultContentDetector {
      * Matches adult hosts and phrases as whole tokens, never as a substring
      * inside another word. "jerome" must not match the site "erome".
      */
-    fun isAdultContent(rawText: String?): Boolean {
+    fun isAdultContent(rawText: String?, extraHosts: Collection<String> = emptyList()): Boolean {
         if (rawText.isNullOrBlank()) return false
         val normalized = normalize(rawText)
 
         HOST_IN_TEXT.findAll(normalized).forEach { match ->
-            if (isBlockedHost(match.groupValues[1])) return true
+            if (isBlockedHost(match.groupValues[1], extraHosts)) return true
         }
 
         for (domain in ADULT_DOMAINS) {
@@ -278,13 +315,14 @@ object AdultContentDetector {
      * "unaware" never match. A group word plus an adult word also matches, which catches searches
      * for adult Telegram, WhatsApp or Discord groups. Only used on the browser's address bar.
      */
-    fun isAdultSearch(rawText: String?): Boolean {
+    fun isAdultSearch(rawText: String?, extraKeywords: Collection<String> = emptyList()): Boolean {
         if (rawText.isNullOrBlank()) return false
         val normalized = normalize(rawText)
             .replace("%2b", "+").replace("%20", " ").replace('_', ' ').replace('-', ' ')
         // In a URL query a plus sign is a space, but a typed "+18" keeps its sign before the number.
         val spaced = Regex("\\+(?!\\d)").replace(normalized, " ")
         if (STRONG_SEARCH_TERMS.any { containsToken(spaced, normalize(it)) }) return true
+        if (extraKeywords.any { containsToken(spaced, it) }) return true
         val hasGroupWord = GROUP_CONTEXT_TERMS.any { containsToken(spaced, it) }
         return hasGroupWord && GROUP_ADULT_TERMS.any { containsToken(spaced, normalize(it)) }
     }

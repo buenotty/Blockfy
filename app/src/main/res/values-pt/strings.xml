@@ -3,10 +3,10 @@
     <string name="app_tagline">Menos Reels. Mais foco.</string>
     <string name="btn_back">Voltar</string>
 
-    <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e, com o bloqueio adulto ligado, para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Ele não lê mensagens, conversas nem o que você digita em outros apps, e não guarda o que lê.</string>
+    <string name="accessibility_service_description">O Blockfy usa Acessibilidade para sair de Reels e Shorts e para contar o tempo nos apps que você limitou. Ele também lê a barra de endereço do seu navegador: para reconhecer o site de um app que você limitou (para o site não burlar o limite) e, com o bloqueio adulto ligado, para comparar com uma lista de sites adultos. Ele não lê mensagens, conversas nem o que você digita em outros apps, e não guarda o que lê.</string>
     <string name="accessibility_service">Serviço de acessibilidade</string>
     <string name="accessibility_dialog_title">Serviço de acessibilidade</string>
-    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X, Telegram) e para contar o tempo nesses apps. Se você ligar o bloqueio adulto, ela também lê a barra de endereço do seu navegador para comparar o site que você está visitando com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
+    <string name="accessibility_dialog_desc">O Blockfy só funciona com a Acessibilidade ligada. Ela serve para detectar e sair das telas de vídeo curto (Instagram, YouTube, TikTok, Facebook, X, Telegram) e para contar o tempo nesses apps. Ela também lê a barra de endereço do seu navegador só para reconhecer o site de um app que você limitou (por exemplo instagram.com), para o site não servir de forma de burlar o limite, e, se você ligar o bloqueio adulto, para comparar o site com uma lista de sites adultos. Ela nunca lê mensagens, conversas, senhas ou o que você digita em outros apps, e não guarda nem envia o que lê. O Blockfy não abre apps de banco. Ao tocar em Aceitar você concorda com esse uso.</string>
     <string name="accessibility_dialog_decline">Recusar</string>
     <string name="accessibility_dialog_accept">Aceitar</string>
     <string name="accessibility_dialog_howto">1. Abra as informações do app e permita configurações restritas, se o celular pedir.\n2. Abra as configurações de Acessibilidade.\n3. Em apps baixados, toque em Blockfy.\n4. Ative o serviço e confirme.</string>
@@ -35,12 +35,12 @@
     <string name="original_author_role">fez o Blokky original</string>
     <string name="about_story">O Blockfy tira você de Reels, Shorts e feeds parecidos. Dá para pôr um limite por dia. O bloqueio adulto, se você ligar, usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Não usa VPN.\n\nO Robin Gebert fez o original, o Blokky. O Samuel Bueno que mantém este fork. Continua sendo um bloqueador pequeno de vídeo curto.</string>
     <string name="privacy_title">Privacidade</string>
-    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook, X e Telegram para ver vídeo curto e bloquear os apps que você escolheu bloquear. Com o bloqueio adulto ligado, ela também lê a barra de endereço do seu navegador para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
+    <string name="privacy_desc">A acessibilidade olha Instagram, YouTube, TikTok, Facebook, X e Telegram para ver vídeo curto e bloquear os apps que você escolheu bloquear. Ela também lê a barra de endereço do seu navegador para reconhecer o site de um app que você limitou e, com o bloqueio adulto ligado, para comparar com uma lista de sites adultos; ela nunca lê mensagens, conversas ou o que você digita em outros apps, e não guarda o que lê. Não abre app de banco e não usa VPN.\n\nAs atualizações devem vir da Google Play. O Blockfy não instala APK sozinho.\n\nSe esse app te ajuda, você pode apoiar no GitHub: https://github.com/buenotty/Blockfy</string>
     <string name="share_app_title">Compartilhar o Blockfy</string>
     <string name="share_app_thanks">Obrigado por compartilhar.</string>
 
     <string name="today_usage_label">Hoje: %1$d de %2$d min</string>
-    <string name="reset_usage_btn">Zerar o contador de hoje</string>
+    <string name="reset_usage_btn">Zerar o uso de hoje (conta como trapaça)</string>
     <string name="start_time">Início</string>
     <string name="end_time">Fim</string>
     <string name="save_btn">Salvar</string>
@@ -702,4 +702,291 @@
     <string name="telegram_offer_desc">Grupos e canais adultos ficam dentro do Telegram, onde o escudo não enxerga. Quer bloquear o app inteiro também? Dá para desligar depois.</string>
     <string name="telegram_offer_yes">Bloquear Telegram</string>
     <string name="telegram_offer_no">Não, obrigado</string>
+
+    <string name="adult_sites_title">Seus sites e palavras bloqueados</string>
+    <string name="adult_sites_summary_empty">Adicione um site ou uma palavra de busca que a lista não pegou. Depois de adicionado, nunca mais poderá ser removido.</string>
+    <string name="adult_sites_summary_count">%1$d adicionados (permanente): %2$s</string>
+    <string name="adult_sites_add">Adicionar site ou palavra</string>
+    <string name="adult_sites_field">Endereço do site ou palavra</string>
+    <string name="adult_sites_invalid">Digite um site (exemplo.com) ou uma palavra com 4 ou mais letras.</string>
+    <string name="adult_sites_already">Esse site já está bloqueado.</string>
+    <string name="adult_sites_preview">Vai bloquear: %1$s e todas as páginas dele</string>
+    <string name="adult_sites_next">Continuar</string>
+    <string name="adult_sites_back">Voltar</string>
+    <string name="adult_sites_confirm_title">Bloquear %1$s para sempre?</string>
+    <string name="adult_sites_confirm_body">Depois de adicionado, este site NUNCA mais poderá ser removido da lista. Confira o endereço: um endereço errado fica bloqueado para sempre.</string>
+    <string name="adult_sites_confirm_check">Conferi o endereço e sei que é permanente</string>
+    <string name="adult_sites_confirm_btn">Bloquear para sempre</string>
+
+    <string name="checkin_card_title">Um check-in rápido e sincero</string>
+    <string name="checkin_card_summary">Responda uma pergunta, em privado. Assim sugerimos a proteção certa para você.</string>
+    <string name="checkin_dialog_title">Você já viu pornografia em algum desses apps?</string>
+    <string name="checkin_dialog_hint">Escolha todos os apps onde isso aconteceu. Sua resposta fica só neste celular.</string>
+    <string name="checkin_none">Não, em nenhum deles</string>
+    <string name="checkin_confirm">Bloquear esses apps</string>
+    <string name="checkin_later">Agora não</string>
+    <string name="checkin_suggest_title">Bloquear %1$s por completo?</string>
+    <string name="checkin_suggest_body">Bloquear esses apps por completo é a forma mais forte de proteger sua sequência. Você pode desativar depois, mas vai precisar de uma pausa antes.</string>
+    <string name="checkin_unblock_reminder">Você disse que já viu pornografia neste app. Tem certeza de que quer desbloqueá-lo agora?</string>
+
+    <string name="toast_session_limit">%1$s: %2$d min seguidos já bastam. Faça uma pausa de %3$d min.</string>
+    <string name="toast_break_active">%1$s está em pausa. Volta em %2$d min.</string>
+    <string name="toast_opens_limit">Você já abriu o %1$s %2$d vezes hoje.</string>
+    <string name="extras_title">Limites extras</string>
+    <string name="extras_session_title">Limite por sessão</string>
+    <string name="extras_session_desc">Bloqueia o app depois de muito tempo seguido e o mantém bloqueado durante uma pausa.</string>
+    <string name="extras_session_minutes">Tempo máximo seguido</string>
+    <string name="extras_break_minutes">Pausa depois</string>
+    <string name="extras_opens_title">Aberturas por dia</string>
+    <string name="extras_opens_desc">Limita quantas vezes você pode abrir o app em um dia.</string>
+    <string name="extras_opens_count">%1$d aberturas</string>
+
+    <string name="toast_focus_active">O modo foco está ligado. %1$s fica bloqueado até acabar.</string>
+    <string name="tile_focus_label">Foco Blockfy</string>
+    <string name="tile_focus_idle">Toque para 1 hora</string>
+    <string name="tile_focus_until">Até %1$s</string>
+
+    <string name="focus_card_title">Modo foco</string>
+    <string name="focus_card_desc">Bloqueia todos os apps rastreados por um tempo definido. Depois de iniciado, não dá para encerrar antes.</string>
+    <string name="focus_1h">1 hora</string>
+    <string name="focus_2h">2 horas</string>
+    <string name="focus_tomorrow">Até amanhã</string>
+    <string name="adult_keyword_preview">Vai bloquear buscas que contenham: %1$s</string>
+
+    <string name="usage_access_title">Igualar o tempo do celular</string>
+    <string name="usage_access_desc">Opcional. Deixa o Blockfy ler por quanto tempo cada app ficou aberto, o mesmo número que o celular mostra, para os limites nunca errarem. Fica só neste aparelho e nunca é enviado.</string>
+    <string name="usage_access_btn">Permitir acesso ao uso</string>
+
+    <string name="recap_title">Seus últimos 7 dias</string>
+    <string name="recap_body">%1$d dias limpos, %2$d tentações bloqueadas, cerca de %3$d min poupados.</string>
+
+    <string name="widget_streak_label">dias limpos</string>
+    <string name="widget_streak_description">Sua sequência de dias limpos.</string>
+    <string name="medal_run_1_title">Primeiro dia</string>
+    <string name="medal_run_1_desc">Um dia inteiro sem trapaça. Todo império começa assim.</string>
+    <string name="medal_run_3_title">Três de pé</string>
+    <string name="medal_run_3_desc">Três dias seguidos. O pior já passou.</string>
+    <string name="medal_run_7_title">Semana de ferro</string>
+    <string name="medal_run_7_desc">7 dias limpos. Seu cérebro já nota a diferença.</string>
+    <string name="medal_run_14_title">Quinzena firme</string>
+    <string name="medal_run_14_desc">14 dias. Isso já é hábito, não sorte.</string>
+    <string name="medal_run_30_title">Mês livre</string>
+    <string name="medal_run_30_desc">30 dias limpos. Você mudou de vida em silêncio.</string>
+    <string name="medal_run_90_title">Trimestre de aço</string>
+    <string name="medal_run_90_desc">90 dias. A maioria desiste antes da primeira semana.</string>
+    <string name="medal_run_180_title">Meio ano de lenda</string>
+    <string name="medal_run_180_desc">180 dias. Você virou exemplo.</string>
+    <string name="medal_run_365_title">Um ano. Sério.</string>
+    <string name="medal_run_365_desc">365 dias limpos. Uau.</string>
+    <string name="medal_comeback_title">Voltou mais forte</string>
+    <string name="medal_comeback_desc">Escorregou e se levantou. É isso que conta.</string>
+    <string name="medal_comeback_3_title">Fênix</string>
+    <string name="medal_comeback_3_desc">Se levantou três vezes. Ninguém te segura.</string>
+    <string name="medal_resisted_10_title">Disse não</string>
+    <string name="medal_resisted_10_desc">10 tentações barradas.</string>
+    <string name="medal_resisted_100_title">Muro de pedra</string>
+    <string name="medal_resisted_100_desc">100 tentações barradas.</string>
+    <string name="medal_resisted_500_title">Inabalável</string>
+    <string name="medal_resisted_500_desc">500 tentações barradas.</string>
+    <string name="medal_saved_10h_title">10 horas de volta</string>
+    <string name="medal_saved_10h_desc">Tempo que você recuperou. Dá para ler um livro.</string>
+    <string name="medal_saved_100h_title">100 horas de volta</string>
+    <string name="medal_saved_100h_desc">Mais de quatro dias inteiros devolvidos à sua vida.</string>
+    <string name="medal_shield_title">Escudo ativado</string>
+    <string name="medal_shield_desc">Um escorregão perdoado. Use com sabedoria.</string>
+    <string name="medal_prestige_title">Prestígio</string>
+    <string name="medal_prestige_desc">Você completou a escada inteira e recomeçou, mais forte.</string>
+    <string-array name="rank_names">
+        <item>Recruta</item>
+        <item>Soldado</item>
+        <item>Cabo</item>
+        <item>Sargento</item>
+        <item>Subtenente</item>
+        <item>Tenente</item>
+        <item>Capitão</item>
+        <item>Major</item>
+        <item>Coronel</item>
+        <item>General</item>
+    </string-array>
+    <string name="rank_common">Pessoa comum</string>
+    <string name="rank_prestige">Prestígio %1$d</string>
+    <string name="goal_1d">1 dia</string>
+    <string name="goal_3d">3 dias</string>
+    <string name="goal_1w">1 semana</string>
+    <string name="goal_2w">2 semanas</string>
+    <string name="goal_1m">1 mês</string>
+    <string name="goal_2m">2 meses</string>
+    <string name="goal_3m">3 meses</string>
+    <string name="goal_6m">6 meses</string>
+    <string name="goal_1y">1 ano</string>
+    <string name="goal_years">%1$d anos</string>
+    <string name="nav_journey">Jornada</string>
+    <string name="journey_title">Sua jornada</string>
+    <string name="journey_next_level">Próxima patente: %1$s</string>
+    <string name="journey_goal_pct">%1$d%% de %2$s</string>
+    <string name="journey_goal_label">Meta de tempo limpo</string>
+    <string name="journey_run">Sequência</string>
+    <string name="journey_best">Recorde</string>
+    <string name="journey_shields">Escudos do mês</string>
+    <string name="journey_xp">%1$d XP</string>
+    <string name="journey_medals">Medalhas</string>
+    <string name="journey_medals_count">%1$d de %2$d</string>
+    <string name="journey_locked">Bloqueada</string>
+    <string name="journey_days_unit">dias</string>
+    <string name="rankup_title">Promoção!</string>
+    <string name="rankup_body">%1$s → %2$s</string>
+    <string name="rankup_cta">Continuar</string>
+    <string name="medal_new_title">Nova medalha</string>
+    <string name="banner_see">Ver</string>
+    <string name="overlay_tag_negotiate">Limite batido</string>
+    <string name="negotiate_btn_ok">Beleza</string>
+    <string name="negotiate_s0_title">Hora de outra coisa.</string>
+    <string name="negotiate_s0_ok">Beleza, vou fazer outra coisa</string>
+    <string name="negotiate_s0_need">Preciso usar mesmo assim</string>
+    <string name="negotiate_ask_title">Ei, você acha que eu não sei o que você vai fazer?</string>
+    <string name="negotiate_ask_sorry">Desculpa</string>
+    <string name="negotiate_ask_quick">É rapidinho</string>
+    <string name="negotiate_emergency_title">É uma emergência?</string>
+    <string name="negotiate_emergency_body">Não vai mentir pra mim.</string>
+    <string name="negotiate_emergency_no">Não é</string>
+    <string name="negotiate_emergency_yes">É sim</string>
+    <string name="negotiate_ok_title">Ok, te libero.</string>
+    <string name="negotiate_ok_body">Escolhe. O relógio já está contando.</string>
+    <string name="negotiate_opt_browser">+10 min no navegador</string>
+    <string name="negotiate_opt_app">+5 min no app</string>
+    <string name="negotiate_opt_tomorrow">Deixo para amanhã</string>
+    <string name="negotiate_granted_browser">Liberado: +10 min no navegador.</string>
+    <string name="negotiate_granted_app">Liberado: +5 min no app.</string>
+    <string name="negotiate_granted_body">Faz o que precisa e para. Depois disso, vai descansar.</string>
+    <string name="negotiate_none_left">Hoje você já usou suas exceções.</string>
+    <string name="negotiate_tomorrow_body">Seu eu de amanhã, com o limite novo, agradece.</string>
+    <string name="negotiate_late">Já é tarde. Vai descansar.</string>
+    <string-array name="negotiate_tomorrow_titles">
+        <item>Poxa, talvez dê pra fazer isso amanhã, no limite novo. Por que hoje?</item>
+        <item>Isso aguenta até amanhã, não aguenta?</item>
+        <item>Amanhã você tem tempo novo. Hoje, descansa.</item>
+    </string-array>
+    <string-array name="negotiate_nudges">
+        <item>Talvez dê pra fazer isso amanhã, no limite novo. Por que hoje?</item>
+        <item>O que é tão urgente que não espera até amanhã?</item>
+        <item>Vai descansar. O resto você resolve amanhã.</item>
+    </string-array>
+    <string name="medal_games_10_title">Distração do bem</string>
+    <string name="medal_games_10_desc">10 jogos curtos concluídos. Você trocou um scroll por algo melhor.</string>
+    <string name="games_title">Bateu a vontade?</string>
+    <string name="games_intro">A vontade passa em uns 15 minutos. Escolhe uma coisa pra fazer enquanto ela vai embora.</string>
+    <string name="games_xp_yes">Cada jogo concluído vale um pouco de XP (até 3 por dia).</string>
+    <string name="games_xp_no">Hoje os jogos já deram o XP máximo. Jogue só pelo prazer.</string>
+    <string name="games_done_title">Missão cumprida</string>
+    <string name="games_xp_earned">+15 XP</string>
+    <string name="games_close">Voltar ao que importa</string>
+    <string name="games_another">Jogar outro</string>
+    <string name="game_breathe_title">Respirar</string>
+    <string name="game_breathe_sub">2 minutos de respiração guiada</string>
+    <string name="game_hold_title">Aguenta firme</string>
+    <string name="game_hold_sub">Segure o botão por 15 segundos</string>
+    <string name="game_memory_title">Memória dos hábitos</string>
+    <string name="game_memory_sub">Ache os pares das tentações</string>
+    <string name="game_quiz_title">Quiz das pegadinhas</string>
+    <string name="game_quiz_sub">5 perguntas, zero culpa</string>
+    <string name="breathe_title">Respire comigo</string>
+    <string name="breathe_in">Inspira</string>
+    <string name="breathe_hold">Segura</string>
+    <string name="breathe_out">Solta</string>
+    <string name="hold_title">Aguenta firme</string>
+    <string name="hold_press">Segure</string>
+    <string name="hold_keep">Não solta!</string>
+    <string name="hold_letgo">Soltou. Tudo bem, recomeça. Você consegue.</string>
+    <string name="memory_title">Memória dos hábitos</string>
+    <string name="memory_hint">Jogadas: %1$d</string>
+    <string name="quiz_progress">Pergunta %1$d de %2$d</string>
+    <string name="quiz_next">Próxima</string>
+    <string name="quiz_finish">Terminar</string>
+    <string-array name="games_done_lines">
+        <item>A vontade já está indo embora. Ou pelo menos ficou do tamanho de um pãozinho.</item>
+        <item>Você gastou 2 minutos bem e não deu nenhum scroll. Isso é um golaço.</item>
+        <item>Seu feed continua lá, mas agora você parece ter mais o que fazer.</item>
+        <item>Impulso: 0. Você: 1.</item>
+    </string-array>
+    <string-array name="breathe_lines">
+        <item>Seu feed pode esperar. Seus pulmões, não.</item>
+        <item>Nada na tela é mais urgente que esse ar.</item>
+        <item>A vontade é uma onda: sobe, bate no pico e passa.</item>
+        <item>Ombros para baixo. Isso, assim.</item>
+    </string-array>
+    <string-array name="hold_lines">
+        <item>Isso, só segurar. Parece fácil, né?</item>
+        <item>Seu dedo está pedindo para soltar. Não solta.</item>
+        <item>Metade! O feed está chorando em algum lugar.</item>
+        <item>Quase lá. Isso é força de vontade de verdade.</item>
+    </string-array>
+    <string-array name="quiz_questions">
+        <item>Quanto tempo uma vontade forte leva para passar, em média?</item>
+        <item>O feed infinito foi desenhado para…</item>
+        <item>Qual a melhor hora para ver só mais um vídeo?</item>
+        <item>Seu celular vibrou. Você…</item>
+        <item>O que acontece com quem larga o celular antes de dormir?</item>
+        <item>Puxar a tela para atualizar se parece com…</item>
+        <item>Quanto vale uma hora a mais de sono?</item>
+        <item>Se você parar de rolar agora, o que perde?</item>
+    </string-array>
+    <string-array name="quiz_opt0">
+        <item>Uns 15 minutos</item>
+        <item>Te ajudar a dormir</item>
+        <item>Agora</item>
+        <item>Olha na hora</item>
+        <item>Vira uma pessoa descansada</item>
+        <item>Uma máquina de caça-níqueis</item>
+        <item>Nada</item>
+        <item>Nada que importe</item>
+    </string-array>
+    <string-array name="quiz_opt1">
+        <item>Uma eternidade</item>
+        <item>Nunca te dar um ponto final</item>
+        <item>Não existe só mais um</item>
+        <item>Respira e deixa para depois</item>
+        <item>Perde as notícias do dia</item>
+        <item>Uma massagem</item>
+        <item>Muito: humor, foco e paciência</item>
+        <item>Sua vida inteira</item>
+    </string-array>
+    <string-array name="quiz_opt2">
+        <item>3 segundos</item>
+        <item>Salvar a natureza</item>
+        <item>3h da manhã</item>
+        <item>Joga pela janela</item>
+        <item>Vira monge</item>
+        <item>Um abraço</item>
+        <item>Um café</item>
+        <item>O fim da internet</item>
+    </string-array>
+    <string-array name="quiz_correct">
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="quiz_feedback">
+        <item>A vontade é uma onda: sobe, bate no pico e vai embora em uns 15 minutos.</item>
+        <item>Sem ponto final, sem hora de parar. Por isso você precisa criar um.</item>
+        <item>Só mais um tem a mesma energia de só mais uma fatia.</item>
+        <item>Quase tudo que vibra pode esperar. Quase.</item>
+        <item>Dorme melhor, acorda melhor, pensa melhor. Simples assim.</item>
+        <item>Você puxa e talvez ganhe algo. É o mesmo truque do cassino.</item>
+        <item>Humor, foco e paciência vêm do sono. Ele não é luxo.</item>
+        <item>Os vídeos continuam lá amanhã. Você é que não precisa continuar.</item>
+    </string-array>
+    <string name="urge_card_title">Bateu a vontade?</string>
+    <string name="urge_card_sub">Respire, jogue ou aguente firme por 2 minutos.</string>
+    <string name="countdown_title">%1$s: o tempo está acabando</string>
+    <string name="countdown_text">Cada segundo conta agora.</string>
+    <string name="relapse_button">Tive uma recaída hoje</string>
+    <string name="relapse_title">Admitir uma recaída?</string>
+    <string name="relapse_msg">Ser honesto é o primeiro passo de volta. Hoje conta como quebrado e sua sequência atual recomeça. Seu XP, patente e medalhas ficam.</string>
+    <string name="relapse_confirm">Sim, tive uma recaída</string>
+    <string name="relapse_cancel">Agora não</string>
 </resources>

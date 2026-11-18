@@ -102,6 +102,16 @@ data class AppSettings(
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
     val adultContentBlockerEnabled: Boolean = false,
+    /** Sites the user added to the adult list. Append-only: [DataStoreManager.updateSettings] never lets one go. */
+    val customAdultSites: List<String> = emptyList(),
+    /** Search words the user added to the adult list. Append-only, like [customAdultSites]. */
+    val customAdultKeywords: List<String> = emptyList(),
+    /** Epoch millis until which focus mode blocks every tracked app. Only ever grows (see [DataStoreManager.updateSettings]). */
+    val focusUntilEpoch: Long = 0L,
+    /** The honest check-in ("have you seen porn in these apps?") was answered. */
+    val checkInDone: Boolean = false,
+    /** Apps where the user said they saw porn. Append-only, like [customAdultSites]: it is the user's own commitment. */
+    val seenAdultIn: List<String> = emptyList(),
     /** Hours and weekdays when the rules are enforced. Shared by every app. */
     val scheduleStart: Int = 0,
     val scheduleEnd: Int = 1439,
