@@ -29,8 +29,8 @@ android {
         applicationId = "com.buenotty.blockfy"
         minSdk = 28
         targetSdk = 36
-        versionCode = 50
-        versionName = "1.15.0"
+        versionCode = 51
+        versionName = "1.16.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -982,4 +982,11 @@
     </string-array>
     <string name="urge_card_title">Bateu a vontade?</string>
     <string name="urge_card_sub">Respire, jogue ou aguente firme por 2 minutos.</string>
+    <string name="countdown_title">%1$s: o tempo está acabando</string>
+    <string name="countdown_text">Cada segundo conta agora.</string>
+    <string name="relapse_button">Tive uma recaída hoje</string>
+    <string name="relapse_title">Admitir uma recaída?</string>
+    <string name="relapse_msg">Ser honesto é o primeiro passo de volta. Hoje conta como quebrado e sua sequência atual recomeça. Seu XP, patente e medalhas ficam.</string>
+    <string name="relapse_confirm">Sim, tive uma recaída</string>
+    <string name="relapse_cancel">Agora não</string>
 </resources>
