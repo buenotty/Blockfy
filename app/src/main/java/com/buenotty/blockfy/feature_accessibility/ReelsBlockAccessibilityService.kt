@@ -629,9 +629,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             val addressBarText = readAddressBar(root, pkg)
             if (addressBarText != null &&
-                (AdultContentDetector.isAdultContent(addressBarText) || AdultContentDetector.isAdultSearch(addressBarText))
+                (AdultContentDetector.isAdultContent(addressBarText) ||
+                    AdultContentDetector.isAdultSearch(addressBarText) ||
+                    AdultContentDetector.isSafeSearchBypass(addressBarText))
             ) {
                 leaveAdultScreen()
+            } else if (hasIncognitoMarker(root, remaining = intArrayOf(MAX_INCOGNITO_SCAN_NODES))) {
+                leaveAdultScreen(R.string.incognito_blocked)
             }
         } finally {
             root.recycle()
@@ -687,10 +691,29 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         return null
     }
 
-    private fun leaveAdultScreen() {
+    /** Only the browser's own controls are checked (views with ids or labels), never page text. */
+    private fun hasIncognitoMarker(node: AccessibilityNodeInfo, remaining: IntArray): Boolean {
+        if (remaining[0] <= 0) return false
+        remaining[0]--
+        if (node.isVisibleToUser && AdultContentDetector.isIncognitoMarker(node.viewIdResourceName, node.contentDescription)) {
+            return true
+        }
+        for (i in 0 until node.childCount) {
+            if (remaining[0] <= 0) return false
+            val child = node.getChild(i) ?: continue
+            try {
+                if (hasIncognitoMarker(child, remaining)) return true
+            } finally {
+                child.recycle()
+            }
+        }
+        return false
+    }
+
+    private fun leaveAdultScreen(@androidx.annotation.StringRes messageRes: Int? = null) {
         performGlobalAction(GLOBAL_ACTION_HOME)
         if (settings.funChallengesEnabled && showCheckIn()) return
-        val message = AdultContentDetector.getRandomWarning(this)
+        val message = messageRes?.let { getString(it) } ?: AdultContentDetector.getRandomWarning(this)
         notifyAlert(getString(R.string.adult_blocker_title), withWhy(message), isFinal = true)
     }
 
@@ -701,6 +724,7 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         private const val MAX_CREDIT_SECONDS = 5L
         private const val FLUSH_INTERVAL_MILLIS = 10_000L
         private const val MAX_ADDRESS_BAR_SCAN_NODES = 40
+        private const val MAX_INCOGNITO_SCAN_NODES = 150
         private const val DEEP_SCAN_INTERVAL_MILLIS = 700L
         private const val MIN_EVENT_GAP_MILLIS = 150L
         private const val SCOPE_REFRESH_MILLIS = 30_000L
