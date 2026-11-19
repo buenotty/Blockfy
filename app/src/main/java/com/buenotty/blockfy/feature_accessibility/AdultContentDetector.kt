@@ -343,18 +343,33 @@ object AdultContentDetector {
     )
 
     /**
+     * Words in a view id that make it a button, menu entry, tab-switcher toggle or settings row
+     * ABOUT private tabs, which a normal window shows too, rather than a sign that this window is private.
+     */
+    private val INCOGNITO_ID_NOISE = setOf(
+        "menu", "toggle", "tab", "tabs", "switch", "switcher", "button", "btn", "setting", "settings",
+        "pref", "preference", "learn", "lock", "reauth", "promo", "dialog", "title", "summary", "close",
+        "list", "item", "row", "text", "label", "action", "option", "options", "more", "description"
+    )
+
+    /**
      * A private-window marker among the browser's own controls: a view id that names it, or a
-     * description that is exactly the label. Menu items such as "New incognito tab" never match.
+     * description that is exactly the label. Anything that only offers private tabs ("New incognito
+     * tab", the tab-switcher toggle, a settings row) never matches, so a normal window is left alone.
      */
     fun isIncognitoMarker(viewId: String?, description: CharSequence?): Boolean {
         val id = viewId?.substringAfter(":id/")?.lowercase(Locale.ROOT)
-        if (id != null && !id.startsWith("new") && !id.contains("menu") &&
-            ("incognito" in id || "inprivate" in id || "private_mode" in id)
+        if (id != null && !id.startsWith("new") &&
+            ("incognito" in id || "inprivate" in id || "private_mode" in id) &&
+            id.split('_').none { it in INCOGNITO_ID_NOISE }
         ) {
             return true
         }
         return description != null && normalize(description.toString()).trim() in INCOGNITO_LABELS
     }
+
+    /** The web page itself. What a site shows is never read, so the private-window scan does not go inside. */
+    fun isPageContent(className: CharSequence?): Boolean = className?.toString() == "android.webkit.WebView"
 
     fun getRandomWarning(context: Context): String {
         val warnings = context.resources.getStringArray(R.array.adult_block_warnings)

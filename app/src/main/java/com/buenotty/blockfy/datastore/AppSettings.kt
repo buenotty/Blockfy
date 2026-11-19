@@ -102,6 +102,12 @@ data class AppSettings(
     val strictModeType: String = "MIDNIGHT",
     val strictModeLockedUntilEpoch: Long = 0L,
     val adultContentBlockerEnabled: Boolean = false,
+    /**
+     * Also leave the browser when a private (incognito) tab is open. Its own switch, under the adult
+     * shield, so a browser that gets caught by mistake can be freed without giving up the site list.
+     * Off by default: it only works while [adultContentBlockerEnabled] is on.
+     */
+    val blockIncognitoEnabled: Boolean = false,
     /** Sites the user added to the adult list. Append-only: [DataStoreManager.updateSettings] never lets one go. */
     val customAdultSites: List<String> = emptyList(),
     /** Search words the user added to the adult list. Append-only, like [customAdultSites]. */

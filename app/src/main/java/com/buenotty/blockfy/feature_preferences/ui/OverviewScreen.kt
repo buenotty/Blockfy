@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -144,6 +145,25 @@ fun BlocksScreen(
                     }
                     strictLocked -> showStrictDialog = true
                     else -> showDisableAdultDialog = true
+                }
+            }
+        )
+
+        // Its own switch, so a browser caught by mistake can be freed without dropping the site list.
+        ToggleCard(
+            icon = Icons.Rounded.VisibilityOff,
+            title = stringResource(R.string.incognito_toggle_title),
+            summary = stringResource(
+                if (settings.adultContentBlockerEnabled) R.string.incognito_toggle_desc
+                else R.string.incognito_toggle_needs_shield
+            ),
+            checked = settings.adultContentBlockerEnabled && settings.blockIncognitoEnabled,
+            enabled = settings.adultContentBlockerEnabled,
+            onCheckedChange = { wantsOn ->
+                when {
+                    wantsOn -> viewModel.setBlockIncognito(true)
+                    strictLocked -> showStrictDialog = true
+                    else -> viewModel.setBlockIncognito(false)
                 }
             }
         )

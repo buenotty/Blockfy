@@ -58,6 +58,24 @@ class CustomAdultSitesTest {
     }
 
     @Test
+    fun `incognito blocking is its own opt-in switch and old settings files still load`() {
+        // Off by default: nobody is caught by it until they turn it on.
+        assertFalse(AppSettings().blockIncognitoEnabled)
+        val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true; coerceInputValues = true; encodeDefaults = true }
+        val old = json.encodeToString(AppSettings.serializer(), AppSettings(adultContentBlockerEnabled = true))
+            .replace(Regex(""","blockIncognitoEnabled":(true|false)"""), "")
+        assertFalse(old.contains("blockIncognitoEnabled"))
+        val loaded = json.decodeFromString(AppSettings.serializer(), old)
+        assertTrue(loaded.adultContentBlockerEnabled)
+        assertFalse(loaded.blockIncognitoEnabled)
+        val on = json.decodeFromString(
+            AppSettings.serializer(),
+            json.encodeToString(AppSettings.serializer(), AppSettings(adultContentBlockerEnabled = true, blockIncognitoEnabled = true))
+        )
+        assertTrue(on.blockIncognitoEnabled)
+    }
+
+    @Test
     fun `settings keep the custom list across a serialisation round trip with old data`() {
         // A settings file written before the field existed must still load.
         assertEquals(emptyList<String>(), AppSettings().customAdultSites)
