@@ -850,7 +850,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
                     AdultContentDetector.isSafeSearchBypass(addressBarText))
             ) {
                 leaveAdultScreen()
-            } else if (hasIncognitoMarker(root, remaining = intArrayOf(MAX_INCOGNITO_SCAN_NODES))) {
+            } else if (settings.blockIncognitoEnabled && addressBarText != null &&
+                hasIncognitoMarker(root, remaining = intArrayOf(MAX_INCOGNITO_SCAN_NODES))
+            ) {
+                // Only with the address bar showing a page: the tab switcher, menus and settings
+                // screens of a normal window also talk about private tabs and must never be caught.
                 leaveAdultScreen(R.string.incognito_blocked)
             }
         } finally {
@@ -929,10 +933,11 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         return null
     }
 
-    /** Only the browser's own controls are checked (views with ids or labels), never page text. */
+    /** Only the browser's own controls are checked (views with ids or labels), never the web page. */
     private fun hasIncognitoMarker(node: AccessibilityNodeInfo, remaining: IntArray): Boolean {
         if (remaining[0] <= 0) return false
         remaining[0]--
+        if (AdultContentDetector.isPageContent(node.className)) return false
         if (node.isVisibleToUser && AdultContentDetector.isIncognitoMarker(node.viewIdResourceName, node.contentDescription)) {
             return true
         }

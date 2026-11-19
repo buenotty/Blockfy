@@ -143,6 +143,9 @@ class OverviewViewModel(private val dataStoreManager: DataStoreManager) : ViewMo
 
     fun setAdultContentBlocker(enabled: Boolean) = update { it.copy(adultContentBlockerEnabled = enabled) }
 
+    /** The private-tab guard of the adult shield; the service still needs the shield itself to be on. */
+    fun setBlockIncognito(enabled: Boolean) = update { it.copy(blockIncognitoEnabled = enabled) }
+
     /** Starts focus mode; the data layer never lets it be shortened afterwards. */
     fun startFocus(untilMillis: Long) = update { it.copy(focusUntilEpoch = untilMillis) }
 

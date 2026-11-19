@@ -70,7 +70,10 @@
     <string name="strict_locked_banner">Modo estrito ligado: até a meia-noite você pode deixar os bloqueios mais rígidos, mas não mais frouxos.</string>
 
     <string name="adult_blocker_title">Escudo de sites adultos</string>
-    <string name="incognito_blocked">Abas anônimas ficam bloqueadas enquanto o escudo de sites adultos está ativo.</string>
+    <string name="incognito_blocked">Abas anônimas estão bloqueadas. Dá para desligar isso em Proteção extra.</string>
+    <string name="incognito_toggle_title">Bloquear abas anônimas</string>
+    <string name="incognito_toggle_desc">Leva você para a tela inicial quando o navegador estiver com uma aba anônima aberta. Só os controles do próprio navegador são verificados, nunca a página. Se o navegador for bloqueado por engano, desligue.</string>
+    <string name="incognito_toggle_needs_shield">Ligue o escudo de sites adultos para usar isso.</string>
     <string name="adult_blocker_desc">Usa a Acessibilidade para comparar a barra de endereço do seu navegador com uma lista de sites adultos. Sem VPN e sem filtro DNS.</string>
     <string name="adult_blocker_dialog_title">Desligar o escudo?</string>
     <string name="adult_blocker_dialog_desc">Digite o parágrafo abaixo você mesmo. Colar está desativado para isso não ser no piloto automático.</string>

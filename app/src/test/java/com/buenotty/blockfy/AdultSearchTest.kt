@@ -54,6 +54,35 @@ class AdultSearchTest {
     }
 
     @Test
+    fun leavesANormalWindowAloneEvenWhenItTalksAboutPrivateTabs() {
+        // A normal Chrome window shows these: the tab-switcher toggle, settings rows, promos, menu entries.
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_toggle_tabs", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_tab_switcher_button", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_lock_setting", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_promo_title", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_menu_item", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/newIncognitoTab", null))
+        assertFalse(AdultContentDetector.isIncognitoMarker(null, "Abas anônimas"))
+        assertFalse(AdultContentDetector.isIncognitoMarker(null, "Incognito tabs"))
+        assertFalse(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/url_bar", "Pesquisar ou digitar URL"))
+    }
+
+    @Test
+    fun stillSpotsAPrivateWindowFromItsOwnIndicators() {
+        assertTrue(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/incognito_indicator", null))
+        assertTrue(AdultContentDetector.isIncognitoMarker("org.mozilla.firefox:id/private_mode_icon", null))
+        assertTrue(AdultContentDetector.isIncognitoMarker(null, "Navegação privada"))
+        assertTrue(AdultContentDetector.isIncognitoMarker(null, "Modo secreto"))
+    }
+
+    @Test
+    fun theWebPageIsNeverScannedForPrivateWindowMarkers() {
+        assertTrue(AdultContentDetector.isPageContent("android.webkit.WebView"))
+        assertFalse(AdultContentDetector.isPageContent("android.view.ViewGroup"))
+        assertFalse(AdultContentDetector.isPageContent(null))
+    }
+
+    @Test
     fun keepsOrdinaryGroupAndTelegramSearches() {
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=grupo+de+estudos+telegram"))
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=como+baixar+telegram"))

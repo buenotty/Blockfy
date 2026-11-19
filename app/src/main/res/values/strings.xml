@@ -70,7 +70,10 @@
     <string name="strict_locked_banner">Strict mode is on: until midnight you can make blocks stricter, but not looser.</string>
 
     <string name="adult_blocker_title">Adult site shield</string>
-    <string name="incognito_blocked">Private tabs are off while the adult site shield is on.</string>
+    <string name="incognito_blocked">Private tabs are blocked. You can turn this off under Extra protection.</string>
+    <string name="incognito_toggle_title">Block incognito tabs</string>
+    <string name="incognito_toggle_desc">Takes you to the home screen when your browser has a private tab open. Only the browser\'s own controls are checked, never the page. If your browser gets blocked by mistake, turn this off.</string>
+    <string name="incognito_toggle_needs_shield">Turn on the adult site shield to use this.</string>
     <string name="adult_blocker_desc">Uses Accessibility to check your browser\'s address bar against a list of adult sites. No VPN and no DNS filter.</string>
     <string name="adult_blocker_dialog_title">Turn the shield off?</string>
     <string name="adult_blocker_dialog_desc">Type the paragraph below yourself. Paste is disabled so this cannot be done on autopilot.</string>
