@@ -1,6 +1,7 @@
 package com.buenotty.blockfy.feature_accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -166,6 +167,10 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         try {
             if (event == null) return
             val pkg = event.packageName?.toString() ?: return
+            if (event.eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+                handleBrowserNotification(event, pkg)
+                return
+            }
 
             // Bursts of content changes carry no new information; window changes always do.
             val nowElapsed = SystemClock.elapsedRealtime()
@@ -841,6 +846,12 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         if (now - lastAdultScanElapsed < ADULT_SCAN_GAP_MILLIS) return
         lastAdultScanElapsed = now
 
+        // Focus, Tor and the like have no normal mode at all: every tab is private.
+        if (settings.blockIncognitoEnabled && pkg in AdultContentDetector.ALWAYS_PRIVATE_BROWSERS) {
+            leaveAdultScreen(R.string.incognito_blocked)
+            return
+        }
+
         val root = rootFromEvent(event, pkg) ?: return
         try {
             val addressBarText = readAddressBar(root, pkg)
@@ -853,8 +864,8 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             } else if (settings.blockIncognitoEnabled && addressBarText != null &&
                 hasIncognitoMarker(root, remaining = intArrayOf(MAX_INCOGNITO_SCAN_NODES))
             ) {
-                // Only with the address bar showing a page: the tab switcher, menus and settings
-                // screens of a normal window also talk about private tabs and must never be caught.
+                // Only with the address bar on screen (empty on a new tab counts): the tab switcher, menus
+                // and settings screens of a normal window also talk about private tabs and are never caught.
                 leaveAdultScreen(R.string.incognito_blocked)
             }
         } finally {
@@ -877,11 +888,13 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             var text: String? = null
             for (node in nodes) {
                 if (text == null && node.isVisibleToUser && !node.isPassword) {
-                    text = node.text?.toString()?.takeIf { it.isNotBlank() }
+                    // An empty bar (a new tab) still counts as the bar being on screen.
+                    text = node.text?.toString()?.takeIf { it.isNotBlank() } ?: ""
                 }
                 node.recycle()
             }
-            if (text != null) return text
+            if (!text.isNullOrEmpty()) return text
+            if (text != null) return findAddressBarText(root, intArrayOf(MAX_ADDRESS_BAR_SCAN_NODES)) ?: text
         }
         return findAddressBarText(root, remaining = intArrayOf(MAX_ADDRESS_BAR_SCAN_NODES))
     }
@@ -938,7 +951,9 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
         if (remaining[0] <= 0) return false
         remaining[0]--
         if (AdultContentDetector.isPageContent(node.className)) return false
-        if (node.isVisibleToUser && AdultContentDetector.isIncognitoMarker(node.viewIdResourceName, node.contentDescription)) {
+        if (node.isVisibleToUser &&
+            AdultContentDetector.isIncognitoMarker(node.viewIdResourceName, node.contentDescription, node.text)
+        ) {
             return true
         }
         for (i in 0 until node.childCount) {
@@ -951,6 +966,41 @@ class ReelsBlockAccessibilityService : AccessibilityService(), KoinComponent {
             }
         }
         return false
+    }
+
+    /**
+     * Browsers keep a notification while a private tab is open ("Close all Incognito tabs"). Seeing it
+     * is the surest sign of a private tab in any browser, so the private tabs are closed through that
+     * same notification (what tapping it does) and the browser is left. Only browser notifications
+     * arrive here, and only their title and text are read.
+     */
+    private fun handleBrowserNotification(event: AccessibilityEvent, pkg: String) {
+        if (!settings.adultContentBlockerEnabled || !settings.blockIncognitoEnabled) return
+        if (pkg !in AdultContentDetector.BROWSER_PACKAGES) return
+        val notification = event.parcelableData as? Notification
+        val extras = notification?.extras
+        // A page playing audio or video also shows a notification, titled after the page: never read it as a sign.
+        if (extras?.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true) return
+        val texts = buildList<CharSequence?> {
+            addAll(event.text)
+            add(notification?.tickerText)
+            if (extras != null) {
+                add(extras.getCharSequence(Notification.EXTRA_TITLE))
+                add(extras.getCharSequence(Notification.EXTRA_TEXT))
+                add(extras.getCharSequence(Notification.EXTRA_BIG_TEXT))
+            }
+        }
+        if (!AdultContentDetector.isIncognitoNotification(texts)) return
+        closePrivateTabs(notification)
+        leaveAdultScreen(R.string.incognito_blocked)
+    }
+
+    /** Fires the notification's own "close" button, or its tap, which in Chrome, Edge, Brave and Firefox closes every private tab. */
+    private fun closePrivateTabs(notification: Notification?) {
+        notification ?: return
+        val close = notification.actions?.firstOrNull { AdultContentDetector.isCloseAction(it.title) }?.actionIntent
+        runCatching { (close ?: notification.contentIntent)?.send() }
+            .onFailure { Log.w(TAG, "Could not close private tabs", it) }
     }
 
     private fun leaveAdultScreen(@androidx.annotation.StringRes messageRes: Int? = null) {

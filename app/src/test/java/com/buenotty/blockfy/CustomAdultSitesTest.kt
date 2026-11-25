@@ -58,16 +58,16 @@ class CustomAdultSitesTest {
     }
 
     @Test
-    fun `incognito blocking is its own opt-in switch and old settings files still load`() {
-        // Off by default: nobody is caught by it until they turn it on.
-        assertFalse(AppSettings().blockIncognitoEnabled)
+    fun `incognito blocking is its own switch, on by default, and old settings files still load`() {
+        // On by default: a private tab is the easiest way around the shield.
+        assertTrue(AppSettings().blockIncognitoEnabled)
         val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true; coerceInputValues = true; encodeDefaults = true }
         val old = json.encodeToString(AppSettings.serializer(), AppSettings(adultContentBlockerEnabled = true))
             .replace(Regex(""","blockIncognitoEnabled":(true|false)"""), "")
         assertFalse(old.contains("blockIncognitoEnabled"))
         val loaded = json.decodeFromString(AppSettings.serializer(), old)
         assertTrue(loaded.adultContentBlockerEnabled)
-        assertFalse(loaded.blockIncognitoEnabled)
+        assertTrue(loaded.blockIncognitoEnabled)
         val on = json.decodeFromString(
             AppSettings.serializer(),
             json.encodeToString(AppSettings.serializer(), AppSettings(adultContentBlockerEnabled = true, blockIncognitoEnabled = true))

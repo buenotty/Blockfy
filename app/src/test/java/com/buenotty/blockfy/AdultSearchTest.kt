@@ -90,4 +90,75 @@ class AdultSearchTest {
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=vazados+documentos+governo"))
         assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=filme+18+anos+cartaz"))
     }
+
+    @Test
+    fun catchesWordsTypedInPiecesToDodgeTheList() {
+        // The reported bypass: a site name split into syllables, searched on Google Images.
+        assertTrue(AdultContentDetector.isAdultSearch("ero me vaz ado"))
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=ero+me+vaz+ado&udm=2"))
+        assertTrue(AdultContentDetector.isAdultSearch("eromevazado"))
+        assertTrue(AdultContentDetector.isAdultSearch("p o r n o"))
+        assertTrue(AdultContentDetector.isAdultSearch("x x x"))
+        assertTrue(AdultContentDetector.isAdultSearch("n.u.d.e.s"))
+        assertTrue(AdultContentDetector.isAdultSearch("nu des da atriz"))
+        assertTrue(AdultContentDetector.isAdultSearch("x videos brasil"))
+        assertTrue(AdultContentDetector.isAdultSearch("only fans vazado"))
+        assertTrue(AdultContentDetector.isAdultSearch("pornhubbrasil"))
+        assertTrue(AdultContentDetector.isAdultSearch("x-v-i-d-e-o-s"))
+    }
+
+    @Test
+    fun catchesLeetspeakRepeatedLettersAndLookalikeCharacters() {
+        assertTrue(AdultContentDetector.isAdultSearch("p0rn"))
+        assertTrue(AdultContentDetector.isAdultSearch("nud3s vazados"))
+        assertTrue(AdultContentDetector.isAdultSearch("poooorn"))
+        assertTrue(AdultContentDetector.isAdultSearch("\u0440orn")) // Cyrillic er
+        assertTrue(AdultContentDetector.isAdultSearch("\uFF50\uFF4F\uFF52\uFF4E")) // full-width
+        assertTrue(AdultContentDetector.isAdultSearch("p\u200Bo\u200Br\u200Bn")) // zero-width spaces
+        assertTrue(AdultContentDetector.isAdultSearch("google.com/search?q=n%C3%BAdes"))
+    }
+
+    @Test
+    fun catchesLeakHuntsForIntimatePhotos() {
+        assertTrue(AdultContentDetector.isAdultSearch("fotos intimas vazadas da cantora"))
+        assertTrue(AdultContentDetector.isAdultSearch("atriz vazou sem roupa"))
+        assertFalse(AdultContentDetector.isAdultSearch("dados vazados do banco"))
+    }
+
+    @Test
+    fun joiningPiecesDoesNotCatchOrdinarySearches() {
+        assertFalse(AdultContentDetector.isAdultSearch("jerome powell juros"))
+        assertFalse(AdultContentDetector.isAdultSearch("por novas regras"))
+        assertFalse(AdultContentDetector.isAdultSearch("por no mas"))
+        assertFalse(AdultContentDetector.isAdultSearch("bob's burgers"))
+        assertFalse(AdultContentDetector.isAdultSearch("pussycat dolls"))
+        assertFalse(AdultContentDetector.isAdultSearch("im live on twitch"))
+        assertFalse(AdultContentDetector.isAdultSearch("xxl camiseta"))
+        assertFalse(AdultContentDetector.isAdultSearch("canal de receitas"))
+        assertFalse(AdultContentDetector.isAdultSearch("previsao do tempo sao paulo"))
+        assertFalse(AdultContentDetector.isAdultSearch("m.youtube.com/watch?v=dQw4w9WgXcQ"))
+        assertFalse(AdultContentDetector.isAdultSearch("google.com/search?q=100%+algodao"))
+    }
+
+    @Test
+    fun spotsTheBrowsersPrivateTabNotification() {
+        assertTrue(AdultContentDetector.isIncognitoNotification(listOf("Chrome", "Fechar todas as guias anônimas")))
+        assertTrue(AdultContentDetector.isIncognitoNotification(listOf("Close all Incognito tabs")))
+        assertTrue(AdultContentDetector.isIncognitoNotification(listOf("Firefox (Private)", "Close private tabs")))
+        assertTrue(AdultContentDetector.isIncognitoNotification(listOf("Close all InPrivate tabs")))
+        assertFalse(AdultContentDetector.isIncognitoNotification(listOf("Download complete", "foto.jpg")))
+        assertFalse(AdultContentDetector.isIncognitoNotification(listOf(null)))
+        assertTrue(AdultContentDetector.isCloseAction("Fechar tudo"))
+        assertTrue(AdultContentDetector.isCloseAction("Close all"))
+        assertFalse(AdultContentDetector.isCloseAction("Abrir"))
+    }
+
+    @Test
+    fun spotsThePrivateTabStartPage() {
+        assertTrue(AdultContentDetector.isIncognitoMarker("com.android.chrome:id/new_tab_incognito_container", null))
+        assertTrue(AdultContentDetector.isIncognitoMarker(null, null, "You\u2019ve gone Incognito"))
+        assertTrue(AdultContentDetector.isIncognitoMarker(null, null, "Você está navegando como anônimo"))
+        assertFalse(AdultContentDetector.isIncognitoMarker(null, null, "Nova guia anônima"))
+        assertTrue(AdultContentDetector.ALWAYS_PRIVATE_BROWSERS.all { it in AdultContentDetector.BROWSER_PACKAGES })
+    }
 }
